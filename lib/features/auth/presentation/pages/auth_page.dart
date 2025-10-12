@@ -128,6 +128,6 @@ class AuthPage extends StatelessWidget {
   }
 
   void _onAuthenticate(BuildContext context) {
-    context.go(GamePage.routeName);
+    context.push(GamePage.routeName);
   }
 }

@@ -81,14 +81,4 @@ class AuthDataSourceImpl extends AuthDataSource {
       );
     }
   }
-
-  @override
-  Future<DataState<bool>> signOut() async {
-    try {
-      await _firebaseAuth.signOut();
-      return DataSuccess<bool>(data: true);
-    } catch (e) {
-      return DataError<bool>(error: AppError(error: e.toString(), code: '500'));
-    }
-  }
 }

@@ -7,7 +7,7 @@ import 'package:wordshool/features/game/presentation/pages/game_page.dart';
 
 GoRouter appRouter(String initialRoute) {
   return GoRouter(
-    initialLocation: '/auth',
+    initialLocation: initialRoute,
     debugLogDiagnostics: true,
     routes: [
       GoRoute(

@@ -5,6 +5,4 @@ abstract class AuthRepository {
   Future<DataState<WordSchoolUserEntity?>> signInWithGoogle();
 
   Future<DataState<WordSchoolUserEntity?>> signInAnonymously();
-
-  Future<DataState<bool>> signOut();
 }

@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/features/auth/domain/usecases/sign_anonymosly.dart';
-import 'package:wordshool/features/auth/domain/usecases/sign_out.dart';
 import 'package:wordshool/features/auth/domain/usecases/sign_with_google.dart';
 import 'package:wordshool/features/auth/utils/auth_type.dart';
 import 'package:wordshool/shared/domains/entities/user_entity.dart';

@@ -7,7 +7,6 @@ import 'package:wordshool/features/auth/data/data_source/remote/auth_service.dar
 import 'package:wordshool/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:wordshool/features/auth/domain/repositories/auth_repository.dart';
 import 'package:wordshool/features/auth/domain/usecases/sign_anonymosly.dart';
-import 'package:wordshool/features/auth/domain/usecases/sign_out.dart';
 import 'package:wordshool/features/auth/domain/usecases/sign_with_google.dart';
 import 'package:wordshool/shared/data/data_source/session_handler.dart';
 import 'package:wordshool/shared/data/repositories/session_repository_impl.dart';
@@ -58,9 +57,6 @@ void _initializeAuthDependencies() {
       sessionRepository: getIt<SessionRepository>(),
     ),
   );
-
-  getIt.registerSingleton<SignOutUseCase>(
-      SignOutUseCase(authRepo: getIt<AuthRepository>()));
 
   getIt.registerSingleton<SignInWithGoogleUseCase>(
       SignInWithGoogleUseCase(authRepo: getIt<AuthRepository>()));

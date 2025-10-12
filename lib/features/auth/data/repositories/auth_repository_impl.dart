@@ -18,9 +18,4 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<DataState<WordSchoolUserModel?>> signInWithGoogle() {
     return _authDataSource.signInWithGoogle();
   }
-
-  @override
-  Future<DataState<bool>> signOut() {
-    return _authDataSource.signOut();
-  }
 }
