@@ -1,0 +1,41 @@
+{
+  "project_info": {
+    "project_number": "87702505475",
+    "project_id": "wordschool-dev",
+    "storage_bucket": "wordschool-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87702505475:android:71ecbdaa65a9ae49d02636",
+        "android_client_info": {
+          "package_name": "com.wordschoolgame.mat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAbP47CHhfIwuFe6v3D7c1GQbljC9qTOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "87702505475-0jobqk13evdmu8qiinmdsgfrq33cscfj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "87702505475-s42orbp34e2q414urk3ivdqha3iq4p87.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wordschoolgame.mat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
