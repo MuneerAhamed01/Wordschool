@@ -3,9 +3,9 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/features/auth/domain/usecases/sign_anonymosly.dart';
 import 'package:wordshool/features/auth/domain/usecases/sign_with_google.dart';
+import 'package:wordshool/features/auth/domain/usecases/save_user_session_usecase.dart';
 import 'package:wordshool/features/auth/utils/auth_type.dart';
 import 'package:wordshool/shared/domains/entities/user_entity.dart';
-import 'package:wordshool/shared/domains/usercases/save_user_session.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';

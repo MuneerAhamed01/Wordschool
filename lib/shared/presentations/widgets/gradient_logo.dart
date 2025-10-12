@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wordshool/config/themes/colors.dart';
 
-enum WordTileType { green, none, orange }
-
 class AnimatedGradientSquares extends StatefulWidget {
   final int squareCount;
   final double squareSize;

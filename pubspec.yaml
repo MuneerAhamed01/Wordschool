@@ -65,4 +65,5 @@ flutter:
     - assets/svgs/
     - assets/audio/
     - .env
+    - assets/words/words.txt
 

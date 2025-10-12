@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wordshool/core/utils/valid_words.dart';
 import 'package:wordshool/features/auth/data/data_source/auth_service.dart';
 import 'package:wordshool/features/auth/data/data_source/remote/auth_service.dart';
 import 'package:wordshool/features/auth/data/repositories/auth_repository_impl.dart';
@@ -12,7 +13,7 @@ import 'package:wordshool/shared/data/data_source/session_handler.dart';
 import 'package:wordshool/shared/data/repositories/session_repository_impl.dart';
 import 'package:wordshool/shared/domains/repostiories/session_repository.dart';
 import 'package:wordshool/shared/domains/usercases/get_current_user_usecase.dart';
-import 'package:wordshool/shared/domains/usercases/save_user_session.dart';
+import 'package:wordshool/features/auth/domain/usecases/save_user_session_usecase.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -22,6 +23,7 @@ Future<void> initializeDependency() async {
 
   await _initSessions();
   _initializeAuthDependencies();
+  await _initializeValidWords();
 }
 
 Future<void> _initSessions() async {
@@ -54,10 +56,14 @@ void _initializeAuthDependencies() {
   getIt.registerSingleton<SignInAnonymouslyUseCase>(
     SignInAnonymouslyUseCase(
       authRepository: getIt<AuthRepository>(),
-      sessionRepository: getIt<SessionRepository>(),
     ),
   );
 
   getIt.registerSingleton<SignInWithGoogleUseCase>(
       SignInWithGoogleUseCase(authRepo: getIt<AuthRepository>()));
+}
+
+Future<void> _initializeValidWords() async {
+  getIt.registerSingleton<ValidWords>(ValidWords());
+  await getIt<ValidWords>().loadWords();
 }

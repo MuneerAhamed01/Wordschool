@@ -128,4 +128,6 @@ class MyColors {
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);
   static const Color lightGray = Color(0xFFD3D3D3);
+
+  static const Color errorColor = Colors.red;
 }

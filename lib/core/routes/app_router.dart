@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:wordshool/di.dart';
 import 'package:wordshool/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:wordshool/features/auth/presentation/pages/auth_page.dart';
+import 'package:wordshool/features/game/presentation/bloc/word_cubit/word_cubit.dart';
 import 'package:wordshool/features/game/presentation/pages/game_page.dart';
 
 GoRouter appRouter(String initialRoute) {
@@ -25,7 +26,10 @@ GoRouter appRouter(String initialRoute) {
       GoRoute(
         path: GamePage.routeName,
         name: GamePage.routeName.replaceFirst(RegExp(r'0'), ''),
-        builder: (context, state) => const GamePage(),
+        builder: (context, state) => BlocProvider(
+          create: (context) => WordCubit(validWords: getIt()),
+          child: const GamePage(),
+        ),
       ),
     ],
   );
