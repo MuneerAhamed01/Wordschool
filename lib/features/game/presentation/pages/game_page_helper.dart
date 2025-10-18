@@ -1,14 +1,16 @@
 part of 'game_page.dart';
 
 mixin GamePageHelper on State<GamePage> {
-  void onSubmitWord(BuildContext context) {
-    final isValid = context.read<WordCubit>().submitWordIfValid();
+  Future<void> onSubmitWord(BuildContext context, String activeWord) async {
+    final isValid =
+        await context.read<WordCubit>().submitWordIfValid(activeWord);
 
     if (!isValid) {
       // Shake the tiles of the current word
       _shakeCurrentWord();
 
       CustomSnackBar.show(
+        // ignore: use_build_context_synchronously
         context,
         message: 'Not a valid word',
         type: SnackBarType.error,
@@ -28,4 +30,6 @@ mixin GamePageHelper on State<GamePage> {
       }
     }
   }
+
+  void listenToWord(BuildContext context, List<Word> word) {}
 }

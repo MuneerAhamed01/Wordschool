@@ -3,6 +3,7 @@ import 'package:wordshool/core/utils/valid_words.dart';
 import 'package:wordshool/features/game/presentation/utils/constants.dart';
 import 'package:wordshool/features/game/presentation/utils/letter.dart';
 import 'package:wordshool/features/game/presentation/utils/word.dart';
+import 'package:wordshool/core/enums/word_tile_type.dart';
 
 class WordCubit extends Cubit<List<Word>> {
   WordCubit({required ValidWords validWords})
@@ -68,14 +69,9 @@ class WordCubit extends Cubit<List<Word>> {
     // emit(state.map((element) => element == letter ? letter : element).toList());
   }
 
-  void _completeWord(Word word) {
-    emit(state
-        .map((element) =>
-            element == word ? word.copyWith(isCompleted: true) : element)
-        .toList());
-  }
+  // _completeWord removed; handled inside _checkAndUpdateTheWordStatus
 
-  bool submitWordIfValid() {
+  Future<bool> submitWordIfValid(String activatedWord) async {
     // Find the first non-completed word
     final activeWordIndex = state.indexWhere((word) => !word.isCompleted);
 
@@ -86,7 +82,9 @@ class WordCubit extends Cubit<List<Word>> {
       if (activeWord.letters.length == GameConstants.maxLetters) {
         final word = activeWord.word;
         if (_validWords.checkIsValidWord(word)) {
-          _completeWord(activeWord);
+          // Check and update the status of the word against today's word
+          await _checkAndUpdateTheWordStatus(activatedWord);
+
           return true;
         } else {
           return false;
@@ -94,5 +92,83 @@ class WordCubit extends Cubit<List<Word>> {
       }
     }
     return true;
+  }
+
+  Future<void> _checkAndUpdateTheWordStatus(String word) async {
+    final activeWordIndex = _findActiveWordIndex();
+    if (activeWordIndex == -1) return;
+
+    final activeWord = state[activeWordIndex];
+    if (!_hasRequiredLetters(activeWord)) return;
+
+    final targetChars = word.trim().toUpperCase().split('');
+    final guessChars =
+        activeWord.letters.map((l) => l.letter.toUpperCase()).toList();
+
+    final types = _evaluateGuess(guessChars, targetChars);
+    final updatedWord = _applyEvaluationToWord(activeWord, types);
+    _emitUpdatedWordAt(activeWordIndex, updatedWord);
+  }
+
+  int _findActiveWordIndex() {
+    return state.indexWhere((w) => !w.isCompleted);
+  }
+
+  bool _hasRequiredLetters(Word word) {
+    return word.letters.length == GameConstants.maxLetters;
+  }
+
+  List<WordTileType> _evaluateGuess(
+    List<String> guessChars,
+    List<String> targetChars,
+  ) {
+    final int n = GameConstants.maxLetters;
+    final List<WordTileType> types =
+        List<WordTileType>.filled(n, WordTileType.error);
+
+    final List<bool> targetTaken = List<bool>.filled(n, false);
+    for (int i = 0; i < n; i++) {
+      if (guessChars[i] == targetChars[i]) {
+        types[i] = WordTileType.green;
+        targetTaken[i] = true;
+      }
+    }
+
+    final Map<String, int> remainingCounts = <String, int>{};
+    for (int i = 0; i < n; i++) {
+      if (!targetTaken[i]) {
+        final ch = targetChars[i];
+        remainingCounts[ch] = (remainingCounts[ch] ?? 0) + 1;
+      }
+    }
+
+    for (int i = 0; i < n; i++) {
+      if (types[i] == WordTileType.green) continue;
+      final ch = guessChars[i];
+      final available = remainingCounts[ch] ?? 0;
+      if (available > 0) {
+        types[i] = WordTileType.orange;
+        remainingCounts[ch] = available - 1;
+      } else {
+        types[i] = WordTileType.none;
+      }
+    }
+
+    return types;
+  }
+
+  Word _applyEvaluationToWord(Word activeWord, List<WordTileType> types) {
+    final updatedLetters = List<Letter>.generate(
+      GameConstants.maxLetters,
+      (i) => activeWord.letters[i].copyWith(type: types[i]),
+      growable: false,
+    );
+    return activeWord.copyWith(letters: updatedLetters, isCompleted: true);
+  }
+
+  void _emitUpdatedWordAt(int index, Word updatedWord) {
+    final updatedState = List<Word>.from(state);
+    updatedState[index] = updatedWord;
+    emit(updatedState);
   }
 }

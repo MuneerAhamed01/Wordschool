@@ -26,37 +26,42 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
   // Store shake functions for each tile
   final Map<int, VoidCallback> _shakeFunctions = {};
 
+  static String todayWord = 'SHAKE';
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: 10),
-            _buildWords(),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 24, top: 16),
-                child: _buildIndicator(context),
-              ),
-            ),
-            Spacer(),
-            Padding(
-              padding: const EdgeInsets.only(left: 16, bottom: 10),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: GlowingLightbulbButton(
-                  size: 24,
-                  onTap: () {},
+    return BlocListener<WordCubit, List<Word>>(
+      listener: listenToWord,
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+            children: [
+              SizedBox(height: 10),
+              _buildWords(),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 24, top: 16),
+                  child: _buildIndicator(context),
                 ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(8),
-              child: _buildCustomButton(),
-            ),
-          ],
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(left: 16, bottom: 10),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: GlowingLightbulbButton(
+                    size: 24,
+                    onTap: () {},
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(8),
+                child: _buildCustomButton(),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -69,7 +74,7 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
           onKeyPressed: (value) {
             context.read<WordCubit>().addLetter(Letter(letter: value));
           },
-          onEnterPressed: () => onSubmitWord(context),
+          onEnterPressed: () => onSubmitWord(context, todayWord),
           onBackspacePressed: () {
             context.read<WordCubit>().removeLastLetter();
           },
