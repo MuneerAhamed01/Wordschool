@@ -17,7 +17,7 @@ dependencies:
   english_words: ^4.0.0
   # firebase_core: ^2.24.2
   google_generative_ai: ^0.4.5
-  # cloud_firestore: ^4.14.0
+  cloud_firestore: ^6.0.3
   get_storage: ^2.1.1
   shimmer: ^3.0.0
   flutter_svg: ^2.0.10+1
