@@ -3,12 +3,14 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wordshool/core/enums/word_tile_type.dart';
+import 'package:wordshool/features/game/presentation/bloc/game_bloc/game_bloc.dart';
 import 'package:wordshool/features/game/presentation/bloc/word_cubit/word_cubit.dart';
 import 'package:wordshool/features/game/presentation/utils/constants.dart';
 import 'package:wordshool/features/game/presentation/utils/letter.dart';
 import 'package:wordshool/features/game/presentation/utils/word.dart';
 import 'package:wordshool/features/game/presentation/widgets/keyboard/keyboard.dart';
 import 'package:wordshool/shared/presentations/widgets/glowing_bulb.dart';
+import 'package:wordshool/shared/presentations/widgets/shimmer_grid_item.dart';
 import 'package:wordshool/shared/presentations/widgets/snackbar.dart';
 import 'package:wordshool/shared/presentations/widgets/wordle_tile/tile.dart';
 
@@ -26,43 +28,55 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
   // Store shake functions for each tile
   final Map<int, VoidCallback> _shakeFunctions = {};
 
-  static String todayWord = 'SHAKE';
-
   @override
   Widget build(BuildContext context) {
-    return BlocListener<WordCubit, List<Word>>(
-      listener: listenToWord,
-      child: Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(height: 10),
-              _buildWords(),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 24, top: 16),
-                  child: _buildIndicator(context),
-                ),
-              ),
-              Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(left: 16, bottom: 10),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: GlowingLightbulbButton(
-                    size: 24,
-                    onTap: () {},
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: _buildCustomButton(),
-              ),
-            ],
+    return BlocBuilder<GameBloc, GameState>(
+      builder: (context, state) {
+        final body = state.whenOrNull(
+          loaded: (word) => _buildContent(),
+          error: (message) => _buildLoadingBody(),
+          loading: () => _buildLoadingBody(),
+          initial: () => _buildLoadingBody(),
+        );
+        return BlocListener<WordCubit, List<Word>>(
+          listener: listenToWord,
+          child: Scaffold(
+            body: body,
           ),
-        ),
+        );
+      },
+    );
+  }
+
+  Widget _buildContent() {
+    return SafeArea(
+      child: Column(
+        children: [
+          SizedBox(height: 10),
+          _buildWords(),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 24, top: 16),
+              child: _buildIndicator(context),
+            ),
+          ),
+          Spacer(),
+          Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 10),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: GlowingLightbulbButton(
+                size: 24,
+                onTap: () {},
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: _buildCustomButton(),
+          ),
+        ],
       ),
     );
   }
@@ -74,7 +88,7 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
           onKeyPressed: (value) {
             context.read<WordCubit>().addLetter(Letter(letter: value));
           },
-          onEnterPressed: () => onSubmitWord(context, todayWord),
+          onEnterPressed: () => onSubmitWord(context),
           onBackspacePressed: () {
             context.read<WordCubit>().removeLastLetter();
           },
@@ -136,6 +150,31 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
           },
         );
       },
+    );
+  }
+
+  Widget _buildLoadingBody() {
+    return SafeArea(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          GridView.builder(
+            itemCount: 5 * 5,
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 5,
+              childAspectRatio: 1,
+              mainAxisSpacing: 5,
+              crossAxisSpacing: 5,
+            ),
+            shrinkWrap: true,
+            itemBuilder: (_, index) => ShimmerGridItem(
+              baseColor: Colors.grey[800]!,
+              highlightColor: Colors.grey[700]!,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -16,6 +16,8 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         super(const GameState.initial()) {
     on<_LoadTodayWord>(_onLoadTodayWord);
     on<_SubmitWord>(_onSubmitWord);
+
+    add(_LoadTodayWord());
   }
 
   Future<void> _onLoadTodayWord(
@@ -28,8 +30,6 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     } else {
       emit(GameState.error(result.error?.message ?? 'Something went wrong'));
     }
-
-    // emit(GameState.loaded(todayWord));
   }
 
   Future<void> _onSubmitWord(_SubmitWord event, Emitter<GameState> emit) async {

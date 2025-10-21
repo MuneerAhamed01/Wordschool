@@ -23,7 +23,7 @@ class Word {
 
   String get word => letters.map((e) => e.letter).join('').trim();
 
-  Word copyWith({
+  Word copyWith({   
     List<Letter>? letters,
     bool? isCompleted,
   }) {

@@ -1,7 +1,12 @@
 part of 'game_page.dart';
 
 mixin GamePageHelper on State<GamePage> {
-  Future<void> onSubmitWord(BuildContext context, String activeWord) async {
+  Future<void> onSubmitWord(BuildContext context) async {
+    final activeWord =
+        context.read<GameBloc>().state.whenOrNull(loaded: (word) => word);
+
+    if (activeWord == null) return;
+
     final isValid =
         await context.read<WordCubit>().submitWordIfValid(activeWord);
 

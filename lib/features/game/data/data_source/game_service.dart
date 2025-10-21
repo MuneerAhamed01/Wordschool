@@ -3,5 +3,6 @@ import 'package:wordshool/features/game/data/models/game.dart';
 
 abstract class GameDataSource {
   Future<DataState<GameModel>> loadTodayWord();
+  
   Future<DataState<bool>> submitWord(String word);
 }

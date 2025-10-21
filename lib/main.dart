@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:go_router/go_router.dart';
 import 'package:wordshool/config/themes/colors.dart';
 import 'package:wordshool/config/themes/fonts.dart';
 import 'package:wordshool/core/routes/app_router.dart';
@@ -18,22 +20,27 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  await FirebaseFirestore.setLoggingEnabled(true);
+
   await dotenv.load();
 
   await initializeDependency();
 
-  runApp(const MainApp());
+  // Compute initial route and create a single GoRouter instance
+  final hasUser = getIt<SessionHandler>().currentUser != null;
+  final initialRoute = hasUser ? GamePage.routeName : AuthPage.routeName;
+  final router = appRouter(initialRoute);
+
+  runApp(MainApp(router: router));
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  const MainApp({super.key, required this.router});
+
+  final GoRouter router;
 
   @override
   Widget build(BuildContext context) {
-    final hasUser = getIt<SessionHandler>().currentUser != null;
-
-    final initialRoute = hasUser ? GamePage.routeName : AuthPage.routeName;
-
     return MaterialApp.router(
       title: 'WordSchool',
       theme: ThemeData(
@@ -41,7 +48,7 @@ class MainApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: ThemeData.light().textTheme.nunito,
       ),
-      routerConfig: appRouter(initialRoute),
+      routerConfig: router,
     );
   }
 }
