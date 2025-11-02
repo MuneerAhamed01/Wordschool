@@ -1,36 +1,40 @@
 import 'package:wordshool/core/firebase/dt_converter.dart';
-import 'package:wordshool/features/game/domain/entities/game.dart';
+import 'package:wordshool/shared/domains/entities/user_game_state/user_game_data.dart';
 
-class GameModel extends GameEntity {
-  const GameModel({
+class UserGameDataModel extends UserGameDataEntity {
+  const UserGameDataModel({
     required super.id,
-    required super.todayWord,
-    required super.isCompleted,
+    super.guessedWords = const [],
+    super.isCompleted = false ,
+    super.isCorrect = false,
     required super.createdDate,
     required super.updatedDate,
   });
 
-  GameModel copyWith({
+  UserGameDataModel copyWith({
     String? id,
-    String? todayWord,
+    List<String>? guessedWords,
     bool? isCompleted,
+    bool? isCorrect,
     DateTime? createdDate,
     DateTime? updatedDate,
   }) {
-    return GameModel(
+    return UserGameDataModel(
       id: id ?? this.id,
-      todayWord: todayWord ?? this.todayWord,
+      guessedWords: guessedWords ?? this.guessedWords,
       isCompleted: isCompleted ?? this.isCompleted,
+      isCorrect: isCorrect ?? this.isCorrect,
       createdDate: createdDate ?? this.createdDate,
       updatedDate: updatedDate ?? this.updatedDate,
     );
   }
 
-  factory GameModel.fromJson(Map<String, dynamic> json) {
-    return GameModel(
+  factory UserGameDataModel.fromJson(Map<String, dynamic> json) {
+    return UserGameDataModel(
       id: json['id'],
-      todayWord: json['todayWord'],
+      guessedWords: json['guessedWords'],
       isCompleted: json['isCompleted'],
+      isCorrect: json['isCorrect'],
       createdDate: FirebaseDTConverter.fromTimestamp(json['createdDate']),
       updatedDate: FirebaseDTConverter.fromTimestamp(json['updatedDate']),
     );
@@ -39,8 +43,9 @@ class GameModel extends GameEntity {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'todayWord': todayWord,
+      'guessedWords': guessedWords,
       'isCompleted': isCompleted,
+      'isCorrect': isCorrect,
       'createdDate': FirebaseDTConverter.toTimestamp(createdDate),
       'updatedDate': FirebaseDTConverter.toTimestamp(updatedDate),
     };

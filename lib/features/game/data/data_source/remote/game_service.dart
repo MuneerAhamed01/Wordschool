@@ -17,38 +17,26 @@ class GameDataSourceImpl extends GameDataSource {
   @override
   Future<DataState<GameModel>> loadTodayWord() async {
     try {
+      final todayDate = DateTime.now().toIso8601String().split('T')[0];
+
       final response = await _firestore
           .collection(FirebaseCollections.games)
-          .orderBy('createdDate', descending: true)
-          .limit(1)
+          .doc(todayDate)
           .get();
 
-      if (response.docs.isEmpty) {
+      if (!response.exists) {
         // No existing game, create new one
         final gameModel = await _createWordIfNotExist();
         return DataSuccess<GameModel>(data: gameModel);
       }
 
-      final gameDoc = response.docs.first;
-      final gameData = gameDoc.data();
-      final createdDate = (gameData['createdDate'] as Timestamp).toDate();
-      final now = DateTime.now();
-
-      // Check if game is from today
-      final isToday = createdDate.year == now.year &&
-          createdDate.month == now.month &&
-          createdDate.day == now.day;
-
-      if (isToday) {
-        // Return existing game from today
-        return DataSuccess<GameModel>(
-          data: GameModel.fromJson(gameData),
+      final gameDoc = response.data();
+      if (gameDoc == null) {
+        return DataError<GameModel>(
+          error: AppError(error: 'Game not found', code: '404'),
         );
-      } else {  
-        // Create new game for today
-        final gameModel = await _createWordIfNotExist();
-        return DataSuccess<GameModel>(data: gameModel);
       }
+      return DataSuccess<GameModel>(data: GameModel.fromJson(gameDoc));
     } catch (e) {
       return DataError<GameModel>(
         error: AppError(error: e.toString(), code: '500'),
@@ -69,7 +57,11 @@ class GameDataSourceImpl extends GameDataSource {
           DateTime.now().millisecondsSinceEpoch %
               _validWords.validWords.length];
 
+      // CREATE ID BASED ON THE CURRENT DATE AND TIME
+      final todayDate = DateTime.now().toIso8601String().split('T')[0];
+
       final gameModel = GameModel(
+        id: todayDate,
         todayWord: randomWord,
         isCompleted: false,
         createdDate: DateTime.now(),
@@ -78,7 +70,8 @@ class GameDataSourceImpl extends GameDataSource {
 
       await _firestore
           .collection(FirebaseCollections.games)
-          .add(gameModel.toJson());
+          .doc(todayDate)
+          .set(gameModel.toJson());
 
       return gameModel;
     } catch (e) {

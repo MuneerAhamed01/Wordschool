@@ -1,12 +1,14 @@
 import 'package:equatable/equatable.dart';
 
 class GameEntity extends Equatable {
+  final String id;
   final String todayWord;
   final bool isCompleted;
   final DateTime createdDate;
   final DateTime updatedDate;
 
   const GameEntity({
+    required this.id,
     required this.todayWord,
     required this.isCompleted,
     required this.createdDate,
@@ -14,5 +16,6 @@ class GameEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props => [todayWord, isCompleted, createdDate, updatedDate];
+  List<Object?> get props =>
+      [id, todayWord, isCompleted, createdDate, updatedDate];
 }

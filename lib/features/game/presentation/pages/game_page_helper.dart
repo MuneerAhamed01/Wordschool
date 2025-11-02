@@ -1,6 +1,9 @@
 part of 'game_page.dart';
 
 mixin GamePageHelper on State<GamePage> {
+  int _lastCompletedWordsCount = 0;
+  bool _hasNavigated = false;
+
   Future<void> onSubmitWord(BuildContext context) async {
     final activeWord =
         context.read<GameBloc>().state.whenOrNull(loaded: (word) => word);
@@ -36,5 +39,51 @@ mixin GamePageHelper on State<GamePage> {
     }
   }
 
-  void listenToWord(BuildContext context, List<Word> word) {}
+  Future<void> listenToWord(BuildContext context, List<Word> words) async {
+    if (_hasNavigated) return;
+
+    final todayWord =
+        context.read<GameBloc>().state.whenOrNull(loaded: (w) => w);
+    if (todayWord == null) return;
+
+    final completedWords = words
+        .where((w) =>
+            w.isCompleted && w.letters.length == GameConstants.maxLetters)
+        .toList();
+
+    final currentCompletedCount = completedWords.length;
+    if (currentCompletedCount == 0 ||
+        currentCompletedCount == _lastCompletedWordsCount) {
+      return;
+    }
+
+    _lastCompletedWordsCount = currentCompletedCount;
+
+    final lastCompleted = completedWords.last;
+    final lastGuess = lastCompleted.word.trim().toUpperCase();
+    final target = todayWord.trim().toUpperCase();
+
+    if (lastGuess == target) {
+      await Future.delayed(const Duration(seconds: 2));
+      _hasNavigated = true;
+      if (context.mounted) {
+        context.push(
+          WinningPage.routeName,
+          extra: WinningPageParam(word: todayWord, isLost: false),
+        );
+      }
+      return;
+    }
+
+    if (currentCompletedCount >= GameConstants.maxWords) {
+      await Future.delayed(const Duration(seconds: 1));
+      _hasNavigated = true;
+      if (context.mounted) {
+        context.push(
+          WinningPage.routeName,
+          extra: WinningPageParam(word: todayWord, isLost: true),
+        );
+      }
+    }
+  }
 }

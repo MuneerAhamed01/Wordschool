@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:wordshool/core/enums/word_tile_type.dart';
 import 'package:wordshool/features/game/presentation/bloc/game_bloc/game_bloc.dart';
 import 'package:wordshool/features/game/presentation/bloc/word_cubit/word_cubit.dart';
@@ -13,6 +14,8 @@ import 'package:wordshool/shared/presentations/widgets/glowing_bulb.dart';
 import 'package:wordshool/shared/presentations/widgets/shimmer_grid_item.dart';
 import 'package:wordshool/shared/presentations/widgets/snackbar.dart';
 import 'package:wordshool/shared/presentations/widgets/wordle_tile/tile.dart';
+import 'package:wordshool/features/winning/presentation/pages/winning_page.dart';
+import 'package:wordshool/features/winning/presentation/pages/params/winning_page_param.dart';
 
 part 'game_page_helper.dart';
 
@@ -84,6 +87,24 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
   Widget _buildCustomButton() {
     return BlocBuilder<WordCubit, List<Word>>(
       builder: (context, state) {
+        // Collect oranged (WordTileType.orange), greened (WordTileType.green), and disabled (WordTileType.error) letter values from state
+        final Set<String> orangedList = <String>{};
+        final Set<String> greenedList = <String>{};
+        final Set<String> disabledList = <String>{};
+
+        for (final word in state) {
+          for (final letter in word.letters) {
+            final upperChar = letter.letter.toUpperCase();
+            if (letter.type == WordTileType.orange) {
+              orangedList.add(upperChar);
+            } else if (letter.type == WordTileType.green) {
+              greenedList.add(upperChar);
+            } else if (letter.type == WordTileType.none) {
+              disabledList.add(upperChar);
+            }
+          }
+        }
+
         return CustomKeyboard(
           onKeyPressed: (value) {
             context.read<WordCubit>().addLetter(Letter(letter: value));
@@ -92,6 +113,9 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
           onBackspacePressed: () {
             context.read<WordCubit>().removeLastLetter();
           },
+          orangedList: orangedList.toList(),
+          greenedList: greenedList.toList(),
+          disabledList: disabledList.toList(),
         );
       },
     );
