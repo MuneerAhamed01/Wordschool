@@ -11,6 +11,6 @@ class LoadUserSpecificGameStateUseCase extends UseCase<DataState<UserGameDataEnt
 
   @override
   Future<DataState<UserGameDataEntity>> call({required String param}) async {
-    return _userGameStateRepository.getUserSpecificGameData(param);
+    return _userGameStateRepository.loadUserSpecificGameData(param);
   }
 }

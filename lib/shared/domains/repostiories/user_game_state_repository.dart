@@ -49,4 +49,8 @@ abstract class UserGameStateRepository {
   Future<DataState<UserGameDataEntity>> updateUserSpecificGameData(
     UserGameDataEntity userGameData,
   );
+
+  Future<DataState<UserGameStateEntity>> loadUserGameState();
+
+  Future<DataState<UserGameDataEntity>> loadUserSpecificGameData(String gameId);
 }

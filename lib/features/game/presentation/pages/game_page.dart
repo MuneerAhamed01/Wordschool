@@ -36,7 +36,8 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
     return BlocBuilder<GameBloc, GameState>(
       builder: (context, state) {
         final body = state.whenOrNull(
-          loaded: (word, userGameState, userSpecificGameData) => _buildContent(),
+          loaded: (word, userGameState, userSpecificGameData) =>
+              _buildContent(),
           error: (message) => _buildLoadingBody(),
           loading: () => _buildLoadingBody(),
           initial: () => _buildLoadingBody(),

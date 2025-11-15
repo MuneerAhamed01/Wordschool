@@ -192,4 +192,26 @@ class UserGameStateRepositoryImpl implements UserGameStateRepository {
     }
     return DataError<UserGameStateEntity>(error: err.error);
   }
+
+  @override
+  Future<DataState<UserGameDataEntity>> loadUserSpecificGameData(
+    String gameId,
+  ) async {
+    final user = _sessionRepository.getCurrentUser();
+    if (user == null) {
+      return DataError<UserGameDataEntity>(
+          error: AppError(error: 'No current user', code: '401'));
+    }
+    final res = await _dataSource.getUserSpecificGameData(user.id, gameId);
+    if (res is DataSuccess<UserGameDataModel>) {
+      return res;
+    }
+    final err = res as DataError<UserGameDataModel>;
+    if (err.error?.code == '404') {
+      final createRes =
+          await _dataSource.createUserSpecificGameData(user.id, gameId);
+      return createRes;
+    }
+    return DataError<UserGameDataEntity>(error: err.error);
+  }
 }

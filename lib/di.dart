@@ -15,11 +15,17 @@ import 'package:wordshool/features/game/data/data_source/remote/game_service.dar
 import 'package:wordshool/features/game/data/repositories/game_repository_impl.dart';
 import 'package:wordshool/features/game/domain/repositories/game_repository.dart';
 import 'package:wordshool/features/game/domain/usecase/load_today_word.dart';
+import 'package:wordshool/shared/data/data_source/remote/user_game_state/user_game_state_service.dart';
 import 'package:wordshool/shared/data/data_source/session_handler.dart';
+import 'package:wordshool/shared/data/data_source/user_game_state_service.dart';
 import 'package:wordshool/shared/data/repositories/session_repository_impl.dart';
+import 'package:wordshool/shared/data/repositories/user_game_state_repository_impl.dart';
 import 'package:wordshool/shared/domains/repostiories/session_repository.dart';
+import 'package:wordshool/shared/domains/repostiories/user_game_state_repository.dart';
 import 'package:wordshool/shared/domains/usercases/get_current_user_usecase.dart';
 import 'package:wordshool/features/auth/domain/usecases/save_user_session_usecase.dart';
+import 'package:wordshool/shared/domains/usercases/load_user_game_state_usecase.dart';
+import 'package:wordshool/shared/domains/usercases/load_user_specific_game_state.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -85,7 +91,24 @@ void _initializeGame() {
     gameDataSource: getIt<GameDataSource>(),
   ));
 
+  getIt.registerSingleton<UserGameStateDataSource>(
+      UserGameStateDataSourceImpl(firestore: FirebaseFirestore.instance));
+
+  getIt.registerSingleton<UserGameStateRepository>(UserGameStateRepositoryImpl(
+    dataSource: getIt<UserGameStateDataSource>(),
+    sessionRepository: getIt<SessionRepository>(),
+  ));
+
   getIt.registerSingleton<LoadTodayWordUseCase>(LoadTodayWordUseCase(
     gameRepository: getIt<GameRepository>(),
+  ));
+
+  getIt.registerSingleton<LoadUserGameStateUseCase>(LoadUserGameStateUseCase(
+    userGameStateRepository: getIt<UserGameStateRepository>(),
+  ));
+
+  getIt.registerSingleton<LoadUserSpecificGameStateUseCase>(
+      LoadUserSpecificGameStateUseCase(
+    userGameStateRepository: getIt<UserGameStateRepository>(),
   ));
 }

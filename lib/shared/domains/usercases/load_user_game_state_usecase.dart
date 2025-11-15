@@ -13,6 +13,6 @@ class LoadUserGameStateUseCase
 
   @override
   Future<DataState<UserGameStateEntity>> call({void param}) async {
-    return _userGameStateRepository.getUserGameState();
+    return _userGameStateRepository.loadUserGameState();
   }
 }
