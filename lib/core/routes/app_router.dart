@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -38,7 +36,12 @@ GoRouter appRouter(String initialRoute) {
               create: (context) => WordCubit(validWords: getIt()),
             ),
             BlocProvider(
-                create: (context) => GameBloc(loadTodayWordUseCase: getIt()))
+              create: (context) => GameBloc(
+                loadTodayWordUseCase: getIt(),
+                loadUserGameStateUseCase: getIt(),
+                loadUserSpecificGameStateUseCase: getIt(),
+              ),
+            )
           ],
           child: const GamePage(),
         ),
@@ -53,12 +56,14 @@ GoRouter appRouter(String initialRoute) {
               word: params.word,
               isLost: params.isLost,
             ),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
               final begin = const Offset(0, 1);
               final end = Offset.zero;
               final curve = Curves.ease;
 
-              var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var tween =
+                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
               return SlideTransition(
                 position: animation.drive(tween),
                 child: child,

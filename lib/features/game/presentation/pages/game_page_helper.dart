@@ -5,8 +5,8 @@ mixin GamePageHelper on State<GamePage> {
   bool _hasNavigated = false;
 
   Future<void> onSubmitWord(BuildContext context) async {
-    final activeWord =
-        context.read<GameBloc>().state.whenOrNull(loaded: (word) => word);
+    final activeWord = context.read<GameBloc>().state.whenOrNull(
+        loaded: (word, userGameState, userSpecificGameData) => word);
 
     if (activeWord == null) return;
 
@@ -42,8 +42,7 @@ mixin GamePageHelper on State<GamePage> {
   Future<void> listenToWord(BuildContext context, List<Word> words) async {
     if (_hasNavigated) return;
 
-    final todayWord =
-        context.read<GameBloc>().state.whenOrNull(loaded: (w) => w);
+    final todayWord = context.read<GameBloc>().state.todayWord;
     if (todayWord == null) return;
 
     final completedWords = words

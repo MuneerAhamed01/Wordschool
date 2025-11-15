@@ -9,9 +9,10 @@ class GameDataSourceImpl extends GameDataSource {
   final FirebaseFirestore _firestore;
   final ValidWords _validWords;
 
-  GameDataSourceImpl(
-      {required FirebaseFirestore firestore, required ValidWords validWords})
-      : _firestore = firestore,
+  GameDataSourceImpl({
+    required FirebaseFirestore firestore,
+    required ValidWords validWords,
+  })  : _firestore = firestore,
         _validWords = validWords;
 
   @override

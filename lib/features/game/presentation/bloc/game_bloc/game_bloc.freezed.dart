@@ -19,18 +19,24 @@ mixin _$GameEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loadTodayWord,
+    required TResult Function() loadUserGameState,
+    required TResult Function(String gameId) loadUserSpecificGameData,
     required TResult Function(String word) submitWord,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadTodayWord,
+    TResult? Function()? loadUserGameState,
+    TResult? Function(String gameId)? loadUserSpecificGameData,
     TResult? Function(String word)? submitWord,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadTodayWord,
+    TResult Function()? loadUserGameState,
+    TResult Function(String gameId)? loadUserSpecificGameData,
     TResult Function(String word)? submitWord,
     required TResult orElse(),
   }) =>
@@ -38,18 +44,26 @@ mixin _$GameEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_LoadTodayWord value) loadTodayWord,
+    required TResult Function(_LoadUserGameState value) loadUserGameState,
+    required TResult Function(_LoadUserSpecificGameData value)
+        loadUserSpecificGameData,
     required TResult Function(_SubmitWord value) submitWord,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadTodayWord value)? loadTodayWord,
+    TResult? Function(_LoadUserGameState value)? loadUserGameState,
+    TResult? Function(_LoadUserSpecificGameData value)?
+        loadUserSpecificGameData,
     TResult? Function(_SubmitWord value)? submitWord,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadTodayWord value)? loadTodayWord,
+    TResult Function(_LoadUserGameState value)? loadUserGameState,
+    TResult Function(_LoadUserSpecificGameData value)? loadUserSpecificGameData,
     TResult Function(_SubmitWord value)? submitWord,
     required TResult orElse(),
   }) =>
@@ -118,6 +132,8 @@ class _$LoadTodayWordImpl implements _LoadTodayWord {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loadTodayWord,
+    required TResult Function() loadUserGameState,
+    required TResult Function(String gameId) loadUserSpecificGameData,
     required TResult Function(String word) submitWord,
   }) {
     return loadTodayWord();
@@ -127,6 +143,8 @@ class _$LoadTodayWordImpl implements _LoadTodayWord {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadTodayWord,
+    TResult? Function()? loadUserGameState,
+    TResult? Function(String gameId)? loadUserSpecificGameData,
     TResult? Function(String word)? submitWord,
   }) {
     return loadTodayWord?.call();
@@ -136,6 +154,8 @@ class _$LoadTodayWordImpl implements _LoadTodayWord {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadTodayWord,
+    TResult Function()? loadUserGameState,
+    TResult Function(String gameId)? loadUserSpecificGameData,
     TResult Function(String word)? submitWord,
     required TResult orElse(),
   }) {
@@ -149,6 +169,9 @@ class _$LoadTodayWordImpl implements _LoadTodayWord {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_LoadTodayWord value) loadTodayWord,
+    required TResult Function(_LoadUserGameState value) loadUserGameState,
+    required TResult Function(_LoadUserSpecificGameData value)
+        loadUserSpecificGameData,
     required TResult Function(_SubmitWord value) submitWord,
   }) {
     return loadTodayWord(this);
@@ -158,6 +181,9 @@ class _$LoadTodayWordImpl implements _LoadTodayWord {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadTodayWord value)? loadTodayWord,
+    TResult? Function(_LoadUserGameState value)? loadUserGameState,
+    TResult? Function(_LoadUserSpecificGameData value)?
+        loadUserSpecificGameData,
     TResult? Function(_SubmitWord value)? submitWord,
   }) {
     return loadTodayWord?.call(this);
@@ -167,6 +193,8 @@ class _$LoadTodayWordImpl implements _LoadTodayWord {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadTodayWord value)? loadTodayWord,
+    TResult Function(_LoadUserGameState value)? loadUserGameState,
+    TResult Function(_LoadUserSpecificGameData value)? loadUserSpecificGameData,
     TResult Function(_SubmitWord value)? submitWord,
     required TResult orElse(),
   }) {
@@ -179,6 +207,283 @@ class _$LoadTodayWordImpl implements _LoadTodayWord {
 
 abstract class _LoadTodayWord implements GameEvent {
   const factory _LoadTodayWord() = _$LoadTodayWordImpl;
+}
+
+/// @nodoc
+abstract class _$$LoadUserGameStateImplCopyWith<$Res> {
+  factory _$$LoadUserGameStateImplCopyWith(_$LoadUserGameStateImpl value,
+          $Res Function(_$LoadUserGameStateImpl) then) =
+      __$$LoadUserGameStateImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$LoadUserGameStateImplCopyWithImpl<$Res>
+    extends _$GameEventCopyWithImpl<$Res, _$LoadUserGameStateImpl>
+    implements _$$LoadUserGameStateImplCopyWith<$Res> {
+  __$$LoadUserGameStateImplCopyWithImpl(_$LoadUserGameStateImpl _value,
+      $Res Function(_$LoadUserGameStateImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of GameEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$LoadUserGameStateImpl implements _LoadUserGameState {
+  const _$LoadUserGameStateImpl();
+
+  @override
+  String toString() {
+    return 'GameEvent.loadUserGameState()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$LoadUserGameStateImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loadTodayWord,
+    required TResult Function() loadUserGameState,
+    required TResult Function(String gameId) loadUserSpecificGameData,
+    required TResult Function(String word) submitWord,
+  }) {
+    return loadUserGameState();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loadTodayWord,
+    TResult? Function()? loadUserGameState,
+    TResult? Function(String gameId)? loadUserSpecificGameData,
+    TResult? Function(String word)? submitWord,
+  }) {
+    return loadUserGameState?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loadTodayWord,
+    TResult Function()? loadUserGameState,
+    TResult Function(String gameId)? loadUserSpecificGameData,
+    TResult Function(String word)? submitWord,
+    required TResult orElse(),
+  }) {
+    if (loadUserGameState != null) {
+      return loadUserGameState();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoadTodayWord value) loadTodayWord,
+    required TResult Function(_LoadUserGameState value) loadUserGameState,
+    required TResult Function(_LoadUserSpecificGameData value)
+        loadUserSpecificGameData,
+    required TResult Function(_SubmitWord value) submitWord,
+  }) {
+    return loadUserGameState(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoadTodayWord value)? loadTodayWord,
+    TResult? Function(_LoadUserGameState value)? loadUserGameState,
+    TResult? Function(_LoadUserSpecificGameData value)?
+        loadUserSpecificGameData,
+    TResult? Function(_SubmitWord value)? submitWord,
+  }) {
+    return loadUserGameState?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoadTodayWord value)? loadTodayWord,
+    TResult Function(_LoadUserGameState value)? loadUserGameState,
+    TResult Function(_LoadUserSpecificGameData value)? loadUserSpecificGameData,
+    TResult Function(_SubmitWord value)? submitWord,
+    required TResult orElse(),
+  }) {
+    if (loadUserGameState != null) {
+      return loadUserGameState(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _LoadUserGameState implements GameEvent {
+  const factory _LoadUserGameState() = _$LoadUserGameStateImpl;
+}
+
+/// @nodoc
+abstract class _$$LoadUserSpecificGameDataImplCopyWith<$Res> {
+  factory _$$LoadUserSpecificGameDataImplCopyWith(
+          _$LoadUserSpecificGameDataImpl value,
+          $Res Function(_$LoadUserSpecificGameDataImpl) then) =
+      __$$LoadUserSpecificGameDataImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String gameId});
+}
+
+/// @nodoc
+class __$$LoadUserSpecificGameDataImplCopyWithImpl<$Res>
+    extends _$GameEventCopyWithImpl<$Res, _$LoadUserSpecificGameDataImpl>
+    implements _$$LoadUserSpecificGameDataImplCopyWith<$Res> {
+  __$$LoadUserSpecificGameDataImplCopyWithImpl(
+      _$LoadUserSpecificGameDataImpl _value,
+      $Res Function(_$LoadUserSpecificGameDataImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of GameEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? gameId = null,
+  }) {
+    return _then(_$LoadUserSpecificGameDataImpl(
+      null == gameId
+          ? _value.gameId
+          : gameId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$LoadUserSpecificGameDataImpl implements _LoadUserSpecificGameData {
+  const _$LoadUserSpecificGameDataImpl(this.gameId);
+
+  @override
+  final String gameId;
+
+  @override
+  String toString() {
+    return 'GameEvent.loadUserSpecificGameData(gameId: $gameId)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LoadUserSpecificGameDataImpl &&
+            (identical(other.gameId, gameId) || other.gameId == gameId));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, gameId);
+
+  /// Create a copy of GameEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LoadUserSpecificGameDataImplCopyWith<_$LoadUserSpecificGameDataImpl>
+      get copyWith => __$$LoadUserSpecificGameDataImplCopyWithImpl<
+          _$LoadUserSpecificGameDataImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loadTodayWord,
+    required TResult Function() loadUserGameState,
+    required TResult Function(String gameId) loadUserSpecificGameData,
+    required TResult Function(String word) submitWord,
+  }) {
+    return loadUserSpecificGameData(gameId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loadTodayWord,
+    TResult? Function()? loadUserGameState,
+    TResult? Function(String gameId)? loadUserSpecificGameData,
+    TResult? Function(String word)? submitWord,
+  }) {
+    return loadUserSpecificGameData?.call(gameId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loadTodayWord,
+    TResult Function()? loadUserGameState,
+    TResult Function(String gameId)? loadUserSpecificGameData,
+    TResult Function(String word)? submitWord,
+    required TResult orElse(),
+  }) {
+    if (loadUserSpecificGameData != null) {
+      return loadUserSpecificGameData(gameId);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoadTodayWord value) loadTodayWord,
+    required TResult Function(_LoadUserGameState value) loadUserGameState,
+    required TResult Function(_LoadUserSpecificGameData value)
+        loadUserSpecificGameData,
+    required TResult Function(_SubmitWord value) submitWord,
+  }) {
+    return loadUserSpecificGameData(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoadTodayWord value)? loadTodayWord,
+    TResult? Function(_LoadUserGameState value)? loadUserGameState,
+    TResult? Function(_LoadUserSpecificGameData value)?
+        loadUserSpecificGameData,
+    TResult? Function(_SubmitWord value)? submitWord,
+  }) {
+    return loadUserSpecificGameData?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoadTodayWord value)? loadTodayWord,
+    TResult Function(_LoadUserGameState value)? loadUserGameState,
+    TResult Function(_LoadUserSpecificGameData value)? loadUserSpecificGameData,
+    TResult Function(_SubmitWord value)? submitWord,
+    required TResult orElse(),
+  }) {
+    if (loadUserSpecificGameData != null) {
+      return loadUserSpecificGameData(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _LoadUserSpecificGameData implements GameEvent {
+  const factory _LoadUserSpecificGameData(final String gameId) =
+      _$LoadUserSpecificGameDataImpl;
+
+  String get gameId;
+
+  /// Create a copy of GameEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$LoadUserSpecificGameDataImplCopyWith<_$LoadUserSpecificGameDataImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -250,6 +555,8 @@ class _$SubmitWordImpl implements _SubmitWord {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loadTodayWord,
+    required TResult Function() loadUserGameState,
+    required TResult Function(String gameId) loadUserSpecificGameData,
     required TResult Function(String word) submitWord,
   }) {
     return submitWord(word);
@@ -259,6 +566,8 @@ class _$SubmitWordImpl implements _SubmitWord {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadTodayWord,
+    TResult? Function()? loadUserGameState,
+    TResult? Function(String gameId)? loadUserSpecificGameData,
     TResult? Function(String word)? submitWord,
   }) {
     return submitWord?.call(word);
@@ -268,6 +577,8 @@ class _$SubmitWordImpl implements _SubmitWord {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadTodayWord,
+    TResult Function()? loadUserGameState,
+    TResult Function(String gameId)? loadUserSpecificGameData,
     TResult Function(String word)? submitWord,
     required TResult orElse(),
   }) {
@@ -281,6 +592,9 @@ class _$SubmitWordImpl implements _SubmitWord {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_LoadTodayWord value) loadTodayWord,
+    required TResult Function(_LoadUserGameState value) loadUserGameState,
+    required TResult Function(_LoadUserSpecificGameData value)
+        loadUserSpecificGameData,
     required TResult Function(_SubmitWord value) submitWord,
   }) {
     return submitWord(this);
@@ -290,6 +604,9 @@ class _$SubmitWordImpl implements _SubmitWord {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadTodayWord value)? loadTodayWord,
+    TResult? Function(_LoadUserGameState value)? loadUserGameState,
+    TResult? Function(_LoadUserSpecificGameData value)?
+        loadUserSpecificGameData,
     TResult? Function(_SubmitWord value)? submitWord,
   }) {
     return submitWord?.call(this);
@@ -299,6 +616,8 @@ class _$SubmitWordImpl implements _SubmitWord {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadTodayWord value)? loadTodayWord,
+    TResult Function(_LoadUserGameState value)? loadUserGameState,
+    TResult Function(_LoadUserSpecificGameData value)? loadUserSpecificGameData,
     TResult Function(_SubmitWord value)? submitWord,
     required TResult orElse(),
   }) {
@@ -327,7 +646,11 @@ mixin _$GameState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(String todayWord) loaded,
+    required TResult Function(
+            String todayWord,
+            UserGameStateEntity? userGameState,
+            UserGameDataEntity? userSpecificGameData)
+        loaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -335,7 +658,9 @@ mixin _$GameState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(String todayWord)? loaded,
+    TResult? Function(String todayWord, UserGameStateEntity? userGameState,
+            UserGameDataEntity? userSpecificGameData)?
+        loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -343,7 +668,9 @@ mixin _$GameState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(String todayWord)? loaded,
+    TResult Function(String todayWord, UserGameStateEntity? userGameState,
+            UserGameDataEntity? userSpecificGameData)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -438,7 +765,11 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(String todayWord) loaded,
+    required TResult Function(
+            String todayWord,
+            UserGameStateEntity? userGameState,
+            UserGameDataEntity? userSpecificGameData)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -449,7 +780,9 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(String todayWord)? loaded,
+    TResult? Function(String todayWord, UserGameStateEntity? userGameState,
+            UserGameDataEntity? userSpecificGameData)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -460,7 +793,9 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(String todayWord)? loaded,
+    TResult Function(String todayWord, UserGameStateEntity? userGameState,
+            UserGameDataEntity? userSpecificGameData)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -555,7 +890,11 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(String todayWord) loaded,
+    required TResult Function(
+            String todayWord,
+            UserGameStateEntity? userGameState,
+            UserGameDataEntity? userSpecificGameData)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -566,7 +905,9 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(String todayWord)? loaded,
+    TResult? Function(String todayWord, UserGameStateEntity? userGameState,
+            UserGameDataEntity? userSpecificGameData)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -577,7 +918,9 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(String todayWord)? loaded,
+    TResult Function(String todayWord, UserGameStateEntity? userGameState,
+            UserGameDataEntity? userSpecificGameData)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -635,7 +978,10 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String todayWord});
+  $Res call(
+      {String todayWord,
+      UserGameStateEntity? userGameState,
+      UserGameDataEntity? userSpecificGameData});
 }
 
 /// @nodoc
@@ -652,12 +998,22 @@ class __$$LoadedImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? todayWord = null,
+    Object? userGameState = freezed,
+    Object? userSpecificGameData = freezed,
   }) {
     return _then(_$LoadedImpl(
-      null == todayWord
+      todayWord: null == todayWord
           ? _value.todayWord
           : todayWord // ignore: cast_nullable_to_non_nullable
               as String,
+      userGameState: freezed == userGameState
+          ? _value.userGameState
+          : userGameState // ignore: cast_nullable_to_non_nullable
+              as UserGameStateEntity?,
+      userSpecificGameData: freezed == userSpecificGameData
+          ? _value.userSpecificGameData
+          : userSpecificGameData // ignore: cast_nullable_to_non_nullable
+              as UserGameDataEntity?,
     ));
   }
 }
@@ -665,14 +1021,19 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(this.todayWord);
+  const _$LoadedImpl(
+      {required this.todayWord, this.userGameState, this.userSpecificGameData});
 
   @override
   final String todayWord;
+  @override
+  final UserGameStateEntity? userGameState;
+  @override
+  final UserGameDataEntity? userSpecificGameData;
 
   @override
   String toString() {
-    return 'GameState.loaded(todayWord: $todayWord)';
+    return 'GameState.loaded(todayWord: $todayWord, userGameState: $userGameState, userSpecificGameData: $userSpecificGameData)';
   }
 
   @override
@@ -681,11 +1042,16 @@ class _$LoadedImpl implements _Loaded {
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
             (identical(other.todayWord, todayWord) ||
-                other.todayWord == todayWord));
+                other.todayWord == todayWord) &&
+            (identical(other.userGameState, userGameState) ||
+                other.userGameState == userGameState) &&
+            (identical(other.userSpecificGameData, userSpecificGameData) ||
+                other.userSpecificGameData == userSpecificGameData));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, todayWord);
+  int get hashCode =>
+      Object.hash(runtimeType, todayWord, userGameState, userSpecificGameData);
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
@@ -700,10 +1066,14 @@ class _$LoadedImpl implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(String todayWord) loaded,
+    required TResult Function(
+            String todayWord,
+            UserGameStateEntity? userGameState,
+            UserGameDataEntity? userSpecificGameData)
+        loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(todayWord);
+    return loaded(todayWord, userGameState, userSpecificGameData);
   }
 
   @override
@@ -711,10 +1081,12 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(String todayWord)? loaded,
+    TResult? Function(String todayWord, UserGameStateEntity? userGameState,
+            UserGameDataEntity? userSpecificGameData)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(todayWord);
+    return loaded?.call(todayWord, userGameState, userSpecificGameData);
   }
 
   @override
@@ -722,12 +1094,14 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(String todayWord)? loaded,
+    TResult Function(String todayWord, UserGameStateEntity? userGameState,
+            UserGameDataEntity? userSpecificGameData)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(todayWord);
+      return loaded(todayWord, userGameState, userSpecificGameData);
     }
     return orElse();
   }
@@ -771,9 +1145,14 @@ class _$LoadedImpl implements _Loaded {
 }
 
 abstract class _Loaded implements GameState {
-  const factory _Loaded(final String todayWord) = _$LoadedImpl;
+  const factory _Loaded(
+      {required final String todayWord,
+      final UserGameStateEntity? userGameState,
+      final UserGameDataEntity? userSpecificGameData}) = _$LoadedImpl;
 
   String get todayWord;
+  UserGameStateEntity? get userGameState;
+  UserGameDataEntity? get userSpecificGameData;
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
@@ -852,7 +1231,11 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(String todayWord) loaded,
+    required TResult Function(
+            String todayWord,
+            UserGameStateEntity? userGameState,
+            UserGameDataEntity? userSpecificGameData)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -863,7 +1246,9 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(String todayWord)? loaded,
+    TResult? Function(String todayWord, UserGameStateEntity? userGameState,
+            UserGameDataEntity? userSpecificGameData)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -874,7 +1259,9 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(String todayWord)? loaded,
+    TResult Function(String todayWord, UserGameStateEntity? userGameState,
+            UserGameDataEntity? userSpecificGameData)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
