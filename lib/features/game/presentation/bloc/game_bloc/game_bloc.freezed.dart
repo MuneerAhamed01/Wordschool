@@ -21,6 +21,9 @@ mixin _$GameEvent {
     required TResult Function() loadTodayWord,
     required TResult Function() loadUserGameState,
     required TResult Function(String gameId) loadUserSpecificGameData,
+    required TResult Function(String word) addGuessedWord,
+    required TResult Function(String word) removeGuessedWord,
+    required TResult Function(bool isCorrect) markGameCompleted,
     required TResult Function(String word) submitWord,
   }) =>
       throw _privateConstructorUsedError;
@@ -29,6 +32,9 @@ mixin _$GameEvent {
     TResult? Function()? loadTodayWord,
     TResult? Function()? loadUserGameState,
     TResult? Function(String gameId)? loadUserSpecificGameData,
+    TResult? Function(String word)? addGuessedWord,
+    TResult? Function(String word)? removeGuessedWord,
+    TResult? Function(bool isCorrect)? markGameCompleted,
     TResult? Function(String word)? submitWord,
   }) =>
       throw _privateConstructorUsedError;
@@ -37,6 +43,9 @@ mixin _$GameEvent {
     TResult Function()? loadTodayWord,
     TResult Function()? loadUserGameState,
     TResult Function(String gameId)? loadUserSpecificGameData,
+    TResult Function(String word)? addGuessedWord,
+    TResult Function(String word)? removeGuessedWord,
+    TResult Function(bool isCorrect)? markGameCompleted,
     TResult Function(String word)? submitWord,
     required TResult orElse(),
   }) =>
@@ -47,6 +56,9 @@ mixin _$GameEvent {
     required TResult Function(_LoadUserGameState value) loadUserGameState,
     required TResult Function(_LoadUserSpecificGameData value)
         loadUserSpecificGameData,
+    required TResult Function(_AddGuessedWord value) addGuessedWord,
+    required TResult Function(_RemoveGuessedWord value) removeGuessedWord,
+    required TResult Function(_MarkGameCompleted value) markGameCompleted,
     required TResult Function(_SubmitWord value) submitWord,
   }) =>
       throw _privateConstructorUsedError;
@@ -56,6 +68,9 @@ mixin _$GameEvent {
     TResult? Function(_LoadUserGameState value)? loadUserGameState,
     TResult? Function(_LoadUserSpecificGameData value)?
         loadUserSpecificGameData,
+    TResult? Function(_AddGuessedWord value)? addGuessedWord,
+    TResult? Function(_RemoveGuessedWord value)? removeGuessedWord,
+    TResult? Function(_MarkGameCompleted value)? markGameCompleted,
     TResult? Function(_SubmitWord value)? submitWord,
   }) =>
       throw _privateConstructorUsedError;
@@ -64,6 +79,9 @@ mixin _$GameEvent {
     TResult Function(_LoadTodayWord value)? loadTodayWord,
     TResult Function(_LoadUserGameState value)? loadUserGameState,
     TResult Function(_LoadUserSpecificGameData value)? loadUserSpecificGameData,
+    TResult Function(_AddGuessedWord value)? addGuessedWord,
+    TResult Function(_RemoveGuessedWord value)? removeGuessedWord,
+    TResult Function(_MarkGameCompleted value)? markGameCompleted,
     TResult Function(_SubmitWord value)? submitWord,
     required TResult orElse(),
   }) =>
@@ -134,6 +152,9 @@ class _$LoadTodayWordImpl implements _LoadTodayWord {
     required TResult Function() loadTodayWord,
     required TResult Function() loadUserGameState,
     required TResult Function(String gameId) loadUserSpecificGameData,
+    required TResult Function(String word) addGuessedWord,
+    required TResult Function(String word) removeGuessedWord,
+    required TResult Function(bool isCorrect) markGameCompleted,
     required TResult Function(String word) submitWord,
   }) {
     return loadTodayWord();
@@ -145,6 +166,9 @@ class _$LoadTodayWordImpl implements _LoadTodayWord {
     TResult? Function()? loadTodayWord,
     TResult? Function()? loadUserGameState,
     TResult? Function(String gameId)? loadUserSpecificGameData,
+    TResult? Function(String word)? addGuessedWord,
+    TResult? Function(String word)? removeGuessedWord,
+    TResult? Function(bool isCorrect)? markGameCompleted,
     TResult? Function(String word)? submitWord,
   }) {
     return loadTodayWord?.call();
@@ -156,6 +180,9 @@ class _$LoadTodayWordImpl implements _LoadTodayWord {
     TResult Function()? loadTodayWord,
     TResult Function()? loadUserGameState,
     TResult Function(String gameId)? loadUserSpecificGameData,
+    TResult Function(String word)? addGuessedWord,
+    TResult Function(String word)? removeGuessedWord,
+    TResult Function(bool isCorrect)? markGameCompleted,
     TResult Function(String word)? submitWord,
     required TResult orElse(),
   }) {
@@ -172,6 +199,9 @@ class _$LoadTodayWordImpl implements _LoadTodayWord {
     required TResult Function(_LoadUserGameState value) loadUserGameState,
     required TResult Function(_LoadUserSpecificGameData value)
         loadUserSpecificGameData,
+    required TResult Function(_AddGuessedWord value) addGuessedWord,
+    required TResult Function(_RemoveGuessedWord value) removeGuessedWord,
+    required TResult Function(_MarkGameCompleted value) markGameCompleted,
     required TResult Function(_SubmitWord value) submitWord,
   }) {
     return loadTodayWord(this);
@@ -184,6 +214,9 @@ class _$LoadTodayWordImpl implements _LoadTodayWord {
     TResult? Function(_LoadUserGameState value)? loadUserGameState,
     TResult? Function(_LoadUserSpecificGameData value)?
         loadUserSpecificGameData,
+    TResult? Function(_AddGuessedWord value)? addGuessedWord,
+    TResult? Function(_RemoveGuessedWord value)? removeGuessedWord,
+    TResult? Function(_MarkGameCompleted value)? markGameCompleted,
     TResult? Function(_SubmitWord value)? submitWord,
   }) {
     return loadTodayWord?.call(this);
@@ -195,6 +228,9 @@ class _$LoadTodayWordImpl implements _LoadTodayWord {
     TResult Function(_LoadTodayWord value)? loadTodayWord,
     TResult Function(_LoadUserGameState value)? loadUserGameState,
     TResult Function(_LoadUserSpecificGameData value)? loadUserSpecificGameData,
+    TResult Function(_AddGuessedWord value)? addGuessedWord,
+    TResult Function(_RemoveGuessedWord value)? removeGuessedWord,
+    TResult Function(_MarkGameCompleted value)? markGameCompleted,
     TResult Function(_SubmitWord value)? submitWord,
     required TResult orElse(),
   }) {
@@ -253,6 +289,9 @@ class _$LoadUserGameStateImpl implements _LoadUserGameState {
     required TResult Function() loadTodayWord,
     required TResult Function() loadUserGameState,
     required TResult Function(String gameId) loadUserSpecificGameData,
+    required TResult Function(String word) addGuessedWord,
+    required TResult Function(String word) removeGuessedWord,
+    required TResult Function(bool isCorrect) markGameCompleted,
     required TResult Function(String word) submitWord,
   }) {
     return loadUserGameState();
@@ -264,6 +303,9 @@ class _$LoadUserGameStateImpl implements _LoadUserGameState {
     TResult? Function()? loadTodayWord,
     TResult? Function()? loadUserGameState,
     TResult? Function(String gameId)? loadUserSpecificGameData,
+    TResult? Function(String word)? addGuessedWord,
+    TResult? Function(String word)? removeGuessedWord,
+    TResult? Function(bool isCorrect)? markGameCompleted,
     TResult? Function(String word)? submitWord,
   }) {
     return loadUserGameState?.call();
@@ -275,6 +317,9 @@ class _$LoadUserGameStateImpl implements _LoadUserGameState {
     TResult Function()? loadTodayWord,
     TResult Function()? loadUserGameState,
     TResult Function(String gameId)? loadUserSpecificGameData,
+    TResult Function(String word)? addGuessedWord,
+    TResult Function(String word)? removeGuessedWord,
+    TResult Function(bool isCorrect)? markGameCompleted,
     TResult Function(String word)? submitWord,
     required TResult orElse(),
   }) {
@@ -291,6 +336,9 @@ class _$LoadUserGameStateImpl implements _LoadUserGameState {
     required TResult Function(_LoadUserGameState value) loadUserGameState,
     required TResult Function(_LoadUserSpecificGameData value)
         loadUserSpecificGameData,
+    required TResult Function(_AddGuessedWord value) addGuessedWord,
+    required TResult Function(_RemoveGuessedWord value) removeGuessedWord,
+    required TResult Function(_MarkGameCompleted value) markGameCompleted,
     required TResult Function(_SubmitWord value) submitWord,
   }) {
     return loadUserGameState(this);
@@ -303,6 +351,9 @@ class _$LoadUserGameStateImpl implements _LoadUserGameState {
     TResult? Function(_LoadUserGameState value)? loadUserGameState,
     TResult? Function(_LoadUserSpecificGameData value)?
         loadUserSpecificGameData,
+    TResult? Function(_AddGuessedWord value)? addGuessedWord,
+    TResult? Function(_RemoveGuessedWord value)? removeGuessedWord,
+    TResult? Function(_MarkGameCompleted value)? markGameCompleted,
     TResult? Function(_SubmitWord value)? submitWord,
   }) {
     return loadUserGameState?.call(this);
@@ -314,6 +365,9 @@ class _$LoadUserGameStateImpl implements _LoadUserGameState {
     TResult Function(_LoadTodayWord value)? loadTodayWord,
     TResult Function(_LoadUserGameState value)? loadUserGameState,
     TResult Function(_LoadUserSpecificGameData value)? loadUserSpecificGameData,
+    TResult Function(_AddGuessedWord value)? addGuessedWord,
+    TResult Function(_RemoveGuessedWord value)? removeGuessedWord,
+    TResult Function(_MarkGameCompleted value)? markGameCompleted,
     TResult Function(_SubmitWord value)? submitWord,
     required TResult orElse(),
   }) {
@@ -402,6 +456,9 @@ class _$LoadUserSpecificGameDataImpl implements _LoadUserSpecificGameData {
     required TResult Function() loadTodayWord,
     required TResult Function() loadUserGameState,
     required TResult Function(String gameId) loadUserSpecificGameData,
+    required TResult Function(String word) addGuessedWord,
+    required TResult Function(String word) removeGuessedWord,
+    required TResult Function(bool isCorrect) markGameCompleted,
     required TResult Function(String word) submitWord,
   }) {
     return loadUserSpecificGameData(gameId);
@@ -413,6 +470,9 @@ class _$LoadUserSpecificGameDataImpl implements _LoadUserSpecificGameData {
     TResult? Function()? loadTodayWord,
     TResult? Function()? loadUserGameState,
     TResult? Function(String gameId)? loadUserSpecificGameData,
+    TResult? Function(String word)? addGuessedWord,
+    TResult? Function(String word)? removeGuessedWord,
+    TResult? Function(bool isCorrect)? markGameCompleted,
     TResult? Function(String word)? submitWord,
   }) {
     return loadUserSpecificGameData?.call(gameId);
@@ -424,6 +484,9 @@ class _$LoadUserSpecificGameDataImpl implements _LoadUserSpecificGameData {
     TResult Function()? loadTodayWord,
     TResult Function()? loadUserGameState,
     TResult Function(String gameId)? loadUserSpecificGameData,
+    TResult Function(String word)? addGuessedWord,
+    TResult Function(String word)? removeGuessedWord,
+    TResult Function(bool isCorrect)? markGameCompleted,
     TResult Function(String word)? submitWord,
     required TResult orElse(),
   }) {
@@ -440,6 +503,9 @@ class _$LoadUserSpecificGameDataImpl implements _LoadUserSpecificGameData {
     required TResult Function(_LoadUserGameState value) loadUserGameState,
     required TResult Function(_LoadUserSpecificGameData value)
         loadUserSpecificGameData,
+    required TResult Function(_AddGuessedWord value) addGuessedWord,
+    required TResult Function(_RemoveGuessedWord value) removeGuessedWord,
+    required TResult Function(_MarkGameCompleted value) markGameCompleted,
     required TResult Function(_SubmitWord value) submitWord,
   }) {
     return loadUserSpecificGameData(this);
@@ -452,6 +518,9 @@ class _$LoadUserSpecificGameDataImpl implements _LoadUserSpecificGameData {
     TResult? Function(_LoadUserGameState value)? loadUserGameState,
     TResult? Function(_LoadUserSpecificGameData value)?
         loadUserSpecificGameData,
+    TResult? Function(_AddGuessedWord value)? addGuessedWord,
+    TResult? Function(_RemoveGuessedWord value)? removeGuessedWord,
+    TResult? Function(_MarkGameCompleted value)? markGameCompleted,
     TResult? Function(_SubmitWord value)? submitWord,
   }) {
     return loadUserSpecificGameData?.call(this);
@@ -463,6 +532,9 @@ class _$LoadUserSpecificGameDataImpl implements _LoadUserSpecificGameData {
     TResult Function(_LoadTodayWord value)? loadTodayWord,
     TResult Function(_LoadUserGameState value)? loadUserGameState,
     TResult Function(_LoadUserSpecificGameData value)? loadUserSpecificGameData,
+    TResult Function(_AddGuessedWord value)? addGuessedWord,
+    TResult Function(_RemoveGuessedWord value)? removeGuessedWord,
+    TResult Function(_MarkGameCompleted value)? markGameCompleted,
     TResult Function(_SubmitWord value)? submitWord,
     required TResult orElse(),
   }) {
@@ -484,6 +556,527 @@ abstract class _LoadUserSpecificGameData implements GameEvent {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LoadUserSpecificGameDataImplCopyWith<_$LoadUserSpecificGameDataImpl>
       get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$AddGuessedWordImplCopyWith<$Res> {
+  factory _$$AddGuessedWordImplCopyWith(_$AddGuessedWordImpl value,
+          $Res Function(_$AddGuessedWordImpl) then) =
+      __$$AddGuessedWordImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String word});
+}
+
+/// @nodoc
+class __$$AddGuessedWordImplCopyWithImpl<$Res>
+    extends _$GameEventCopyWithImpl<$Res, _$AddGuessedWordImpl>
+    implements _$$AddGuessedWordImplCopyWith<$Res> {
+  __$$AddGuessedWordImplCopyWithImpl(
+      _$AddGuessedWordImpl _value, $Res Function(_$AddGuessedWordImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of GameEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? word = null,
+  }) {
+    return _then(_$AddGuessedWordImpl(
+      null == word
+          ? _value.word
+          : word // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$AddGuessedWordImpl implements _AddGuessedWord {
+  const _$AddGuessedWordImpl(this.word);
+
+  @override
+  final String word;
+
+  @override
+  String toString() {
+    return 'GameEvent.addGuessedWord(word: $word)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AddGuessedWordImpl &&
+            (identical(other.word, word) || other.word == word));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, word);
+
+  /// Create a copy of GameEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AddGuessedWordImplCopyWith<_$AddGuessedWordImpl> get copyWith =>
+      __$$AddGuessedWordImplCopyWithImpl<_$AddGuessedWordImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loadTodayWord,
+    required TResult Function() loadUserGameState,
+    required TResult Function(String gameId) loadUserSpecificGameData,
+    required TResult Function(String word) addGuessedWord,
+    required TResult Function(String word) removeGuessedWord,
+    required TResult Function(bool isCorrect) markGameCompleted,
+    required TResult Function(String word) submitWord,
+  }) {
+    return addGuessedWord(word);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loadTodayWord,
+    TResult? Function()? loadUserGameState,
+    TResult? Function(String gameId)? loadUserSpecificGameData,
+    TResult? Function(String word)? addGuessedWord,
+    TResult? Function(String word)? removeGuessedWord,
+    TResult? Function(bool isCorrect)? markGameCompleted,
+    TResult? Function(String word)? submitWord,
+  }) {
+    return addGuessedWord?.call(word);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loadTodayWord,
+    TResult Function()? loadUserGameState,
+    TResult Function(String gameId)? loadUserSpecificGameData,
+    TResult Function(String word)? addGuessedWord,
+    TResult Function(String word)? removeGuessedWord,
+    TResult Function(bool isCorrect)? markGameCompleted,
+    TResult Function(String word)? submitWord,
+    required TResult orElse(),
+  }) {
+    if (addGuessedWord != null) {
+      return addGuessedWord(word);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoadTodayWord value) loadTodayWord,
+    required TResult Function(_LoadUserGameState value) loadUserGameState,
+    required TResult Function(_LoadUserSpecificGameData value)
+        loadUserSpecificGameData,
+    required TResult Function(_AddGuessedWord value) addGuessedWord,
+    required TResult Function(_RemoveGuessedWord value) removeGuessedWord,
+    required TResult Function(_MarkGameCompleted value) markGameCompleted,
+    required TResult Function(_SubmitWord value) submitWord,
+  }) {
+    return addGuessedWord(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoadTodayWord value)? loadTodayWord,
+    TResult? Function(_LoadUserGameState value)? loadUserGameState,
+    TResult? Function(_LoadUserSpecificGameData value)?
+        loadUserSpecificGameData,
+    TResult? Function(_AddGuessedWord value)? addGuessedWord,
+    TResult? Function(_RemoveGuessedWord value)? removeGuessedWord,
+    TResult? Function(_MarkGameCompleted value)? markGameCompleted,
+    TResult? Function(_SubmitWord value)? submitWord,
+  }) {
+    return addGuessedWord?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoadTodayWord value)? loadTodayWord,
+    TResult Function(_LoadUserGameState value)? loadUserGameState,
+    TResult Function(_LoadUserSpecificGameData value)? loadUserSpecificGameData,
+    TResult Function(_AddGuessedWord value)? addGuessedWord,
+    TResult Function(_RemoveGuessedWord value)? removeGuessedWord,
+    TResult Function(_MarkGameCompleted value)? markGameCompleted,
+    TResult Function(_SubmitWord value)? submitWord,
+    required TResult orElse(),
+  }) {
+    if (addGuessedWord != null) {
+      return addGuessedWord(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _AddGuessedWord implements GameEvent {
+  const factory _AddGuessedWord(final String word) = _$AddGuessedWordImpl;
+
+  String get word;
+
+  /// Create a copy of GameEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$AddGuessedWordImplCopyWith<_$AddGuessedWordImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$RemoveGuessedWordImplCopyWith<$Res> {
+  factory _$$RemoveGuessedWordImplCopyWith(_$RemoveGuessedWordImpl value,
+          $Res Function(_$RemoveGuessedWordImpl) then) =
+      __$$RemoveGuessedWordImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String word});
+}
+
+/// @nodoc
+class __$$RemoveGuessedWordImplCopyWithImpl<$Res>
+    extends _$GameEventCopyWithImpl<$Res, _$RemoveGuessedWordImpl>
+    implements _$$RemoveGuessedWordImplCopyWith<$Res> {
+  __$$RemoveGuessedWordImplCopyWithImpl(_$RemoveGuessedWordImpl _value,
+      $Res Function(_$RemoveGuessedWordImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of GameEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? word = null,
+  }) {
+    return _then(_$RemoveGuessedWordImpl(
+      null == word
+          ? _value.word
+          : word // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$RemoveGuessedWordImpl implements _RemoveGuessedWord {
+  const _$RemoveGuessedWordImpl(this.word);
+
+  @override
+  final String word;
+
+  @override
+  String toString() {
+    return 'GameEvent.removeGuessedWord(word: $word)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RemoveGuessedWordImpl &&
+            (identical(other.word, word) || other.word == word));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, word);
+
+  /// Create a copy of GameEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RemoveGuessedWordImplCopyWith<_$RemoveGuessedWordImpl> get copyWith =>
+      __$$RemoveGuessedWordImplCopyWithImpl<_$RemoveGuessedWordImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loadTodayWord,
+    required TResult Function() loadUserGameState,
+    required TResult Function(String gameId) loadUserSpecificGameData,
+    required TResult Function(String word) addGuessedWord,
+    required TResult Function(String word) removeGuessedWord,
+    required TResult Function(bool isCorrect) markGameCompleted,
+    required TResult Function(String word) submitWord,
+  }) {
+    return removeGuessedWord(word);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loadTodayWord,
+    TResult? Function()? loadUserGameState,
+    TResult? Function(String gameId)? loadUserSpecificGameData,
+    TResult? Function(String word)? addGuessedWord,
+    TResult? Function(String word)? removeGuessedWord,
+    TResult? Function(bool isCorrect)? markGameCompleted,
+    TResult? Function(String word)? submitWord,
+  }) {
+    return removeGuessedWord?.call(word);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loadTodayWord,
+    TResult Function()? loadUserGameState,
+    TResult Function(String gameId)? loadUserSpecificGameData,
+    TResult Function(String word)? addGuessedWord,
+    TResult Function(String word)? removeGuessedWord,
+    TResult Function(bool isCorrect)? markGameCompleted,
+    TResult Function(String word)? submitWord,
+    required TResult orElse(),
+  }) {
+    if (removeGuessedWord != null) {
+      return removeGuessedWord(word);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoadTodayWord value) loadTodayWord,
+    required TResult Function(_LoadUserGameState value) loadUserGameState,
+    required TResult Function(_LoadUserSpecificGameData value)
+        loadUserSpecificGameData,
+    required TResult Function(_AddGuessedWord value) addGuessedWord,
+    required TResult Function(_RemoveGuessedWord value) removeGuessedWord,
+    required TResult Function(_MarkGameCompleted value) markGameCompleted,
+    required TResult Function(_SubmitWord value) submitWord,
+  }) {
+    return removeGuessedWord(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoadTodayWord value)? loadTodayWord,
+    TResult? Function(_LoadUserGameState value)? loadUserGameState,
+    TResult? Function(_LoadUserSpecificGameData value)?
+        loadUserSpecificGameData,
+    TResult? Function(_AddGuessedWord value)? addGuessedWord,
+    TResult? Function(_RemoveGuessedWord value)? removeGuessedWord,
+    TResult? Function(_MarkGameCompleted value)? markGameCompleted,
+    TResult? Function(_SubmitWord value)? submitWord,
+  }) {
+    return removeGuessedWord?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoadTodayWord value)? loadTodayWord,
+    TResult Function(_LoadUserGameState value)? loadUserGameState,
+    TResult Function(_LoadUserSpecificGameData value)? loadUserSpecificGameData,
+    TResult Function(_AddGuessedWord value)? addGuessedWord,
+    TResult Function(_RemoveGuessedWord value)? removeGuessedWord,
+    TResult Function(_MarkGameCompleted value)? markGameCompleted,
+    TResult Function(_SubmitWord value)? submitWord,
+    required TResult orElse(),
+  }) {
+    if (removeGuessedWord != null) {
+      return removeGuessedWord(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _RemoveGuessedWord implements GameEvent {
+  const factory _RemoveGuessedWord(final String word) = _$RemoveGuessedWordImpl;
+
+  String get word;
+
+  /// Create a copy of GameEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$RemoveGuessedWordImplCopyWith<_$RemoveGuessedWordImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$MarkGameCompletedImplCopyWith<$Res> {
+  factory _$$MarkGameCompletedImplCopyWith(_$MarkGameCompletedImpl value,
+          $Res Function(_$MarkGameCompletedImpl) then) =
+      __$$MarkGameCompletedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({bool isCorrect});
+}
+
+/// @nodoc
+class __$$MarkGameCompletedImplCopyWithImpl<$Res>
+    extends _$GameEventCopyWithImpl<$Res, _$MarkGameCompletedImpl>
+    implements _$$MarkGameCompletedImplCopyWith<$Res> {
+  __$$MarkGameCompletedImplCopyWithImpl(_$MarkGameCompletedImpl _value,
+      $Res Function(_$MarkGameCompletedImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of GameEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? isCorrect = null,
+  }) {
+    return _then(_$MarkGameCompletedImpl(
+      null == isCorrect
+          ? _value.isCorrect
+          : isCorrect // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$MarkGameCompletedImpl implements _MarkGameCompleted {
+  const _$MarkGameCompletedImpl(this.isCorrect);
+
+  @override
+  final bool isCorrect;
+
+  @override
+  String toString() {
+    return 'GameEvent.markGameCompleted(isCorrect: $isCorrect)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$MarkGameCompletedImpl &&
+            (identical(other.isCorrect, isCorrect) ||
+                other.isCorrect == isCorrect));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, isCorrect);
+
+  /// Create a copy of GameEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$MarkGameCompletedImplCopyWith<_$MarkGameCompletedImpl> get copyWith =>
+      __$$MarkGameCompletedImplCopyWithImpl<_$MarkGameCompletedImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loadTodayWord,
+    required TResult Function() loadUserGameState,
+    required TResult Function(String gameId) loadUserSpecificGameData,
+    required TResult Function(String word) addGuessedWord,
+    required TResult Function(String word) removeGuessedWord,
+    required TResult Function(bool isCorrect) markGameCompleted,
+    required TResult Function(String word) submitWord,
+  }) {
+    return markGameCompleted(isCorrect);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loadTodayWord,
+    TResult? Function()? loadUserGameState,
+    TResult? Function(String gameId)? loadUserSpecificGameData,
+    TResult? Function(String word)? addGuessedWord,
+    TResult? Function(String word)? removeGuessedWord,
+    TResult? Function(bool isCorrect)? markGameCompleted,
+    TResult? Function(String word)? submitWord,
+  }) {
+    return markGameCompleted?.call(isCorrect);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loadTodayWord,
+    TResult Function()? loadUserGameState,
+    TResult Function(String gameId)? loadUserSpecificGameData,
+    TResult Function(String word)? addGuessedWord,
+    TResult Function(String word)? removeGuessedWord,
+    TResult Function(bool isCorrect)? markGameCompleted,
+    TResult Function(String word)? submitWord,
+    required TResult orElse(),
+  }) {
+    if (markGameCompleted != null) {
+      return markGameCompleted(isCorrect);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoadTodayWord value) loadTodayWord,
+    required TResult Function(_LoadUserGameState value) loadUserGameState,
+    required TResult Function(_LoadUserSpecificGameData value)
+        loadUserSpecificGameData,
+    required TResult Function(_AddGuessedWord value) addGuessedWord,
+    required TResult Function(_RemoveGuessedWord value) removeGuessedWord,
+    required TResult Function(_MarkGameCompleted value) markGameCompleted,
+    required TResult Function(_SubmitWord value) submitWord,
+  }) {
+    return markGameCompleted(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoadTodayWord value)? loadTodayWord,
+    TResult? Function(_LoadUserGameState value)? loadUserGameState,
+    TResult? Function(_LoadUserSpecificGameData value)?
+        loadUserSpecificGameData,
+    TResult? Function(_AddGuessedWord value)? addGuessedWord,
+    TResult? Function(_RemoveGuessedWord value)? removeGuessedWord,
+    TResult? Function(_MarkGameCompleted value)? markGameCompleted,
+    TResult? Function(_SubmitWord value)? submitWord,
+  }) {
+    return markGameCompleted?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoadTodayWord value)? loadTodayWord,
+    TResult Function(_LoadUserGameState value)? loadUserGameState,
+    TResult Function(_LoadUserSpecificGameData value)? loadUserSpecificGameData,
+    TResult Function(_AddGuessedWord value)? addGuessedWord,
+    TResult Function(_RemoveGuessedWord value)? removeGuessedWord,
+    TResult Function(_MarkGameCompleted value)? markGameCompleted,
+    TResult Function(_SubmitWord value)? submitWord,
+    required TResult orElse(),
+  }) {
+    if (markGameCompleted != null) {
+      return markGameCompleted(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _MarkGameCompleted implements GameEvent {
+  const factory _MarkGameCompleted(final bool isCorrect) =
+      _$MarkGameCompletedImpl;
+
+  bool get isCorrect;
+
+  /// Create a copy of GameEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$MarkGameCompletedImplCopyWith<_$MarkGameCompletedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -557,6 +1150,9 @@ class _$SubmitWordImpl implements _SubmitWord {
     required TResult Function() loadTodayWord,
     required TResult Function() loadUserGameState,
     required TResult Function(String gameId) loadUserSpecificGameData,
+    required TResult Function(String word) addGuessedWord,
+    required TResult Function(String word) removeGuessedWord,
+    required TResult Function(bool isCorrect) markGameCompleted,
     required TResult Function(String word) submitWord,
   }) {
     return submitWord(word);
@@ -568,6 +1164,9 @@ class _$SubmitWordImpl implements _SubmitWord {
     TResult? Function()? loadTodayWord,
     TResult? Function()? loadUserGameState,
     TResult? Function(String gameId)? loadUserSpecificGameData,
+    TResult? Function(String word)? addGuessedWord,
+    TResult? Function(String word)? removeGuessedWord,
+    TResult? Function(bool isCorrect)? markGameCompleted,
     TResult? Function(String word)? submitWord,
   }) {
     return submitWord?.call(word);
@@ -579,6 +1178,9 @@ class _$SubmitWordImpl implements _SubmitWord {
     TResult Function()? loadTodayWord,
     TResult Function()? loadUserGameState,
     TResult Function(String gameId)? loadUserSpecificGameData,
+    TResult Function(String word)? addGuessedWord,
+    TResult Function(String word)? removeGuessedWord,
+    TResult Function(bool isCorrect)? markGameCompleted,
     TResult Function(String word)? submitWord,
     required TResult orElse(),
   }) {
@@ -595,6 +1197,9 @@ class _$SubmitWordImpl implements _SubmitWord {
     required TResult Function(_LoadUserGameState value) loadUserGameState,
     required TResult Function(_LoadUserSpecificGameData value)
         loadUserSpecificGameData,
+    required TResult Function(_AddGuessedWord value) addGuessedWord,
+    required TResult Function(_RemoveGuessedWord value) removeGuessedWord,
+    required TResult Function(_MarkGameCompleted value) markGameCompleted,
     required TResult Function(_SubmitWord value) submitWord,
   }) {
     return submitWord(this);
@@ -607,6 +1212,9 @@ class _$SubmitWordImpl implements _SubmitWord {
     TResult? Function(_LoadUserGameState value)? loadUserGameState,
     TResult? Function(_LoadUserSpecificGameData value)?
         loadUserSpecificGameData,
+    TResult? Function(_AddGuessedWord value)? addGuessedWord,
+    TResult? Function(_RemoveGuessedWord value)? removeGuessedWord,
+    TResult? Function(_MarkGameCompleted value)? markGameCompleted,
     TResult? Function(_SubmitWord value)? submitWord,
   }) {
     return submitWord?.call(this);
@@ -618,6 +1226,9 @@ class _$SubmitWordImpl implements _SubmitWord {
     TResult Function(_LoadTodayWord value)? loadTodayWord,
     TResult Function(_LoadUserGameState value)? loadUserGameState,
     TResult Function(_LoadUserSpecificGameData value)? loadUserSpecificGameData,
+    TResult Function(_AddGuessedWord value)? addGuessedWord,
+    TResult Function(_RemoveGuessedWord value)? removeGuessedWord,
+    TResult Function(_MarkGameCompleted value)? markGameCompleted,
     TResult Function(_SubmitWord value)? submitWord,
     required TResult orElse(),
   }) {

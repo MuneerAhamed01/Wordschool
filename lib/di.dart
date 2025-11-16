@@ -24,8 +24,10 @@ import 'package:wordshool/shared/domains/repostiories/session_repository.dart';
 import 'package:wordshool/shared/domains/repostiories/user_game_state_repository.dart';
 import 'package:wordshool/shared/domains/usercases/get_current_user_usecase.dart';
 import 'package:wordshool/features/auth/domain/usecases/save_user_session_usecase.dart';
+import 'package:wordshool/shared/domains/usercases/guessed_word_usecase/add_guessed_word_usecase.dart';
 import 'package:wordshool/shared/domains/usercases/load_user_game_state_usecase.dart';
 import 'package:wordshool/shared/domains/usercases/load_user_specific_game_state.dart';
+import 'package:wordshool/shared/domains/usercases/mark_game_usecase/mark_game_completed_usecase.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -109,6 +111,14 @@ void _initializeGame() {
 
   getIt.registerSingleton<LoadUserSpecificGameStateUseCase>(
       LoadUserSpecificGameStateUseCase(
+    userGameStateRepository: getIt<UserGameStateRepository>(),
+  ));
+
+  getIt.registerSingleton<AddGuessedWordUseCase>(AddGuessedWordUseCase(
+    userGameStateRepository: getIt<UserGameStateRepository>(),
+  ));
+
+  getIt.registerSingleton<MarkGameCompletedUseCase>(MarkGameCompletedUseCase(
     userGameStateRepository: getIt<UserGameStateRepository>(),
   ));
 }

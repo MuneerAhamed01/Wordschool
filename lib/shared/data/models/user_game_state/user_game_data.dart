@@ -5,7 +5,7 @@ class UserGameDataModel extends UserGameDataEntity {
   const UserGameDataModel({
     required super.id,
     super.guessedWords = const [],
-    super.isCompleted = false ,
+    super.isCompleted = false,
     super.isCorrect = false,
     required super.createdDate,
     required super.updatedDate,
@@ -32,7 +32,8 @@ class UserGameDataModel extends UserGameDataEntity {
   factory UserGameDataModel.fromJson(Map<String, dynamic> json) {
     return UserGameDataModel(
       id: json['id'],
-      guessedWords: json['guessedWords'],
+      guessedWords:
+          (json['guessedWords'] as List).map((e) => e.toString()).toList(),
       isCompleted: json['isCompleted'],
       isCorrect: json['isCorrect'],
       createdDate: FirebaseDTConverter.fromTimestamp(json['createdDate']),

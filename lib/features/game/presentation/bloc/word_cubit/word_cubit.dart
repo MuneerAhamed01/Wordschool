@@ -171,4 +171,43 @@ class WordCubit extends Cubit<List<Word>> {
     updatedState[index] = updatedWord;
     emit(updatedState);
   }
+
+  /// Replays previously guessed words from persistent storage and rebuilds
+  /// the cubit's state by evaluating each guess against today's word.
+  ///
+  /// - todayWord: The target word to evaluate guesses against.
+  /// - words: Previously guessed words in the order they were played.
+  ///
+  /// This method:
+  /// 1) Clears existing in-memory guesses.
+  /// 2) For each stored guess, types the letters into the active row.
+  /// 3) Uses the existing evaluation flow to color tiles and complete the row.
+  Future<void> restoreGuesses({
+    required String todayWord,
+    required List<String> words,
+  }) async {
+    // Start from a clean state
+    emit([]);
+
+    if (words.isEmpty) return;
+
+    for (final rawGuess in words) {
+      if (state.length >= GameConstants.maxWords) break;
+      final guess = rawGuess.trim().toUpperCase();
+      if (guess.isEmpty) continue;
+
+      final letters = guess.split('');
+      // Only take up to max letters to avoid overflow
+      for (int i = 0; i < letters.length && i < GameConstants.maxLetters; i++) {
+        addLetter(Letter(letter: letters[i]));
+      }
+
+      // If we reached a full row, evaluate it against today's word
+      final activeIndex = _findActiveWordIndex();
+      if (activeIndex != -1 &&
+          state[activeIndex].letters.length == GameConstants.maxLetters) {
+        await _checkAndUpdateTheWordStatus(todayWord);
+      }
+    }
+  }
 }

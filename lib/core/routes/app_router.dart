@@ -40,6 +40,8 @@ GoRouter appRouter(String initialRoute) {
                 loadTodayWordUseCase: getIt(),
                 loadUserGameStateUseCase: getIt(),
                 loadUserSpecificGameStateUseCase: getIt(),
+                addGuessedWordUseCase: getIt(),
+                markGameCompletedUseCase: getIt(),
               ),
             )
           ],

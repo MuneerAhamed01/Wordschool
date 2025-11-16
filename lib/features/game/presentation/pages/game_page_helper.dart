@@ -23,6 +23,12 @@ mixin GamePageHelper on State<GamePage> {
         message: 'Not a valid word',
         type: SnackBarType.error,
       );
+    } else {
+      if (!context.mounted) return;
+
+      context
+          .read<GameBloc>()
+          .add(GameEvent.addGuessedWord(_getLatestWord(context)?.word ?? ''));
     }
   }
 
@@ -39,11 +45,19 @@ mixin GamePageHelper on State<GamePage> {
     }
   }
 
+  /// Returns the latest (most recent) non-completed or completed word from the WordCubit state based on a condition.
+  /// If [completed] is true, returns the latest completed word with 5 letters.
+  /// Otherwise, returns the latest non-completed word.
+  Word? _getLatestWord(BuildContext context) {
+    final words = context.read<WordCubit>().state;
+    return words.lastWhere(
+        (w) => w.isCompleted && w.letters.length == GameConstants.maxLetters);
+  }
+
   Future<void> listenToWord(BuildContext context, List<Word> words) async {
     if (_hasNavigated) return;
 
     final todayWord = context.read<GameBloc>().state.todayWord;
-    if (todayWord == null) return;
 
     final completedWords = words
         .where((w) =>
@@ -63,26 +77,33 @@ mixin GamePageHelper on State<GamePage> {
     final target = todayWord.trim().toUpperCase();
 
     if (lastGuess == target) {
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(milliseconds: 800));
       _hasNavigated = true;
       if (context.mounted) {
+        _onMarkGameCompleted(context, true);
         context.push(
           WinningPage.routeName,
           extra: WinningPageParam(word: todayWord, isLost: false),
         );
       }
+
       return;
     }
 
     if (currentCompletedCount >= GameConstants.maxWords) {
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(const Duration(milliseconds: 800));
       _hasNavigated = true;
       if (context.mounted) {
+        _onMarkGameCompleted(context, false);
         context.push(
           WinningPage.routeName,
           extra: WinningPageParam(word: todayWord, isLost: true),
         );
       }
     }
+  }
+
+  void _onMarkGameCompleted(BuildContext context, bool isCorrect) {
+    context.read<GameBloc>().add(GameEvent.markGameCompleted(isCorrect));
   }
 }

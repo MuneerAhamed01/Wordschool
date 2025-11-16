@@ -10,6 +10,8 @@ import 'package:wordshool/features/game/presentation/utils/constants.dart';
 import 'package:wordshool/features/game/presentation/utils/letter.dart';
 import 'package:wordshool/features/game/presentation/utils/word.dart';
 import 'package:wordshool/features/game/presentation/widgets/keyboard/keyboard.dart';
+import 'package:wordshool/shared/domains/entities/user_game_state/user_game_data.dart';
+import 'package:wordshool/shared/domains/entities/user_game_state/user_game_state.dart';
 import 'package:wordshool/shared/presentations/widgets/glowing_bulb.dart';
 import 'package:wordshool/shared/presentations/widgets/shimmer_grid_item.dart';
 import 'package:wordshool/shared/presentations/widgets/snackbar.dart';
@@ -37,22 +39,38 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
       builder: (context, state) {
         final body = state.whenOrNull(
           loaded: (word, userGameState, userSpecificGameData) =>
-              _buildContent(),
+              _buildContent(word, userGameState, userSpecificGameData),
           error: (message) => _buildLoadingBody(),
           loading: () => _buildLoadingBody(),
           initial: () => _buildLoadingBody(),
         );
-        return BlocListener<WordCubit, List<Word>>(
-          listener: listenToWord,
-          child: Scaffold(
-            body: body,
+        return BlocListener<GameBloc, GameState>(
+          listenWhen: (previous, current) {
+            return previous.userSpecificGameData?.id !=
+                current.userSpecificGameData?.id;
+          },
+          listener: (context, state) {
+            if (state.userSpecificGameData != null) {
+              context.read<WordCubit>().restoreGuesses(
+                    todayWord: state.todayWord,
+                    words: state.userSpecificGameData?.guessedWords ?? [],
+                  );
+            }
+          },
+          child: BlocListener<WordCubit, List<Word>>(
+            listener: listenToWord,
+            child: Scaffold(body: body),
           ),
         );
       },
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(
+    String word,
+    UserGameStateEntity? userGameState,
+    UserGameDataEntity? userSpecificGameData,
+  ) {
     return SafeArea(
       child: Column(
         children: [
