@@ -28,6 +28,11 @@ import 'package:wordshool/shared/domains/usercases/guessed_word_usecase/add_gues
 import 'package:wordshool/shared/domains/usercases/load_user_game_state_usecase.dart';
 import 'package:wordshool/shared/domains/usercases/load_user_specific_game_state.dart';
 import 'package:wordshool/shared/domains/usercases/mark_game_usecase/mark_game_completed_usecase.dart';
+import 'package:wordshool/features/settings/data/data_source/remote/settings_data_source.dart';
+import 'package:wordshool/features/settings/data/data_source/settings_data_source.dart';
+import 'package:wordshool/features/settings/data/repositories/settings_repository_impl.dart';
+import 'package:wordshool/features/settings/domain/repositories/settings_repository.dart';
+import 'package:wordshool/features/settings/domain/usecases/logout_usecase.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -39,6 +44,7 @@ Future<void> initializeDependency() async {
   _initializeAuthDependencies();
   await _initializeValidWords();
   _initializeGame();
+  _initializeSettings();
 }
 
 Future<void> _initSessions() async {
@@ -121,4 +127,27 @@ void _initializeGame() {
   getIt.registerSingleton<MarkGameCompletedUseCase>(MarkGameCompletedUseCase(
     userGameStateRepository: getIt<UserGameStateRepository>(),
   ));
+}
+
+void _initializeSettings() {
+  // Data source
+  getIt.registerSingleton<SettingsDataSource>(
+    SettingsDataSourceImpl(
+      firebaseAuth: FirebaseAuth.instance,
+      googleSignIn: GoogleSignIn.instance,
+    ),
+  );
+
+  // Repository
+  getIt.registerSingleton<SettingsRepository>(
+    SettingsRepositoryImpl(
+      dataSource: getIt<SettingsDataSource>(),
+      sessionRepository: getIt<SessionRepository>(),
+    ),
+  );
+
+  // Use case
+  getIt.registerSingleton<LogoutUseCase>(
+    LogoutUseCase(repository: getIt<SettingsRepository>()),
+  );
 }

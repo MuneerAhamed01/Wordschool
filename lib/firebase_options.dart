@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDAbP47CHhfIwuFe6v3D7c1GQbljC9qTOM',
-    appId: '1:87702505475:android:71ecbdaa65a9ae49d02636',
+    appId: '1:87702505475:android:88daf17b6d2895a3d02636',
     messagingSenderId: '87702505475',
     projectId: 'wordschool-dev',
     storageBucket: 'wordschool-dev.firebasestorage.app',
@@ -59,12 +59,13 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDhUeESiay4f92p2VfMZAmZnMHKV7kDK6A',
-    appId: '1:87702505475:ios:1121678a38e1d161d02636',
+    appId: '1:87702505475:ios:9ffac947fb5fa204d02636',
     messagingSenderId: '87702505475',
     projectId: 'wordschool-dev',
     storageBucket: 'wordschool-dev.firebasestorage.app',
     androidClientId: '87702505475-hd86el48ffi4o4inms6p0ne61mh8s7b2.apps.googleusercontent.com',
-    iosClientId: '87702505475-s42orbp34e2q414urk3ivdqha3iq4p87.apps.googleusercontent.com',
-    iosBundleId: 'com.wordschoolgame.mat',
+    iosClientId: '87702505475-id78b5gh16rqa8eirni1jveo6orrkd81.apps.googleusercontent.com',
+    iosBundleId: 'com.wordschool.mat',
   );
+
 }

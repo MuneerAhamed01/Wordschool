@@ -98,20 +98,20 @@ class WinningPage extends StatelessWidget {
                   ),
                 ],
 
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: SizedBox(
-                    height: 48,
-                    child: AppButton(
-                      onTap: () {
-                        // Get.toNamed(StreakScreen.routeName);
-                      },
-                      label: 'Continue to the steaks',
-                      type: ButtonType.grey,
-                    ),
-                  ),
-                ),
+                // const Spacer(),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                //   child: SizedBox(
+                //     height: 48,
+                //     child: AppButton(
+                //       onTap: () {
+                //         // Get.toNamed(StreakScreen.routeName);
+                //       },
+                //       label: 'Continue to the steaks',
+                //       type: ButtonType.grey,
+                //     ),
+                //   ),
+                // ),
                 const SizedBox(height: 12),
                 // Padding(
                 //   padding: const EdgeInsets.symmetric(horizontal: 16),

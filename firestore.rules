@@ -1,0 +1,104 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ---------- Helpers ----------
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    function isDateId(id) {
+      // YYYY-MM-DD
+      return id.matches('^\\d{4}-\\d{2}-\\d{2}$');
+    }
+    function isNonNegativeInt(n) {
+      return n is int && n >= 0;
+    }
+
+    // ---------- "games" (daily puzzle) ----------
+    match /games/{gameId} {
+      // Read allowed to anyone; IDs must look like a date.
+      allow read: if isDateId(gameId);
+
+      // Allow authenticated clients to create daily game docs with validated shape.
+      allow create: if isAuthenticated()
+        && isDateId(gameId)
+        && request.resource.data.id == gameId
+        && request.resource.data.todayWord is string
+        && request.resource.data.createdDate is timestamp
+        && request.resource.data.updatedDate is timestamp
+        && request.resource.data.isCompleted is bool;
+
+      // Allow guarded updates by authenticated clients; keep invariants.
+      allow update: if isAuthenticated()
+        && isDateId(gameId)
+        && request.resource.data.id == resource.data.id
+        && request.resource.data.createdDate == resource.data.createdDate
+        && request.resource.data.todayWord is string
+        && request.resource.data.updatedDate is timestamp
+        && request.resource.data.isCompleted is bool;
+
+      // No client deletes.
+      allow delete: if false;
+    }
+
+    // ---------- Per-user game state ----------
+    // Root doc holds aggregates: totalGames, completedGames, streak, timestamps...
+    // Subcollection holds per-day user data keyed by YYYY-MM-DD.
+    match /userGameStates/{uid} {
+      // Only the owner can read their state
+      allow read: if isOwner(uid);
+
+      // Create user's state document
+      allow create: if isOwner(uid)
+        && request.resource.data.id == uid
+        && request.resource.data.createdDate is timestamp
+        && request.resource.data.updatedDate is timestamp
+        && isNonNegativeInt(request.resource.data.totalGames)
+        && isNonNegativeInt(request.resource.data.completedGames)
+        && isNonNegativeInt(request.resource.data.streak);
+
+      // Update with sane constraints: id and createdDate immutable; counts not decreasing
+      allow update: if isOwner(uid)
+        && request.resource.data.id == uid
+        && resource.data.id == uid
+        && request.resource.data.createdDate == resource.data.createdDate
+        && request.resource.data.updatedDate is timestamp
+        && isNonNegativeInt(request.resource.data.totalGames)
+        && isNonNegativeInt(request.resource.data.completedGames)
+        && isNonNegativeInt(request.resource.data.streak)
+        && request.resource.data.totalGames >= resource.data.totalGames
+        && request.resource.data.completedGames >= resource.data.completedGames
+        && request.resource.data.streak >= 0;
+
+      // Clients should not delete their state container
+      allow delete: if false;
+
+      // Per-day user data for each game day
+      match /userGameData/{dateId} {
+        // Only the owner can read their per-day data
+        allow read: if isOwner(uid);
+
+        // Create a per-day record only for valid date IDs
+        // and only if the corresponding game document exists
+        allow create: if isOwner(uid)
+          && isDateId(dateId)
+          && exists(/databases/$(database)/documents/games/$(dateId));
+
+        // Updates allowed to owner; keep ID format guard
+        allow update: if isOwner(uid) && isDateId(dateId);
+
+        // Do not allow deletes from clients
+        allow delete: if false;
+      }
+    }
+
+    // ---------- Catch-all: deny anything not matched above ----------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+

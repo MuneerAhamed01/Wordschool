@@ -9,6 +9,10 @@ import 'package:wordshool/features/game/presentation/bloc/word_cubit/word_cubit.
 import 'package:wordshool/features/game/presentation/pages/game_page.dart';
 import 'package:wordshool/features/winning/presentation/pages/params/winning_page_param.dart';
 import 'package:wordshool/features/winning/presentation/pages/winning_page.dart';
+import 'package:wordshool/features/settings/presentation/pages/settings_page.dart';
+import 'package:wordshool/features/settings/presentation/pages/legal_markdown_page.dart';
+import 'package:wordshool/features/settings/presentation/bloc/settings_bloc.dart';
+import 'package:wordshool/features/settings/domain/usecases/logout_usecase.dart';
 
 GoRouter appRouter(String initialRoute) {
   return GoRouter(
@@ -30,22 +34,50 @@ GoRouter appRouter(String initialRoute) {
       GoRoute(
         path: GamePage.routeName,
         name: GamePage.routeName.replaceFirst(RegExp(r'0'), ''),
-        builder: (context, state) => MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (context) => WordCubit(validWords: getIt()),
-            ),
-            BlocProvider(
-              create: (context) => GameBloc(
-                loadTodayWordUseCase: getIt(),
-                loadUserGameStateUseCase: getIt(),
-                loadUserSpecificGameStateUseCase: getIt(),
-                addGuessedWordUseCase: getIt(),
-                markGameCompletedUseCase: getIt(),
+        builder: (context, state) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => WordCubit(validWords: getIt()),
               ),
-            )
-          ],
-          child: const GamePage(),
+              BlocProvider(
+                create: (context) => GameBloc(
+                  loadTodayWordUseCase: getIt(),
+                  loadUserGameStateUseCase: getIt(),
+                  loadUserSpecificGameStateUseCase: getIt(),
+                  addGuessedWordUseCase: getIt(),
+                  markGameCompletedUseCase: getIt(),
+                ),
+              )
+            ],
+            child: const GamePage(),
+          );
+        },
+      ),
+      GoRoute(
+        path: SettingsPage.routeName,
+        name: SettingsPage.routeName.replaceFirst(RegExp(r'0'), ''),
+        builder: (context, state) => BlocProvider(
+          create: (_) => SettingsBloc(
+            logoutUseCase: getIt<LogoutUseCase>(),
+          ),
+          child: const SettingsPage(),
+        ),
+      ),
+      GoRoute(
+        path: '/terms',
+        name: 'terms',
+        builder: (context, state) => const LegalMarkdownPage(
+          title: 'Terms & Conditions',
+          assetPath: 'assets/legal/terms.md',
+        ),
+      ),
+      GoRoute(
+        path: '/privacy',
+        name: 'privacy',
+        builder: (context, state) => const LegalMarkdownPage(
+          title: 'Privacy Policy',
+          assetPath: 'assets/legal/privacy.md',
         ),
       ),
       GoRoute(

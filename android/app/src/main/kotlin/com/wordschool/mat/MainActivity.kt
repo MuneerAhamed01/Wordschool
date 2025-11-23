@@ -1,4 +1,4 @@
-package com.wordschoolgame.mat
+package com.wordschool.mat
 
 import io.flutter.embedding.android.FlutterActivity
 

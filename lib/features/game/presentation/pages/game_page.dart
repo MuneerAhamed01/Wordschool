@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:wordshool/config/themes/colors.dart';
 import 'package:wordshool/core/enums/word_tile_type.dart';
 import 'package:wordshool/features/game/presentation/bloc/game_bloc/game_bloc.dart';
 import 'package:wordshool/features/game/presentation/bloc/word_cubit/word_cubit.dart';
@@ -12,12 +13,16 @@ import 'package:wordshool/features/game/presentation/utils/word.dart';
 import 'package:wordshool/features/game/presentation/widgets/keyboard/keyboard.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_data.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_state.dart';
-import 'package:wordshool/shared/presentations/widgets/glowing_bulb.dart';
+import 'package:wordshool/shared/presentations/widgets/gradient_logo.dart';
 import 'package:wordshool/shared/presentations/widgets/shimmer_grid_item.dart';
 import 'package:wordshool/shared/presentations/widgets/snackbar.dart';
 import 'package:wordshool/shared/presentations/widgets/wordle_tile/tile.dart';
 import 'package:wordshool/features/winning/presentation/pages/winning_page.dart';
 import 'package:wordshool/features/winning/presentation/pages/params/winning_page_param.dart';
+import 'package:wordshool/shared/data/models/user.dart';
+import 'package:wordshool/shared/data/data_source/session_handler.dart';
+import 'package:wordshool/di.dart';
+import 'package:wordshool/features/settings/presentation/pages/settings_page.dart';
 
 part 'game_page_helper.dart';
 
@@ -33,6 +38,18 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
   // Store shake functions for each tile
   final Map<int, VoidCallback> _shakeFunctions = {};
 
+  String _getUserInitial(WordSchoolUserModel? user) {
+    final name = user?.name?.trim();
+    if (name != null && name.isNotEmpty) {
+      return name.substring(0, 1).toUpperCase();
+    }
+    final email = user?.email.trim();
+    if (email != null && email.isNotEmpty) {
+      return email.substring(0, 1).toUpperCase();
+    }
+    return 'A';
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GameBloc, GameState>(
@@ -44,6 +61,7 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
           loading: () => _buildLoadingBody(),
           initial: () => _buildLoadingBody(),
         );
+
         return BlocListener<GameBloc, GameState>(
           listenWhen: (previous, current) {
             return previous.userSpecificGameData?.id !=
@@ -59,7 +77,30 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
           },
           child: BlocListener<WordCubit, List<Word>>(
             listener: listenToWord,
-            child: Scaffold(body: body),
+            child: Scaffold(
+              appBar: AppBar(
+                centerTitle: false,
+                title: Text(
+                  'WordSchool'.toUpperCase(),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: MyColors.white, fontWeight: FontWeight.bold),
+                ),
+                actions: [
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 3),
+                      child: IconButton(
+                        onPressed: () {
+                          context.push(SettingsPage.routeName);
+                        },
+                        icon: const Icon(Icons.settings),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              body: body,
+            ),
           ),
         );
       },
@@ -84,16 +125,16 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
             ),
           ),
           Spacer(),
-          Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 10),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: GlowingLightbulbButton(
-                size: 24,
-                onTap: () {},
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(left: 16, bottom: 10),
+          //   child: Align(
+          //     alignment: Alignment.centerLeft,
+          //     child: GlowingLightbulbButton(
+          //       size: 24,
+          //       onTap: () {},
+          //     ),
+          //   ),
+          // ),
           Padding(
             padding: EdgeInsets.all(8),
             child: _buildCustomButton(),
