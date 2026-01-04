@@ -87,7 +87,7 @@ class AuthPage extends StatelessWidget {
                   state.whenOrNull<AuthType?>(loading: (type) => type) ==
                       AuthType.anonymous,
               isDisabled: state is AuthLoading,
-              label: 'Sign up anonymously',
+              label: 'Continue as guest',
               type: ButtonType.background,
             ),
           ),
@@ -128,6 +128,6 @@ class AuthPage extends StatelessWidget {
   }
 
   void _onAuthenticate(BuildContext context) {
-    context.push(GamePage.routeName);
+    context.go(GamePage.routeName);
   }
 }

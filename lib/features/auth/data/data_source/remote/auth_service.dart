@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/features/auth/data/data_source/auth_service.dart';
@@ -38,15 +39,18 @@ class AuthDataSourceImpl extends AuthDataSource {
   @override
   Future<DataState<WordSchoolUserModel?>> signInWithGoogle() async {
     try {
-      await GoogleSignIn.instance.initialize();
+      final serviceID = dotenv.env['GOOGLE_SERVICE_WEB_CLIENT'] ?? '';
+      await GoogleSignIn.instance.initialize(
+        serverClientId: serviceID,
+      );
 
       const scopes = [
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile',
-        'openid',
+        // 'openid',
       ];
 
-      final googleUser = await _googleSignIn.authenticate(scopeHint: scopes);
+      final googleUser = await _googleSignIn.authenticate();
 
       final googleAuthentication = googleUser.authentication;
       final googleAuthorization =

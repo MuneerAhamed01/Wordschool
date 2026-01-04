@@ -24,7 +24,7 @@ dependencies:
   just_audio: ^0.9.40
   dictionaryx: ^0.3.5
   # firebase_auth: ^4.16.0
-  google_sign_in: ^7.1.0
+  google_sign_in: ^7.2.0
   dio: ^5.7.0
   intl: ^0.19.0
   url_launcher: ^6.3.0
