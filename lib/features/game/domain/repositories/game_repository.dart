@@ -3,5 +3,8 @@ import 'package:wordshool/features/game/domain/entities/game.dart';
 
 abstract class GameRepository {
   Future<DataState<GameEntity>> loadTodayWord();
+
+  Future<DataState<GameEntity>> loadGameByDate(String dateId);
+
   Future<DataState<bool>> submitWord(String word);
 }

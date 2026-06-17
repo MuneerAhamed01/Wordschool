@@ -1,6 +1,8 @@
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_state.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_data.dart';
+import 'package:wordshool/shared/domains/usercases/mark_game_usecase/utils/mark_game_completed_params.dart';
+import 'package:wordshool/shared/domains/usercases/mark_game_usecase/utils/mark_game_completed_result.dart';
 
 abstract class UserGameStateRepository {
   Future<DataState<UserGameStateEntity>> createUserGameState();
@@ -20,26 +22,13 @@ abstract class UserGameStateRepository {
     String gameId,
   );
 
-  Future<DataState<bool>> markGameAsCompleted(
-    String gameId,
-    bool isCorrect,
+  Future<DataState<MarkGameCompletedResult>> markGameAsCompleted(
+    MarkGameCompletedParam param,
   );
 
   Future<DataState<bool>> removeGuessedWord(
     String gameId,
     String guessedWord,
-  );
-
-  Future<DataState<bool>> updateCompletedGames(
-    int completedGames,
-  );
-
-  Future<DataState<bool>> updateStreak(
-    int streak,
-  );
-
-  Future<DataState<bool>> updateTotalGames(
-    int totalGames,
   );
 
   Future<DataState<UserGameStateEntity>> updateUserGameState(
@@ -53,4 +42,9 @@ abstract class UserGameStateRepository {
   Future<DataState<UserGameStateEntity>> loadUserGameState();
 
   Future<DataState<UserGameDataEntity>> loadUserSpecificGameData(String gameId);
+
+  Future<DataState<List<UserGameDataEntity>>> loadUserGameDataInRange(
+    String startDateId,
+    String endDateId,
+  );
 }

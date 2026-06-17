@@ -1,4 +1,6 @@
 import 'package:wordshool/core/resorces/data_state.dart';
+import 'package:wordshool/core/utils/date_helper.dart';
+import 'package:wordshool/core/utils/streak_calculator.dart';
 import 'package:wordshool/shared/data/data_source/user_game_state_service.dart';
 import 'package:wordshool/shared/data/models/user_game_state/user_game_data.dart';
 import 'package:wordshool/shared/data/models/user_game_state/user_game_state.dart';
@@ -6,6 +8,8 @@ import 'package:wordshool/shared/domains/entities/user_game_state/user_game_data
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_state.dart';
 import 'package:wordshool/shared/domains/repostiories/session_repository.dart';
 import 'package:wordshool/shared/domains/repostiories/user_game_state_repository.dart';
+import 'package:wordshool/shared/domains/usercases/mark_game_usecase/utils/mark_game_completed_params.dart';
+import 'package:wordshool/shared/domains/usercases/mark_game_usecase/utils/mark_game_completed_result.dart';
 
 class UserGameStateRepositoryImpl implements UserGameStateRepository {
   final UserGameStateDataSource _dataSource;
@@ -17,15 +21,21 @@ class UserGameStateRepositoryImpl implements UserGameStateRepository {
   })  : _dataSource = dataSource,
         _sessionRepository = sessionRepository;
 
+  String? _currentUserId() {
+    return _sessionRepository.getCurrentUser()?.id;
+  }
+
+  DataError<T> _noUserError<T>() {
+    return DataError<T>(
+      error: AppError(error: 'No current user', code: '401'),
+    );
+  }
+
   @override
   Future<DataState<UserGameStateEntity>> createUserGameState() async {
-    final user = _sessionRepository.getCurrentUser();
-    if (user == null) {
-      return DataError<UserGameStateEntity>(
-        error: AppError(error: 'No current user', code: '401'),
-      );
-    }
-    return _dataSource.createUserGameState(user.id);
+    final userId = _currentUserId();
+    if (userId == null) return _noUserError();
+    return _dataSource.createUserGameState(userId);
   }
 
   @override
@@ -33,113 +43,117 @@ class UserGameStateRepositoryImpl implements UserGameStateRepository {
     String gameId,
     String guessedWord,
   ) async {
-    final user = _sessionRepository.getCurrentUser();
-    if (user == null) {
-      return DataError<bool>(
-        error: AppError(error: 'No current user', code: '401'),
-      );
-    }
-    return _dataSource.addGuessedWord(user.id, gameId, guessedWord);
+    final userId = _currentUserId();
+    if (userId == null) return _noUserError();
+    return _dataSource.addGuessedWord(userId, gameId, guessedWord);
   }
 
   @override
   Future<DataState<UserGameDataEntity>> createUserSpecificGameData(
     String gameId,
   ) async {
-    final user = _sessionRepository.getCurrentUser();
-    if (user == null) {
-      return DataError<UserGameDataEntity>(
-        error: AppError(
-          error: 'No current user',
-          code: '401',
-        ),
-      );
-    }
-    return _dataSource.createUserSpecificGameData(user.id, gameId);
+    final userId = _currentUserId();
+    if (userId == null) return _noUserError();
+    return _dataSource.createUserSpecificGameData(userId, gameId);
   }
 
   @override
   Future<DataState<UserGameStateEntity>> getUserGameState() async {
-    final user = _sessionRepository.getCurrentUser();
-    if (user == null) {
-      return DataError<UserGameStateEntity>(
-        error: AppError(
-          error: 'No current user',
-          code: '401',
-        ),
-      );
-    }
-    return _dataSource.getUserGameState(user.id);
+    final userId = _currentUserId();
+    if (userId == null) return _noUserError();
+    return _dataSource.getUserGameState(userId);
   }
 
   @override
   Future<DataState<UserGameDataEntity>> getUserSpecificGameData(
     String gameId,
   ) async {
-    final user = _sessionRepository.getCurrentUser();
-    if (user == null) {
-      return DataError<UserGameDataEntity>(
-          error: AppError(error: 'No current user', code: '401'));
-    }
-    return _dataSource.getUserSpecificGameData(user.id, gameId);
+    final userId = _currentUserId();
+    if (userId == null) return _noUserError();
+    return _dataSource.getUserSpecificGameData(userId, gameId);
   }
 
   @override
-  Future<DataState<bool>> markGameAsCompleted(
-    String gameId,
-    bool isCorrect,
-  ) {
-    final user = _sessionRepository.getCurrentUser();
-    if (user == null) {
-      return Future.value(DataError<bool>(
-          error: AppError(error: 'No current user', code: '401')));
+  Future<DataState<MarkGameCompletedResult>> markGameAsCompleted(
+    MarkGameCompletedParam param,
+  ) async {
+    final userId = _currentUserId();
+    if (userId == null) return _noUserError();
+
+    final existingGameData =
+        await _dataSource.getUserSpecificGameData(userId, param.gameId);
+
+    if (existingGameData is DataSuccess<UserGameDataModel>) {
+      if (existingGameData.data!.isCompleted) {
+        return DataSuccess<MarkGameCompletedResult>(
+          data: const MarkGameCompletedResult(wasAlreadyCompleted: true),
+        );
+      }
     }
-    return _dataSource.markGameAsCompleted(user.id, gameId, isCorrect);
+
+    final markResult = await _dataSource.markGameAsCompleted(
+      userId,
+      param.gameId,
+      param.isCorrect,
+    );
+
+    if (markResult is! DataSuccess<bool>) {
+      return DataError<MarkGameCompletedResult>(error: markResult.error);
+    }
+
+    if (param.isArchiveMode) {
+      return DataSuccess<MarkGameCompletedResult>(
+        data: const MarkGameCompletedResult(wasAlreadyCompleted: false),
+      );
+    }
+
+    final todayDateId = DateHelper.todayDateId();
+    if (param.gameId != todayDateId) {
+      return DataSuccess<MarkGameCompletedResult>(
+        data: const MarkGameCompletedResult(wasAlreadyCompleted: false),
+      );
+    }
+
+    final userStateResult = await _dataSource.getUserGameState(userId);
+    if (userStateResult is! DataSuccess<UserGameStateModel>) {
+      return DataError<MarkGameCompletedResult>(error: userStateResult.error);
+    }
+
+    final streakUpdate = StreakCalculator.calculateAfterDailyCompletion(
+      currentState: userStateResult.data!,
+      completedGameDateId: param.gameId,
+      isCorrect: param.isCorrect,
+    );
+
+    final streakResult = await _dataSource.updateStreak(
+      userId,
+      streakUpdate.streak,
+      streakUpdate.lastStreakDate,
+      streakUpdate.longestStreak,
+      streakUpdate.completedGames,
+      streakUpdate.totalGames,
+    );
+
+    if (streakResult is! DataSuccess<bool>) {
+      return DataError<MarkGameCompletedResult>(error: streakResult.error);
+    }
+
+    return DataSuccess<MarkGameCompletedResult>(
+      data: MarkGameCompletedResult(
+        wasAlreadyCompleted: false,
+        updatedStreak: streakUpdate.streak,
+      ),
+    );
   }
 
   @override
   Future<DataState<bool>> removeGuessedWord(
     String gameId,
     String guessedWord,
-  ) {
-    final user = _sessionRepository.getCurrentUser();
-    if (user == null) {
-      return Future.value(DataError<bool>(
-          error: AppError(error: 'No current user', code: '401')));
-    }
-    return _dataSource.removeGuessedWord(user.id, gameId, guessedWord);
-  }
-
-  @override
-  Future<DataState<bool>> updateCompletedGames(
-    int completedGames,
-  ) {
-    final user = _sessionRepository.getCurrentUser();
-    if (user == null) {
-      return Future.value(DataError<bool>(
-          error: AppError(error: 'No current user', code: '401')));
-    }
-    return _dataSource.updateCompletedGames(user.id, completedGames);
-  }
-
-  @override
-  Future<DataState<bool>> updateStreak(int streak) {
-    final user = _sessionRepository.getCurrentUser();
-    if (user == null) {
-      return Future.value(DataError<bool>(
-          error: AppError(error: 'No current user', code: '401')));
-    }
-    return _dataSource.updateStreak(user.id, streak);
-  }
-
-  @override
-  Future<DataState<bool>> updateTotalGames(int totalGames) {
-    final user = _sessionRepository.getCurrentUser();
-    if (user == null) {
-      return Future.value(DataError<bool>(
-          error: AppError(error: 'No current user', code: '401')));
-    }
-    return _dataSource.updateTotalGames(user.id, totalGames);
+  ) async {
+    final userId = _currentUserId();
+    if (userId == null) return _noUserError();
+    return _dataSource.removeGuessedWord(userId, gameId, guessedWord);
   }
 
   @override
@@ -149,6 +163,8 @@ class UserGameStateRepositoryImpl implements UserGameStateRepository {
     final model = UserGameStateModel(
       id: userGameState.id,
       streak: userGameState.streak,
+      longestStreak: userGameState.longestStreak,
+      lastStreakDate: userGameState.lastStreakDate,
       completedGames: userGameState.completedGames,
       totalGames: userGameState.totalGames,
       createdDate: userGameState.createdDate,
@@ -161,6 +177,9 @@ class UserGameStateRepositoryImpl implements UserGameStateRepository {
   Future<DataState<UserGameDataEntity>> updateUserSpecificGameData(
     UserGameDataEntity userGameData,
   ) async {
+    final userId = _currentUserId();
+    if (userId == null) return _noUserError();
+
     final model = UserGameDataModel(
       id: userGameData.id,
       guessedWords: userGameData.guessedWords,
@@ -169,49 +188,58 @@ class UserGameStateRepositoryImpl implements UserGameStateRepository {
       createdDate: userGameData.createdDate,
       updatedDate: userGameData.updatedDate,
     );
-    return _dataSource.updateUserSpecificGameData(model);
+    return _dataSource.updateUserSpecificGameData(userId, model);
   }
 
   @override
   Future<DataState<UserGameStateEntity>> loadUserGameState() async {
-    final user = _sessionRepository.getCurrentUser();
-    if (user == null) {
-      return DataError<UserGameStateEntity>(
-        error: AppError(error: 'No current user', code: '401'),
-      );
+    final userId = _currentUserId();
+    if (userId == null) return _noUserError();
+
+    final result = await _dataSource.getUserGameState(userId);
+    if (result is DataSuccess<UserGameStateModel>) {
+      return result;
     }
 
-    final res = await _dataSource.getUserGameState(user.id);
-    if (res is DataSuccess<UserGameStateModel>) {
-      return res;
+    final error = result as DataError<UserGameStateModel>;
+    if (error.error?.code == '404') {
+      return _dataSource.createUserGameState(userId);
     }
-    final err = res as DataError<UserGameStateModel>;
-    if (err.error?.code == '404') {
-      final createRes = await _dataSource.createUserGameState(user.id);
-      return createRes;
-    }
-    return DataError<UserGameStateEntity>(error: err.error);
+
+    return DataError<UserGameStateEntity>(error: error.error);
   }
 
   @override
   Future<DataState<UserGameDataEntity>> loadUserSpecificGameData(
     String gameId,
   ) async {
-    final user = _sessionRepository.getCurrentUser();
-    if (user == null) {
-      return DataError<UserGameDataEntity>(
-          error: AppError(error: 'No current user', code: '401'));
+    final userId = _currentUserId();
+    if (userId == null) return _noUserError();
+
+    final result = await _dataSource.getUserSpecificGameData(userId, gameId);
+    if (result is DataSuccess<UserGameDataModel>) {
+      return result;
     }
-    final res = await _dataSource.getUserSpecificGameData(user.id, gameId);
-    if (res is DataSuccess<UserGameDataModel>) {
-      return res;
+
+    final error = result as DataError<UserGameDataModel>;
+    if (error.error?.code == '404') {
+      return _dataSource.createUserSpecificGameData(userId, gameId);
     }
-    final err = res as DataError<UserGameDataModel>;
-    if (err.error?.code == '404') {
-      final createRes =
-          await _dataSource.createUserSpecificGameData(user.id, gameId);
-      return createRes;
-    }
-    return DataError<UserGameDataEntity>(error: err.error);
+
+    return DataError<UserGameDataEntity>(error: error.error);
+  }
+
+  @override
+  Future<DataState<List<UserGameDataEntity>>> loadUserGameDataInRange(
+    String startDateId,
+    String endDateId,
+  ) async {
+    final userId = _currentUserId();
+    if (userId == null) return _noUserError();
+    return _dataSource.getUserGameDataInRange(
+      userId,
+      startDateId,
+      endDateId,
+    );
   }
 }

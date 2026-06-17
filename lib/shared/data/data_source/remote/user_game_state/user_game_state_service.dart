@@ -11,14 +11,24 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
   UserGameStateDataSourceImpl({required FirebaseFirestore firestore})
       : _firestore = firestore;
 
+  CollectionReference<Map<String, dynamic>> _userGameStateCollection() {
+    return _firestore.collection(FirebaseCollections.userGameStates);
+  }
+
+  CollectionReference<Map<String, dynamic>> _userGameDataCollection(
+    String userId,
+  ) {
+    return _userGameStateCollection()
+        .doc(userId)
+        .collection(FirebaseCollections.userGameData);
+  }
+
   @override
   Future<DataState<UserGameStateModel>> createUserGameState(
     String userId,
   ) async {
     try {
-      final gameStateDoc =
-          _firestore.collection(FirebaseCollections.userGameStates).doc(userId);
-
+      final gameStateDoc = _userGameStateCollection().doc(userId);
       final emptyUserData = UserGameStateModel(
         id: gameStateDoc.id,
         createdDate: DateTime.now(),
@@ -26,30 +36,29 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
       );
       await gameStateDoc.set(emptyUserData.toJson());
       return DataSuccess<UserGameStateModel>(data: emptyUserData);
-    } catch (e) {
+    } catch (error) {
       return DataError<UserGameStateModel>(
-        error: AppError(error: e.toString(), code: '500'),
+        error: AppError(error: error.toString(), code: '500'),
       );
     }
   }
 
   @override
   Future<DataState<bool>> addGuessedWord(
-      String userId, String gameId, String guessedWord) async {
+    String userId,
+    String gameId,
+    String guessedWord,
+  ) async {
     try {
-      final gameDataDoc = _firestore
-          .collection(FirebaseCollections.userGameStates)
-          .doc(userId)
-          .collection(FirebaseCollections.userGameData)
-          .doc(gameId);
-
-      await gameDataDoc.update({
+      await _userGameDataCollection(userId).doc(gameId).update({
         'guessedWords': FieldValue.arrayUnion([guessedWord]),
+        'updatedDate': FieldValue.serverTimestamp(),
       });
-
       return DataSuccess<bool>(data: true);
-    } catch (e) {
-      return DataError<bool>(error: AppError(error: e.toString(), code: '500'));
+    } catch (error) {
+      return DataError<bool>(
+        error: AppError(error: error.toString(), code: '500'),
+      );
     }
   }
 
@@ -59,12 +68,7 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
     String gameId,
   ) async {
     try {
-      final gameDataDoc = _firestore
-          .collection(FirebaseCollections.userGameStates)
-          .doc(userId)
-          .collection(FirebaseCollections.userGameData)
-          .doc(gameId);
-
+      final gameDataDoc = _userGameDataCollection(userId).doc(gameId);
       final emptyGameData = UserGameDataModel(
         id: gameDataDoc.id,
         createdDate: DateTime.now(),
@@ -72,9 +76,9 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
       );
       await gameDataDoc.set(emptyGameData.toJson());
       return DataSuccess<UserGameDataModel>(data: emptyGameData);
-    } catch (e) {
+    } catch (error) {
       return DataError<UserGameDataModel>(
-        error: AppError(error: e.toString(), code: '500'),
+        error: AppError(error: error.toString(), code: '500'),
       );
     }
   }
@@ -82,61 +86,90 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
   @override
   Future<DataState<UserGameStateModel>> getUserGameState(String userId) async {
     try {
-      final gameStateDoc = await _firestore
-          .collection(FirebaseCollections.userGameStates)
-          .doc(userId)
-          .get();
+      final gameStateDoc = await _userGameStateCollection().doc(userId).get();
       if (!gameStateDoc.exists) {
         return DataError<UserGameStateModel>(
-            error: AppError(error: 'Game state not found', code: '404'));
+          error: AppError(error: 'Game state not found', code: '404'),
+        );
       }
       return DataSuccess<UserGameStateModel>(
-          data: UserGameStateModel.fromJson(gameStateDoc.data() ?? {}));
-    } catch (e) {
+        data: UserGameStateModel.fromJson(gameStateDoc.data() ?? {}),
+      );
+    } catch (error) {
       return DataError<UserGameStateModel>(
-          error: AppError(error: e.toString(), code: '500'));
+        error: AppError(error: error.toString(), code: '500'),
+      );
     }
   }
 
   @override
   Future<DataState<UserGameDataModel>> getUserSpecificGameData(
-      String userId, String gameId) async {
+    String userId,
+    String gameId,
+  ) async {
     try {
-      final gameDataDoc = await _firestore
-          .collection(FirebaseCollections.userGameStates)
-          .doc(userId)
-          .collection(FirebaseCollections.userGameData)
-          .doc(gameId)
-          .get();
+      final gameDataDoc =
+          await _userGameDataCollection(userId).doc(gameId).get();
 
       if (!gameDataDoc.exists) {
         return DataError<UserGameDataModel>(
-            error: AppError(error: 'Game data not found', code: '404'));
+          error: AppError(error: 'Game data not found', code: '404'),
+        );
       }
 
       return DataSuccess<UserGameDataModel>(
         data: UserGameDataModel.fromJson(gameDataDoc.data() ?? {}),
       );
-    } catch (e) {
+    } catch (error) {
       return DataError<UserGameDataModel>(
-          error: AppError(error: e.toString(), code: '500'));
+        error: AppError(error: error.toString(), code: '500'),
+      );
+    }
+  }
+
+  @override
+  Future<DataState<List<UserGameDataModel>>> getUserGameDataInRange(
+    String userId,
+    String startDateId,
+    String endDateId,
+  ) async {
+    try {
+      final snapshot = await _userGameDataCollection(userId)
+          .where(FieldPath.documentId, isGreaterThanOrEqualTo: startDateId)
+          .where(FieldPath.documentId, isLessThanOrEqualTo: endDateId)
+          .get();
+
+      final gameDataList = snapshot.docs.map((document) {
+        final data = Map<String, dynamic>.from(document.data());
+        data.putIfAbsent('id', () => document.id);
+        return UserGameDataModel.fromJson(data);
+      }).toList();
+
+      return DataSuccess<List<UserGameDataModel>>(data: gameDataList);
+    } catch (error) {
+      return DataError<List<UserGameDataModel>>(
+        error: AppError(error: error.toString(), code: '500'),
+      );
     }
   }
 
   @override
   Future<DataState<bool>> markGameAsCompleted(
-      String userId, String gameId, bool isCorrect) async {
+    String userId,
+    String gameId,
+    bool isCorrect,
+  ) async {
     try {
-      final gameDataDoc = _firestore
-          .collection(FirebaseCollections.userGameStates)
-          .doc(userId)
-          .collection(FirebaseCollections.userGameData)
-          .doc(gameId);
-
-      gameDataDoc.update({'isCompleted': true, 'isCorrect': isCorrect});
+      await _userGameDataCollection(userId).doc(gameId).update({
+        'isCompleted': true,
+        'isCorrect': isCorrect,
+        'updatedDate': FieldValue.serverTimestamp(),
+      });
       return DataSuccess<bool>(data: true);
-    } catch (e) {
-      return DataError<bool>(error: AppError(error: e.toString(), code: '500'));
+    } catch (error) {
+      return DataError<bool>(
+        error: AppError(error: error.toString(), code: '500'),
+      );
     }
   }
 
@@ -147,86 +180,73 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
     String guessedWord,
   ) async {
     try {
-      final gameDataDoc = _firestore
-          .collection(FirebaseCollections.userGameStates)
-          .doc(userId)
-          .collection(FirebaseCollections.userGameData)
-          .doc(gameId);
-
-      gameDataDoc.update({
+      await _userGameDataCollection(userId).doc(gameId).update({
         'guessedWords': FieldValue.arrayRemove([guessedWord]),
+        'updatedDate': FieldValue.serverTimestamp(),
       });
       return DataSuccess<bool>(data: true);
-    } catch (e) {
-      return DataError<bool>(error: AppError(error: e.toString(), code: '500'));
+    } catch (error) {
+      return DataError<bool>(
+        error: AppError(error: error.toString(), code: '500'),
+      );
     }
   }
 
   @override
-  Future<DataState<bool>> updateCompletedGames(
-      String userId, int completedGames) async {
+  Future<DataState<bool>> updateStreak(
+    String userId,
+    int streak,
+    String lastStreakDate,
+    int longestStreak,
+    int completedGames,
+    int totalGames,
+  ) async {
     try {
-      final gameStateDoc =
-          _firestore.collection(FirebaseCollections.userGameStates).doc(userId);
-
-      gameStateDoc.update({'completedGames': completedGames});
+      await _userGameStateCollection().doc(userId).update({
+        'streak': streak,
+        'lastStreakDate': lastStreakDate,
+        'longestStreak': longestStreak,
+        'completedGames': completedGames,
+        'totalGames': totalGames,
+        'updatedDate': FieldValue.serverTimestamp(),
+      });
       return DataSuccess<bool>(data: true);
-    } catch (e) {
-      return DataError<bool>(error: AppError(error: e.toString(), code: '500'));
-    }
-  }
-
-  @override
-  Future<DataState<bool>> updateStreak(String userId, int streak) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<DataState<bool>> updateTotalGames(
-      String userId, int totalGames) async {
-    try {
-      final gameStateDoc =
-          _firestore.collection(FirebaseCollections.userGameStates).doc(userId);
-
-      await gameStateDoc.update({'totalGames': totalGames});
-
-      return DataSuccess<bool>(data: true);
-    } catch (e) {
-      return DataError<bool>(error: AppError(error: e.toString(), code: '500'));
+    } catch (error) {
+      return DataError<bool>(
+        error: AppError(error: error.toString(), code: '500'),
+      );
     }
   }
 
   @override
   Future<DataState<UserGameStateModel>> updateUserGameState(
-      UserGameStateModel userGameState) async {
+    UserGameStateModel userGameState,
+  ) async {
     try {
-      final gameStateDoc = _firestore
-          .collection(FirebaseCollections.userGameStates)
-          .doc(userGameState.id);
-
-      await gameStateDoc.update(userGameState.toJson());
+      await _userGameStateCollection()
+          .doc(userGameState.id)
+          .update(userGameState.toJson());
       return DataSuccess<UserGameStateModel>(data: userGameState);
-    } catch (e) {
+    } catch (error) {
       return DataError<UserGameStateModel>(
-          error: AppError(error: e.toString(), code: '500'));
+        error: AppError(error: error.toString(), code: '500'),
+      );
     }
   }
 
   @override
   Future<DataState<UserGameDataModel>> updateUserSpecificGameData(
-      UserGameDataModel userGameData) async {
+    String userId,
+    UserGameDataModel userGameData,
+  ) async {
     try {
-      final gameDataDoc = _firestore
-          .collection(FirebaseCollections.userGameStates)
+      await _userGameDataCollection(userId)
           .doc(userGameData.id)
-          .collection(FirebaseCollections.userGameData)
-          .doc(userGameData.id);
-
-      await gameDataDoc.update(userGameData.toJson());
+          .update(userGameData.toJson());
       return DataSuccess<UserGameDataModel>(data: userGameData);
-    } catch (e) {
+    } catch (error) {
       return DataError<UserGameDataModel>(
-        error: AppError(error: e.toString(), code: '500'),
+        error: AppError(error: error.toString(), code: '500'),
       );
     }
   }

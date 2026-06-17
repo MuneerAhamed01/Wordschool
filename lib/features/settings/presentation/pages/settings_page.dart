@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:wordshool/config/themes/colors.dart';
 import 'package:wordshool/features/auth/presentation/pages/auth_page.dart';
 import 'package:wordshool/shared/presentations/popup/general_pop_up.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wordshool/features/settings/presentation/bloc/settings_bloc.dart';
+import 'package:wordshool/shared/presentations/widgets/action_tile.dart';
+import 'package:wordshool/shared/presentations/widgets/fade_slide_in.dart';
+import 'package:wordshool/shared/presentations/widgets/game_scaffold.dart';
 import 'package:wordshool/shared/presentations/widgets/snackbar.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -19,9 +23,7 @@ class SettingsPage extends StatelessWidget {
       listener: (context, state) {
         state.whenOrNull(
           success: () {
-            if (context.mounted) {
-              context.go(AuthPage.routeName);
-            }
+            if (context.mounted) context.go(AuthPage.routeName);
           },
           error: (message) {
             CustomSnackBar.show(
@@ -32,31 +34,42 @@ class SettingsPage extends StatelessWidget {
           },
         );
       },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Settings'),
-          centerTitle: false,
-        ),
+      child: GameScaffold(
+        appBar: AppBar(title: const Text('Settings')),
         body: ListView(
+          padding: const EdgeInsets.all(20),
           children: [
-            ListTile(
-              leading: const Icon(Icons.description_outlined),
-              title: const Text('Terms & Conditions'),
-              onTap: () => context.push(termsRouteName),
-            ),
-            ListTile(
-              leading: const Icon(Icons.privacy_tip_outlined),
-              title: const Text('Privacy Policy'),
-              onTap: () =>
-                  _launchUrl('https://sites.google.com/view/wordschool/home'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.redAccent),
-              title: const Text(
-                'Log out',
-                style: TextStyle(color: Colors.redAccent),
+            FadeSlideIn(
+              child: ActionTile(
+                title: 'Terms & Conditions',
+                subtitle: 'Read our terms of service',
+                icon: Icons.description_outlined,
+                accentColor: MyColors.lightBlue3,
+                onTap: () => context.push(termsRouteName),
               ),
-              onTap: () => _confirmAndLogout(context),
+            ),
+            const SizedBox(height: 10),
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 80),
+              child: ActionTile(
+                title: 'Privacy Policy',
+                subtitle: 'How we handle your data',
+                icon: Icons.privacy_tip_outlined,
+                accentColor: MyColors.tileCorrect,
+                onTap: () =>
+                    _launchUrl('https://sites.google.com/view/wordschool/home'),
+              ),
+            ),
+            const SizedBox(height: 10),
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 160),
+              child: ActionTile(
+                title: 'Log out',
+                subtitle: 'Sign out of your account',
+                icon: Icons.logout_rounded,
+                accentColor: Colors.redAccent,
+                onTap: () => _confirmLogout(context),
+              ),
             ),
           ],
         ),
@@ -64,24 +77,20 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  Future<void> _confirmAndLogout(BuildContext context) async {
+  Future<void> _confirmLogout(BuildContext context) async {
     await SlidingDialog.show(
       context,
       title: 'Are you sure you want to log out?',
-      onPressContinue: () async {
-        // Close dialog before navigating
-        if (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop();
-        }
+      onPressContinue: () {
+        if (Navigator.of(context).canPop()) Navigator.of(context).pop();
         context.read<SettingsBloc>().add(const SettingsEvent.logoutRequested());
       },
     );
   }
 
   Future<void> _launchUrl(String url) async {
-    final myurl = Uri.parse(url);
-    if (!await launchUrl(myurl)) {
-      throw Exception('Could not launch $myurl');
+    if (!await launchUrl(Uri.parse(url))) {
+      throw Exception('Could not launch $url');
     }
   }
 }

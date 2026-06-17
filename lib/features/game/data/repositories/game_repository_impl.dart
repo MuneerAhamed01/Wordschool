@@ -15,6 +15,11 @@ class GameRepositoryImpl implements GameRepository {
   }
 
   @override
+  Future<DataState<GameModel>> loadGameByDate(String dateId) {
+    return _gameDataSource.loadGameByDate(dateId);
+  }
+
+  @override
   Future<DataState<bool>> submitWord(String word) {
     return _gameDataSource.submitWord(word);
   }

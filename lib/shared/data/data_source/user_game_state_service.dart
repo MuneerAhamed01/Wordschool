@@ -22,6 +22,7 @@ abstract class UserGameStateDataSource {
   );
 
   Future<DataState<UserGameDataModel>> updateUserSpecificGameData(
+    String userId,
     UserGameDataModel userGameData,
   );
 
@@ -43,12 +44,18 @@ abstract class UserGameStateDataSource {
     String guessedWord,
   );
 
-  Future<DataState<bool>> updateCompletedGames(
+  Future<DataState<bool>> updateStreak(
     String userId,
+    int streak,
+    String lastStreakDate,
+    int longestStreak,
     int completedGames,
+    int totalGames,
   );
 
-  Future<DataState<bool>> updateTotalGames(String userId, int totalGames);
-
-  Future<DataState<bool>> updateStreak(String userId, int streak);
+  Future<DataState<List<UserGameDataModel>>> getUserGameDataInRange(
+    String userId,
+    String startDateId,
+    String endDateId,
+  );
 }

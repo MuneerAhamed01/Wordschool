@@ -5,31 +5,32 @@ mixin GamePageHelper on State<GamePage> {
   bool _hasNavigated = false;
 
   Future<void> onSubmitWord(BuildContext context) async {
-    final activeWord = context.read<GameBloc>().state.whenOrNull(
-        loaded: (word, userGameState, userSpecificGameData) => word);
+    final gameState = context.read<GameBloc>().state;
+    if (gameState.isGameAlreadyCompleted) return;
 
-    if (activeWord == null) return;
+    final activeWord = gameState.todayWord;
+    if (activeWord.isEmpty) return;
 
     final isValid =
         await context.read<WordCubit>().submitWordIfValid(activeWord);
 
     if (!isValid) {
-      // Shake the tiles of the current word
       _shakeCurrentWord();
+      if (!context.mounted) return;
 
       CustomSnackBar.show(
-        // ignore: use_build_context_synchronously
         context,
         message: 'Not a valid word',
         type: SnackBarType.error,
       );
-    } else {
-      if (!context.mounted) return;
-
-      context
-          .read<GameBloc>()
-          .add(GameEvent.addGuessedWord(_getLatestWord(context)?.word ?? ''));
+      return;
     }
+
+    if (!context.mounted) return;
+
+    context.read<GameBloc>().add(
+          GameEvent.addGuessedWord(_getLatestWord(context)?.word ?? ''),
+        );
   }
 
   void _shakeCurrentWord() {
@@ -37,31 +38,34 @@ mixin GamePageHelper on State<GamePage> {
     final activeWordIndex = state.indexWhere((word) => !word.isCompleted);
 
     if (activeWordIndex != -1) {
-      // Shake all tiles of the current word (5 tiles per word)
-      for (int i = 0; i < 5; i++) {
-        final tileIndex = activeWordIndex * 5 + i;
+      for (int tileIndex = activeWordIndex * 5;
+          tileIndex < activeWordIndex * 5 + 5;
+          tileIndex++) {
         (this as _GamePageState)._shakeFunctions[tileIndex]?.call();
       }
     }
   }
 
-  /// Returns the latest (most recent) non-completed or completed word from the WordCubit state based on a condition.
-  /// If [completed] is true, returns the latest completed word with 5 letters.
-  /// Otherwise, returns the latest non-completed word.
   Word? _getLatestWord(BuildContext context) {
     final words = context.read<WordCubit>().state;
     return words.lastWhere(
-        (w) => w.isCompleted && w.letters.length == GameConstants.maxLetters);
+      (word) =>
+          word.isCompleted && word.letters.length == GameConstants.maxLetters,
+    );
   }
 
   Future<void> listenToWord(BuildContext context, List<Word> words) async {
     if (_hasNavigated) return;
 
-    final todayWord = context.read<GameBloc>().state.todayWord;
+    final gameBlocState = context.read<GameBloc>().state;
+    if (gameBlocState.isGameAlreadyCompleted) return;
 
+    final todayWord = gameBlocState.todayWord;
     final completedWords = words
-        .where((w) =>
-            w.isCompleted && w.letters.length == GameConstants.maxLetters)
+        .where(
+          (word) =>
+              word.isCompleted && word.letters.length == GameConstants.maxLetters,
+        )
         .toList();
 
     final currentCompletedCount = completedWords.length;
@@ -77,33 +81,41 @@ mixin GamePageHelper on State<GamePage> {
     final target = todayWord.trim().toUpperCase();
 
     if (lastGuess == target) {
-      await Future.delayed(const Duration(milliseconds: 800));
-      _hasNavigated = true;
-      if (context.mounted) {
-        _onMarkGameCompleted(context, true);
-        context.push(
-          WinningPage.routeName,
-          extra: WinningPageParam(word: todayWord, isLost: false),
-        );
-      }
-
+      await _navigateToWinning(context, isLost: false);
       return;
     }
 
     if (currentCompletedCount >= GameConstants.maxWords) {
-      await Future.delayed(const Duration(milliseconds: 800));
-      _hasNavigated = true;
-      if (context.mounted) {
-        _onMarkGameCompleted(context, false);
-        context.push(
-          WinningPage.routeName,
-          extra: WinningPageParam(word: todayWord, isLost: true),
-        );
-      }
+      await _navigateToWinning(context, isLost: true);
     }
   }
 
-  void _onMarkGameCompleted(BuildContext context, bool isCorrect) {
-    context.read<GameBloc>().add(GameEvent.markGameCompleted(isCorrect));
+  Future<void> _navigateToWinning(
+    BuildContext context, {
+    required bool isLost,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (!context.mounted || _hasNavigated) return;
+
+    _hasNavigated = true;
+    final gameBlocState = context.read<GameBloc>().state;
+
+    context.read<GameBloc>().add(GameEvent.markGameCompleted(!isLost));
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    if (!context.mounted) return;
+
+    final updatedState = context.read<GameBloc>().state;
+
+    context.push(
+      WinningPage.routeName,
+      extra: WinningPageParam(
+        word: gameBlocState.todayWord,
+        isLost: isLost,
+        isArchiveMode: gameBlocState.isArchiveMode,
+        gameDateId: gameBlocState.gameDateId,
+        updatedStreak: updatedState.userGameState?.streak,
+      ),
+    );
   }
 }

@@ -6,6 +6,8 @@ class GameState with _$GameState {
   const factory GameState.loading() = _Loading;
   const factory GameState.loaded({
     required String todayWord,
+    required String gameDateId,
+    required GameMode gameMode,
     UserGameStateEntity? userGameState,
     UserGameDataEntity? userSpecificGameData,
   }) = _Loaded;
@@ -15,15 +17,42 @@ class GameState with _$GameState {
 extension GameStateX on GameState {
   String get todayWord =>
       whenOrNull(
-        loaded: (todayWord, userGameState, userSpecificGameData) => todayWord,
+        loaded: (todayWord, gameDateId, gameMode, userGameState,
+                userSpecificGameData) =>
+            todayWord,
       ) ??
       '';
+
+  String get gameDateId =>
+      whenOrNull(
+        loaded: (todayWord, gameDateId, gameMode, userGameState,
+                userSpecificGameData) =>
+            gameDateId,
+      ) ??
+      '';
+
+  GameMode get gameMode =>
+      whenOrNull(
+        loaded: (todayWord, gameDateId, gameMode, userGameState,
+                userSpecificGameData) =>
+            gameMode,
+      ) ??
+      GameMode.daily;
+
   UserGameStateEntity? get userGameState => whenOrNull(
-        loaded: (todayWord, userGameState, userSpecificGameData) =>
+        loaded: (todayWord, gameDateId, gameMode, userGameState,
+                userSpecificGameData) =>
             userGameState,
       );
+
   UserGameDataEntity? get userSpecificGameData => whenOrNull(
-        loaded: (todayWord, userGameState, userSpecificGameData) =>
+        loaded: (todayWord, gameDateId, gameMode, userGameState,
+                userSpecificGameData) =>
             userSpecificGameData,
       );
+
+  bool get isArchiveMode => gameMode == GameMode.archive;
+
+  bool get isGameAlreadyCompleted =>
+      userSpecificGameData?.isCompleted ?? false;
 }

@@ -1,33 +1,34 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wordshool/config/themes/colors.dart';
+import 'package:wordshool/core/enums/game_mode.dart';
 import 'package:wordshool/core/enums/word_tile_type.dart';
+import 'package:wordshool/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:wordshool/features/game/presentation/bloc/game_bloc/game_bloc.dart';
 import 'package:wordshool/features/game/presentation/bloc/word_cubit/word_cubit.dart';
 import 'package:wordshool/features/game/presentation/utils/constants.dart';
 import 'package:wordshool/features/game/presentation/utils/letter.dart';
 import 'package:wordshool/features/game/presentation/utils/word.dart';
+import 'package:wordshool/features/game/presentation/widgets/game_result_footer.dart';
+import 'package:wordshool/features/game/presentation/widgets/game_result_hero.dart';
 import 'package:wordshool/features/game/presentation/widgets/keyboard/keyboard.dart';
+import 'package:wordshool/features/settings/presentation/pages/settings_page.dart';
+import 'package:wordshool/features/winning/presentation/pages/params/winning_page_param.dart';
+import 'package:wordshool/features/winning/presentation/pages/winning_page.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_data.dart';
-import 'package:wordshool/shared/domains/entities/user_game_state/user_game_state.dart';
-import 'package:wordshool/shared/presentations/widgets/gradient_logo.dart';
+import 'package:wordshool/shared/presentations/widgets/game_scaffold.dart';
+import 'package:wordshool/shared/presentations/widgets/info_banner.dart';
 import 'package:wordshool/shared/presentations/widgets/shimmer_grid_item.dart';
 import 'package:wordshool/shared/presentations/widgets/snackbar.dart';
+import 'package:wordshool/shared/presentations/widgets/streak_chip.dart';
 import 'package:wordshool/shared/presentations/widgets/wordle_tile/tile.dart';
-import 'package:wordshool/features/winning/presentation/pages/winning_page.dart';
-import 'package:wordshool/features/winning/presentation/pages/params/winning_page_param.dart';
-import 'package:wordshool/shared/data/models/user.dart';
-import 'package:wordshool/shared/data/data_source/session_handler.dart';
-import 'package:wordshool/di.dart';
-import 'package:wordshool/features/settings/presentation/pages/settings_page.dart';
 
 part 'game_page_helper.dart';
 
 class GamePage extends StatefulWidget {
   static const String routeName = '/game';
+
   const GamePage({super.key});
 
   @override
@@ -35,201 +36,176 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> with GamePageHelper {
-  // Store shake functions for each tile
   final Map<int, VoidCallback> _shakeFunctions = {};
-
-  String _getUserInitial(WordSchoolUserModel? user) {
-    final name = user?.name?.trim();
-    if (name != null && name.isNotEmpty) {
-      return name.substring(0, 1).toUpperCase();
-    }
-    final email = user?.email.trim();
-    if (email != null && email.isNotEmpty) {
-      return email.substring(0, 1).toUpperCase();
-    }
-    return 'A';
-  }
+  String? _lastRestoredKey;
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GameBloc, GameState>(
       builder: (context, state) {
-        final body = state.whenOrNull(
-          loaded: (word, userGameState, userSpecificGameData) =>
-              _buildContent(word, userGameState, userSpecificGameData),
-          error: (message) => _buildLoadingBody(),
-          loading: () => _buildLoadingBody(),
-          initial: () => _buildLoadingBody(),
-        );
+        _scheduleRestoreIfNeeded(context, state);
 
         return BlocListener<GameBloc, GameState>(
-          listenWhen: (previous, current) {
-            return previous.userSpecificGameData?.id !=
-                current.userSpecificGameData?.id;
-          },
-          listener: (context, state) {
-            if (state.userSpecificGameData != null) {
-              context.read<WordCubit>().restoreGuesses(
-                    todayWord: state.todayWord,
-                    words: state.userSpecificGameData?.guessedWords ?? [],
-                  );
-            }
-          },
+          listenWhen: (prev, curr) =>
+              prev.userSpecificGameData?.id != curr.userSpecificGameData?.id ||
+              prev.userSpecificGameData?.guessedWords.length !=
+                  curr.userSpecificGameData?.guessedWords.length ||
+              prev.todayWord != curr.todayWord,
+          listener: (context, state) => _tryRestoreGuesses(context, state),
           child: BlocListener<WordCubit, List<Word>>(
             listener: listenToWord,
-            child: Scaffold(
-              appBar: AppBar(
-                centerTitle: false,
-                title: Text(
-                  'WordSchool'.toUpperCase(),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: MyColors.white, fontWeight: FontWeight.bold),
-                ),
-                actions: [
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 3),
-                      child: IconButton(
-                        onPressed: () {
-                          context.push(SettingsPage.routeName);
-                        },
-                        icon: const Icon(Icons.settings),
-                      ),
+            child: GameScaffold(
+              appBar: _buildAppBar(context, state),
+              body: state.whenOrNull(
+                    loaded: (word, gameDateId, gameMode, userGameState,
+                            userSpecificGameData) =>
+                        _buildContent(
+                      word,
+                      gameMode,
+                      userSpecificGameData,
+                      state.userGameState?.streak,
                     ),
-                  ),
-                ],
-              ),
-              body: body,
+                    error: (message) => _buildError(message),
+                    loading: () => _buildLoading(),
+                    initial: () => _buildLoading(),
+                  ) ??
+                  _buildLoading(),
             ),
           ),
         );
       },
     );
+  }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context, GameState state) {
+    return AppBar(
+      leading: IconButton(
+        icon: const Icon(Icons.close_rounded),
+        onPressed: () => context.go(DashboardPage.routeName),
+      ),
+      title: Text(_titleForState(state)),
+      actions: [
+        if (state.userGameState != null && !state.isArchiveMode)
+          Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: Center(child: StreakChip(streak: state.userGameState!.streak)),
+          ),
+        IconButton(
+          onPressed: () => context.push(SettingsPage.routeName),
+          icon: const Icon(Icons.settings_outlined),
+        ),
+        const SizedBox(width: 4),
+      ],
+    );
+  }
+
+  String _titleForState(GameState state) {
+    if (state.isArchiveMode) return state.gameDateId;
+    return 'WordSchool';
+  }
+
+  void _scheduleRestoreIfNeeded(BuildContext context, GameState state) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _tryRestoreGuesses(context, state);
+    });
+  }
+
+  void _tryRestoreGuesses(BuildContext context, GameState state) {
+    final data = state.userSpecificGameData;
+    final todayWord = state.todayWord;
+    if (data == null || todayWord.isEmpty) return;
+
+    final words = data.guessedWords;
+    if (words.isEmpty) return;
+
+    final key = '${data.id}:${words.length}:$todayWord';
+    if (_lastRestoredKey == key) return;
+    _lastRestoredKey = key;
+
+    context.read<WordCubit>().restoreGuesses(
+          todayWord: todayWord,
+          words: words,
+        );
   }
 
   Widget _buildContent(
     String word,
-    UserGameStateEntity? userGameState,
-    UserGameDataEntity? userSpecificGameData,
+    GameMode gameMode,
+    UserGameDataEntity? userGameData,
+    int? streak,
   ) {
-    return SafeArea(
-      child: Column(
-        children: [
-          SizedBox(height: 10),
-          _buildWords(),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 24, top: 16),
-              child: _buildIndicator(context),
-            ),
+    final isCompleted = userGameData?.isCompleted ?? false;
+    final isWin = userGameData?.isCorrect ?? false;
+    final guessCount = userGameData?.guessedWords.length ?? 0;
+
+    return Column(
+      children: [
+        if (gameMode == GameMode.archive)
+          const InfoBanner(
+            message: 'Archive mode — progress here does not affect your streak',
+            icon: Icons.history_rounded,
+            tone: InfoBannerTone.info,
           ),
-          Spacer(),
-          // Padding(
-          //   padding: const EdgeInsets.only(left: 16, bottom: 10),
-          //   child: Align(
-          //     alignment: Alignment.centerLeft,
-          //     child: GlowingLightbulbButton(
-          //       size: 24,
-          //       onTap: () {},
-          //     ),
-          //   ),
-          // ),
-          Padding(
-            padding: EdgeInsets.all(8),
-            child: _buildCustomButton(),
+        if (isCompleted)
+          GameResultHero(
+            isWin: isWin,
+            answerWord: word,
+            guessCount: guessCount,
+            streak: streak,
+            isArchiveMode: gameMode == GameMode.archive,
           ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: Align(
+            alignment: Alignment.center,
+            child: _buildBoard(isReadOnly: isCompleted),
+          ),
+        ),
+        if (isCompleted)
+          GameResultFooter(
+            isWin: isWin,
+            isArchiveMode: gameMode == GameMode.archive,
+          )
+        else ...[
+          _buildGuessCounter(),
+          const SizedBox(height: 8),
+          _buildKeyboard(),
+          const SizedBox(height: 8),
         ],
-      ),
+      ],
     );
   }
 
-  Widget _buildCustomButton() {
+  Widget _buildBoard({required bool isReadOnly}) {
     return BlocBuilder<WordCubit, List<Word>>(
-      builder: (context, state) {
-        // Collect oranged (WordTileType.orange), greened (WordTileType.green), and disabled (WordTileType.error) letter values from state
-        final Set<String> orangedList = <String>{};
-        final Set<String> greenedList = <String>{};
-        final Set<String> disabledList = <String>{};
-
-        for (final word in state) {
-          for (final letter in word.letters) {
-            final upperChar = letter.letter.toUpperCase();
-            if (letter.type == WordTileType.orange) {
-              orangedList.add(upperChar);
-            } else if (letter.type == WordTileType.green) {
-              greenedList.add(upperChar);
-            } else if (letter.type == WordTileType.none) {
-              disabledList.add(upperChar);
-            }
-          }
-        }
-
-        return CustomKeyboard(
-          onKeyPressed: (value) {
-            context.read<WordCubit>().addLetter(Letter(letter: value));
-          },
-          onEnterPressed: () => onSubmitWord(context),
-          onBackspacePressed: () {
-            context.read<WordCubit>().removeLastLetter();
-          },
-          orangedList: orangedList.toList(),
-          greenedList: greenedList.toList(),
-          disabledList: disabledList.toList(),
-        );
-      },
-    );
-  }
-
-  Widget _buildIndicator(BuildContext context) {
-    return BlocBuilder<WordCubit, List<Word>>(
-      builder: (context, state) {
-        // Count completed words
-        final completedWords = min(
-            state.where((word) => word.isCompleted).length + 1,
-            GameConstants.maxWords);
-        final maxWords = GameConstants.maxWords;
-
-        return Text(
-          '$completedWords / $maxWords',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.white.withOpacity(0.7),
-              ),
-        );
-      },
-    );
-  }
-
-  Widget _buildWords() {
-    return BlocBuilder<WordCubit, List<Word>>(
-      builder: (context, state) {
+      builder: (context, words) {
         return GridView.builder(
-          itemCount: 5 * 5,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          itemCount: 25,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 5,
+            mainAxisSpacing: 6,
+            crossAxisSpacing: 6,
             childAspectRatio: 1,
-            mainAxisSpacing: 5,
-            crossAxisSpacing: 5,
           ),
-          shrinkWrap: true,
           itemBuilder: (_, index) {
-            final wordIndex =
-                index ~/ 5; // Integer division to get word index (0-4)
-            final letterIndex =
-                index % 5; // Modulo to get letter index within word (0-4)
-
-            final word = state.elementAtOrNull(wordIndex);
+            final wordIndex = index ~/ 5;
+            final letterIndex = index % 5;
+            final word = words.elementAtOrNull(wordIndex);
             final letter = word?.letters.elementAtOrNull(letterIndex);
 
             return WordTile(
               tileType: letter?.type ?? WordTileType.none,
-              shakeCallBack: (shakeFunction) {
-                // Store the shake function for this specific tile
-                _shakeFunctions[index] = shakeFunction as VoidCallback;
-              },
               value: letter?.letter ?? '',
+              revealDelay: isReadOnly
+                  ? Duration.zero
+                  : Duration(milliseconds: 100 * letterIndex),
+              instantReveal: isReadOnly,
+              shakeCallBack: (fn) {
+                _shakeFunctions[index] = fn as VoidCallback;
+              },
             );
           },
         );
@@ -237,27 +213,75 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
     );
   }
 
-  Widget _buildLoadingBody() {
-    return SafeArea(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          GridView.builder(
-            itemCount: 5 * 5,
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 5,
-              childAspectRatio: 1,
-              mainAxisSpacing: 5,
-              crossAxisSpacing: 5,
-            ),
-            shrinkWrap: true,
-            itemBuilder: (_, index) => ShimmerGridItem(
-              baseColor: Colors.grey[800]!,
-              highlightColor: Colors.grey[700]!,
-            ),
+  Widget _buildGuessCounter() {
+    return BlocBuilder<WordCubit, List<Word>>(
+      builder: (context, words) {
+        final done = words.where((w) => w.isCompleted).length;
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Text(
+            'Guess ${(done + 1).clamp(1, GameConstants.maxWords)} of ${GameConstants.maxWords}',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: MyColors.textMuted,
+                  fontWeight: FontWeight.w600,
+                ),
           ),
-        ],
+        );
+      },
+    );
+  }
+
+  Widget _buildKeyboard() {
+    return BlocBuilder<WordCubit, List<Word>>(
+      builder: (context, words) {
+        final orange = <String>{};
+        final green = <String>{};
+        final absent = <String>{};
+
+        for (final word in words) {
+          for (final letter in word.letters) {
+            final c = letter.letter.toUpperCase();
+            if (letter.type == WordTileType.orange) orange.add(c);
+            if (letter.type == WordTileType.green) green.add(c);
+            if (letter.type == WordTileType.none) absent.add(c);
+          }
+        }
+
+        return CustomKeyboard(
+          onKeyPressed: (v) =>
+              context.read<WordCubit>().addLetter(Letter(letter: v)),
+          onEnterPressed: () => onSubmitWord(context),
+          onBackspacePressed: () =>
+              context.read<WordCubit>().removeLastLetter(),
+          orangedList: orange.toList(),
+          greenedList: green.toList(),
+          disabledList: absent.toList(),
+        );
+      },
+    );
+  }
+
+  Widget _buildLoading() {
+    return GridView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 5,
+        mainAxisSpacing: 6,
+        crossAxisSpacing: 6,
+      ),
+      itemCount: 25,
+      itemBuilder: (_, __) => ShimmerGridItem(
+        baseColor: MyColors.gameSurface,
+        highlightColor: MyColors.gameBorder,
+      ),
+    );
+  }
+
+  Widget _buildError(String message) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Text(message, textAlign: TextAlign.center),
       ),
     );
   }

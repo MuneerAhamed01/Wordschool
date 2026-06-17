@@ -11,7 +11,7 @@ dependencies:
     sdk: flutter
   
   cupertino_icons: ^1.0.8
-  google_fonts: ^6.2.1
+  google_fonts: ^6.3.3
   flip_card: ^0.7.0
   auto_size_text: ^3.0.0
   english_words: ^4.0.0
@@ -68,5 +68,6 @@ flutter:
     - assets/audio/
     - .env
     - assets/words/words.txt
+    - assets/words/answers.txt
     - assets/legal/
 

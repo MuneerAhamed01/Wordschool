@@ -1,115 +1,107 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:wordshool/config/themes/colors.dart';
+import 'package:wordshool/shared/presentations/widgets/pressable_scale.dart';
 import 'package:wordshool/shared/presentations/widgets/progress_indicator.dart';
 
-enum ButtonType { grey, background }
+enum ButtonVariant { primary, secondary, ghost }
 
-class AppButton extends StatefulWidget {
+class AppButton extends StatelessWidget {
   const AppButton({
     super.key,
     this.onTap,
-    this.onTapIcon,
     this.label,
     this.icon,
-    this.type = ButtonType.grey,
-    this.iconSize,
-    this.labelBuilder,
-    this.backgroundColor,
-    this.iconColor,
-    this.iconPadding,
+    this.variant = ButtonVariant.primary,
     this.isDisabled = false,
     this.isLoading = false,
+    this.expand = true,
   });
 
   final VoidCallback? onTap;
-
-  final VoidCallback? onTapIcon;
-
   final String? label;
-
   final IconData? icon;
-
-  final ButtonType type;
-
-  final double? iconSize;
-
-  final Widget? labelBuilder;
-
-  final Color? backgroundColor;
-
-  final Color? iconColor;
-
-  final EdgeInsets? iconPadding;
-
+  final ButtonVariant variant;
   final bool isDisabled;
-
   final bool isLoading;
+  final bool expand;
 
-  @override
-  State<AppButton> createState() => _AppButtonState();
-}
-
-class _AppButtonState extends State<AppButton> {
-  double _opacity = 1;
   @override
   Widget build(BuildContext context) {
-    return AnimatedOpacity(
-      opacity: _opacity,
-      duration: const Duration(milliseconds: 200),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: widget.isDisabled
-            ? null
-            : () {
-                setState(() {
-                  _opacity = 0.7;
-                });
+    final colors = _resolveColors();
+    final enabled = !isDisabled && !isLoading && onTap != null;
 
-                widget.onTap?.call();
-
-                setState(() {
-                  _opacity = 1;
-                });
-              },
-        child: Center(child: _buttonLabel(context)),
+    final button = PressableScale(
+      enabled: enabled,
+      onTap: onTap ?? () {},
+      child: AnimatedOpacity(
+        opacity: enabled ? 1 : 0.45,
+        duration: const Duration(milliseconds: 200),
+        child: Container(
+          height: 52,
+          width: expand ? double.infinity : null,
+          padding: expand ? null : const EdgeInsets.symmetric(horizontal: 24),
+          decoration: BoxDecoration(
+            color: colors.background,
+            borderRadius: BorderRadius.circular(12),
+            border: colors.border != null
+                ? Border.all(color: colors.border!)
+                : null,
+          ),
+          child: isLoading
+              ? const Center(child: AppLoadingIndicator())
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: expand ? MainAxisSize.max : MainAxisSize.min,
+                  children: [
+                    if (icon != null) ...[
+                      Icon(icon, size: 20, color: colors.foreground),
+                      const SizedBox(width: 8),
+                    ],
+                    Text(
+                      label ?? '',
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: colors.foreground,
+                          ),
+                    ),
+                  ],
+                ),
+        ),
       ),
     );
+
+    return button;
   }
 
-  Widget _buttonLabel(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          gradient: LinearGradient(colors: [
-            if (widget.type == ButtonType.grey) ...[
-              MyColors.gray5,
-              MyColors.gray5,
-            ] else ...[
-              MyColors.gray6,
-              MyColors.gray6,
-            ]
-          ])),
-      width: double.infinity,
-      child: widget.isLoading
-          ? _buildLoading()
-          : Center(
-              child: Text(
-                widget.label!,
-                textScaler: const TextScaler.linear(1.0),
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w300,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-              ),
-            ),
-    );
+  _ButtonColors _resolveColors() {
+    switch (variant) {
+      case ButtonVariant.primary:
+        return const _ButtonColors(
+          background: MyColors.tileCorrect,
+          foreground: MyColors.white,
+        );
+      case ButtonVariant.secondary:
+        return const _ButtonColors(
+          background: MyColors.keyAction,
+          foreground: MyColors.white,
+        );
+      case ButtonVariant.ghost:
+        return const _ButtonColors(
+          background: Colors.transparent,
+          foreground: MyColors.white,
+          border: MyColors.gameBorder,
+        );
+    }
   }
+}
 
-  Widget _buildLoading() {
-    return const Center(
-      child: AppLoadingIndicator(),
-    );
-  }
+class _ButtonColors {
+  const _ButtonColors({
+    required this.background,
+    required this.foreground,
+    this.border,
+  });
+
+  final Color background;
+  final Color foreground;
+  final Color? border;
 }

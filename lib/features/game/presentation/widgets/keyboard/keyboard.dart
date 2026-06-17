@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wordshool/config/themes/colors.dart';
+import 'package:wordshool/shared/presentations/widgets/pressable_scale.dart';
 
 part 'helper.dart';
 
@@ -30,27 +31,23 @@ class _CustomKeyboardState extends State<CustomKeyboard>
   Widget _buildKey(String key) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(2.0).copyWith(bottom: 6),
-        child: Material(
-          borderRadius: BorderRadius.circular(4),
-          color: backgroundColor(key),
-          child: InkWell(
-            onTap: () {
-              // widget.controller.play();
-              widget.onKeyPressed(key);
-            },
-            child: Container(
-              padding: const EdgeInsets.all(12.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Center(
-                child: Text(
-                  key,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: textColor(key),
-                      ),
+        padding: const EdgeInsets.all(3),
+        child: PressableScale(
+          onTap: () => widget.onKeyPressed(key),
+          scale: 0.92,
+          child: Container(
+            height: 52,
+            decoration: BoxDecoration(
+              color: keyBackground(key),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Center(
+              child: Text(
+                key,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: keyTextColor(key),
                 ),
               ),
             ),
@@ -60,32 +57,42 @@ class _CustomKeyboardState extends State<CustomKeyboard>
     );
   }
 
-  Widget _buildWideButton(String label, VoidCallback onPressed) {
+  Widget _buildActionKey({
+    required String label,
+    required VoidCallback onPressed,
+    required int flex,
+    IconData? icon,
+  }) {
     return Expanded(
-      flex: 2,
+      flex: flex,
       child: Padding(
-        padding: const EdgeInsets.all(2.0).copyWith(bottom: 6),
-        child: Material(
-          borderRadius: BorderRadius.circular(4),
-          color: Colors.white,
-          child: InkWell(
-            onTap: () {
-              // widget.controller.play();
-              onPressed.call();
-            },
-            child: Container(
-              alignment: Alignment.center,
-              padding: const EdgeInsets.all(12.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                label,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+        padding: const EdgeInsets.all(3),
+        child: PressableScale(
+          onTap: onPressed,
+          scale: 0.92,
+          child: Container(
+            height: 52,
+            decoration: BoxDecoration(
+              color: MyColors.keyAction,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, size: 18, color: MyColors.white),
+                  if (label.isNotEmpty) const SizedBox(width: 4),
+                ],
+                if (label.isNotEmpty)
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: MyColors.white,
                     ),
-              ),
+                  ),
+              ],
             ),
           ),
         ),
@@ -95,19 +102,32 @@ class _CustomKeyboardState extends State<CustomKeyboard>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ...keyboardLayout
-            .map((row) => Row(children: row.map(_buildKey).toList())),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildWideButton('Enter', widget.onEnterPressed),
-            _buildWideButton('Clear', widget.onBackspacePressed),
-          ],
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      child: Column(
+        children: [
+          ...keyboardLayout.map(
+            (row) => Row(
+              children: row.map(_buildKey).toList(),
+            ),
+          ),
+          Row(
+            children: [
+              _buildActionKey(
+                label: 'ENTER',
+                onPressed: widget.onEnterPressed,
+                flex: 3,
+              ),
+              _buildActionKey(
+                label: '',
+                onPressed: widget.onBackspacePressed,
+                flex: 2,
+                icon: Icons.backspace_outlined,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

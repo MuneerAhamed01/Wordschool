@@ -31,11 +31,13 @@ class UserGameDataModel extends UserGameDataEntity {
 
   factory UserGameDataModel.fromJson(Map<String, dynamic> json) {
     return UserGameDataModel(
-      id: json['id'],
-      guessedWords:
-          (json['guessedWords'] as List).map((e) => e.toString()).toList(),
-      isCompleted: json['isCompleted'],
-      isCorrect: json['isCorrect'],
+      id: json['id'] as String,
+      guessedWords: (json['guessedWords'] as List?)
+              ?.map((entry) => entry.toString())
+              .toList() ??
+          const [],
+      isCompleted: (json['isCompleted'] as bool?) ?? false,
+      isCorrect: (json['isCorrect'] as bool?) ?? false,
       createdDate: FirebaseDTConverter.fromTimestamp(json['createdDate']),
       updatedDate: FirebaseDTConverter.fromTimestamp(json['updatedDate']),
     );

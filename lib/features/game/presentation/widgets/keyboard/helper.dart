@@ -7,28 +7,14 @@ mixin CustomKeyboardHelper on State<CustomKeyboard> {
     ['Z', 'X', 'C', 'V', 'B', 'N', 'M'],
   ];
 
-  Color backgroundColor(String key) {
-    if (widget.greenedList.contains(key)) {
-      return MyColors.green5;
-    }
-
-    if (widget.orangedList.contains(key)) {
-      return MyColors.orange4;
-    }
-
-    if (widget.disabledList.contains(key)) {
-      return MyColors.gray5;
-    }
-    return Colors.white;
+  Color keyBackground(String key) {
+    if (widget.greenedList.contains(key)) return MyColors.tileCorrect;
+    if (widget.orangedList.contains(key)) return MyColors.tilePresent;
+    if (widget.disabledList.contains(key)) return MyColors.tileAbsent;
+    return MyColors.keyDefault;
   }
 
-  Color textColor(String key) {
-    final isAvailable = widget.orangedList.contains(key) ||
-        widget.greenedList.contains(key) ||
-        widget.disabledList.contains(key);
-
-    if (isAvailable) return Colors.white;
-
-    return Colors.black;
+  Color keyTextColor(String key) {
+    return MyColors.white;
   }
 }

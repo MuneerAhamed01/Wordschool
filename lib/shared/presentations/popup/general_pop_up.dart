@@ -34,16 +34,9 @@ class SlidingDialog extends StatelessWidget {
         height: 300,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-          border: Border.all(
-            color: MyColors.gray5,
-            width: 6,
-          ),
-          borderRadius: BorderRadius.circular(8),
-          gradient: const LinearGradient(
-            begin: Alignment.bottomRight,
-            end: Alignment.topLeft,
-            colors: [MyColors.gray5, MyColors.gray6],
-          ),
+          color: MyColors.gameSurface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: MyColors.gameBorder),
         ),
         child: Column(
           children: [
@@ -71,7 +64,7 @@ class SlidingDialog extends StatelessWidget {
                   child: AppButton(
                     onTap: onPressContinue,
                     label: 'Continue',
-                    type: ButtonType.grey,
+                    variant: ButtonVariant.primary,
                   ),
                 ),
               ),
@@ -88,7 +81,7 @@ class SlidingDialog extends StatelessWidget {
                     Navigator.of(context).pop();
                   },
                   label: 'Back',
-                  type: ButtonType.background,
+                  variant: ButtonVariant.ghost,
                 ),
               ),
             ),

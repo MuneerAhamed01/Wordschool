@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:wordshool/core/enums/game_mode.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
-import 'package:wordshool/features/game/domain/usecase/load_today_word.dart';
+import 'package:wordshool/features/game/domain/usecase/load_game_by_date.dart';
+import 'package:wordshool/features/game/presentation/utils/game_load_config.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_data.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_state.dart';
 import 'package:wordshool/shared/domains/usercases/guessed_word_usecase/add_guessed_word_usecase.dart';
@@ -17,45 +19,51 @@ part 'game_state.dart';
 part 'game_bloc.freezed.dart';
 
 class GameBloc extends Bloc<GameEvent, GameState> {
-  final LoadTodayWordUseCase _loadTodayWordUseCase;
-
+  final LoadGameByDateUseCase _loadGameByDateUseCase;
   final LoadUserGameStateUseCase _loadUserGameStateUseCase;
-
   final LoadUserSpecificGameStateUseCase _loadUserSpecificGameStateUseCase;
-
   final AddGuessedWordUseCase _addGuessedWordUseCase;
-
   final MarkGameCompletedUseCase _markGameCompletedUseCase;
+  final GameLoadConfig _loadConfig;
 
   GameBloc({
-    required LoadTodayWordUseCase loadTodayWordUseCase,
+    required LoadGameByDateUseCase loadGameByDateUseCase,
     required LoadUserGameStateUseCase loadUserGameStateUseCase,
     required LoadUserSpecificGameStateUseCase loadUserSpecificGameStateUseCase,
     required AddGuessedWordUseCase addGuessedWordUseCase,
     required MarkGameCompletedUseCase markGameCompletedUseCase,
-  })  : _loadTodayWordUseCase = loadTodayWordUseCase,
+    required GameLoadConfig loadConfig,
+  })  : _loadGameByDateUseCase = loadGameByDateUseCase,
         _loadUserGameStateUseCase = loadUserGameStateUseCase,
         _loadUserSpecificGameStateUseCase = loadUserSpecificGameStateUseCase,
         _addGuessedWordUseCase = addGuessedWordUseCase,
         _markGameCompletedUseCase = markGameCompletedUseCase,
+        _loadConfig = loadConfig,
         super(const GameState.initial()) {
-    on<_LoadTodayWord>(_onLoadTodayWord);
+    on<_LoadGame>(_onLoadGame);
     on<_SubmitWord>(_onSubmitWord);
     on<_LoadUserGameState>(_onLoadUserGameState);
     on<_LoadUserSpecificGameData>(_onLoadUserSpecificGameData);
     on<_AddGuessedWord>(_onAddGuessedWord);
     on<_MarkGameCompleted>(_onMarkGameCompleted);
-    add(_LoadTodayWord());
+    add(const _LoadGame());
   }
 
-  Future<void> _onLoadTodayWord(
-      _LoadTodayWord event, Emitter<GameState> emit) async {
+  Future<void> _onLoadGame(_LoadGame event, Emitter<GameState> emit) async {
     emit(const GameState.loading());
-    final result = await _loadTodayWordUseCase();
+
+    final result =
+        await _loadGameByDateUseCase(param: _loadConfig.gameDateId);
 
     if (result is DataSuccess) {
-      emit(GameState.loaded(todayWord: result.data!.todayWord));
-      add(_LoadUserGameState());
+      emit(
+        GameState.loaded(
+          todayWord: result.data!.todayWord,
+          gameDateId: result.data!.id,
+          gameMode: _loadConfig.gameMode,
+        ),
+      );
+      add(const _LoadUserGameState());
       add(_LoadUserSpecificGameData(result.data!.id));
     } else {
       emit(GameState.error(result.error?.message ?? 'Something went wrong'));
@@ -64,8 +72,6 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
   Future<void> _onSubmitWord(_SubmitWord event, Emitter<GameState> emit) async {
     emit(const GameState.loading());
-    // final result = await _submitWordUseCase(event.word);
-    // emit(GameState.loaded(result));
   }
 
   Future<void> _onLoadUserGameState(
@@ -74,9 +80,13 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   ) async {
     final result = await _loadUserGameStateUseCase();
     if (result is DataSuccess) {
-      emit(state.maybeMap(
-          loaded: (state) => state.copyWith(userGameState: result.data!),
-          orElse: () => state));
+      emit(
+        state.maybeMap(
+          loaded: (loadedState) =>
+              loadedState.copyWith(userGameState: result.data!),
+          orElse: () => state,
+        ),
+      );
     } else {
       emit(GameState.error(result.error?.message ?? 'Something went wrong'));
     }
@@ -86,11 +96,13 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     _LoadUserSpecificGameData event,
     Emitter<GameState> emit,
   ) async {
-    final result = await _loadUserSpecificGameStateUseCase(param: event.gameId);
+    final result =
+        await _loadUserSpecificGameStateUseCase(param: event.gameId);
     if (result is DataSuccess) {
       emit(
         state.maybeMap(
-          loaded: (state) => state.copyWith(userSpecificGameData: result.data!),
+          loaded: (loadedState) =>
+              loadedState.copyWith(userSpecificGameData: result.data!),
           orElse: () => state,
         ),
       );
@@ -103,7 +115,9 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     _AddGuessedWord event,
     Emitter<GameState> emit,
   ) async {
-    _addGuessedWordUseCase(
+    if (state.isGameAlreadyCompleted) return;
+
+    await _addGuessedWordUseCase(
       param: AddGuessedWordParam(
         gameId: state.userSpecificGameData!.id,
         guessedWord: event.word,
@@ -111,16 +125,29 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     );
   }
 
-  /// TODO: IF THIS IS NOT REFLECTING ON THE UI WE CAN HANDLE IT IN CLOUD FUNCTIONS
   Future<void> _onMarkGameCompleted(
     _MarkGameCompleted event,
     Emitter<GameState> emit,
   ) async {
+    if (state.isGameAlreadyCompleted) return;
+
     await _markGameCompletedUseCase(
       param: MarkGameCompletedParam(
         gameId: state.userSpecificGameData!.id,
         isCorrect: event.isCorrect,
+        isArchiveMode: state.isArchiveMode,
       ),
     );
+
+    final userStateResult = await _loadUserGameStateUseCase();
+    if (userStateResult is DataSuccess) {
+      emit(
+        state.maybeMap(
+          loaded: (loadedState) =>
+              loadedState.copyWith(userGameState: userStateResult.data!),
+          orElse: () => state,
+        ),
+      );
+    }
   }
 }

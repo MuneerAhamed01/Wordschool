@@ -3,17 +3,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
-import 'package:wordshool/config/themes/colors.dart';
-import 'package:wordshool/config/themes/fonts.dart';
+import 'package:wordshool/config/themes/app_theme.dart';
 import 'package:wordshool/core/routes/app_router.dart';
 import 'package:wordshool/di.dart';
 import 'package:wordshool/features/auth/presentation/pages/auth_page.dart';
-import 'package:wordshool/features/game/presentation/pages/game_page.dart';
+import 'package:wordshool/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:wordshool/firebase_options.dart';
 import 'package:wordshool/shared/data/data_source/session_handler.dart';
 
 Future<void> main() async {
-  // WidgetBinding
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
@@ -26,9 +24,8 @@ Future<void> main() async {
 
   await initializeDependency();
 
-  // Compute initial route and create a single GoRouter instance
   final hasUser = getIt<SessionHandler>().currentUser != null;
-  final initialRoute = hasUser ? GamePage.routeName : AuthPage.routeName;
+  final initialRoute = hasUser ? DashboardPage.routeName : AuthPage.routeName;
   final router = appRouter(initialRoute);
 
   runApp(MainApp(router: router));
@@ -43,11 +40,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'WordSchool',
-      theme: ThemeData(
-        colorScheme: MyColorScheme.dark(),
-        useMaterial3: true,
-        textTheme: ThemeData.light().textTheme.nunito,
-      ),
+      theme: AppTheme.gameDark(),
       routerConfig: router,
     );
   }

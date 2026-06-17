@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordshool/core/utils/valid_words.dart';
+import 'package:wordshool/features/archive/domain/usecases/load_user_game_history_usecase.dart';
 import 'package:wordshool/features/auth/data/data_source/auth_service.dart';
 import 'package:wordshool/features/auth/data/data_source/remote/auth_service.dart';
 import 'package:wordshool/features/auth/data/repositories/auth_repository_impl.dart';
@@ -14,6 +15,7 @@ import 'package:wordshool/features/game/data/data_source/game_service.dart';
 import 'package:wordshool/features/game/data/data_source/remote/game_service.dart';
 import 'package:wordshool/features/game/data/repositories/game_repository_impl.dart';
 import 'package:wordshool/features/game/domain/repositories/game_repository.dart';
+import 'package:wordshool/features/game/domain/usecase/load_game_by_date.dart';
 import 'package:wordshool/features/game/domain/usecase/load_today_word.dart';
 import 'package:wordshool/shared/data/data_source/remote/user_game_state/user_game_state_service.dart';
 import 'package:wordshool/shared/data/data_source/session_handler.dart';
@@ -111,6 +113,16 @@ void _initializeGame() {
     gameRepository: getIt<GameRepository>(),
   ));
 
+  getIt.registerSingleton<LoadGameByDateUseCase>(LoadGameByDateUseCase(
+    gameRepository: getIt<GameRepository>(),
+  ));
+
+  getIt.registerSingleton<LoadUserGameHistoryUseCase>(
+    LoadUserGameHistoryUseCase(
+      userGameStateRepository: getIt<UserGameStateRepository>(),
+    ),
+  );
+
   getIt.registerSingleton<LoadUserGameStateUseCase>(LoadUserGameStateUseCase(
     userGameStateRepository: getIt<UserGameStateRepository>(),
   ));
@@ -130,7 +142,6 @@ void _initializeGame() {
 }
 
 void _initializeSettings() {
-  // Data source
   getIt.registerSingleton<SettingsDataSource>(
     SettingsDataSourceImpl(
       firebaseAuth: FirebaseAuth.instance,
@@ -138,7 +149,6 @@ void _initializeSettings() {
     ),
   );
 
-  // Repository
   getIt.registerSingleton<SettingsRepository>(
     SettingsRepositoryImpl(
       dataSource: getIt<SettingsDataSource>(),
@@ -146,7 +156,6 @@ void _initializeSettings() {
     ),
   );
 
-  // Use case
   getIt.registerSingleton<LogoutUseCase>(
     LogoutUseCase(repository: getIt<SettingsRepository>()),
   );

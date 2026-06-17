@@ -2,17 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wordshool/di.dart';
+import 'package:wordshool/features/archive/presentation/bloc/archive_bloc.dart';
+import 'package:wordshool/features/archive/presentation/pages/archive_page.dart';
 import 'package:wordshool/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:wordshool/features/auth/presentation/pages/auth_page.dart';
+import 'package:wordshool/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:wordshool/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:wordshool/features/game/presentation/bloc/game_bloc/game_bloc.dart';
 import 'package:wordshool/features/game/presentation/bloc/word_cubit/word_cubit.dart';
 import 'package:wordshool/features/game/presentation/pages/game_page.dart';
+import 'package:wordshool/features/game/presentation/utils/game_route_parser.dart';
+import 'package:wordshool/features/leaderboard/presentation/pages/leaderboard_page.dart';
+import 'package:wordshool/features/settings/domain/usecases/logout_usecase.dart';
+import 'package:wordshool/features/settings/presentation/bloc/settings_bloc.dart';
+import 'package:wordshool/features/settings/presentation/pages/legal_markdown_page.dart';
+import 'package:wordshool/features/settings/presentation/pages/settings_page.dart';
 import 'package:wordshool/features/winning/presentation/pages/params/winning_page_param.dart';
 import 'package:wordshool/features/winning/presentation/pages/winning_page.dart';
-import 'package:wordshool/features/settings/presentation/pages/settings_page.dart';
-import 'package:wordshool/features/settings/presentation/pages/legal_markdown_page.dart';
-import 'package:wordshool/features/settings/presentation/bloc/settings_bloc.dart';
-import 'package:wordshool/features/settings/domain/usecases/logout_usecase.dart';
 
 GoRouter appRouter(String initialRoute) {
   return GoRouter(
@@ -32,9 +38,22 @@ GoRouter appRouter(String initialRoute) {
         ),
       ),
       GoRoute(
+        path: DashboardPage.routeName,
+        name: DashboardPage.routeName.replaceFirst(RegExp(r'0'), ''),
+        builder: (context, state) => BlocProvider(
+          create: (context) => DashboardBloc(
+            loadUserGameStateUseCase: getIt(),
+            loadUserSpecificGameStateUseCase: getIt(),
+          ),
+          child: const DashboardPage(),
+        ),
+      ),
+      GoRoute(
         path: GamePage.routeName,
         name: GamePage.routeName.replaceFirst(RegExp(r'0'), ''),
         builder: (context, state) {
+          final loadConfig = GameRouteParser.parseUri(state.uri);
+
           return MultiBlocProvider(
             providers: [
               BlocProvider(
@@ -42,17 +61,33 @@ GoRouter appRouter(String initialRoute) {
               ),
               BlocProvider(
                 create: (context) => GameBloc(
-                  loadTodayWordUseCase: getIt(),
+                  loadGameByDateUseCase: getIt(),
                   loadUserGameStateUseCase: getIt(),
                   loadUserSpecificGameStateUseCase: getIt(),
                   addGuessedWordUseCase: getIt(),
                   markGameCompletedUseCase: getIt(),
+                  loadConfig: loadConfig,
                 ),
-              )
+              ),
             ],
             child: const GamePage(),
           );
         },
+      ),
+      GoRoute(
+        path: ArchivePage.routeName,
+        name: ArchivePage.routeName.replaceFirst(RegExp(r'0'), ''),
+        builder: (context, state) => BlocProvider(
+          create: (context) => ArchiveBloc(
+            loadUserGameHistoryUseCase: getIt(),
+          ),
+          child: const ArchivePage(),
+        ),
+      ),
+      GoRoute(
+        path: LeaderboardPage.routeName,
+        name: LeaderboardPage.routeName.replaceFirst(RegExp(r'0'), ''),
+        builder: (context, state) => const LeaderboardPage(),
       ),
       GoRoute(
         path: SettingsPage.routeName,
@@ -89,6 +124,9 @@ GoRouter appRouter(String initialRoute) {
             child: WinningPage(
               word: params.word,
               isLost: params.isLost,
+              isArchiveMode: params.isArchiveMode,
+              gameDateId: params.gameDateId,
+              updatedStreak: params.updatedStreak,
             ),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
@@ -96,7 +134,7 @@ GoRouter appRouter(String initialRoute) {
               final end = Offset.zero;
               final curve = Curves.ease;
 
-              var tween =
+              final tween =
                   Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
               return SlideTransition(
                 position: animation.drive(tween),

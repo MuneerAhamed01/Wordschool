@@ -3,44 +3,29 @@ part of 'tile.dart';
 mixin WordTileStateMixin on State<WordTile> {
   WordTileType get type;
 
-  GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
-
   WordTileType _tileType = WordTileType.none;
 
-  // late AnimationController animationController;
-  // late Animation<double> animation;
-
-  List<Color> get myGradientColors {
-    return [
-      if (type == WordTileType.green) ...[
-        MyColors.green4,
-        MyColors.green5,
-      ] else if (type == WordTileType.none) ...[
-        MyColors.gray5,
-        MyColors.gray6,
-      ] else if (type == WordTileType.error) ...[
-        Colors.red,
-        Colors.red.withOpacity(0.6),
-      ] else ...[
-        MyColors.orange4,
-        MyColors.orange5,
-      ]
-    ];
+  Color get tileBackgroundColor {
+    switch (type) {
+      case WordTileType.green:
+        return MyColors.tileCorrect;
+      case WordTileType.orange:
+        return MyColors.tilePresent;
+      case WordTileType.error:
+        return MyColors.tileAbsent;
+      case WordTileType.none:
+        return widget.value.isEmpty
+            ? MyColors.tileEmpty
+            : MyColors.tileFilled;
+    }
   }
 
-  Color get strokeColor {
-    if (type == WordTileType.green) return MyColors.green4;
-
-    if (type == WordTileType.none) return MyColors.gray5;
-
-    return MyColors.orange4;
+  Color get tileBorderColor {
+    if (type != WordTileType.none) return tileBackgroundColor;
+    return widget.value.isEmpty ? MyColors.gameBorder : MyColors.textMuted;
   }
 
-  Color get textColor {
-    if (type == WordTileType.orange) return MyColors.gray5;
-
-    return Colors.white;
-  }
+  Color get textColor => MyColors.white;
 
   @override
   void didUpdateWidget(covariant WordTile oldWidget) {
@@ -48,11 +33,5 @@ mixin WordTileStateMixin on State<WordTile> {
       _tileType = widget.tileType;
     }
     super.didUpdateWidget(oldWidget);
-  }
-
-  @override
-  void initState() {
-    _tileType = widget.tileType;
-    super.initState();
   }
 }
