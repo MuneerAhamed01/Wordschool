@@ -12,3 +12,8 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+**/*.pem
+
+# Release signing assets (see signing/README.md)
+/signing/*
+!/signing/README.md

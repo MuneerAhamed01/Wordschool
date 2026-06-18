@@ -3,7 +3,7 @@ import 'package:wordshool/config/themes/colors.dart';
 import 'package:wordshool/shared/presentations/widgets/pressable_scale.dart';
 import 'package:wordshool/shared/presentations/widgets/progress_indicator.dart';
 
-enum ButtonVariant { primary, secondary, ghost }
+enum ButtonVariant { primary, secondary, ghost, google }
 
 class AppButton extends StatelessWidget {
   const AppButton({
@@ -11,6 +11,7 @@ class AppButton extends StatelessWidget {
     this.onTap,
     this.label,
     this.icon,
+    this.leading,
     this.variant = ButtonVariant.primary,
     this.isDisabled = false,
     this.isLoading = false,
@@ -20,6 +21,7 @@ class AppButton extends StatelessWidget {
   final VoidCallback? onTap;
   final String? label;
   final IconData? icon;
+  final Widget? leading;
   final ButtonVariant variant;
   final bool isDisabled;
   final bool isLoading;
@@ -53,7 +55,10 @@ class AppButton extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: expand ? MainAxisSize.max : MainAxisSize.min,
                   children: [
-                    if (icon != null) ...[
+                    if (leading != null) ...[
+                      leading!,
+                      const SizedBox(width: 12),
+                    ] else if (icon != null) ...[
                       Icon(icon, size: 20, color: colors.foreground),
                       const SizedBox(width: 8),
                     ],
@@ -61,6 +66,9 @@ class AppButton extends StatelessWidget {
                       label ?? '',
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
                             color: colors.foreground,
+                            fontWeight: variant == ButtonVariant.google
+                                ? FontWeight.w600
+                                : FontWeight.w700,
                           ),
                     ),
                   ],
@@ -89,6 +97,12 @@ class AppButton extends StatelessWidget {
           background: Colors.transparent,
           foreground: MyColors.white,
           border: MyColors.gameBorder,
+        );
+      case ButtonVariant.google:
+        return const _ButtonColors(
+          background: MyColors.white,
+          foreground: Color(0xFF1F1F1F),
+          border: Color(0xFFDADCE0),
         );
     }
   }

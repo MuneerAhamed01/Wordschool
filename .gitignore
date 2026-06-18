@@ -51,3 +51,11 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+
+# Android release signing (never commit secrets)
+android/key.properties
+android/signing/*
+!android/signing/README.md
+*.jks
+upload-keystore.jks
+upload_certificate.pem

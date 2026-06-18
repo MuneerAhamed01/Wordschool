@@ -12,7 +12,24 @@
           "package_name": "com.wordschool.mat"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "87702505475-d76u6b420qtver76mc2u1tete9730oea.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wordschool.mat",
+            "certificate_hash": "c397905adc3345ae21f6c21f5eb41640415ee4b0"
+          }
+        },
+        {
+          "client_id": "87702505475-q5e1dnbkt8hd1kjl8et9gj0li4kqdolp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wordschool.mat",
+            "certificate_hash": "ceb000183b4785b0ea7650c35952de0d6eb99c9f"
+          }
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDAbP47CHhfIwuFe6v3D7c1GQbljC9qTOM"
@@ -26,10 +43,10 @@
               "client_type": 3
             },
             {
-              "client_id": "87702505475-s42orbp34e2q414urk3ivdqha3iq4p87.apps.googleusercontent.com",
+              "client_id": "87702505475-id78b5gh16rqa8eirni1jveo6orrkd81.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.wordschoolgame.mat"
+                "bundle_id": "com.wordschool.mat"
               }
             }
           ]
@@ -43,7 +60,24 @@
           "package_name": "com.wordschoolgame.mat"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "87702505475-hd86el48ffi4o4inms6p0ne61mh8s7b2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wordschoolgame.mat",
+            "certificate_hash": "ceb000183b4785b0ea7650c35952de0d6eb99c9f"
+          }
+        },
+        {
+          "client_id": "87702505475-mabsh2lh05m7tu84ap46eunfcmcurs7r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wordschoolgame.mat",
+            "certificate_hash": "c397905adc3345ae21f6c21f5eb41640415ee4b0"
+          }
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDAbP47CHhfIwuFe6v3D7c1GQbljC9qTOM"
@@ -57,10 +91,10 @@
               "client_type": 3
             },
             {
-              "client_id": "87702505475-s42orbp34e2q414urk3ivdqha3iq4p87.apps.googleusercontent.com",
+              "client_id": "87702505475-id78b5gh16rqa8eirni1jveo6orrkd81.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.wordschoolgame.mat"
+                "bundle_id": "com.wordschool.mat"
               }
             }
           ]

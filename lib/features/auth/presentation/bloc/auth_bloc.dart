@@ -76,6 +76,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       emit(AuthState.authenticated(result.data!));
     } else {
+      final errorCode = result.error?.code;
+      if (errorCode == '499') {
+        emit(const AuthState.initial());
+        return;
+      }
       emit(AuthState.error(result.error?.error ?? 'Google sign-in failed'));
     }
   }

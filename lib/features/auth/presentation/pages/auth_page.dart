@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:wordshool/config/themes/colors.dart';
 import 'package:wordshool/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:wordshool/features/auth/utils/auth_type.dart';
 import 'package:wordshool/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:wordshool/shared/presentations/widgets/app_button.dart';
 import 'package:wordshool/shared/presentations/widgets/fade_slide_in.dart';
 import 'package:wordshool/shared/presentations/widgets/game_scaffold.dart';
-import 'package:wordshool/shared/presentations/widgets/glass_card.dart';
+import 'package:wordshool/shared/presentations/widgets/snackbar.dart';
 
 class AuthPage extends StatelessWidget {
   static const String routeName = '/auth';
@@ -21,48 +23,60 @@ class AuthPage extends StatelessWidget {
         listener: (ctx, state) {
           state.whenOrNull(
             authenticated: (_) => ctx.go(DashboardPage.routeName),
+            error: (message) {
+              if (message == 'Google sign-in was cancelled') {
+                return;
+              }
+              CustomSnackBar.show(
+                ctx,
+                message: message,
+                type: SnackBarType.error,
+              );
+            },
           );
         },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            children: [
-              const Spacer(flex: 2),
-              FadeSlideIn(
-                child: Column(
-                  children: [
-                    _buildLogoMark(),
-                    const SizedBox(height: 24),
-                    Text(
-                      'WordSchool',
-                      style: Theme.of(context).textTheme.displayLarge,
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              children: [
+                Expanded(
+                  child: Center(
+                    child: FadeSlideIn(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildLogoMark(),
+                          const SizedBox(height: 28),
+                          Text(
+                            'WordSchool',
+                            style: Theme.of(context).textTheme.displayLarge,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Guess the word. Build your streak.',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'One puzzle, every day.',
+                            style:
+                                Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: MyColors.textMuted,
+                                    ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Guess the word. Build your streak.\nOne puzzle, every day.',
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-              const Spacer(flex: 2),
-              FadeSlideIn(
-                delay: const Duration(milliseconds: 120),
-                child: _buildGoogleButton(),
-              ),
-              const SizedBox(height: 12),
-              FadeSlideIn(
-                delay: const Duration(milliseconds: 180),
-                child: _buildGuestButton(),
-              ),
-              const SizedBox(height: 24),
-              FadeSlideIn(
-                delay: const Duration(milliseconds: 240),
-                child: _buildTermsLink(context),
-              ),
-              const Spacer(),
-            ],
+                _buildActions(context),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),
@@ -70,34 +84,78 @@ class AuthPage extends StatelessWidget {
   }
 
   Widget _buildLogoMark() {
-    return GlassCard(
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: List.generate(5, (index) {
-          return Container(
-            width: 36,
-            height: 36,
-            margin: const EdgeInsets.symmetric(horizontal: 3),
-            decoration: BoxDecoration(
-              color: index == 2
-                  ? const Color(0xFF538D4E)
-                  : const Color(0xFF3A3A3C),
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: const Color(0xFF565658)),
-            ),
-            child: Center(
-              child: Text(
-                ['W', 'O', 'R', 'D', 'S'][index],
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: MyColors.gameSurface.withValues(alpha: 0.85),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: MyColors.gameBorder.withValues(alpha: 0.8),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.25),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(5, (index) {
+            final letters = ['W', 'O', 'R', 'D', 'S'];
+            return Padding(
+              padding: EdgeInsets.only(left: index == 0 ? 0 : 6),
+              child: Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: index == 2
+                      ? MyColors.tileCorrect
+                      : MyColors.tileAbsent,
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: MyColors.tileFilled),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  letters[index],
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 17,
+                    height: 1,
+                  ),
                 ),
               ),
-            ),
-          );
-        }),
+            );
+          }),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActions(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 400),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          FadeSlideIn(
+            delay: const Duration(milliseconds: 120),
+            child: _buildGoogleButton(),
+          ),
+          const SizedBox(height: 12),
+          FadeSlideIn(
+            delay: const Duration(milliseconds: 180),
+            child: _buildGuestButton(),
+          ),
+          const SizedBox(height: 20),
+          FadeSlideIn(
+            delay: const Duration(milliseconds: 240),
+            child: _buildTermsLink(context),
+          ),
+        ],
       ),
     );
   }
@@ -109,8 +167,12 @@ class AuthPage extends StatelessWidget {
             AuthType.google;
         return AppButton(
           label: 'Continue with Google',
-          icon: Icons.g_mobiledata_rounded,
-          variant: ButtonVariant.primary,
+          leading: SvgPicture.asset(
+            'assets/svgs/google_logo.svg',
+            width: 20,
+            height: 20,
+          ),
+          variant: ButtonVariant.google,
           isLoading: state is AuthLoading && isGoogle,
           isDisabled: state is AuthLoading,
           onTap: () =>
@@ -144,6 +206,7 @@ class AuthPage extends StatelessWidget {
         'By continuing, you agree to our Privacy Policy',
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               decoration: TextDecoration.underline,
+              decorationColor: MyColors.textMuted.withValues(alpha: 0.6),
             ),
         textAlign: TextAlign.center,
       ),

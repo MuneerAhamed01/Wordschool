@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:wordshool/config/google_auth_config.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/features/auth/data/data_source/auth_service.dart';
 import 'package:wordshool/shared/data/models/user.dart';
@@ -15,6 +17,15 @@ class AuthDataSourceImpl extends AuthDataSource {
     required GoogleSignIn googleSignIn,
   })  : _firebaseAuth = firebaseAuth,
         _googleSignIn = googleSignIn;
+
+  static Future<void> initializeGoogleSignIn() async {
+    await GoogleSignIn.instance.initialize(
+      clientId: defaultTargetPlatform == TargetPlatform.iOS
+          ? GoogleAuthConfig.iosClientId
+          : null,
+      serverClientId: GoogleAuthConfig.webClientId,
+    );
+  }
 
   @override
   Future<DataState<WordSchoolUserModel?>> signInAnonymously() async {
@@ -39,36 +50,54 @@ class AuthDataSourceImpl extends AuthDataSource {
   @override
   Future<DataState<WordSchoolUserModel?>> signInWithGoogle() async {
     try {
-      final serviceID = dotenv.env['GOOGLE_SERVICE_WEB_CLIENT'] ?? '';
-      await GoogleSignIn.instance.initialize(
-        serverClientId: serviceID,
-      );
-
-      const scopes = [
-        'https://www.googleapis.com/auth/userinfo.email',
-        'https://www.googleapis.com/auth/userinfo.profile',
-        // 'openid',
-      ];
-
       final googleUser = await _googleSignIn.authenticate();
-
-      final googleAuthentication = googleUser.authentication;
-      final googleAuthorization =
-          await googleUser.authorizationClient.authorizationForScopes(scopes);
-
-      if (googleAuthorization == null) {
+      return _completeGoogleSignIn(googleUser);
+    } on GoogleSignInException catch (e) {
+      if (e.code == GoogleSignInExceptionCode.canceled) {
         return DataError<WordSchoolUserModel?>(
-          error: AppError(
-              error: 'Failed to retrieve Google ID Token', code: '401'),
+          error: AppError(error: 'Google sign-in was cancelled', code: '499'),
         );
       }
 
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuthorization.accessToken,
-        idToken: googleAuthentication.idToken,
+      return DataError<WordSchoolUserModel?>(
+        error: AppError(error: e.description ?? e.toString(), code: '500'),
       );
+    } on FirebaseAuthException catch (e) {
+      return DataError<WordSchoolUserModel?>(
+        error: AppError(error: e.message ?? e.code, code: e.code),
+      );
+    } catch (e) {
+      return DataError<WordSchoolUserModel?>(
+        error: AppError(error: e.toString(), code: '500'),
+      );
+    }
+  }
 
-      final response = await _firebaseAuth.signInWithCredential(credential);
+  Future<DataState<WordSchoolUserModel?>> _completeGoogleSignIn(
+    GoogleSignInAccount googleUser,
+  ) async {
+    final idToken = googleUser.authentication.idToken;
+
+    if (idToken == null || idToken.isEmpty) {
+      return DataError<WordSchoolUserModel?>(
+        error: AppError(
+          error: 'Failed to retrieve Google ID token. '
+              'Ensure the Firebase Web client ID is configured.',
+          code: '401',
+        ),
+      );
+    }
+
+    final credential = GoogleAuthProvider.credential(idToken: idToken);
+    final currentUser = _firebaseAuth.currentUser;
+
+    try {
+      final UserCredential response;
+      if (currentUser != null && currentUser.isAnonymous) {
+        response = await currentUser.linkWithCredential(credential);
+      } else {
+        response = await _firebaseAuth.signInWithCredential(credential);
+      }
 
       if (response.user == null) {
         return DataError<WordSchoolUserModel?>(
@@ -79,9 +108,22 @@ class AuthDataSourceImpl extends AuthDataSource {
       return DataSuccess<WordSchoolUserModel?>(
         data: WordSchoolUserModel.fromFirebase(user: response.user!),
       );
-    } catch (e) {
-      return DataError<WordSchoolUserModel?>(
-        error: AppError(error: e.toString(), code: '500'),
+    } on FirebaseAuthException catch (e) {
+      if (e.code != 'credential-already-in-use') {
+        rethrow;
+      }
+
+      await _firebaseAuth.signOut();
+      final response = await _firebaseAuth.signInWithCredential(credential);
+
+      if (response.user == null) {
+        return DataError<WordSchoolUserModel?>(
+          error: AppError(error: 'Authentication failed', code: '404'),
+        );
+      }
+
+      return DataSuccess<WordSchoolUserModel?>(
+        data: WordSchoolUserModel.fromFirebase(user: response.user!),
       );
     }
   }

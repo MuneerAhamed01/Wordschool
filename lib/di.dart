@@ -43,7 +43,7 @@ Future<void> initializeDependency() async {
   getIt.registerSingleton<SharedPreferences>(sharedPref);
 
   await _initSessions();
-  _initializeAuthDependencies();
+  await _initializeAuthDependencies();
   await _initializeValidWords();
   _initializeGame();
   _initializeSettings();
@@ -65,7 +65,9 @@ Future<void> _initSessions() async {
       GetCurrentUserUseCase(sessionRepository: getIt<SessionRepository>()));
 }
 
-void _initializeAuthDependencies() {
+Future<void> _initializeAuthDependencies() async {
+  await AuthDataSourceImpl.initializeGoogleSignIn();
+
   getIt.registerSingleton<AuthDataSource>(
     AuthDataSourceImpl(
       firebaseAuth: FirebaseAuth.instance,
