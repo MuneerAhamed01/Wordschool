@@ -22,6 +22,22 @@
           }
         },
         {
+          "client_id": "87702505475-ksivqp8p9639iq5pketffhp358g06415.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wordschool.mat",
+            "certificate_hash": "ac980953952905365eb0895eed5534855deb2407"
+          }
+        },
+        {
+          "client_id": "87702505475-l1usqotgavs3tntk5bpa6od4q6jalh1l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wordschool.mat",
+            "certificate_hash": "b4c6811746797e7fecf00d7cd795fa7df1bcafb0"
+          }
+        },
+        {
           "client_id": "87702505475-q5e1dnbkt8hd1kjl8et9gj0li4kqdolp.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

@@ -16,6 +16,7 @@ class AppButton extends StatelessWidget {
     this.isDisabled = false,
     this.isLoading = false,
     this.expand = true,
+    this.height = 52,
   });
 
   final VoidCallback? onTap;
@@ -26,6 +27,7 @@ class AppButton extends StatelessWidget {
   final bool isDisabled;
   final bool isLoading;
   final bool expand;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +41,7 @@ class AppButton extends StatelessWidget {
         opacity: enabled ? 1 : 0.45,
         duration: const Duration(milliseconds: 200),
         child: Container(
-          height: 52,
+          height: height,
           width: expand ? double.infinity : null,
           padding: expand ? null : const EdgeInsets.symmetric(horizontal: 24),
           decoration: BoxDecoration(

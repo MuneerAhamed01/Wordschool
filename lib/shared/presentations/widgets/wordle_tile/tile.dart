@@ -13,6 +13,7 @@ class WordTile extends StatefulWidget {
     required this.shakeCallBack,
     this.revealDelay = Duration.zero,
     this.instantReveal = false,
+    this.fontSize = 28,
   });
 
   final WordTileType tileType;
@@ -20,6 +21,7 @@ class WordTile extends StatefulWidget {
   final Function(Function shake) shakeCallBack;
   final Duration revealDelay;
   final bool instantReveal;
+  final double fontSize;
 
   @override
   State<WordTile> createState() => _WordTileState();
@@ -144,8 +146,8 @@ class _WordTileState extends State<WordTile>
         child: Center(
           child: Text(
             widget.value.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 28,
+            style: TextStyle(
+              fontSize: widget.fontSize,
               fontWeight: FontWeight.w700,
               color: MyColors.white,
             ),

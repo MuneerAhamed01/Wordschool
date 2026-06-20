@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wordshool/config/themes/colors.dart';
+import 'package:wordshool/core/utils/game_layout_metrics.dart';
 import 'package:wordshool/core/enums/word_tile_type.dart';
 import 'package:wordshool/features/game/presentation/utils/constants.dart';
 import 'package:wordshool/shared/presentations/widgets/fade_slide_in.dart';
@@ -24,13 +25,20 @@ class GameResultHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final metrics = GameLayoutMetrics.of(context);
     final accent = isWin ? MyColors.tileCorrect : MyColors.streakAccent;
+    final compact = metrics.isCompact;
 
     return FadeSlideIn(
       child: Container(
         width: double.infinity,
-        margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-        padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
+        margin: EdgeInsets.fromLTRB(16, compact ? 4 : 8, 16, 0),
+        padding: EdgeInsets.fromLTRB(
+          compact ? 14 : 18,
+          compact ? 12 : 18,
+          compact ? 14 : 18,
+          compact ? 12 : 16,
+        ),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -47,40 +55,43 @@ class GameResultHero extends StatelessWidget {
           children: [
             Icon(
               isWin ? Icons.emoji_events_rounded : Icons.psychology_alt_rounded,
-              size: 40,
+              size: compact ? 32 : 40,
               color: accent,
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: compact ? 6 : 10),
             Text(
               _headline(),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w800,
                     color: MyColors.white,
+                    fontSize: compact ? 20 : null,
                   ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: compact ? 4 : 6),
             Text(
               _subtitle(),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: MyColors.white.withValues(alpha: 0.75),
                     height: 1.35,
+                    fontSize: compact ? 13 : null,
                   ),
               textAlign: TextAlign.center,
             ),
             if (!isWin) ...[
-              const SizedBox(height: 14),
+              SizedBox(height: compact ? 10 : 14),
               Text(
                 'The word was',
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
                       color: MyColors.textMuted,
+                      fontSize: compact ? 12 : null,
                     ),
               ),
-              const SizedBox(height: 8),
-              _AnswerTiles(word: answerWord),
+              SizedBox(height: compact ? 6 : 8),
+              _AnswerTiles(word: answerWord, metrics: metrics),
             ],
             if (isWin && !isArchiveMode && streak != null && streak! > 0) ...[
-              const SizedBox(height: 14),
+              SizedBox(height: compact ? 10 : 14),
               StreakChip(streak: streak!),
             ],
           ],
@@ -112,25 +123,28 @@ class GameResultHero extends StatelessWidget {
 }
 
 class _AnswerTiles extends StatelessWidget {
-  const _AnswerTiles({required this.word});
+  const _AnswerTiles({required this.word, required this.metrics});
 
   final String word;
+  final GameLayoutMetrics metrics;
 
   @override
   Widget build(BuildContext context) {
     final letters = word.toUpperCase().split('');
+    final tileSide = metrics.isCompact ? 38.0 : 44.0;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(GameConstants.maxLetters, (index) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 2),
           child: SizedBox(
-            width: 44,
-            height: 44,
+            width: tileSide,
+            height: tileSide,
             child: WordTile(
               value: letters.elementAtOrNull(index) ?? '',
               tileType: WordTileType.green,
               instantReveal: true,
+              fontSize: metrics.tileFontSize,
               shakeCallBack: (_) {},
             ),
           ),

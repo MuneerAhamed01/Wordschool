@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -19,14 +18,13 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // await FirebaseFirestore.setLoggingEnabled(true);
-
   await dotenv.load();
 
   await initializeDependency();
 
   final sessionUser = getIt<SessionHandler>().currentUser;
   final analytics = getIt<AnalyticsService>();
+
   if (sessionUser != null) {
     await analytics.setUserId(sessionUser.id);
     await analytics.setUserProperty(
@@ -53,6 +51,7 @@ class MainApp extends StatelessWidget {
       title: 'WordSchool',
       theme: AppTheme.gameDark(),
       routerConfig: router,
+      debugShowCheckedModeBanner: false,
     );
   }
 }

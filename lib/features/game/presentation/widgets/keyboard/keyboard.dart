@@ -11,6 +11,8 @@ class CustomKeyboard extends StatefulWidget {
   final List<String> orangedList;
   final List<String> greenedList;
   final List<String> disabledList;
+  final double keyHeight;
+  final double keyFontSize;
 
   const CustomKeyboard({
     super.key,
@@ -20,6 +22,8 @@ class CustomKeyboard extends StatefulWidget {
     this.orangedList = const [],
     this.greenedList = const [],
     this.disabledList = const [],
+    this.keyHeight = 52,
+    this.keyFontSize = 14,
   });
 
   @override
@@ -36,7 +40,7 @@ class _CustomKeyboardState extends State<CustomKeyboard>
           onTap: () => widget.onKeyPressed(key),
           scale: 0.92,
           child: Container(
-            height: 52,
+            height: widget.keyHeight,
             decoration: BoxDecoration(
               color: keyBackground(key),
               borderRadius: BorderRadius.circular(6),
@@ -45,7 +49,7 @@ class _CustomKeyboardState extends State<CustomKeyboard>
               child: Text(
                 key,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: widget.keyFontSize,
                   fontWeight: FontWeight.w700,
                   color: keyTextColor(key),
                 ),
@@ -71,7 +75,7 @@ class _CustomKeyboardState extends State<CustomKeyboard>
           onTap: onPressed,
           scale: 0.92,
           child: Container(
-            height: 52,
+            height: widget.keyHeight,
             decoration: BoxDecoration(
               color: MyColors.keyAction,
               borderRadius: BorderRadius.circular(6),
@@ -80,14 +84,18 @@ class _CustomKeyboardState extends State<CustomKeyboard>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (icon != null) ...[
-                  Icon(icon, size: 18, color: MyColors.white),
+                  Icon(
+                    icon,
+                    size: widget.keyFontSize + 4,
+                    color: MyColors.white,
+                  ),
                   if (label.isNotEmpty) const SizedBox(width: 4),
                 ],
                 if (label.isNotEmpty)
                   Text(
                     label,
-                    style: const TextStyle(
-                      fontSize: 13,
+                    style: TextStyle(
+                      fontSize: widget.keyFontSize - 1,
                       fontWeight: FontWeight.w700,
                       color: MyColors.white,
                     ),

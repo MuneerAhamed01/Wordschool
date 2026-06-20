@@ -23,7 +23,14 @@ class GameScaffold extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           const _AmbientBackground(),
-          SafeArea(child: body),
+          SafeArea(
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: appBar != null ? kToolbarHeight : 0,
+              ),
+              child: body,
+            ),
+          ),
         ],
       ),
     );

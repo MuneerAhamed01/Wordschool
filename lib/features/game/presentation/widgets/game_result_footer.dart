@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wordshool/config/themes/colors.dart';
+import 'package:wordshool/core/utils/game_layout_metrics.dart';
 import 'package:wordshool/features/archive/presentation/pages/archive_page.dart';
 import 'package:wordshool/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:wordshool/shared/presentations/widgets/app_button.dart';
@@ -18,10 +19,14 @@ class GameResultFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final metrics = GameLayoutMetrics.of(context);
+    final compact = metrics.isCompact;
+    final buttonHeight = compact ? 46.0 : 52.0;
+
     return FadeSlideIn(
       delay: const Duration(milliseconds: 120),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+        padding: EdgeInsets.fromLTRB(20, compact ? 4 : 8, 20, compact ? 12 : 20),
         child: Column(
           children: [
             Text(
@@ -29,22 +34,25 @@ class GameResultFooter extends StatelessWidget {
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: MyColors.textMuted,
                     fontWeight: FontWeight.w600,
+                    fontSize: compact ? 12 : null,
                   ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: compact ? 10 : 14),
             AppButton(
               label: 'Back to Home',
               icon: Icons.home_outlined,
               variant: ButtonVariant.primary,
+              height: buttonHeight,
               onTap: () => context.go(DashboardPage.routeName),
             ),
             if (!isArchiveMode) ...[
-              const SizedBox(height: 10),
+              SizedBox(height: compact ? 8 : 10),
               AppButton(
                 label: 'Practice in Archive',
                 icon: Icons.history_rounded,
                 variant: ButtonVariant.secondary,
+                height: buttonHeight,
                 onTap: () => context.push(ArchivePage.routeName),
               ),
             ],

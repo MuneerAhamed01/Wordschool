@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wordshool/config/themes/colors.dart';
+import 'package:wordshool/core/utils/game_layout_metrics.dart';
 import 'package:wordshool/core/enums/game_mode.dart';
 import 'package:wordshool/core/enums/word_tile_type.dart';
 import 'package:wordshool/core/analytics/analytics_service.dart';
@@ -162,93 +163,131 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
     final isCompleted = userGameData?.isCompleted ?? false;
     final isWin = userGameData?.isCorrect ?? false;
     final guessCount = userGameData?.guessedWords.length ?? 0;
+    final isArchiveMode = gameMode == GameMode.archive;
 
-    return Column(
-      children: [
-        if (gameMode == GameMode.archive)
-          const InfoBanner(
-            message: 'Archive mode — progress here does not affect your streak',
-            icon: Icons.history_rounded,
-            tone: InfoBannerTone.info,
-          ),
-        if (isCompleted)
-          GameResultHero(
-            isWin: isWin,
-            answerWord: word,
-            guessCount: guessCount,
-            streak: streak,
-            isArchiveMode: gameMode == GameMode.archive,
-          ),
-        const SizedBox(height: 8),
-        Expanded(
-          child: Align(
-            alignment: Alignment.center,
-            child: _buildBoard(isReadOnly: isCompleted),
-          ),
-        ),
-        if (isCompleted)
-          GameResultFooter(
-            isWin: isWin,
-            isArchiveMode: gameMode == GameMode.archive,
-          )
-        else ...[
-          _buildGuessCounter(),
-          const SizedBox(height: 8),
-          _buildKeyboard(),
-          const SizedBox(height: 8),
-        ],
-      ],
-    );
-  }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final flags = GameLayoutFlags(
+          hasBanner: isArchiveMode,
+          hasHero: isCompleted,
+          hasFooter: isCompleted,
+          hasKeyboard: !isCompleted,
+          hasGuessCounter: !isCompleted,
+          heroShowsAnswerTiles: isCompleted && !isWin,
+          footerHasTwoButtons: isCompleted && !isArchiveMode,
+        );
+        final metrics = GameLayoutMetrics.compute(
+          maxWidth: constraints.maxWidth,
+          maxHeight: constraints.maxHeight,
+          flags: flags,
+        );
 
-  Widget _buildBoard({required bool isReadOnly}) {
-    return BlocBuilder<WordCubit, List<Word>>(
-      builder: (context, words) {
-        return GridView.builder(
-          itemCount: 25,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 5,
-            mainAxisSpacing: 6,
-            crossAxisSpacing: 6,
-            childAspectRatio: 1,
+        return GameLayoutScope(
+          metrics: metrics,
+          child: Column(
+            children: [
+              if (isArchiveMode)
+                const InfoBanner(
+                  message:
+                      'Archive mode — progress here does not affect your streak',
+                  icon: Icons.history_rounded,
+                  tone: InfoBannerTone.info,
+                ),
+              if (isCompleted)
+                GameResultHero(
+                  isWin: isWin,
+                  answerWord: word,
+                  guessCount: guessCount,
+                  streak: streak,
+                  isArchiveMode: isArchiveMode,
+                ),
+              SizedBox(height: metrics.isCompact ? 4 : 8),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: _buildBoard(
+                    metrics: metrics,
+                    isReadOnly: isCompleted,
+                  ),
+                ),
+              ),
+              if (isCompleted)
+                GameResultFooter(
+                  isWin: isWin,
+                  isArchiveMode: isArchiveMode,
+                )
+              else ...[
+                _buildGuessCounter(metrics),
+                SizedBox(height: metrics.isCompact ? 4 : 8),
+                _buildKeyboard(metrics),
+                SizedBox(height: metrics.isCompact ? 4 : 8),
+              ],
+            ],
           ),
-          itemBuilder: (_, index) {
-            final wordIndex = index ~/ 5;
-            final letterIndex = index % 5;
-            final word = words.elementAtOrNull(wordIndex);
-            final letter = word?.letters.elementAtOrNull(letterIndex);
-
-            return WordTile(
-              tileType: letter?.type ?? WordTileType.none,
-              value: letter?.letter ?? '',
-              revealDelay: isReadOnly
-                  ? Duration.zero
-                  : Duration(milliseconds: 100 * letterIndex),
-              instantReveal: isReadOnly,
-              shakeCallBack: (fn) {
-                _shakeFunctions[index] = fn as VoidCallback;
-              },
-            );
-          },
         );
       },
     );
   }
 
-  Widget _buildGuessCounter() {
+  Widget _buildBoard({
+    required GameLayoutMetrics metrics,
+    required bool isReadOnly,
+  }) {
+    return BlocBuilder<WordCubit, List<Word>>(
+      builder: (context, words) {
+        final boardSide = metrics.boardSide;
+        return SizedBox(
+          width: boardSide,
+          height: boardSide,
+          child: GridView.builder(
+            itemCount: 25,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 5,
+              mainAxisSpacing: metrics.tileSpacing,
+              crossAxisSpacing: metrics.tileSpacing,
+              childAspectRatio: 1,
+            ),
+            itemBuilder: (_, index) {
+              final wordIndex = index ~/ 5;
+              final letterIndex = index % 5;
+              final word = words.elementAtOrNull(wordIndex);
+              final letter = word?.letters.elementAtOrNull(letterIndex);
+
+              return WordTile(
+                tileType: letter?.type ?? WordTileType.none,
+                value: letter?.letter ?? '',
+                fontSize: metrics.tileFontSize,
+                revealDelay: isReadOnly
+                    ? Duration.zero
+                    : Duration(milliseconds: 100 * letterIndex),
+                instantReveal: isReadOnly,
+                shakeCallBack: (fn) {
+                  _shakeFunctions[index] = fn as VoidCallback;
+                },
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildGuessCounter(GameLayoutMetrics metrics) {
     return BlocBuilder<WordCubit, List<Word>>(
       builder: (context, words) {
         final done = words.where((w) => w.isCompleted).length;
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: EdgeInsets.symmetric(
+            vertical: metrics.isCompact ? 6 : 12,
+          ),
           child: Text(
             'Guess ${(done + 1).clamp(1, GameConstants.maxWords)} of ${GameConstants.maxWords}',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: MyColors.textMuted,
                   fontWeight: FontWeight.w600,
+                  fontSize: metrics.isCompact ? 13 : null,
                 ),
           ),
         );
@@ -256,7 +295,7 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
     );
   }
 
-  Widget _buildKeyboard() {
+  Widget _buildKeyboard(GameLayoutMetrics metrics) {
     return BlocBuilder<WordCubit, List<Word>>(
       builder: (context, words) {
         final orange = <String>{};
@@ -273,6 +312,8 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
         }
 
         return CustomKeyboard(
+          keyHeight: metrics.keyHeight,
+          keyFontSize: metrics.keyFontSize,
           onKeyPressed: (v) =>
               context.read<WordCubit>().addLetter(Letter(letter: v)),
           onEnterPressed: () => onSubmitWord(context),
