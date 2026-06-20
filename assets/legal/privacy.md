@@ -1,6 +1,6 @@
 # Privacy Policy
 
-Last updated: November 23, 2025
+Last updated: June 20, 2026
 
 This Privacy Policy explains how WordSchool (“we”, “our”, or “us”) collects, uses, and protects information in the WordSchool app.
 
@@ -9,12 +9,14 @@ This Privacy Policy explains how WordSchool (“we”, “our”, or “us”) c
 - Account information: If you sign in, we receive your user ID and, when available, your display name and email via Firebase Authentication.
 - Gameplay data: Word attempts, progress, and basic app settings to provide core gameplay features and persistence.
 - Device information: Non‑identifying information like OS version and app version for support and quality.
+- Usage analytics: Aggregated, non‑personal data about which app features and screens are used, how long users spend in them, and general location (country/region) to improve the product. We use Firebase Analytics for this; it does not include your name or email in event data.
 
-We do not collect advertising identifiers, and we do not use analytics or ad networks.
+We do not collect advertising identifiers, and we do not use ad networks.
 
 ## How we use information
 
 - Provide, personalize, and improve gameplay features
+- Understand feature adoption and product usage to guide development
 - Authenticate users and sync progress across sessions/devices
 - Support, safety, and debugging (e.g., investigating issues)
 

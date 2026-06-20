@@ -101,6 +101,16 @@ mixin GamePageHelper on State<GamePage> {
     final gameBlocState = context.read<GameBloc>().state;
 
     context.read<GameBloc>().add(GameEvent.markGameCompleted(!isLost));
+
+    final attempts = context.read<WordCubit>().state
+        .where((word) => word.isCompleted)
+        .length;
+    getIt<AnalyticsService>().logGameCompleted(
+      gameMode: gameBlocState.gameMode.analyticsName,
+      won: !isLost,
+      attempts: attempts,
+    );
+
     await Future.delayed(const Duration(milliseconds: 400));
 
     if (!context.mounted) return;

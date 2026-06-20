@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wordshool/config/themes/colors.dart';
+import 'package:wordshool/core/analytics/analytics_events.dart';
+import 'package:wordshool/core/analytics/analytics_service.dart';
+import 'package:wordshool/di.dart';
 import 'package:wordshool/features/archive/presentation/pages/archive_page.dart';
 import 'package:wordshool/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:wordshool/features/game/presentation/pages/game_page.dart';
@@ -98,7 +101,12 @@ class DashboardPage extends StatelessWidget {
                   label: playLabel,
                   icon: _playButtonIcon(todayGameData),
                   variant: ButtonVariant.primary,
-                  onTap: () => context.push(GamePage.routeName),
+                  onTap: () {
+                    getIt<AnalyticsService>().logFeatureOpened(
+                      featureName: AnalyticsFeatures.dailyGame,
+                    );
+                    context.push(GamePage.routeName);
+                  },
                 ),
                 if (playSubtitle != null) ...[
                   const SizedBox(height: 8),
@@ -122,7 +130,12 @@ class DashboardPage extends StatelessWidget {
               subtitle: 'Replay past daily puzzles',
               icon: Icons.calendar_today_rounded,
               accentColor: MyColors.lightBlue3,
-              onTap: () => context.push(ArchivePage.routeName),
+              onTap: () {
+                getIt<AnalyticsService>().logFeatureOpened(
+                  featureName: AnalyticsFeatures.archive,
+                );
+                context.push(ArchivePage.routeName);
+              },
             ),
           ),
           const SizedBox(height: 10),
@@ -147,7 +160,12 @@ class DashboardPage extends StatelessWidget {
                       ),
                 ),
               ),
-              onTap: () => context.push(LeaderboardPage.routeName),
+              onTap: () {
+                getIt<AnalyticsService>().logFeatureOpened(
+                  featureName: AnalyticsFeatures.leaderboard,
+                );
+                context.push(LeaderboardPage.routeName);
+              },
             ),
           ),
           const SizedBox(height: 10),
@@ -158,7 +176,12 @@ class DashboardPage extends StatelessWidget {
               subtitle: 'Account, privacy & preferences',
               icon: Icons.settings_outlined,
               accentColor: MyColors.textMuted,
-              onTap: () => context.push(SettingsPage.routeName),
+              onTap: () {
+                getIt<AnalyticsService>().logFeatureOpened(
+                  featureName: AnalyticsFeatures.settings,
+                );
+                context.push(SettingsPage.routeName);
+              },
             ),
           ),
         ],

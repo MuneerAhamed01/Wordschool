@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wordshool/core/analytics/analytics_service.dart';
 import 'package:wordshool/core/utils/valid_words.dart';
 import 'package:wordshool/features/archive/domain/usecases/load_user_game_history_usecase.dart';
 import 'package:wordshool/features/auth/data/data_source/auth_service.dart';
@@ -43,6 +45,7 @@ Future<void> initializeDependency() async {
   getIt.registerSingleton<SharedPreferences>(sharedPref);
 
   await _initSessions();
+  _initializeAnalytics();
   await _initializeAuthDependencies();
   await _initializeValidWords();
   _initializeGame();
@@ -63,6 +66,12 @@ Future<void> _initSessions() async {
 
   getIt.registerSingleton<GetCurrentUserUseCase>(
       GetCurrentUserUseCase(sessionRepository: getIt<SessionRepository>()));
+}
+
+void _initializeAnalytics() {
+  getIt.registerSingleton<AnalyticsService>(
+    FirebaseAnalyticsService(FirebaseAnalytics.instance),
+  );
 }
 
 Future<void> _initializeAuthDependencies() async {

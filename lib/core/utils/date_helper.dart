@@ -12,6 +12,10 @@ class DateHelper {
     return toDateId(DateTime.now());
   }
 
+  static String todayUtcDateId() {
+    return toDateId(DateTime.now().toUtc());
+  }
+
   static DateTime parseDateId(String dateId) {
     final parts = dateId.split('-');
     return DateTime(
@@ -41,5 +45,9 @@ class DateHelper {
 
   static bool isFutureDateId(String dateId) {
     return dateId.compareTo(todayDateId()) > 0;
+  }
+
+  static bool isFutureUtcDateId(String dateId) {
+    return dateId.compareTo(todayUtcDateId()) > 0;
   }
 }

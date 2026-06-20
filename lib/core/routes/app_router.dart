@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:wordshool/core/analytics/analytics_route_observer.dart';
+import 'package:wordshool/core/analytics/analytics_service.dart';
 import 'package:wordshool/di.dart';
 import 'package:wordshool/features/archive/presentation/bloc/archive_bloc.dart';
 import 'package:wordshool/features/archive/presentation/pages/archive_page.dart';
@@ -17,13 +19,17 @@ import 'package:wordshool/features/settings/domain/usecases/logout_usecase.dart'
 import 'package:wordshool/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:wordshool/features/settings/presentation/pages/legal_markdown_page.dart';
 import 'package:wordshool/features/settings/presentation/pages/settings_page.dart';
+import 'package:wordshool/features/story_mode/presentation/pages/story_home_page.dart';
 import 'package:wordshool/features/winning/presentation/pages/params/winning_page_param.dart';
 import 'package:wordshool/features/winning/presentation/pages/winning_page.dart';
 
 GoRouter appRouter(String initialRoute) {
+  final analyticsObserver =
+      AnalyticsRouteObserver(getIt<AnalyticsService>());
+
   return GoRouter(
     initialLocation: initialRoute,
-    debugLogDiagnostics: true,
+    observers: [analyticsObserver],
     routes: [
       GoRoute(
         path: AuthPage.routeName,
@@ -33,6 +39,7 @@ GoRouter appRouter(String initialRoute) {
             signInAnonymouslyUseCase: getIt(),
             signInWithGoogleUseCase: getIt(),
             saveUserSessionUseCase: getIt(),
+            analytics: getIt(),
           ),
           child: const AuthPage(),
         ),
@@ -85,6 +92,11 @@ GoRouter appRouter(String initialRoute) {
         ),
       ),
       GoRoute(
+        path: StoryHomePage.routeName,
+        name: StoryHomePage.routeName.replaceFirst(RegExp(r'0'), ''),
+        builder: (context, state) => const StoryHomePage(),
+      ),
+      GoRoute(
         path: LeaderboardPage.routeName,
         name: LeaderboardPage.routeName.replaceFirst(RegExp(r'0'), ''),
         builder: (context, state) => const LeaderboardPage(),
@@ -95,6 +107,7 @@ GoRouter appRouter(String initialRoute) {
         builder: (context, state) => BlocProvider(
           create: (_) => SettingsBloc(
             logoutUseCase: getIt<LogoutUseCase>(),
+            analytics: getIt(),
           ),
           child: const SettingsPage(),
         ),

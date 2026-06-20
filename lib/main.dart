@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wordshool/config/themes/app_theme.dart';
+import 'package:wordshool/core/analytics/analytics_service.dart';
 import 'package:wordshool/core/routes/app_router.dart';
 import 'package:wordshool/di.dart';
 import 'package:wordshool/features/auth/presentation/pages/auth_page.dart';
@@ -18,13 +19,23 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await FirebaseFirestore.setLoggingEnabled(true);
+  // await FirebaseFirestore.setLoggingEnabled(true);
 
   await dotenv.load();
 
   await initializeDependency();
 
-  final hasUser = getIt<SessionHandler>().currentUser != null;
+  final sessionUser = getIt<SessionHandler>().currentUser;
+  final analytics = getIt<AnalyticsService>();
+  if (sessionUser != null) {
+    await analytics.setUserId(sessionUser.id);
+    await analytics.setUserProperty(
+      name: 'auth_method',
+      value: sessionUser.isAnonymous ? 'anonymous' : 'google',
+    );
+  }
+
+  final hasUser = sessionUser != null;
   final initialRoute = hasUser ? DashboardPage.routeName : AuthPage.routeName;
   final router = appRouter(initialRoute);
 

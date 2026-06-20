@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:wordshool/config/themes/colors.dart';
 import 'package:wordshool/core/enums/game_mode.dart';
 import 'package:wordshool/core/enums/word_tile_type.dart';
+import 'package:wordshool/core/analytics/analytics_service.dart';
+import 'package:wordshool/di.dart';
 import 'package:wordshool/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:wordshool/features/game/presentation/bloc/game_bloc/game_bloc.dart';
 import 'package:wordshool/features/game/presentation/bloc/word_cubit/word_cubit.dart';
@@ -38,6 +40,7 @@ class GamePage extends StatefulWidget {
 class _GamePageState extends State<GamePage> with GamePageHelper {
   final Map<int, VoidCallback> _shakeFunctions = {};
   String? _lastRestoredKey;
+  bool _gameStartedLogged = false;
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +53,12 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
               prev.userSpecificGameData?.id != curr.userSpecificGameData?.id ||
               prev.userSpecificGameData?.guessedWords.length !=
                   curr.userSpecificGameData?.guessedWords.length ||
-              prev.todayWord != curr.todayWord,
-          listener: (context, state) => _tryRestoreGuesses(context, state),
+              prev.todayWord != curr.todayWord ||
+              (!_gameStartedLogged && curr.maybeMap(loaded: (_) => true, orElse: () => false)),
+          listener: (context, state) {
+            _tryRestoreGuesses(context, state);
+            _trackGameStartedIfNeeded(state);
+          },
           child: BlocListener<WordCubit, List<Word>>(
             listener: listenToWord,
             child: GameScaffold(
@@ -108,6 +115,24 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _tryRestoreGuesses(context, state);
     });
+  }
+
+  void _trackGameStartedIfNeeded(GameState state) {
+    if (_gameStartedLogged) return;
+
+    state.maybeMap(
+      loaded: (loaded) {
+        final data = loaded.userSpecificGameData;
+        if (data == null) return;
+
+        _gameStartedLogged = true;
+        getIt<AnalyticsService>().logGameStarted(
+          gameMode: loaded.gameMode.analyticsName,
+          isResume: data.guessedWords.isNotEmpty || data.isCompleted,
+        );
+      },
+      orElse: () {},
+    );
   }
 
   void _tryRestoreGuesses(BuildContext context, GameState state) {

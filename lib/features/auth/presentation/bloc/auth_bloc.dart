@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:wordshool/core/analytics/analytics_service.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/features/auth/domain/usecases/sign_anonymosly.dart';
 import 'package:wordshool/features/auth/domain/usecases/sign_with_google.dart';
@@ -15,14 +16,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignInAnonymouslyUseCase _signInAnonymouslyUseCase;
   final SignInWithGoogleUseCase _signInWithGoogleUseCase;
   final SaveUserSessionUseCase _saveUserSessionUseCase;
+  final AnalyticsService _analytics;
 
   AuthBloc({
     required SignInAnonymouslyUseCase signInAnonymouslyUseCase,
     required SignInWithGoogleUseCase signInWithGoogleUseCase,
     required SaveUserSessionUseCase saveUserSessionUseCase,
+    required AnalyticsService analytics,
   })  : _signInAnonymouslyUseCase = signInAnonymouslyUseCase,
         _signInWithGoogleUseCase = signInWithGoogleUseCase,
         _saveUserSessionUseCase = saveUserSessionUseCase,
+        _analytics = analytics,
         super(const AuthState.initial()) {
     on<SignInAnonymously>(_onSignInAnonymously);
     on<SignInWithGoogle>(_onSignInWithGoogle);
@@ -46,6 +50,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           ),
         );
       }
+      await _trackSignIn(result.data!, AuthType.anonymous);
       emit(AuthState.authenticated(result.data!));
     } else {
       emit(AuthState.error(result.error?.error ?? 'Anonymous sign-in failed'));
@@ -74,6 +79,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         return;
       }
 
+      await _trackSignIn(result.data!, AuthType.google);
       emit(AuthState.authenticated(result.data!));
     } else {
       final errorCode = result.error?.code;
@@ -88,5 +94,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<DataState<bool>> _saveUserSession(WordSchoolUserEntity user) async {
     final result = await _saveUserSessionUseCase(param: user);
     return result;
+  }
+
+  Future<void> _trackSignIn(
+    WordSchoolUserEntity user,
+    AuthType authType,
+  ) async {
+    await _analytics.setUserId(user.id);
+    await _analytics.setUserProperty(
+      name: 'auth_method',
+      value: authType.name,
+    );
+    await _analytics.logSignIn(method: authType.name);
   }
 }

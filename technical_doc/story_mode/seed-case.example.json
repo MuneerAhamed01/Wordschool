@@ -1,0 +1,32 @@
+{
+  "title": "The Midnight Ledger",
+  "introduction": "Rain hammers the precinct windows as Captain Hale slides a thin case file across your desk. A financier was found dead in a locked study, and every suspect has an alibi written in ink.",
+  "resolution": "The ledger proves the financier discovered a forgery ring inside his own firm. The killer staged the scene to look like a robbery, but the weapon and location tell the truth.",
+  "createdAt": "2026-06-18T00:00:00.000Z",
+  "clues": [
+    {
+      "index": 0,
+      "type": "location",
+      "hint": "The body was discovered where contracts are signed and secrets stay behind oak doors.",
+      "answer": "STUDY",
+      "reaction": "The study was locked from the inside, yet the ledger shows a meeting scheduled minutes before the murder.",
+      "investigatePrompt": "Search the crime scene for a five-letter location."
+    },
+    {
+      "index": 1,
+      "type": "weapon",
+      "hint": "The coroner found a narrow puncture wound, clean and precise.",
+      "answer": "KNIFE",
+      "reaction": "A kitchen knife is missing from the manor's silver set, and the handle was wiped clean.",
+      "investigatePrompt": "Identify the murder weapon."
+    },
+    {
+      "index": 2,
+      "type": "suspect",
+      "hint": "The partner stood to inherit control of the firm if the victim disappeared.",
+      "answer": "HEIRS",
+      "reaction": "The heir's fingerprints were on the ledger, and their alibi collapses under cross-examination.",
+      "investigatePrompt": "Name the prime suspect."
+    }
+  ]
+}

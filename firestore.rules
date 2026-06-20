@@ -15,6 +15,28 @@ service cloud.firestore {
     function isNonNegativeInt(n) {
       return n is int && n >= 0;
     }
+    function isValidCaseOutcome(value) {
+      return value == null
+        || value == 'case_closed'
+        || value == 'cold_case'
+        || value == 'unsolved'
+        || value == 'dismissed';
+    }
+    function isStoryProgressData(data) {
+      return data.currentClueIndex is int
+        && data.currentClueIndex >= 0
+        && data.currentClueIndex <= 2
+        && data.clueAttempts is list
+        && data.clueAttempts.size() == 3
+        && data.clueGuesses is list
+        && data.clueGuesses.size() == 3
+        && data.clueSolved is list
+        && data.clueSolved.size() == 3
+        && isNonNegativeInt(data.totalScore)
+        && data.totalScore <= 300
+        && isValidCaseOutcome(data.outcome)
+        && (data.completedAt == null || data.completedAt is timestamp);
+    }
 
     // ---------- "games" (daily puzzle) ----------
     match /games/{gameId} {
@@ -93,6 +115,35 @@ service cloud.firestore {
         allow update: if isOwner(uid) && isDateId(dateId);
 
         // Do not allow deletes from clients
+        allow delete: if false;
+      }
+    }
+
+    // ---------- Detective story mode ----------
+    match /detectiveCases/{caseId} {
+      allow read: if isDateId(caseId);
+      allow create, update, delete: if false;
+    }
+
+    match /userStoryProgress/{uid} {
+      allow read, write: if false;
+
+      match /cases/{dateId} {
+        allow read: if isOwner(uid);
+
+        allow create: if isOwner(uid)
+          && isDateId(dateId)
+          && exists(/databases/$(database)/documents/detectiveCases/$(dateId))
+          && isStoryProgressData(request.resource.data);
+
+        allow update: if isOwner(uid)
+          && isDateId(dateId)
+          && isStoryProgressData(request.resource.data)
+          && request.resource.data.currentClueIndex >= resource.data.currentClueIndex
+          && request.resource.data.clueAttempts.size() == resource.data.clueAttempts.size()
+          && request.resource.data.clueGuesses.size() == resource.data.clueGuesses.size()
+          && request.resource.data.clueSolved.size() == resource.data.clueSolved.size();
+
         allow delete: if false;
       }
     }
