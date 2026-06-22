@@ -45,6 +45,9 @@ app.*.map.json
 /android/app/release
 
 .env
+.secret.local
+functions/lib/
+functions/node_modules/
 
 # Local tooling venv
 .venv_words/

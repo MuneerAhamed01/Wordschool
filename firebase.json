@@ -1,1 +1,62 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"wordschool-dev","appId":"1:87702505475:android:88daf17b6d2895a3d02636","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"wordschool-dev","appId":"1:87702505475:ios:9ffac947fb5fa204d02636","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"wordschool-dev","configurations":{"android":"1:87702505475:android:88daf17b6d2895a3d02636","ios":"1:87702505475:ios:9ffac947fb5fa204d02636"}}}}}}
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    }
+  ],
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "wordschool-dev",
+          "appId": "1:87702505475:android:88daf17b6d2895a3d02636",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "wordschool-dev",
+          "appId": "1:87702505475:ios:9ffac947fb5fa204d02636",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "wordschool-dev",
+          "configurations": {
+            "android": "1:87702505475:android:88daf17b6d2895a3d02636",
+            "ios": "1:87702505475:ios:9ffac947fb5fa204d02636"
+          }
+        }
+      }
+    }
+  }
+}

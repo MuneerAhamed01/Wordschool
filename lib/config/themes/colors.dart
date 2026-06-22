@@ -72,7 +72,7 @@ class MyTheme {
     return ThemeData(
       colorScheme: colorScheme,
       primaryColor: colorScheme.primary,
-      scaffoldBackgroundColor: colorScheme.background,
+      scaffoldBackgroundColor: colorScheme.surface,
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,

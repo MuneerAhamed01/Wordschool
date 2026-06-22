@@ -1,0 +1,37 @@
+{
+  "name": "wordschool-functions",
+  "description": "Firebase Cloud Functions for Wordschool Story Mode",
+  "scripts": {
+    "lint": "eslint --ext .js,.ts .",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions,firestore",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log",
+    "test": "jest",
+    "seed": "npm run build && node lib/scripts/seed.js"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "firebase-admin": "^13.0.2",
+    "firebase-functions": "^6.3.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@typescript-eslint/eslint-plugin": "^8.20.0",
+    "@typescript-eslint/parser": "^8.20.0",
+    "eslint": "^8.57.1",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.31.0",
+    "firebase-functions-test": "^3.4.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.7.3"
+  },
+  "private": true
+}

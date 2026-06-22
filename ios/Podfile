@@ -25,6 +25,8 @@ end
 
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
+$FirebaseAnalyticsWithoutAdIdSupport = true
+
 flutter_ios_podfile_setup
 
 target 'Runner' do

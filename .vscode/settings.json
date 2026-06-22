@@ -1,5 +1,5 @@
 {
-  "dart.flutterSdkPath": ".fvm/versions/stable",
+  "dart.flutterSdkPath": ".fvm/flutter_sdk",
   "cSpell.words": [
     "prefs",
     "wordshool"

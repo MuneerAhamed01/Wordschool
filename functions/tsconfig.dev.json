@@ -1,0 +1,9 @@
+{
+  "include": [
+    "src",
+    "jest.config.js"
+  ],
+  "compilerOptions": {
+    "types": ["jest", "node"]
+  }
+}

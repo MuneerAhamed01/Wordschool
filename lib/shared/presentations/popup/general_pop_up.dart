@@ -98,7 +98,7 @@ class SlidingDialogRoute<T> extends PageRouteBuilder<T> {
       : super(
           opaque: false,
           barrierDismissible: true,
-          barrierColor: Colors.black.withOpacity(0.5),
+          barrierColor: Colors.black.withValues(alpha: 0.5),
           transitionDuration: const Duration(milliseconds: 300),
           pageBuilder: (context, animation, secondaryAnimation) => page,
           transitionsBuilder: (context, animation, secondaryAnimation, child) {

@@ -64,7 +64,7 @@ class GameLayoutMetrics {
 
     var tileSize = widthTile < heightTile
         ? widthTile
-        : (heightTile.clamp(_minTileSize, widthTile) as double);
+        : heightTile.clamp(_minTileSize, widthTile);
     var scale = tileSize / widthTile;
 
     if (flags.hasKeyboard) {
@@ -78,7 +78,7 @@ class GameLayoutMetrics {
       heightTile = (gridHeight - 4 * _defaultSpacing) / 5;
       tileSize = widthTile < heightTile
           ? widthTile
-          : (heightTile.clamp(_minTileSize, widthTile) as double);
+          : heightTile.clamp(_minTileSize, widthTile);
       scale = tileSize / widthTile;
     }
 
