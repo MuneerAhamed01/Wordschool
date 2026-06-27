@@ -41,6 +41,11 @@ dependencies:
   firebase_remote_config: ^6.0.2
   flutter_markdown: ^0.7.3
   logger: ^2.5.0
+  share_plus: ^10.1.4
+  google_mobile_ads: ^5.3.0
+  in_app_purchase: ^3.2.1
+  flutter_animate: ^4.5.2
+  just_audio: ^0.9.46
 
 dev_dependencies:
   flutter_test:
@@ -71,4 +76,5 @@ flutter:
     - assets/words/words.txt
     - assets/words/answers.txt
     - assets/legal/
+    - assets/audio/
 

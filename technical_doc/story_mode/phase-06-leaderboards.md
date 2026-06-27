@@ -1,7 +1,7 @@
 # Phase 6 — Leaderboards & Progress
 
-> **Status:** Not started  
-> **Last updated:** —  
+> **Status:** Complete  
+> **Last updated:** 2026-06-27  
 > **Owner:** —  
 > **Depends on:** Phase 5  
 > **Blocks:** —  
@@ -27,11 +27,11 @@ Track weekly detective points, show player rank on leaderboards, and surface sto
 
 ## Steps checklist
 
-- [ ] **Step 6.1** — Weekly leaderboard Firestore model (`detectiveLeaderboard/{weekId}/entries/{userId}`)
-- [ ] **Step 6.2** — Aggregation on case complete (Cloud Function or client write with rules)
-- [ ] **Step 6.3** — Leaderboard UI: "Detective" tab on `leaderboard_page.dart`
-- [ ] **Step 6.4** — Story mode daily streak (reuse `streak_calculator` patterns)
-- [ ] **Step 6.5** — Dashboard: detective rank, weekly points, story streak
+- [x] **Step 6.1** — Weekly leaderboard Firestore model (`detectiveLeaderboard/{weekId}/entries/{userId}`)
+- [x] **Step 6.2** — Aggregation on case complete (Cloud Function or client write with rules)
+- [x] **Step 6.3** — Leaderboard UI: "Detective" tab on `leaderboard_page.dart`
+- [x] **Step 6.4** — Story mode daily streak (reuse `streak_calculator` patterns)
+- [x] **Step 6.5** — Dashboard: detective rank, weekly points, story streak
 
 ## Technical decisions
 

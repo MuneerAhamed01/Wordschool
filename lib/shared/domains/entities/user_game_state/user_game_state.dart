@@ -7,6 +7,13 @@ class UserGameStateEntity extends Equatable {
   final String? lastStreakDate;
   final int completedGames;
   final int totalGames;
+  final int detectivePoints;
+  final int storyModeStreak;
+  final int storyModeLongestStreak;
+  final String? lastStoryModeStreakDate;
+  final int hintPackBalance;
+  final bool hasRemoveAds;
+  final bool isDetectivePro;
   final DateTime createdDate;
   final DateTime updatedDate;
 
@@ -17,6 +24,13 @@ class UserGameStateEntity extends Equatable {
     this.lastStreakDate,
     this.completedGames = 0,
     this.totalGames = 0,
+    this.detectivePoints = 0,
+    this.storyModeStreak = 0,
+    this.storyModeLongestStreak = 0,
+    this.lastStoryModeStreakDate,
+    this.hintPackBalance = 0,
+    this.hasRemoveAds = false,
+    this.isDetectivePro = false,
     required this.createdDate,
     required this.updatedDate,
   });
@@ -29,6 +43,13 @@ class UserGameStateEntity extends Equatable {
         lastStreakDate,
         completedGames,
         totalGames,
+        detectivePoints,
+        storyModeStreak,
+        storyModeLongestStreak,
+        lastStoryModeStreakDate,
+        hintPackBalance,
+        hasRemoveAds,
+        isDetectivePro,
         createdDate,
         updatedDate,
       ];

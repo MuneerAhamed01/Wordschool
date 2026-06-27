@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:wordshool/features/story_mode/presentation/analytics/story_analytics.dart';
 import 'package:wordshool/features/story_mode/presentation/bloc/story_flow_bloc/story_flow_bloc.dart';
 import 'package:wordshool/features/story_mode/presentation/routing/story_flow_gating.dart';
 import 'package:wordshool/features/story_mode/presentation/widgets/story_mode_widgets.dart';
@@ -22,6 +23,7 @@ class CaseIntroPage extends StatelessWidget {
               body: detectiveCase.introduction,
               continueLabel: 'Continue',
               onContinue: () {
+                StoryAnalytics.caseStarted();
                 context.push(StoryFlowGating.introContinuePath(flowState));
               },
             );

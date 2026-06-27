@@ -37,6 +37,7 @@ import 'package:wordshool/features/settings/data/data_source/settings_data_sourc
 import 'package:wordshool/features/settings/data/repositories/settings_repository_impl.dart';
 import 'package:wordshool/features/settings/domain/repositories/settings_repository.dart';
 import 'package:wordshool/features/settings/domain/usecases/logout_usecase.dart';
+import 'package:wordshool/core/config/monetization_config.dart';
 import 'package:wordshool/core/remote_config/story_mode_config.dart';
 import 'package:wordshool/features/story_mode/data/data_source/remote/story_case_service.dart';
 import 'package:wordshool/features/story_mode/data/data_source/remote/story_progress_service.dart';
@@ -44,9 +45,20 @@ import 'package:wordshool/features/story_mode/data/data_source/story_case_servic
 import 'package:wordshool/features/story_mode/data/data_source/story_progress_service.dart';
 import 'package:wordshool/features/story_mode/data/repositories/story_case_repository_impl.dart';
 import 'package:wordshool/features/story_mode/domain/repositories/story_case_repository.dart';
+import 'package:wordshool/features/story_mode/domain/usecases/complete_story_case.dart';
 import 'package:wordshool/features/story_mode/domain/usecases/complete_story_clue.dart';
 import 'package:wordshool/features/story_mode/domain/usecases/load_today_detective_case.dart';
 import 'package:wordshool/features/story_mode/domain/usecases/save_clue_guess.dart';
+import 'package:wordshool/features/leaderboard/data/data_source/remote/detective_leaderboard_service.dart';
+import 'package:wordshool/features/leaderboard/data/data_source/detective_leaderboard_service.dart';
+import 'package:wordshool/features/leaderboard/data/repositories/detective_leaderboard_repository_impl.dart';
+import 'package:wordshool/features/leaderboard/domain/repositories/detective_leaderboard_repository.dart';
+import 'package:wordshool/features/leaderboard/domain/usecases/load_detective_leaderboard.dart';
+import 'package:wordshool/core/monetization/ad_service.dart';
+import 'package:wordshool/core/monetization/iap_service.dart';
+import 'package:wordshool/core/monetization/story_entitlements.dart';
+import 'package:wordshool/features/story_mode/domain/usecases/consume_hint.dart';
+import 'package:wordshool/features/story_mode/presentation/utils/story_audio_manager.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -59,9 +71,74 @@ Future<void> initializeDependency() async {
   await _initializeAuthDependencies();
   await _initializeValidWords();
   await _initializeRemoteConfig();
+  getIt.registerSingleton<MonetizationConfig>(MonetizationConfig.fromEnv());
   _initializeGame();
   _initializeStoryMode();
+  _initializeLeaderboard();
+  await _initializeStoryModeExtras();
   _initializeSettings();
+}
+
+Future<void> _initializeStoryModeExtras() async {
+  getIt.registerSingleton<StoryAudioManager>(
+    StoryAudioManager(preferences: getIt<SharedPreferences>()),
+  );
+
+  if (!getIt<MonetizationConfig>().isMonetizationAndPurchasesEnabled) {
+    return;
+  }
+
+  getIt.registerSingleton<StoryEntitlementsService>(
+    StoryEntitlementsService(
+      getCurrentUserUseCase: getIt<GetCurrentUserUseCase>(),
+      userGameStateDataSource: getIt<UserGameStateDataSource>(),
+    ),
+  );
+  await getIt<StoryEntitlementsService>().refresh();
+
+  getIt.registerSingleton<ConsumeHintUseCase>(
+    ConsumeHintUseCase(
+      getCurrentUserUseCase: getIt<GetCurrentUserUseCase>(),
+      userGameStateDataSource: getIt<UserGameStateDataSource>(),
+      entitlementsService: getIt<StoryEntitlementsService>(),
+    ),
+  );
+
+  getIt.registerSingleton<AdService>(
+    AdService(entitlements: getIt<StoryEntitlementsService>()),
+  );
+  await getIt<AdService>().initialize();
+
+  getIt.registerSingleton<IapService>(
+    IapService(
+      userGameStateDataSource: getIt<UserGameStateDataSource>(),
+      analytics: getIt<AnalyticsService>(),
+      getCurrentUserUseCase: getIt<GetCurrentUserUseCase>(),
+      entitlementsService: getIt<StoryEntitlementsService>(),
+    ),
+  );
+  await getIt<IapService>().initialize();
+}
+
+void _initializeLeaderboard() {
+  getIt.registerSingleton<DetectiveLeaderboardDataSource>(
+    DetectiveLeaderboardDataSourceImpl(
+      firestore: FirebaseFirestore.instance,
+    ),
+  );
+
+  getIt.registerSingleton<DetectiveLeaderboardRepository>(
+    DetectiveLeaderboardRepositoryImpl(
+      dataSource: getIt<DetectiveLeaderboardDataSource>(),
+    ),
+  );
+
+  getIt.registerSingleton<LoadDetectiveLeaderboardUseCase>(
+    LoadDetectiveLeaderboardUseCase(
+      repository: getIt<DetectiveLeaderboardRepository>(),
+      getCurrentUserUseCase: getIt<GetCurrentUserUseCase>(),
+    ),
+  );
 }
 
 Future<void> _initializeRemoteConfig() async {
@@ -82,6 +159,7 @@ void _initializeStoryMode() {
     StoryCaseRepositoryImpl(
       storyCaseDataSource: getIt<StoryCaseDataSource>(),
       storyProgressDataSource: getIt<StoryProgressDataSource>(),
+      userGameStateDataSource: getIt<UserGameStateDataSource>(),
     ),
   );
 
@@ -98,6 +176,10 @@ void _initializeStoryMode() {
 
   getIt.registerSingleton<CompleteStoryClueUseCase>(
     CompleteStoryClueUseCase(storyCaseRepository: getIt<StoryCaseRepository>()),
+  );
+
+  getIt.registerSingleton<CompleteStoryCaseUseCase>(
+    CompleteStoryCaseUseCase(storyCaseRepository: getIt<StoryCaseRepository>()),
   );
 }
 

@@ -6,4 +6,6 @@ class FirebaseCollections {
   static const String detectiveCases = 'detectiveCases';
   static const String userStoryProgress = 'userStoryProgress';
   static const String storyCases = 'cases';
+  static const String detectiveLeaderboard = 'detectiveLeaderboard';
+  static const String leaderboardEntries = 'entries';
 }

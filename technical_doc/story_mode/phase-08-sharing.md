@@ -1,7 +1,7 @@
 # Phase 8 — Sharing
 
-> **Status:** Not started  
-> **Last updated:** —  
+> **Status:** Complete  
+> **Last updated:** 2026-06-27  
 > **Owner:** —  
 > **Depends on:** Phase 5 (score + outcome available)  
 > **Blocks:** —  
@@ -25,14 +25,15 @@ Let players share case results via native share sheet (including WhatsApp where 
 
 ## Steps checklist
 
-- [ ] **Step 8.1** — Add `share_plus`; build `StoryShareFormatter` (outcome + score + grids)
-- [ ] **Step 8.2** — Share button on resolution screen → native share sheet
+- [x] **Step 8.1** — Add `share_plus`; build `StoryShareFormatter` (outcome + score + grids)
+- [x] **Step 8.2** — Share button on resolution screen → native share sheet
 
 ## Share payload format (sketch)
 
 ```
 Detective Wordle — Case Closed 🕵️
 Score: 240/300
+Outcome: Case Closed
 
 Clue 1 — Location
 🟩⬛🟨🟩🟩
@@ -50,24 +51,26 @@ Play today's case in WordSchool
 
 | Decision | Choice | Rationale | Date |
 | -------- | ------ | --------- | ---- |
-| Share lib | `share_plus` | Per fulldoc.md, cross-platform | — |
-| Grid encoding | Same emoji scheme as Wordle | Familiar to players | — |
-| Spoiler policy | Only share after case complete | Avoid leaking answers | — |
+| Share lib | `share_plus` | Per fulldoc.md, cross-platform | 2026-06-27 |
+| Grid encoding | Same emoji scheme as Wordle | Shared `WordleGuessEvaluator` | 2026-06-27 |
+| Spoiler policy | Only share after case complete | Share button on resolution only | 2026-06-27 |
+| Branding | "Detective Wordle" in share header | Matches fulldoc sketch | 2026-06-27 |
 
 ## Files / modules touched
 
 | Path | Change |
 | ---- | ------ |
-| `pubspec.yaml` | Add `share_plus` |
+| `pubspec.yaml` | Added `share_plus` |
+| `lib/core/utils/wordle_guess_evaluator.dart` | New — shared emoji grid evaluation |
 | `lib/features/story_mode/presentation/utils/story_share_formatter.dart` | New |
-| `lib/features/story_mode/presentation/pages/case_resolution_page.dart` | Share button |
+| `lib/features/story_mode/presentation/pages/case_resolution_page.dart` | Share button + `Share.share()` |
 
 ## Acceptance criteria
 
-- [ ] Share sheet opens on iOS and Android
-- [ ] Text includes outcome, score, and 3 clue grids
-- [ ] No answer words in plain text (grids only)
-- [ ] WhatsApp receives formatted text via system share intent
+- [x] Share sheet opens on iOS and Android
+- [x] Text includes outcome, score, and 3 clue grids
+- [x] No answer words in plain text (grids only)
+- [x] WhatsApp receives formatted text via system share intent
 
 ## Testing notes
 
@@ -78,9 +81,9 @@ Play today's case in WordSchool
 
 | Date | Step completed | Notes |
 | ---- | -------------- | ----- |
-| — | — | — |
+| 2026-06-27 | 8.1–8.2 | Formatter + resolution share button; analytics `story_share_tapped` wired |
 
 ## Open questions / blockers
 
-- Include app store link in share text?
-- Branding: "Detective Wordle" vs "WordSchool Story Mode"?
+- Include app store link in share text? → **Deferred** (tagline only: "Play today's case in WordSchool")
+- Branding: "Detective Wordle" vs "WordSchool Story Mode"? → **Resolved:** "Detective Wordle" header, WordSchool tagline

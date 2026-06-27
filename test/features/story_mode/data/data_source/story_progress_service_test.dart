@@ -2,6 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/features/story_mode/data/data_source/story_progress_service.dart';
 import 'package:wordshool/features/story_mode/data/models/story_mode_progress.dart';
+import 'package:wordshool/features/story_mode/domain/entities/case_outcome.dart';
+import 'package:wordshool/features/story_mode/domain/utils/case_outcome_resolver.dart';
+import 'package:wordshool/features/story_mode/domain/utils/detective_score_calculator.dart';
 
 class InMemoryStoryProgressDataSource extends StoryProgressDataSource {
   final Map<String, StoryModeProgressModel> _docs = {};
@@ -37,6 +40,10 @@ class InMemoryStoryProgressDataSource extends StoryProgressDataSource {
     }
 
     final progress = ensureResult.data!;
+    if (progress.completedAt != null) {
+      return DataSuccess(data: progress);
+    }
+
     final clueGuesses = progress.clueGuesses
         .map((guesses) => List<String>.from(guesses))
         .toList();
@@ -53,6 +60,8 @@ class InMemoryStoryProgressDataSource extends StoryProgressDataSource {
       clueGuesses: clueGuesses,
       clueSolved: List<bool>.from(progress.clueSolved),
       totalScore: progress.totalScore,
+      outcome: progress.outcome,
+      completedAt: progress.completedAt,
     );
     _docs[_key(userId, caseId)] = updated;
     return DataSuccess(data: updated);
@@ -71,6 +80,10 @@ class InMemoryStoryProgressDataSource extends StoryProgressDataSource {
     }
 
     final progress = ensureResult.data!;
+    if (progress.completedAt != null) {
+      return DataSuccess(data: progress);
+    }
+
     final clueSolved = List<bool>.from(progress.clueSolved);
     clueSolved[clueIndex] = solved;
 
@@ -78,6 +91,11 @@ class InMemoryStoryProgressDataSource extends StoryProgressDataSource {
     final currentClueIndex = nextClueIndex > progress.currentClueIndex
         ? nextClueIndex
         : progress.currentClueIndex;
+
+    final cluePoints = DetectiveScoreCalculator.pointsForClue(
+      solved: solved,
+      attempts: progress.clueAttempts[clueIndex],
+    );
 
     final updated = StoryModeProgressModel(
       userId: userId,
@@ -88,7 +106,53 @@ class InMemoryStoryProgressDataSource extends StoryProgressDataSource {
           .map((guesses) => List<String>.from(guesses))
           .toList(),
       clueSolved: clueSolved,
-      totalScore: progress.totalScore,
+      totalScore: progress.totalScore + cluePoints,
+      outcome: progress.outcome,
+      completedAt: progress.completedAt,
+    );
+    _docs[_key(userId, caseId)] = updated;
+    return DataSuccess(data: updated);
+  }
+
+  @override
+  Future<DataState<StoryModeProgressModel>> completeStoryCase({
+    required String userId,
+    required String caseId,
+  }) async {
+    final ensureResult = await ensureProgressDoc(userId: userId, caseId: caseId);
+    if (ensureResult is! DataSuccess<StoryModeProgressModel>) {
+      return ensureResult;
+    }
+
+    final progress = ensureResult.data!;
+    if (progress.completedAt != null) {
+      return DataSuccess(data: progress);
+    }
+
+    if (progress.currentClueIndex < 3) {
+      return DataError<StoryModeProgressModel>(
+        error: AppError(error: 'Case is not finished', code: '400'),
+      );
+    }
+
+    final expectedScore = DetectiveScoreCalculator.totalScore(
+      clueSolved: progress.clueSolved,
+      clueAttempts: progress.clueAttempts,
+      currentClueIndex: progress.currentClueIndex,
+    );
+
+    final updated = StoryModeProgressModel(
+      userId: userId,
+      caseId: caseId,
+      currentClueIndex: progress.currentClueIndex,
+      clueAttempts: List<int>.from(progress.clueAttempts),
+      clueGuesses: progress.clueGuesses
+          .map((guesses) => List<String>.from(guesses))
+          .toList(),
+      clueSolved: List<bool>.from(progress.clueSolved),
+      totalScore: expectedScore,
+      outcome: CaseOutcomeResolver.resolve(progress.clueSolved),
+      completedAt: DateTime.utc(2026, 6, 27),
     );
     _docs[_key(userId, caseId)] = updated;
     return DataSuccess(data: updated);
@@ -117,7 +181,7 @@ void main() {
       expect(progress.clueAttempts[0], 1);
     });
 
-    test('completeClue marks solved and advances currentClueIndex', () async {
+    test('completeClue marks solved, advances index, and scores clue', () async {
       await dataSource.saveClueGuess(
         userId: 'user-1',
         caseId: '2026-06-18',
@@ -137,9 +201,10 @@ void main() {
           (completeResult as DataSuccess<StoryModeProgressModel>).data!;
       expect(progress.clueSolved[0], isTrue);
       expect(progress.currentClueIndex, 1);
+      expect(progress.totalScore, 100);
     });
 
-    test('completeClue on failed clue advances without solving', () async {
+    test('completeClue on failed clue advances without points', () async {
       for (var i = 0; i < 5; i++) {
         await dataSource.saveClueGuess(
           userId: 'user-1',
@@ -161,6 +226,75 @@ void main() {
       expect(progress.clueSolved[0], isFalse);
       expect(progress.currentClueIndex, 1);
       expect(progress.clueAttempts[0], 5);
+      expect(progress.totalScore, 0);
+    });
+
+    test('completeStoryCase sets outcome and completedAt', () async {
+      for (var clueIndex = 0; clueIndex < 3; clueIndex++) {
+        await dataSource.saveClueGuess(
+          userId: 'user-1',
+          caseId: '2026-06-18',
+          clueIndex: clueIndex,
+          guess: 'study',
+        );
+        await dataSource.completeClue(
+          userId: 'user-1',
+          caseId: '2026-06-18',
+          clueIndex: clueIndex,
+          solved: true,
+        );
+      }
+
+      final result = await dataSource.completeStoryCase(
+        userId: 'user-1',
+        caseId: '2026-06-18',
+      );
+
+      final progress = (result as DataSuccess<StoryModeProgressModel>).data!;
+      expect(progress.totalScore, 300);
+      expect(progress.outcome, CaseOutcome.caseClosed);
+      expect(progress.completedAt, isNotNull);
+    });
+
+    test('completeStoryCase cold case when one clue failed', () async {
+      for (var i = 0; i < 5; i++) {
+        await dataSource.saveClueGuess(
+          userId: 'user-1',
+          caseId: '2026-06-18',
+          clueIndex: 0,
+          guess: 'wrong',
+        );
+      }
+      await dataSource.completeClue(
+        userId: 'user-1',
+        caseId: '2026-06-18',
+        clueIndex: 0,
+        solved: false,
+      );
+
+      for (var clueIndex = 1; clueIndex < 3; clueIndex++) {
+        await dataSource.saveClueGuess(
+          userId: 'user-1',
+          caseId: '2026-06-18',
+          clueIndex: clueIndex,
+          guess: 'study',
+        );
+        await dataSource.completeClue(
+          userId: 'user-1',
+          caseId: '2026-06-18',
+          clueIndex: clueIndex,
+          solved: true,
+        );
+      }
+
+      final result = await dataSource.completeStoryCase(
+        userId: 'user-1',
+        caseId: '2026-06-18',
+      );
+
+      final progress = (result as DataSuccess<StoryModeProgressModel>).data!;
+      expect(progress.totalScore, 200);
+      expect(progress.outcome, CaseOutcome.coldCase);
     });
   });
 }

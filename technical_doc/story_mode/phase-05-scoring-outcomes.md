@@ -1,7 +1,7 @@
 # Phase 5 — Scoring & Outcomes
 
-> **Status:** Not started  
-> **Last updated:** —  
+> **Status:** Complete  
+> **Last updated:** 2026-06-27  
 > **Owner:** —  
 > **Depends on:** Phase 4  
 > **Blocks:** Phase 6, Phase 8  
@@ -27,13 +27,13 @@ Calculate detective points per clue, determine case outcome, display results on 
 
 ## Steps checklist
 
-- [ ] **Step 5.1** — `DetectiveScoreCalculator` — map attempts → points
-- [ ] **Step 5.2** — `CaseOutcomeResolver` — 3/2/1/0 clues → outcome
-- [ ] **Step 5.3** — Resolution screen: per-clue breakdown + total score
-- [ ] **Step 5.4** — Extend user game state with `detectivePoints`, `storyModeStreak`
-- [ ] **Step 5.5** — Prevent replay of today's case after completion
+- [x] **Step 5.1** — `DetectiveScoreCalculator` — map attempts → points
+- [x] **Step 5.2** — `CaseOutcomeResolver` — 3/2/1/0 clues → outcome
+- [x] **Step 5.3** — Resolution screen: per-clue breakdown + total score
+- [x] **Step 5.4** — Extend user game state with `detectivePoints`, `storyModeStreak`
+- [x] **Step 5.5** — Prevent replay of today's case after completion
 
-## Scoring table (from fulldoc.md)
+## Scoring table (5-guess limit — Phase 4 alignment)
 
 | Attempts | Points |
 | -------- | ------ |
@@ -42,8 +42,7 @@ Calculate detective points per clue, determine case outcome, display results on 
 | 3 | 60 |
 | 4 | 40 |
 | 5 | 20 |
-| 6 | 10 |
-| Failed (7+) | 0 |
+| Failed | 0 |
 
 **Maximum:** 300 points per day (3 clues × 100)
 
@@ -60,8 +59,11 @@ Calculate detective points per clue, determine case outcome, display results on 
 
 | Decision | Choice | Rationale | Date |
 | -------- | ------ | --------- | ---- |
-| Score timing | Compute on clue complete + finalize on case end | Incremental + final validation | — |
-| Stats storage | Extend `UserGameStateEntity` or separate doc | TBD — see Phase 0 open question | — |
+| Score timing | Compute on clue complete + finalize on case end | Incremental + final validation | 2026-06-27 |
+| Stats storage | Extend `UserGameStateEntity` | Reuse existing user doc; Phase 6 adds weekly leaderboard | 2026-06-27 |
+| Attempt table | 5 guesses (Phase 4) | Matches daily Wordle cap; drops fulldoc 6th-attempt row | 2026-06-27 |
+| Post-completion UX | Read-only review | Show score/outcome; narrative replay allowed, no re-scoring | 2026-06-27 |
+| Completion lock | `completedAt` on progress doc | `StoryCaseBloc` → `alreadyCompleted`; Firestore rule blocks updates | 2026-06-27 |
 
 ## Files / modules touched
 
@@ -69,30 +71,36 @@ Calculate detective points per clue, determine case outcome, display results on 
 | ---- | ------ |
 | `lib/features/story_mode/domain/utils/detective_score_calculator.dart` | New |
 | `lib/features/story_mode/domain/utils/case_outcome_resolver.dart` | New |
-| `lib/features/story_mode/presentation/pages/case_resolution_page.dart` | Score UI |
-| `lib/shared/domains/entities/user_game_state/` | Add detective fields |
 | `lib/features/story_mode/domain/usecases/complete_story_case.dart` | New |
+| `lib/features/story_mode/presentation/pages/case_resolution_page.dart` | Score UI |
+| `lib/features/story_mode/presentation/widgets/case_score_breakdown.dart` | New |
+| `lib/features/story_mode/presentation/utils/case_outcome_labels.dart` | New |
+| `lib/shared/domains/entities/user_game_state/` | Add detective fields |
+| `lib/core/utils/story_mode_streak_calculator.dart` | New |
+| `lib/features/story_mode/data/data_source/remote/story_progress_service.dart` | Scoring + finalize |
+| `firestore.rules` | Story progress lock + user stats fields |
 
 ## Acceptance criteria
 
-- [ ] 1-attempt solve on all clues = 300 total
-- [ ] Failed clue contributes 0 to total
-- [ ] Correct outcome badge for each solve combination
-- [ ] Re-opening app after completion shows `alreadyCompleted`, not replay
+- [x] 1-attempt solve on all clues = 300 total
+- [x] Failed clue contributes 0 to total
+- [x] Correct outcome badge for each solve combination
+- [x] Re-opening app after completion shows `alreadyCompleted`, not replay
 
 ## Testing notes
 
 - Unit tests for all attempt → point mappings
 - Unit tests for all 4 outcomes (0–3 clues solved)
 - Edge: user fails clue 1, solves 2 and 3 → Cold Case, score = sum of 2+3 only
+- `StoryCaseBloc` transitions to `alreadyCompleted` when `completedAt` is set mid-session
 
 ## Completion log
 
 | Date | Step completed | Notes |
 | ---- | -------------- | ----- |
-| — | — | — |
+| 2026-06-27 | 5.1–5.5 | Scoring utils, incremental + finalize writes, resolution UI, user stats, completion lock |
 
 ## Open questions / blockers
 
-- Partial credit if user abandons mid-case — score only completed clues?
-- Show outcome on dashboard before opening resolution screen?
+- ~~Partial credit if user abandons mid-case — score only completed clues?~~ → Yes; case finalizes only after clue 3 completes
+- ~~Show outcome on dashboard before opening resolution screen?~~ → Home shows outcome + score on `alreadyCompleted`

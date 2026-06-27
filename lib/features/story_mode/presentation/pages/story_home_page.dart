@@ -2,9 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wordshool/config/themes/colors.dart';
+import 'package:wordshool/core/config/monetization_config.dart';
+import 'package:wordshool/di.dart';
+import 'package:wordshool/features/story_mode/domain/entities/story_mode_progress.dart';
+import 'package:wordshool/features/story_mode/domain/utils/detective_score_calculator.dart';
+import 'package:wordshool/features/story_mode/presentation/utils/case_outcome_labels.dart';
 import 'package:wordshool/features/story_mode/presentation/bloc/story_case_bloc/story_case_bloc.dart';
 import 'package:wordshool/features/story_mode/presentation/bloc/story_flow_bloc/story_flow_bloc.dart';
 import 'package:wordshool/features/story_mode/presentation/routing/story_flow_gating.dart';
+import 'package:wordshool/features/story_mode/presentation/widgets/story_banner_ad.dart';
+import 'package:wordshool/features/story_mode/presentation/widgets/typewriter_text.dart';
 import 'package:wordshool/shared/presentations/widgets/app_button.dart';
 import 'package:wordshool/shared/presentations/widgets/game_scaffold.dart';
 
@@ -41,6 +48,7 @@ class StoryHomePage extends StatelessWidget {
               detectiveCase.title,
               detectiveCase.introduction,
               completed: true,
+              progress: progress,
             ),
           );
         },
@@ -80,6 +88,7 @@ class StoryHomePage extends StatelessWidget {
     String title,
     String introduction, {
     bool completed = false,
+    StoryModeProgressEntity? progress,
   }) {
     final flowState = context.watch<StoryFlowBloc>().state;
     final canBegin = flowState.maybeMap(
@@ -107,12 +116,32 @@ class StoryHomePage extends StatelessWidget {
                   ),
               textAlign: TextAlign.center,
             ),
+            if (progress?.outcome != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                caseOutcomeLabel(progress!.outcome!),
+                style: Theme.of(context).textTheme.titleMedium,
+                textAlign: TextAlign.center,
+              ),
+            ],
+            if (progress != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                '${progress.totalScore} / ${DetectiveScoreCalculator.maxPointsPerDay} points',
+                style: Theme.of(context).textTheme.bodyLarge,
+                textAlign: TextAlign.center,
+              ),
+            ],
           ],
           const SizedBox(height: 24),
-          Text(
-            introduction,
+          TypewriterText(
+            text: introduction,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
+          if (getIt<MonetizationConfig>().isMonetizationAndPurchasesEnabled) ...[
+            const SizedBox(height: 16),
+            const StoryBannerAd(),
+          ],
           if (canBegin) ...[
             const SizedBox(height: 32),
             AppButton(
@@ -129,7 +158,7 @@ class StoryHomePage extends StatelessWidget {
 
   String _beginLabel(StoryFlowState flowState, {required bool completed}) {
     if (completed) {
-      return 'Replay case';
+      return 'Review case';
     }
 
     return flowState.maybeMap(

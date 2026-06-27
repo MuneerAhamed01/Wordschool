@@ -20,4 +20,9 @@ abstract class StoryProgressDataSource {
     required int clueIndex,
     required bool solved,
   });
+
+  Future<DataState<StoryModeProgressModel>> completeStoryCase({
+    required String userId,
+    required String caseId,
+  });
 }

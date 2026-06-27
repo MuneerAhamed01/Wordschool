@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:wordshool/core/monetization/story_entitlements.dart';
+import 'package:wordshool/di.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/core/utils/date_helper.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_data.dart';
@@ -37,6 +39,11 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         await _loadUserSpecificGameStateUseCase(param: todayId);
 
     if (userStateResult is DataSuccess<UserGameStateEntity>) {
+      if (getIt.isRegistered<StoryEntitlementsService>()) {
+        getIt<StoryEntitlementsService>()
+            .updateFrom(userStateResult.data!);
+      }
+
       final todayGame = todayGameResult is DataSuccess<UserGameDataEntity>
           ? todayGameResult.data
           : null;

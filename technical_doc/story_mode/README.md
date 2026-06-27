@@ -12,15 +12,17 @@ Living documentation for building Story Mode. Product requirements live in [full
 | 1 — Backend | [phase-01-backend.md](./phase-01-backend.md) | Complete | 6/6 steps | 2026-06-21 |
 | 2 — Load case | [phase-02-load-case.md](./phase-02-load-case.md) | Complete | 4/4 steps | 2026-06-22 |
 | 3 — Story UI | [phase-03-story-ui.md](./phase-03-story-ui.md) | Complete | 7/7 steps | 2026-06-22 |
-| 4 — Wordle clues | [phase-04-wordle-clues.md](./phase-04-wordle-clues.md) | Complete | 5/5 steps | 2026-06-25 |
-| 5 — Scoring & outcomes | [phase-05-scoring-outcomes.md](./phase-05-scoring-outcomes.md) | Not started | 0/5 steps | — |
-| 6 — Leaderboards | [phase-06-leaderboards.md](./phase-06-leaderboards.md) | Not started | 0/5 steps | — |
-| 7 — Atmosphere | [phase-07-atmosphere.md](./phase-07-atmosphere.md) | Not started | 0/5 steps | — |
-| 8 — Sharing | [phase-08-sharing.md](./phase-08-sharing.md) | Not started | 0/2 steps | — |
-| 9 — Monetization | [phase-09-monetization.md](./phase-09-monetization.md) | Not started | 0/4 steps | — |
-| 10 — Analytics & polish | [phase-10-analytics-polish.md](./phase-10-analytics-polish.md) | Not started | 0/4 steps | — |
+| 4 — Wordle clues | [phase-04-wordle-clues.md](./phase-04-wordle-clues.md) | Complete | 5/5 steps | 2026-06-27 |
+| 5 — Scoring & outcomes | [phase-05-scoring-outcomes.md](./phase-05-scoring-outcomes.md) | Complete | 5/5 steps | 2026-06-27 |
+| 6 — Leaderboards | [phase-06-leaderboards.md](./phase-06-leaderboards.md) | Complete | 5/5 steps | 2026-06-27 |
+| 7 — Atmosphere | [phase-07-atmosphere.md](./phase-07-atmosphere.md) | Complete | 5/5 steps | 2026-06-27 |
+| 8 — Sharing | [phase-08-sharing.md](./phase-08-sharing.md) | Complete | 2/2 steps | 2026-06-27 |
+| 9 — Monetization | [phase-09-monetization.md](./phase-09-monetization.md) | Complete | 4/4 steps | 2026-06-27 |
+| 10 — Analytics & polish | [phase-10-analytics-polish.md](./phase-10-analytics-polish.md) | Complete | 4/4 steps | 2026-06-27 |
 
-**Overall:** 26 / 51 steps complete
+**Overall:** 51 / 51 steps complete
+
+**Launch docs:** [feature-completed.md](./feature-completed.md) · [manual-configuration-setup.md](./manual-configuration-setup.md) · [manual-testing-scenarios.md](./manual-testing-scenarios.md)
 
 ---
 
@@ -74,6 +76,8 @@ Phase 1 (Backend) ──→ Phase 2 (Load case)
 
 | Date | Change |
 | ---- | ------ |
+| 2026-06-27 | Phase 5 complete — detective scoring, outcomes, resolution UI, user stats, completion lock |
+| 2026-06-27 | Fix Firestore `clueGuesses` map serialization — nested arrays caused iOS crash on first clue guess |
 | 2026-06-25 | Phase 4 complete — real Wordle per clue, Firestore progress writes, restore, win/fail navigation |
 | 2026-06-22 | Phase 3 complete — story flow routes, five narrative screens, Wordle stub, StoryFlowBloc gating, tests |
 | 2026-06-22 | Phase 2 complete — Firestore case load, StoryCaseBloc, Remote Config gating, dashboard tile |
@@ -98,4 +102,4 @@ Phase 1 (Backend) ──→ Phase 2 (Load case)
 | Story mode backend | `functions/` — `generateDailyCase`, `seedDetectiveCase`, validation, seed script |
 | Remote Config | `lib/core/remote_config/story_mode_config.dart` — `story_mode_enabled` flag |
 
-**Not yet in app:** ads/IAP, `share_plus`, scoring/outcomes UI (Phase 5).
+**Not yet in app:** production AdMob/IAP IDs, audio asset files (optional).

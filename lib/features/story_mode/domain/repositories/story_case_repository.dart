@@ -27,4 +27,9 @@ abstract class StoryCaseRepository {
     required int clueIndex,
     required bool solved,
   });
+
+  Future<DataState<StoryModeProgressEntity>> completeStoryCase({
+    required String userId,
+    required String caseId,
+  });
 }

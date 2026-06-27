@@ -10,6 +10,13 @@ abstract final class AnalyticsEvents {
   static const purchaseStarted = 'purchase_started';
   static const purchaseCompleted = 'purchase_completed';
   static const purchaseFailed = 'purchase_failed';
+  static const storyCaseStarted = 'story_case_started';
+  static const storyClueStarted = 'story_clue_started';
+  static const storyClueSolved = 'story_clue_solved';
+  static const storyClueFailed = 'story_clue_failed';
+  static const storyCaseCompleted = 'story_case_completed';
+  static const storyShareTapped = 'story_share_tapped';
+  static const storyHintUsed = 'story_hint_used';
 }
 
 /// Parameter keys shared across events.
@@ -27,6 +34,10 @@ abstract final class AnalyticsParams {
   static const productId = 'product_id';
   static const productType = 'product_type';
   static const reason = 'reason';
+  static const clueIndex = 'clue_index';
+  static const outcome = 'outcome';
+  static const score = 'score';
+  static const hintSource = 'source';
 }
 
 /// Known features for adoption reporting in Firebase.

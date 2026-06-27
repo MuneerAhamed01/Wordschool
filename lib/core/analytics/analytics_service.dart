@@ -59,6 +59,26 @@ abstract class AnalyticsService {
     required String screenName,
     required int durationSeconds,
   });
+
+  Future<void> logStoryCaseStarted();
+
+  Future<void> logStoryClueStarted({required int clueIndex});
+
+  Future<void> logStoryClueSolved({
+    required int clueIndex,
+    required int attempts,
+  });
+
+  Future<void> logStoryClueFailed({required int clueIndex});
+
+  Future<void> logStoryCaseCompleted({
+    required String outcome,
+    required int score,
+  });
+
+  Future<void> logStoryShareTapped();
+
+  Future<void> logStoryHintUsed({required String source});
 }
 
 class FirebaseAnalyticsService implements AnalyticsService {
@@ -193,6 +213,61 @@ class FirebaseAnalyticsService implements AnalyticsService {
           AnalyticsParams.durationSeconds: durationSeconds,
         },
       );
+
+  @override
+  Future<void> logStoryCaseStarted() =>
+      _analytics.logEvent(name: AnalyticsEvents.storyCaseStarted);
+
+  @override
+  Future<void> logStoryClueStarted({required int clueIndex}) =>
+      _analytics.logEvent(
+        name: AnalyticsEvents.storyClueStarted,
+        parameters: {AnalyticsParams.clueIndex: clueIndex},
+      );
+
+  @override
+  Future<void> logStoryClueSolved({
+    required int clueIndex,
+    required int attempts,
+  }) =>
+      _analytics.logEvent(
+        name: AnalyticsEvents.storyClueSolved,
+        parameters: {
+          AnalyticsParams.clueIndex: clueIndex,
+          AnalyticsParams.attempts: attempts,
+        },
+      );
+
+  @override
+  Future<void> logStoryClueFailed({required int clueIndex}) =>
+      _analytics.logEvent(
+        name: AnalyticsEvents.storyClueFailed,
+        parameters: {AnalyticsParams.clueIndex: clueIndex},
+      );
+
+  @override
+  Future<void> logStoryCaseCompleted({
+    required String outcome,
+    required int score,
+  }) =>
+      _analytics.logEvent(
+        name: AnalyticsEvents.storyCaseCompleted,
+        parameters: {
+          AnalyticsParams.outcome: outcome,
+          AnalyticsParams.score: score,
+        },
+      );
+
+  @override
+  Future<void> logStoryShareTapped() =>
+      _analytics.logEvent(name: AnalyticsEvents.storyShareTapped);
+
+  @override
+  Future<void> logStoryHintUsed({required String source}) =>
+      _analytics.logEvent(
+        name: AnalyticsEvents.storyHintUsed,
+        parameters: {AnalyticsParams.hintSource: source},
+      );
 }
 
 /// No-op implementation for tests.
@@ -263,4 +338,31 @@ class NoOpAnalyticsService implements AnalyticsService {
     required String screenName,
     required int durationSeconds,
   }) async {}
+
+  @override
+  Future<void> logStoryCaseStarted() async {}
+
+  @override
+  Future<void> logStoryClueStarted({required int clueIndex}) async {}
+
+  @override
+  Future<void> logStoryClueSolved({
+    required int clueIndex,
+    required int attempts,
+  }) async {}
+
+  @override
+  Future<void> logStoryClueFailed({required int clueIndex}) async {}
+
+  @override
+  Future<void> logStoryCaseCompleted({
+    required String outcome,
+    required int score,
+  }) async {}
+
+  @override
+  Future<void> logStoryShareTapped() async {}
+
+  @override
+  Future<void> logStoryHintUsed({required String source}) async {}
 }

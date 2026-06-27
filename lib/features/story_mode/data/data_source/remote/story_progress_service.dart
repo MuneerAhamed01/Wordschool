@@ -3,6 +3,8 @@ import 'package:wordshool/core/firebase/collections.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/features/story_mode/data/data_source/story_progress_service.dart';
 import 'package:wordshool/features/story_mode/data/models/story_mode_progress.dart';
+import 'package:wordshool/features/story_mode/domain/utils/case_outcome_resolver.dart';
+import 'package:wordshool/features/story_mode/domain/utils/detective_score_calculator.dart';
 
 class StoryProgressDataSourceImpl extends StoryProgressDataSource {
   StoryProgressDataSourceImpl({required FirebaseFirestore firestore})
@@ -72,6 +74,10 @@ class StoryProgressDataSourceImpl extends StoryProgressDataSource {
       }
 
       final progress = ensureResult.data!;
+      if (progress.completedAt != null) {
+        return DataSuccess<StoryModeProgressModel>(data: progress);
+      }
+
       final clueGuesses = progress.clueGuesses
           .map((guesses) => List<String>.from(guesses))
           .toList();
@@ -80,24 +86,25 @@ class StoryProgressDataSourceImpl extends StoryProgressDataSource {
       clueGuesses[clueIndex] = [...clueGuesses[clueIndex], guess.toUpperCase()];
       clueAttempts[clueIndex] = clueAttempts[clueIndex] + 1;
 
+      final updated = StoryModeProgressModel(
+        userId: userId,
+        caseId: caseId,
+        currentClueIndex: progress.currentClueIndex,
+        clueAttempts: clueAttempts,
+        clueGuesses: clueGuesses,
+        clueSolved: List<bool>.from(progress.clueSolved),
+        totalScore: progress.totalScore,
+        outcome: progress.outcome,
+        completedAt: progress.completedAt,
+      );
+      final payload = updated.toJson();
+
       await _progressDoc(userId, caseId).update({
-        'clueGuesses': clueGuesses,
-        'clueAttempts': clueAttempts,
+        'clueGuesses': payload['clueGuesses'],
+        'clueAttempts': payload['clueAttempts'],
       });
 
-      return DataSuccess<StoryModeProgressModel>(
-        data: StoryModeProgressModel(
-          userId: userId,
-          caseId: caseId,
-          currentClueIndex: progress.currentClueIndex,
-          clueAttempts: clueAttempts,
-          clueGuesses: clueGuesses,
-          clueSolved: List<bool>.from(progress.clueSolved),
-          totalScore: progress.totalScore,
-          outcome: progress.outcome,
-          completedAt: progress.completedAt,
-        ),
-      );
+      return DataSuccess<StoryModeProgressModel>(data: updated);
     } catch (error, stackTrace) {
       return DataError<StoryModeProgressModel>(
         error: AppError.fromException(error),
@@ -124,6 +131,10 @@ class StoryProgressDataSourceImpl extends StoryProgressDataSource {
       }
 
       final progress = ensureResult.data!;
+      if (progress.completedAt != null) {
+        return DataSuccess<StoryModeProgressModel>(data: progress);
+      }
+
       final clueSolved = List<bool>.from(progress.clueSolved);
       clueSolved[clueIndex] = solved;
 
@@ -132,31 +143,105 @@ class StoryProgressDataSourceImpl extends StoryProgressDataSource {
           ? nextClueIndex
           : progress.currentClueIndex;
 
+      final cluePoints = DetectiveScoreCalculator.pointsForClue(
+        solved: solved,
+        attempts: progress.clueAttempts[clueIndex],
+      );
+
+      final updated = StoryModeProgressModel(
+        userId: userId,
+        caseId: caseId,
+        currentClueIndex: currentClueIndex,
+        clueAttempts: List<int>.from(progress.clueAttempts),
+        clueGuesses: progress.clueGuesses
+            .map((guesses) => List<String>.from(guesses))
+            .toList(),
+        clueSolved: clueSolved,
+        totalScore: progress.totalScore + cluePoints,
+        outcome: progress.outcome,
+        completedAt: progress.completedAt,
+      );
+      final payload = updated.toJson();
+
       await _progressDoc(userId, caseId).update({
-        'clueSolved': clueSolved,
-        'currentClueIndex': currentClueIndex,
+        'clueSolved': payload['clueSolved'],
+        'currentClueIndex': payload['currentClueIndex'],
+        'clueGuesses': payload['clueGuesses'],
+        'totalScore': payload['totalScore'],
       });
 
-      return DataSuccess<StoryModeProgressModel>(
-        data: StoryModeProgressModel(
-          userId: userId,
-          caseId: caseId,
-          currentClueIndex: currentClueIndex,
-          clueAttempts: List<int>.from(progress.clueAttempts),
-          clueGuesses: progress.clueGuesses
-              .map((guesses) => List<String>.from(guesses))
-              .toList(),
-          clueSolved: clueSolved,
-          totalScore: progress.totalScore,
-          outcome: progress.outcome,
-          completedAt: progress.completedAt,
-        ),
-      );
+      return DataSuccess<StoryModeProgressModel>(data: updated);
     } catch (error, stackTrace) {
       return DataError<StoryModeProgressModel>(
         error: AppError.fromException(error),
         stackTrace: stackTrace,
         context: 'StoryProgressDataSource.completeClue',
+      );
+    }
+  }
+
+  @override
+  Future<DataState<StoryModeProgressModel>> completeStoryCase({
+    required String userId,
+    required String caseId,
+  }) async {
+    try {
+      final ensureResult = await ensureProgressDoc(
+        userId: userId,
+        caseId: caseId,
+      );
+      if (ensureResult is! DataSuccess<StoryModeProgressModel>) {
+        return ensureResult;
+      }
+
+      final progress = ensureResult.data!;
+      if (progress.completedAt != null) {
+        return DataSuccess<StoryModeProgressModel>(data: progress);
+      }
+
+      if (progress.currentClueIndex < 3) {
+        return DataError<StoryModeProgressModel>(
+          error: AppError(
+            error: 'Case is not finished',
+            message: 'Complete all clues before closing the case',
+            code: '400',
+          ),
+        );
+      }
+
+      final expectedScore = DetectiveScoreCalculator.totalScore(
+        clueSolved: progress.clueSolved,
+        clueAttempts: progress.clueAttempts,
+        currentClueIndex: progress.currentClueIndex,
+      );
+
+      final updated = StoryModeProgressModel(
+        userId: userId,
+        caseId: caseId,
+        currentClueIndex: progress.currentClueIndex,
+        clueAttempts: List<int>.from(progress.clueAttempts),
+        clueGuesses: progress.clueGuesses
+            .map((guesses) => List<String>.from(guesses))
+            .toList(),
+        clueSolved: List<bool>.from(progress.clueSolved),
+        totalScore: expectedScore,
+        outcome: CaseOutcomeResolver.resolve(progress.clueSolved),
+        completedAt: DateTime.now(),
+      );
+      final payload = updated.toJson();
+
+      await _progressDoc(userId, caseId).update({
+        'totalScore': payload['totalScore'],
+        'outcome': payload['outcome'],
+        'completedAt': payload['completedAt'],
+      });
+
+      return DataSuccess<StoryModeProgressModel>(data: updated);
+    } catch (error, stackTrace) {
+      return DataError<StoryModeProgressModel>(
+        error: AppError.fromException(error),
+        stackTrace: stackTrace,
+        context: 'StoryProgressDataSource.completeStoryCase',
       );
     }
   }

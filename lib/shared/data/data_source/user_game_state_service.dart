@@ -53,6 +53,24 @@ abstract class UserGameStateDataSource {
     int totalGames,
   );
 
+  Future<DataState<bool>> updateStoryModeStats(
+    String userId, {
+    required int detectivePoints,
+    required int storyModeStreak,
+    required String lastStoryModeStreakDate,
+    required int storyModeLongestStreak,
+  });
+
+  Future<DataState<bool>> updateHintPackBalance(
+    String userId,
+    int hintPackBalance,
+  );
+
+  Future<DataState<bool>> applyMonetizationPurchase(
+    String userId, {
+    required String productId,
+  });
+
   Future<DataState<List<UserGameDataModel>>> getUserGameDataInRange(
     String userId,
     String startDateId,

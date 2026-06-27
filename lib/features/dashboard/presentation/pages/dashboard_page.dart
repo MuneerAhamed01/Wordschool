@@ -11,6 +11,7 @@ import 'package:wordshool/features/game/presentation/pages/game_page.dart';
 import 'package:wordshool/features/leaderboard/presentation/pages/leaderboard_page.dart';
 import 'package:wordshool/features/settings/presentation/pages/settings_page.dart';
 import 'package:wordshool/features/story_mode/presentation/pages/story_home_page.dart';
+import 'package:wordshool/core/config/monetization_config.dart';
 import 'package:wordshool/core/remote_config/story_mode_config.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_data.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_state.dart';
@@ -18,6 +19,8 @@ import 'package:wordshool/shared/presentations/widgets/action_tile.dart';
 import 'package:wordshool/shared/presentations/widgets/app_button.dart';
 import 'package:wordshool/shared/presentations/widgets/fade_slide_in.dart';
 import 'package:wordshool/shared/presentations/widgets/game_scaffold.dart';
+import 'package:wordshool/features/story_mode/presentation/widgets/story_banner_ad.dart';
+import 'package:wordshool/shared/presentations/widgets/detective_stats_panel.dart';
 import 'package:wordshool/shared/presentations/widgets/stats_panel.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -95,6 +98,20 @@ class DashboardPage extends StatelessWidget {
             delay: const Duration(milliseconds: 80),
             child: StatsPanel(userGameState: userGameState),
           ),
+          if (getIt<StoryModeConfig>()
+              .isEnabledForUser(userGameState.id)) ...[
+            const SizedBox(height: 16),
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 120),
+              child: DetectiveStatsPanel(userGameState: userGameState),
+            ),
+            const SizedBox(height: 12),
+            if (getIt<MonetizationConfig>().isMonetizationAndPurchasesEnabled)
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 130),
+                child: const Center(child: StoryBannerAd()),
+              ),
+          ],
           const SizedBox(height: 28),
           FadeSlideIn(
             delay: const Duration(milliseconds: 160),
@@ -126,7 +143,8 @@ class DashboardPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          if (getIt<StoryModeConfig>().isEnabled) ...[
+          if (getIt<StoryModeConfig>()
+              .isEnabledForUser(userGameState.id)) ...[
             FadeSlideIn(
               delay: const Duration(milliseconds: 200),
               child: ActionTile(
@@ -164,23 +182,9 @@ class DashboardPage extends StatelessWidget {
             delay: const Duration(milliseconds: 280),
             child: ActionTile(
               title: 'Leaderboard',
-              subtitle: 'Rankings coming soon',
+              subtitle: 'Weekly detective rankings',
               icon: Icons.leaderboard_rounded,
               accentColor: MyColors.streakAccent,
-              trailing: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: MyColors.gameBorder,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  'SOON',
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        fontSize: 10,
-                        color: MyColors.textMuted,
-                      ),
-                ),
-              ),
               onTap: () {
                 getIt<AnalyticsService>().logFeatureOpened(
                   featureName: AnalyticsFeatures.leaderboard,

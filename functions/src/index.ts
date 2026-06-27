@@ -6,3 +6,4 @@ if (getApps().length === 0) {
 
 export {generateDailyCase} from "./generateDailyCase";
 export {seedDetectiveCase} from "./seedCase";
+export {updateDetectiveLeaderboard} from "./updateDetectiveLeaderboard";

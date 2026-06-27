@@ -3,6 +3,8 @@ import 'package:wordshool/features/story_mode/domain/entities/case_outcome.dart'
 import 'package:wordshool/features/story_mode/domain/entities/story_mode_progress.dart';
 
 class StoryModeProgressModel extends StoryModeProgressEntity {
+  static const int clueCount = 3;
+
   const StoryModeProgressModel({
     required super.userId,
     required super.caseId,
@@ -45,13 +47,7 @@ class StoryModeProgressModel extends StoryModeProgressEntity {
       clueAttempts: (json['clueAttempts'] as List<dynamic>)
           .map((value) => value as int)
           .toList(),
-      clueGuesses: (json['clueGuesses'] as List<dynamic>)
-          .map(
-            (clueGuesses) => (clueGuesses as List<dynamic>)
-                .map((guess) => guess as String)
-                .toList(),
-          )
-          .toList(),
+      clueGuesses: clueGuessesFromFirestore(json['clueGuesses']),
       clueSolved: (json['clueSolved'] as List<dynamic>)
           .map((value) => value as bool)
           .toList(),
@@ -69,12 +65,50 @@ class StoryModeProgressModel extends StoryModeProgressEntity {
     return {
       'currentClueIndex': currentClueIndex,
       'clueAttempts': clueAttempts,
-      'clueGuesses': clueGuesses,
+      'clueGuesses': clueGuessesToFirestore(clueGuesses),
       'clueSolved': clueSolved,
       'totalScore': totalScore,
       'outcome': outcome?.toFirestoreString(),
       'completedAt':
           completedAt == null ? null : FirebaseDTConverter.toTimestamp(completedAt!),
     };
+  }
+
+  /// Firestore rejects nested arrays. Persist guesses as a map of clue index →
+  /// string array, e.g. `{ "0": ["STUDY"], "1": [], "2": [] }`.
+  static Map<String, List<String>> clueGuessesToFirestore(
+    List<List<String>> guesses,
+  ) {
+    return {
+      for (var index = 0; index < guesses.length; index++)
+        '$index': List<String>.from(guesses[index]),
+    };
+  }
+
+  static List<List<String>> clueGuessesFromFirestore(dynamic value) {
+    if (value is Map) {
+      return List<List<String>>.generate(
+        clueCount,
+        (index) {
+          final guesses = value['$index'];
+          if (guesses is! List) {
+            return const [];
+          }
+          return guesses.map((guess) => guess as String).toList();
+        },
+      );
+    }
+
+    if (value is List) {
+      return value
+          .map(
+            (clueGuesses) => (clueGuesses as List<dynamic>)
+                .map((guess) => guess as String)
+                .toList(),
+          )
+          .toList();
+    }
+
+    return List<List<String>>.generate(clueCount, (_) => const []);
   }
 }

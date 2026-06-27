@@ -14,6 +14,7 @@ import 'package:wordshool/features/game/presentation/bloc/game_bloc/game_bloc.da
 import 'package:wordshool/features/game/presentation/bloc/word_cubit/word_cubit.dart';
 import 'package:wordshool/features/game/presentation/pages/game_page.dart';
 import 'package:wordshool/features/game/presentation/utils/game_route_parser.dart';
+import 'package:wordshool/features/leaderboard/presentation/bloc/leaderboard_bloc.dart';
 import 'package:wordshool/features/leaderboard/presentation/pages/leaderboard_page.dart';
 import 'package:wordshool/features/settings/domain/usecases/logout_usecase.dart';
 import 'package:wordshool/features/settings/presentation/bloc/settings_bloc.dart';
@@ -30,6 +31,7 @@ import 'package:wordshool/features/story_mode/presentation/pages/story_reaction_
 import 'package:wordshool/features/story_mode/presentation/bloc/story_clue_bloc/story_clue_bloc.dart';
 import 'package:wordshool/features/story_mode/presentation/pages/story_wordle_page.dart';
 import 'package:wordshool/features/story_mode/presentation/routing/story_flow_redirect.dart';
+import 'package:wordshool/features/story_mode/presentation/routing/story_mode_feature_gate.dart';
 import 'package:wordshool/features/story_mode/presentation/widgets/story_mode_widgets.dart';
 import 'package:wordshool/features/winning/presentation/pages/params/winning_page_param.dart';
 import 'package:wordshool/features/winning/presentation/pages/winning_page.dart';
@@ -107,6 +109,7 @@ GoRouter appRouter(String initialRoute) {
         ),
       ),
       ShellRoute(
+        redirect: (context, state) => redirectStoryModeFeatureGate(state),
         builder: (context, state, child) {
           return MultiBlocProvider(
             providers: [
@@ -162,6 +165,7 @@ GoRouter appRouter(String initialRoute) {
                         create: (_) => StoryClueBloc(
                           saveClueGuessUseCase: getIt(),
                           completeStoryClueUseCase: getIt(),
+                          completeStoryCaseUseCase: getIt(),
                         ),
                       ),
                     ],
@@ -192,7 +196,12 @@ GoRouter appRouter(String initialRoute) {
       GoRoute(
         path: LeaderboardPage.routeName,
         name: LeaderboardPage.routeName.replaceFirst(RegExp(r'0'), ''),
-        builder: (context, state) => const LeaderboardPage(),
+        builder: (context, state) => BlocProvider(
+          create: (_) => LeaderboardBloc(
+            loadDetectiveLeaderboardUseCase: getIt(),
+          ),
+          child: const LeaderboardPage(),
+        ),
       ),
       GoRoute(
         path: SettingsPage.routeName,

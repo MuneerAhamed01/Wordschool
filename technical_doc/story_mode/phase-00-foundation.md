@@ -1,7 +1,7 @@
 # Phase 0 — Foundation & Data Model
 
 > **Status:** Complete  
-> **Last updated:** 2026-06-18  
+> **Last updated:** 2026-06-27  
 > **Owner:** —  
 > **Depends on:** —  
 > **Blocks:** Phase 1, Phase 2  
@@ -39,6 +39,7 @@ Define domain models, Firestore schema, security rules, and routing so Story Mod
 | Clue types enum | `location`, `weapon`, `suspect` | Matches product spec in fulldoc.md | — |
 | Feature module path | `lib/features/story_mode/` | Matches existing feature folder convention | — |
 | Progress collection | `userStoryProgress/{userId}/cases/{date}` | Separate shape and rules from daily `userGameData` | 2026-06-18 |
+| `clueGuesses` Firestore shape | Map keyed by clue index (`"0"`, `"1"`, `"2"`) | Firestore rejects nested arrays; Dart model stays `List<List<String>>` | 2026-06-27 |
 | Case rollover timezone | UTC via `DateHelper.todayUtcDateId()` | Global same-day case; daily Wordle stays device-local | 2026-06-18 |
 | Outcome Firestore values | snake_case (`case_closed`, etc.) | Consistent with security rule validation | 2026-06-18 |
 | Story routing | Dedicated `/story` route + `GameMode.story` | Multi-screen flow separate from `/game` query params | 2026-06-18 |
@@ -73,9 +74,9 @@ Define domain models, Firestore schema, security rules, and routing so Story Mod
 | ----- | ---- | ----- |
 | `userId` | `String` | Firebase Auth UID |
 | `caseId` | `String` | Same as case date |
-| `currentClueIndex` | `int` | 0–2 |
+| `currentClueIndex` | `int` | 0–3 (3 = all clues processed) |
 | `clueAttempts` | `List<int>` | Attempts used per clue (length 3) |
-| `clueGuesses` | `List<List<String>>` | Guess history per clue |
+| `clueGuesses` | `List<List<String>>` (Dart) / `map<string, string[]>` (Firestore) | Guess history per clue; map keys `"0"`–`"2"` because Firestore forbids nested arrays |
 | `clueSolved` | `List<bool>` | Whether each clue was solved |
 | `totalScore` | `int` | 0–300 |
 | `outcome` | `CaseOutcome?` | Set on completion |
@@ -104,12 +105,29 @@ detectiveCases/{yyyy-MM-dd}
 userStoryProgress/{userId}/cases/{yyyy-MM-dd}
   ├── currentClueIndex: number
   ├── clueAttempts: number[3]
-  ├── clueGuesses: array
+  ├── clueGuesses: map          // keys "0" | "1" | "2" → string[] (NOT nested arrays)
+  │     ├── "0": string[]
+  │     ├── "1": string[]
+  │     └── "2": string[]
   ├── clueSolved: boolean[3]
   ├── totalScore: number
   ├── outcome: string | null
   └── completedAt: timestamp | null
 ```
+
+### Firestore constraint: no nested arrays
+
+Firestore allows arrays of primitives but **not** arrays inside arrays. The Dart domain model uses `List<List<String>>` for ergonomics, but `StoryModeProgressModel.toJson()` converts to a map before any write:
+
+```json
+"clueGuesses": {
+  "0": ["CRANE", "STUDY"],
+  "1": [],
+  "2": []
+}
+```
+
+`fromJson()` accepts both the map format (current) and the legacy nested-array list (read-only compat). Writing nested arrays crashes the native SDK with `FIRInvalidArgumentException: Nested arrays are not supported`.
 
 ## Files / modules touched
 
@@ -143,6 +161,7 @@ userStoryProgress/{userId}/cases/{yyyy-MM-dd}
 | Date | Step completed | Notes |
 | ---- | -------------- | ----- |
 | 2026-06-18 | Steps 0.1–0.4 | Entities, models, collections, UTC helpers, rules, `/story` stub, 8 unit tests |
+| 2026-06-27 | Schema fix | Document + implement `clueGuesses` map shape for Firestore compatibility |
 
 ## Open questions / blockers
 

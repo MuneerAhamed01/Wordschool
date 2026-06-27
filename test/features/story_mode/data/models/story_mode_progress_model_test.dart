@@ -59,6 +59,48 @@ void main() {
           completedAt.millisecondsSinceEpoch);
       expect(json['outcome'], 'case_closed');
       expect(json['completedAt'], isA<Timestamp>());
+      expect(json['clueGuesses'], {
+        '0': ['CRANE', 'STUDY'],
+        '1': ['BLADE', 'KNIFE', 'SWORD'],
+        '2': ['HEIRS'],
+      });
+    });
+
+    test('serializes clueGuesses as Firestore map, not nested arrays', () {
+      final model = StoryModeProgressModel.empty(
+        userId: 'user-123',
+        caseId: '2026-06-18',
+      );
+
+      final json = model.toJson();
+
+      expect(json['clueGuesses'], isA<Map>());
+      expect(json['clueGuesses'], isNot(isA<List>()));
+      expect(json['clueGuesses'], {'0': [], '1': [], '2': []});
+    });
+
+    test('restores clueGuesses from legacy nested array format', () {
+      final restored = StoryModeProgressModel.fromJson(
+        {
+          'currentClueIndex': 1,
+          'clueAttempts': [2, 0, 0],
+          'clueGuesses': [
+            ['STUDY'],
+            [],
+            [],
+          ],
+          'clueSolved': [true, false, false],
+          'totalScore': 0,
+        },
+        userId: 'user-123',
+        caseId: '2026-06-18',
+      );
+
+      expect(restored.clueGuesses, [
+        ['STUDY'],
+        [],
+        [],
+      ]);
     });
 
     test('omits userId and caseId from Firestore payload', () {

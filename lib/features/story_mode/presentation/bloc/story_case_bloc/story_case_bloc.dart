@@ -72,6 +72,16 @@ class StoryCaseBloc extends Bloc<StoryCaseEvent, StoryCaseState> {
     final current = state;
     current.whenOrNull(
       loaded: (detectiveCase, progress) {
+        if (event.progress.completedAt != null) {
+          emit(
+            StoryCaseState.alreadyCompleted(
+              detectiveCase: detectiveCase,
+              progress: event.progress,
+            ),
+          );
+          return;
+        }
+
         emit(
           StoryCaseState.loaded(
             detectiveCase: detectiveCase,

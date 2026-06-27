@@ -22,14 +22,33 @@ service cloud.firestore {
         || value == 'unsolved'
         || value == 'dismissed';
     }
+    function isStoryClueGuessesMap(guesses) {
+      return guesses is map
+        && guesses.keys().hasAll(['0', '1', '2'])
+        && guesses['0'] is list
+        && guesses['1'] is list
+        && guesses['2'] is list;
+    }
+    function isStoryClueGuessesList(guesses) {
+      return guesses is list
+        && guesses.size() == 3
+        && guesses[0] is list
+        && guesses[1] is list
+        && guesses[2] is list;
+    }
+    function isStoryClueGuesses(guesses) {
+      return isStoryClueGuessesMap(guesses) || isStoryClueGuessesList(guesses);
+    }
+    function storyClueGuessesSlotCount(guesses) {
+      return guesses is map ? guesses.size() : guesses.size();
+    }
     function isStoryProgressData(data) {
       return data.currentClueIndex is int
         && data.currentClueIndex >= 0
-        && data.currentClueIndex <= 2
+        && data.currentClueIndex <= 3
         && data.clueAttempts is list
         && data.clueAttempts.size() == 3
-        && data.clueGuesses is list
-        && data.clueGuesses.size() == 3
+        && isStoryClueGuesses(data.clueGuesses)
         && data.clueSolved is list
         && data.clueSolved.size() == 3
         && isNonNegativeInt(data.totalScore)
@@ -80,7 +99,11 @@ service cloud.firestore {
         && isNonNegativeInt(request.resource.data.totalGames)
         && isNonNegativeInt(request.resource.data.completedGames)
         && isNonNegativeInt(request.resource.data.streak)
-        && isNonNegativeInt(request.resource.data.longestStreak);
+        && isNonNegativeInt(request.resource.data.longestStreak)
+        && isNonNegativeInt(request.resource.data.detectivePoints)
+        && isNonNegativeInt(request.resource.data.storyModeStreak)
+        && isNonNegativeInt(request.resource.data.storyModeLongestStreak)
+        && isNonNegativeInt(request.resource.data.hintPackBalance);
 
       // Update with sane constraints: id and createdDate immutable; counts not decreasing
       allow update: if isOwner(uid)
@@ -92,10 +115,18 @@ service cloud.firestore {
         && isNonNegativeInt(request.resource.data.completedGames)
         && isNonNegativeInt(request.resource.data.streak)
         && isNonNegativeInt(request.resource.data.longestStreak)
+        && isNonNegativeInt(request.resource.data.detectivePoints)
+        && isNonNegativeInt(request.resource.data.storyModeStreak)
+        && isNonNegativeInt(request.resource.data.storyModeLongestStreak)
         && request.resource.data.totalGames >= resource.data.totalGames
         && request.resource.data.completedGames >= resource.data.completedGames
         && request.resource.data.streak >= 0
-        && request.resource.data.longestStreak >= resource.data.longestStreak;
+        && request.resource.data.longestStreak >= resource.data.longestStreak
+        && request.resource.data.detectivePoints >= resource.data.detectivePoints
+        && request.resource.data.storyModeStreak >= 0
+        && request.resource.data.storyModeLongestStreak >= resource.data.storyModeLongestStreak
+        && request.resource.data.hintPackBalance >= 0
+        && request.resource.data.hintPackBalance >= resource.data.hintPackBalance - 5;
 
       // Clients should not delete their state container
       allow delete: if false;
@@ -139,12 +170,25 @@ service cloud.firestore {
         allow update: if isOwner(uid)
           && isDateId(dateId)
           && isStoryProgressData(request.resource.data)
+          && resource.data.completedAt == null
           && request.resource.data.currentClueIndex >= resource.data.currentClueIndex
           && request.resource.data.clueAttempts.size() == resource.data.clueAttempts.size()
-          && request.resource.data.clueGuesses.size() == resource.data.clueGuesses.size()
+          && storyClueGuessesSlotCount(request.resource.data.clueGuesses)
+             == storyClueGuessesSlotCount(resource.data.clueGuesses)
           && request.resource.data.clueSolved.size() == resource.data.clueSolved.size();
 
         allow delete: if false;
+      }
+    }
+
+    // ---------- Detective weekly leaderboard (server-written) ----------
+    match /detectiveLeaderboard/{weekId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+
+      match /entries/{userId} {
+        allow read: if isAuthenticated();
+        allow write: if false;
       }
     }
 

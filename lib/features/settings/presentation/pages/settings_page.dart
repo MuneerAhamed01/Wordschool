@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wordshool/config/themes/colors.dart';
+import 'package:wordshool/core/config/monetization_config.dart';
+import 'package:wordshool/core/monetization/story_entitlements.dart';
+import 'package:wordshool/core/monetization/iap_service.dart';
+import 'package:wordshool/di.dart';
 import 'package:wordshool/features/auth/presentation/pages/auth_page.dart';
+import 'package:wordshool/features/settings/presentation/widgets/story_settings_tiles.dart';
 import 'package:wordshool/shared/presentations/popup/general_pop_up.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wordshool/features/settings/presentation/bloc/settings_bloc.dart';
@@ -62,7 +67,45 @@ class SettingsPage extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             FadeSlideIn(
-              delay: const Duration(milliseconds: 160),
+              delay: const Duration(milliseconds: 120),
+              child: const StoryAudioSettingTile(),
+            ),
+            const SizedBox(height: 10),
+            if (getIt<MonetizationConfig>().isMonetizationAndPurchasesEnabled) ...[
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 140),
+                child: const DetectiveUpgradeTiles(),
+              ),
+              const SizedBox(height: 10),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 160),
+                child: ActionTile(
+                  title: 'Restore purchases',
+                  subtitle: 'Detective Pro, hint packs & remove ads',
+                  icon: Icons.restore_rounded,
+                  accentColor: MyColors.streakAccent,
+                  onTap: () async {
+                    if (getIt.isRegistered<IapService>()) {
+                      await getIt<IapService>().restorePurchases();
+                      if (getIt.isRegistered<StoryEntitlementsService>()) {
+                        await getIt<StoryEntitlementsService>().refresh();
+                      }
+                      if (context.mounted) {
+                        CustomSnackBar.show(
+                          context,
+                          message:
+                              'Restore requested — check your entitlements',
+                          type: SnackBarType.success,
+                        );
+                      }
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
+            ],
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 240),
               child: ActionTile(
                 title: 'Log out',
                 subtitle: 'Sign out of your account',

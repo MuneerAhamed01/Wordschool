@@ -1,7 +1,7 @@
 # Phase 4 — Wordle Per Clue
 
 > **Status:** Complete  
-> **Last updated:** 2026-06-25  
+> **Last updated:** 2026-06-27  
 > **Owner:** —  
 > **Depends on:** Phase 3  
 > **Blocks:** Phase 5  
@@ -45,6 +45,7 @@ Reuse the existing Wordle engine for each detective clue: 5 letters, max 5 guess
 | Clue BLoC | `StoryClueBloc` per route with `clueIndex` | Mirrors `GameBloc` + `WordCubit` pattern | 2026-06-25 |
 | Invalid word UX | Copy shake + snackbar from `GamePageHelper` | Consistent daily game feel | 2026-06-25 |
 | Flow completion | Derive from `currentClueIndex`, not only `clueSolved` | Failed clues still unlock reaction | 2026-06-25 |
+| `clueGuesses` persistence | Map in Firestore (`"0"`, `"1"`, `"2"` → string[]) | Firestore rejects nested arrays; model converts in `toJson`/`fromJson` | 2026-06-27 |
 
 ## Reuse map
 
@@ -89,6 +90,7 @@ Reuse the existing Wordle engine for each detective clue: 5 letters, max 5 guess
 | Date | Step completed | Notes |
 | ---- | -------------- | ----- |
 | 2026-06-25 | 4.1–4.5 | Real Wordle page, progress writes, restore, win/fail → reaction |
+| 2026-06-27 | Hotfix | `clueGuesses` Firestore map serialization — fixes iOS crash on first guess write |
 
 ## Open questions / blockers
 

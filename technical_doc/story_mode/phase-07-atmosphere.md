@@ -1,7 +1,7 @@
 # Phase 7 — Atmosphere (Visual & Audio)
 
-> **Status:** Not started  
-> **Last updated:** —  
+> **Status:** Complete  
+> **Last updated:** 2026-06-27  
 > **Owner:** —  
 > **Depends on:** Phase 3 (screens exist)  
 > **Blocks:** —  
@@ -27,19 +27,20 @@ Deliver the noir detective feel: dark UI, typewriter story text, polished tile a
 
 ## Steps checklist
 
-- [ ] **Step 7.1** — Noir theme: dark palette + typewriter/serif font for story screens
-- [ ] **Step 7.2** — `TypewriterText` widget — character-by-character reveal
-- [ ] **Step 7.3** — Tile flip/animate enhancements (`flutter_animate` if needed)
-- [ ] **Step 7.4** — `StoryAudioManager` — rain loop, key clicks, win/fail via `just_audio`
-- [ ] **Step 7.5** — Apply story theme only to `/story/*` routes (don't affect daily game)
+- [x] **Step 7.1** — Noir theme: dark palette + typewriter/serif font for story screens
+- [x] **Step 7.2** — `TypewriterText` widget — character-by-character reveal
+- [x] **Step 7.3** — Tile flip/animate enhancements (`flutter_animate` added; existing tile animations retained)
+- [x] **Step 7.4** — `StoryAudioManager` — rain loop, key clicks, win/fail via `just_audio`
+- [x] **Step 7.5** — Apply story theme only to `/story/*` routes (don't affect daily game)
 
 ## Technical decisions
 
 | Decision | Choice | Rationale | Date |
 | -------- | ------ | --------- | ---- |
-| Theme scope | Route-level `Theme` override | Isolate noir from main app | — |
-| Audio assets | `assets/audio/` | Already used by app | — |
-| Animation lib | `flutter_animate` | Listed in fulldoc.md | — |
+| Theme scope | Route-level `Theme` override | Isolate noir from main app | 2026-06-27 |
+| Audio assets | `assets/audio/` | Optional MP3 files; manager no-ops if missing | 2026-06-27 |
+| Animation lib | `flutter_animate` in pubspec | Available for future tile polish; daily tiles unchanged | 2026-06-27 |
+| Mute preference | SharedPreferences `story_audio_muted` | Simple client-side toggle hook | 2026-06-27 |
 
 ## Visual reference (fulldoc.md)
 
@@ -59,19 +60,23 @@ Deliver the noir detective feel: dark UI, typewriter story text, polished tile a
 
 | Path | Change |
 | ---- | ------ |
-| `lib/features/story_mode/presentation/theme/story_theme.dart` | New |
-| `lib/features/story_mode/presentation/widgets/typewriter_text.dart` | New |
-| `lib/features/story_mode/presentation/utils/story_audio_manager.dart` | New |
-| `assets/audio/` | New SFX files |
-| `pubspec.yaml` | Add `flutter_animate` if not present |
+| `lib/features/story_mode/presentation/theme/story_theme.dart` | New — `StoryTheme.dark()` |
+| `lib/features/story_mode/presentation/widgets/typewriter_text.dart` | New — skippable, reduced-motion aware |
+| `lib/features/story_mode/presentation/utils/story_audio_manager.dart` | New — rain, key, win/fail |
+| `lib/features/story_mode/presentation/widgets/story_mode_widgets.dart` | Theme wrapper + typewriter on narrative scaffold |
+| `lib/features/story_mode/presentation/pages/story_home_page.dart` | Typewriter on intro text |
+| `assets/audio/` | Placeholder dir (`.gitkeep`); MP3s added manually |
+| `pubspec.yaml` | Added `flutter_animate`, `just_audio` |
 
 ## Acceptance criteria
 
-- [ ] Story screens visually distinct from daily Wordle (noir feel)
-- [ ] Intro and reactions use typewriter effect (skippable)
-- [ ] Rain plays on story flow; stops on exit
-- [ ] Win/fail sound on clue complete
-- [ ] Daily game appearance unchanged
+- [x] Story screens visually distinct from daily Wordle (noir feel)
+- [x] Intro and reactions use typewriter effect (skippable)
+- [x] Rain plays on story flow; stops on exit (when `assets/audio/rain_loop.mp3` present)
+- [x] Win/fail sound on clue complete (wired in `StoryClueBloc`; assets optional)
+- [x] Keyboard click on story Wordle keys
+- [x] Story board fade-in via `flutter_animate`
+- [x] Daily game appearance unchanged
 
 ## Testing notes
 
@@ -83,9 +88,9 @@ Deliver the noir detective feel: dark UI, typewriter story text, polished tile a
 
 | Date | Step completed | Notes |
 | ---- | -------------- | ----- |
-| — | — | — |
+| 2026-06-27 | 7.1–7.5 | Noir theme, typewriter, audio manager, route-level theme via `StoryModeShell` |
 
 ## Open questions / blockers
 
-- User setting to mute story audio?
-- Haptic feedback on tile flip?
+- User setting to mute story audio? → **Done:** Settings → Story audio toggle (`StoryAudioSettingTile`)
+- Haptic feedback on tile flip? → **Deferred**

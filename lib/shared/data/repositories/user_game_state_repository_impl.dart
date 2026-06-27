@@ -167,6 +167,10 @@ class UserGameStateRepositoryImpl implements UserGameStateRepository {
       lastStreakDate: userGameState.lastStreakDate,
       completedGames: userGameState.completedGames,
       totalGames: userGameState.totalGames,
+      detectivePoints: userGameState.detectivePoints,
+      storyModeStreak: userGameState.storyModeStreak,
+      storyModeLongestStreak: userGameState.storyModeLongestStreak,
+      lastStoryModeStreakDate: userGameState.lastStoryModeStreakDate,
       createdDate: userGameState.createdDate,
       updatedDate: userGameState.updatedDate,
     );

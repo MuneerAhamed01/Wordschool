@@ -18,7 +18,9 @@ import 'package:wordshool/features/story_mode/presentation/routing/story_flow_ga
 import 'package:wordshool/features/story_mode/presentation/routing/story_flow_redirect.dart';
 import 'package:wordshool/features/story_mode/presentation/widgets/story_mode_widgets.dart';
 
+import 'package:wordshool/core/config/monetization_config.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
+import 'package:wordshool/di.dart';
 import 'package:wordshool/features/story_mode/domain/repositories/story_case_repository.dart';
 import 'package:wordshool/features/story_mode/domain/usecases/load_today_detective_case.dart';
 import 'package:wordshool/features/story_mode/domain/usecases/today_detective_case_result.dart';
@@ -194,6 +196,21 @@ GoRouter buildStoryTestRouter({
 }
 
 void main() {
+  setUp(() {
+    if (getIt.isRegistered<MonetizationConfig>()) {
+      getIt.unregister<MonetizationConfig>();
+    }
+    getIt.registerSingleton<MonetizationConfig>(
+      const MonetizationConfig(isMonetizationAndPurchasesEnabled: false),
+    );
+  });
+
+  tearDown(() async {
+    if (getIt.isRegistered<MonetizationConfig>()) {
+      await getIt.unregister<MonetizationConfig>();
+    }
+  });
+
   group('Story flow navigation', () {
     testWidgets('walks through three-clue active flow', (tester) async {
       final detectiveCase = sampleDetectiveCase();

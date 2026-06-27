@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wordshool/config/themes/colors.dart';
@@ -15,6 +16,7 @@ import 'package:wordshool/features/story_mode/presentation/bloc/story_case_bloc/
 import 'package:wordshool/features/story_mode/presentation/bloc/story_clue_bloc/story_clue_bloc.dart';
 import 'package:wordshool/features/story_mode/presentation/bloc/story_flow_bloc/story_flow_bloc.dart';
 import 'package:wordshool/features/story_mode/presentation/routing/story_flow_gating.dart';
+import 'package:wordshool/features/story_mode/presentation/utils/story_audio_manager.dart';
 import 'package:wordshool/features/story_mode/presentation/utils/clue_type_labels.dart';
 import 'package:wordshool/features/story_mode/presentation/widgets/story_mode_widgets.dart';
 import 'package:wordshool/shared/domains/repostiories/session_repository.dart';
@@ -324,7 +326,9 @@ class _StoryWordlePageState extends State<StoryWordlePage>
               );
             },
           ),
-        );
+        )
+            .animate()
+            .fadeIn(duration: 350.ms, curve: Curves.easeOut);
       },
     );
   }
@@ -369,8 +373,12 @@ class _StoryWordlePageState extends State<StoryWordlePage>
         return CustomKeyboard(
           keyHeight: metrics.keyHeight,
           keyFontSize: metrics.keyFontSize,
-          onKeyPressed: (value) =>
-              context.read<WordCubit>().addLetter(Letter(letter: value)),
+          onKeyPressed: (value) {
+            if (getIt.isRegistered<StoryAudioManager>()) {
+              getIt<StoryAudioManager>().playKeyClick();
+            }
+            context.read<WordCubit>().addLetter(Letter(letter: value));
+          },
           onEnterPressed: () => onSubmitWord(context),
           onBackspacePressed: () =>
               context.read<WordCubit>().removeLastLetter(),

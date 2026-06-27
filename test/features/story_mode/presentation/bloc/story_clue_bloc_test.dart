@@ -4,9 +4,11 @@ import 'package:wordshool/features/story_mode/data/data_source/story_case_servic
 import 'package:wordshool/features/story_mode/data/models/detective_case.dart';
 import 'package:wordshool/features/story_mode/data/models/story_mode_progress.dart';
 import 'package:wordshool/features/story_mode/data/repositories/story_case_repository_impl.dart';
+import 'package:wordshool/features/story_mode/domain/usecases/complete_story_case.dart';
 import 'package:wordshool/features/story_mode/domain/usecases/complete_story_clue.dart';
 import 'package:wordshool/features/story_mode/domain/usecases/save_clue_guess.dart';
 import 'package:wordshool/features/story_mode/presentation/bloc/story_clue_bloc/story_clue_bloc.dart';
+import 'package:wordshool/features/story_mode/presentation/routing/story_flow_gating.dart';
 
 import '../../data/data_source/story_progress_service_test.dart';
 
@@ -53,6 +55,8 @@ StoryClueBloc _createBloc(InMemoryStoryProgressDataSource dataSource) {
     saveClueGuessUseCase: SaveClueGuessUseCase(storyCaseRepository: repository),
     completeStoryClueUseCase:
         CompleteStoryClueUseCase(storyCaseRepository: repository),
+    completeStoryCaseUseCase:
+        CompleteStoryCaseUseCase(storyCaseRepository: repository),
   );
 }
 

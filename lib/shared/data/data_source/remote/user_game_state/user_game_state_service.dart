@@ -225,6 +225,79 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
   }
 
   @override
+  Future<DataState<bool>> updateStoryModeStats(
+    String userId, {
+    required int detectivePoints,
+    required int storyModeStreak,
+    required String lastStoryModeStreakDate,
+    required int storyModeLongestStreak,
+  }) async {
+    try {
+      await _userGameStateCollection().doc(userId).update({
+        'detectivePoints': detectivePoints,
+        'storyModeStreak': storyModeStreak,
+        'lastStoryModeStreakDate': lastStoryModeStreakDate,
+        'storyModeLongestStreak': storyModeLongestStreak,
+        'updatedDate': FieldValue.serverTimestamp(),
+      });
+      return DataSuccess<bool>(data: true);
+    } catch (error, stackTrace) {
+      return DataError<bool>(
+        error: AppError.fromException(error),
+      );
+    }
+  }
+
+  @override
+  Future<DataState<bool>> updateHintPackBalance(
+    String userId,
+    int hintPackBalance,
+  ) async {
+    try {
+      await _userGameStateCollection().doc(userId).update({
+        'hintPackBalance': hintPackBalance,
+        'updatedDate': FieldValue.serverTimestamp(),
+      });
+      return DataSuccess<bool>(data: true);
+    } catch (error) {
+      return DataError<bool>(error: AppError.fromException(error));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> applyMonetizationPurchase(
+    String userId, {
+    required String productId,
+  }) async {
+    try {
+      final stateResult = await getUserGameState(userId);
+      if (stateResult is! DataSuccess<UserGameStateModel>) {
+        return DataError<bool>(error: stateResult.error);
+      }
+
+      final current = stateResult.data!;
+      final updates = <String, dynamic>{
+        'updatedDate': FieldValue.serverTimestamp(),
+      };
+
+      switch (productId) {
+        case 'wordschool_remove_ads':
+          updates['hasRemoveAds'] = true;
+        case 'wordschool_hint_pack_5':
+          updates['hintPackBalance'] = current.hintPackBalance + 5;
+        case 'wordschool_detective_pro_monthly':
+          updates['isDetectivePro'] = true;
+          updates['hasRemoveAds'] = true;
+      }
+
+      await _userGameStateCollection().doc(userId).update(updates);
+      return DataSuccess<bool>(data: true);
+    } catch (error) {
+      return DataError<bool>(error: AppError.fromException(error));
+    }
+  }
+
+  @override
   Future<DataState<UserGameStateModel>> updateUserGameState(
     UserGameStateModel userGameState,
   ) async {

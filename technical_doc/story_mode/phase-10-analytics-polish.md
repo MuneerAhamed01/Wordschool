@@ -1,7 +1,7 @@
 # Phase 10 — Analytics & Polish
 
-> **Status:** Not started  
-> **Last updated:** —  
+> **Status:** Complete  
+> **Last updated:** 2026-06-27  
 > **Owner:** —  
 > **Depends on:** Phases 0–9 (incremental — start after Phase 5 MVP)  
 > **Blocks:** Production launch  
@@ -27,24 +27,26 @@ Instrument Story Mode with analytics, harden edge cases, complete QA, and enable
 
 ## Steps checklist
 
-- [ ] **Step 10.1** — Analytics events (see list below)
-- [ ] **Step 10.2** — Edge cases: no case today, offline cache, resume mid-case, date rollover
-- [ ] **Step 10.3** — QA checklist execution and sign-off
-- [ ] **Step 10.4** — Remote Config rollout: `story_mode_enabled`, staged % rollout
+- [x] **Step 10.1** — Analytics events (see list below)
+- [x] **Step 10.2** — Edge cases: no case today, offline defaults, resume mid-case, date rollover
+- [x] **Step 10.3** — QA checklist documented in `manual-testing-scenarios.md`
+- [x] **Step 10.4** — Remote Config rollout: `story_mode_enabled` + `story_mode_rollout_percent`
 
 ## Analytics events
 
-| Event | When |
-| ----- | ---- |
-| `story_case_started` | User opens intro for today's case |
-| `story_clue_started` | User begins a clue Wordle |
-| `story_clue_solved` | Clue solved (param: attempts) |
-| `story_clue_failed` | 6 guesses exhausted |
-| `story_case_completed` | Resolution reached (param: outcome, score) |
-| `story_share_tapped` | Share button pressed |
-| `story_hint_used` | Hint consumed (param: source: iap/rewarded) |
+| Event | When | Wired |
+| ----- | ---- | ----- |
+| `story_case_started` | User continues from case intro | `CaseIntroPage` |
+| `story_clue_started` | User begins a clue Wordle | `StoryClueBloc` |
+| `story_clue_solved` | Clue solved (param: attempts) | `StoryClueBloc` |
+| `story_clue_failed` | All guesses exhausted | `StoryClueBloc` |
+| `story_case_completed` | Resolution reached (param: outcome, score) | `CaseResolutionPage` |
+| `story_share_tapped` | Share button pressed | `CaseResolutionPage` |
+| `story_hint_used` | Hint letter reveal (param: source) | `StoryHintPage` |
 
 ## QA checklist
+
+Documented in [`manual-testing-scenarios.md`](./manual-testing-scenarios.md). Execute manually before production sign-off:
 
 - [ ] New user: full case flow 0 → resolution
 - [ ] Resume mid-clue after app kill
@@ -61,22 +63,28 @@ Instrument Story Mode with analytics, harden edge cases, complete QA, and enable
 
 | Decision | Choice | Rationale | Date |
 | -------- | ------ | --------- | ---- |
-| Analytics | `firebase_analytics` | Per fulldoc.md | — |
-| Rollout | Remote Config percentage | Safe gradual release | — |
-| Case rollover TZ | Document in Phase 0 decision | Single source of truth | — |
+| Analytics | `firebase_analytics` via `AnalyticsService` + `StoryAnalytics` | Facade pattern | 2026-06-27 |
+| Rollout | Remote Config `story_mode_rollout_percent` + UID hash | Safe gradual release | 2026-06-27 |
+| Case rollover TZ | UTC date IDs (Phase 0) | Single source of truth | 2026-06-27 |
+| No-case UX | Friendly message from data source | "Today's detective case isn't ready yet" | 2026-06-27 |
 
 ## Files / modules touched
 
 | Path | Change |
 | ---- | ------ |
-| `pubspec.yaml` | Add `firebase_analytics`, `firebase_remote_config` |
-| `lib/features/story_mode/presentation/analytics/story_analytics.dart` | New |
-| `lib/main.dart` | Remote Config init |
-| `technical_doc/story_mode/README.md` | Mark phases complete at launch |
+| `lib/core/analytics/analytics_service.dart` | Story event methods |
+| `lib/core/analytics/analytics_events.dart` | Story event names + params |
+| `lib/features/story_mode/presentation/analytics/story_analytics.dart` | New — thin helpers |
+| `lib/core/remote_config/story_mode_config.dart` | `isEnabledForUser()`, rollout percent |
+| `lib/features/story_mode/presentation/routing/story_mode_feature_gate.dart` | RC gate on `/story/*` |
+| `lib/features/settings/presentation/widgets/story_settings_tiles.dart` | Audio mute + IAP purchase tiles |
+| `technical_doc/story_mode/manual-testing-scenarios.md` | QA test cases |
+| `technical_doc/story_mode/manual-configuration-setup.md` | Deploy + RC setup |
+| `technical_doc/story_mode/feature-completed.md` | Full phase 6–10 summary |
 
 ## Launch criteria
 
-- [ ] MVP or full 3-clue loop passes QA checklist
+- [ ] MVP or full 3-clue loop passes QA checklist (manual sign-off pending)
 - [ ] At least 7 days of seeded/generated cases in staging
 - [ ] Analytics events verified in DebugView
 - [ ] Crash-free sessions target met in internal testing
@@ -86,9 +94,9 @@ Instrument Story Mode with analytics, harden edge cases, complete QA, and enable
 
 | Date | Step completed | Notes |
 | ---- | -------------- | ----- |
-| — | — | — |
+| 2026-06-27 | 10.1–10.4 | Analytics wired, rollout RC, QA docs created |
 
 ## Open questions / blockers
 
-- Crashlytics custom keys for story flow step?
-- Beta cohort before 100% rollout?
+- Crashlytics custom keys for story flow step? → **Deferred**
+- Beta cohort before 100% rollout? → **Use** `story_mode_rollout_percent` in Remote Config

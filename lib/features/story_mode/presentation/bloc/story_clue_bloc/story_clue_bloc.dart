@@ -1,9 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:async';
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/features/game/presentation/utils/constants.dart';
 import 'package:wordshool/features/story_mode/domain/entities/story_mode_progress.dart';
+import 'package:wordshool/features/story_mode/presentation/analytics/story_analytics.dart';
+import 'package:wordshool/features/story_mode/presentation/utils/story_audio_manager.dart';
+import 'package:wordshool/di.dart';
+import 'package:wordshool/features/story_mode/domain/usecases/complete_story_case.dart';
 import 'package:wordshool/features/story_mode/domain/usecases/complete_story_clue.dart';
 import 'package:wordshool/features/story_mode/domain/usecases/save_clue_guess.dart';
+import 'package:wordshool/features/story_mode/domain/usecases/utils/complete_story_case_param.dart';
+import 'package:wordshool/features/story_mode/presentation/routing/story_flow_gating.dart';
 import 'package:wordshool/features/story_mode/domain/usecases/utils/complete_story_clue_param.dart';
 import 'package:wordshool/features/story_mode/domain/usecases/utils/save_clue_guess_param.dart';
 
@@ -142,8 +149,10 @@ class StoryClueBloc extends Bloc<StoryClueEvent, StoryClueState> {
   StoryClueBloc({
     required SaveClueGuessUseCase saveClueGuessUseCase,
     required CompleteStoryClueUseCase completeStoryClueUseCase,
+    required CompleteStoryCaseUseCase completeStoryCaseUseCase,
   })  : _saveClueGuessUseCase = saveClueGuessUseCase,
         _completeStoryClueUseCase = completeStoryClueUseCase,
+        _completeStoryCaseUseCase = completeStoryCaseUseCase,
         super(const StoryClueInitial()) {
     on<InitializeClue>(_onInitializeClue);
     on<SubmitGuess>(_onSubmitGuess);
@@ -152,6 +161,7 @@ class StoryClueBloc extends Bloc<StoryClueEvent, StoryClueState> {
 
   final SaveClueGuessUseCase _saveClueGuessUseCase;
   final CompleteStoryClueUseCase _completeStoryClueUseCase;
+  final CompleteStoryCaseUseCase _completeStoryCaseUseCase;
 
   void _onInitializeClue(InitializeClue event, Emitter<StoryClueState> emit) {
     emit(
@@ -167,6 +177,13 @@ class StoryClueBloc extends Bloc<StoryClueEvent, StoryClueState> {
         ),
       ),
     );
+
+    if (!_isClueFinishedFromProgress(
+      clueIndex: event.clueIndex,
+      progress: event.progress,
+    )) {
+      StoryAnalytics.clueStarted(clueIndex: event.clueIndex);
+    }
   }
 
   Future<void> _onSubmitGuess(
@@ -222,12 +239,42 @@ class StoryClueBloc extends Bloc<StoryClueEvent, StoryClueState> {
     );
 
     if (result is DataSuccess<StoryModeProgressEntity>) {
+      var progress = result.data!;
+
+      if (current.clueIndex == StoryFlowGating.maxClueIndex) {
+        final caseResult = await _completeStoryCaseUseCase(
+          param: CompleteStoryCaseParam(
+            userId: current.userId,
+            caseId: current.caseId,
+          ),
+        );
+
+        if (caseResult is DataSuccess<StoryModeProgressEntity>) {
+          progress = caseResult.data!;
+        }
+      }
+
       emit(
         current.copyWith(
-          progress: result.data,
+          progress: progress,
           isCompleted: true,
         ),
       );
+
+      if (event.solved) {
+        StoryAnalytics.clueSolved(
+          clueIndex: current.clueIndex,
+          attempts: progress.clueAttempts[current.clueIndex],
+        );
+        if (getIt.isRegistered<StoryAudioManager>()) {
+          unawaited(getIt<StoryAudioManager>().playWin());
+        }
+      } else {
+        StoryAnalytics.clueFailed(clueIndex: current.clueIndex);
+        if (getIt.isRegistered<StoryAudioManager>()) {
+          unawaited(getIt<StoryAudioManager>().playFail());
+        }
+      }
       return;
     }
 
