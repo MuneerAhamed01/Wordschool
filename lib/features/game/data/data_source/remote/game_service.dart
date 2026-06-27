@@ -26,13 +26,19 @@ class GameDataSourceImpl extends GameDataSource {
     try {
       if (!DateHelper.isValidDateId(dateId)) {
         return DataError<GameModel>(
-          error: AppError(error: 'Invalid date format', code: '400'),
+          error: AppError.validation(
+            message: 'Invalid date format',
+            error: 'Invalid date format',
+          ),
         );
       }
 
       if (DateHelper.isFutureDateId(dateId)) {
         return DataError<GameModel>(
-          error: AppError(error: 'Future games are not available', code: '400'),
+          error: AppError.validation(
+            message: 'Future games are not available',
+            error: 'Future games are not available',
+          ),
         );
       }
 
@@ -49,21 +55,29 @@ class GameDataSourceImpl extends GameDataSource {
         }
 
         return DataError<GameModel>(
-          error: AppError(error: 'Game not found for $dateId', code: '404'),
+          error: AppError.notFound(
+            message: 'Game not found for $dateId',
+            error: 'Game not found for $dateId',
+          ),
         );
       }
 
       final gameDoc = response.data();
       if (gameDoc == null) {
         return DataError<GameModel>(
-          error: AppError(error: 'Game not found', code: '404'),
+          error: AppError.notFound(
+            message: 'Game not found',
+            error: 'Game not found',
+          ),
         );
       }
 
       return DataSuccess<GameModel>(data: GameModel.fromJson(gameDoc));
-    } catch (error) {
+    } catch (error, stackTrace) {
       return DataError<GameModel>(
-        error: AppError(error: error.toString(), code: '500'),
+        error: AppError.fromException(error),
+        stackTrace: stackTrace,
+        context: 'GameDataSource.loadGameByDate',
       );
     }
   }

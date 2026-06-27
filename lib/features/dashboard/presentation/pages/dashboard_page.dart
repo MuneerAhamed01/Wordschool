@@ -10,6 +10,8 @@ import 'package:wordshool/features/dashboard/presentation/bloc/dashboard_bloc.da
 import 'package:wordshool/features/game/presentation/pages/game_page.dart';
 import 'package:wordshool/features/leaderboard/presentation/pages/leaderboard_page.dart';
 import 'package:wordshool/features/settings/presentation/pages/settings_page.dart';
+import 'package:wordshool/features/story_mode/presentation/pages/story_home_page.dart';
+import 'package:wordshool/core/remote_config/story_mode_config.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_data.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_state.dart';
 import 'package:wordshool/shared/presentations/widgets/action_tile.dart';
@@ -78,7 +80,8 @@ class DashboardPage extends StatelessWidget {
           FadeSlideIn(
             child: Column(
               children: [
-                Text('WordSchool', style: Theme.of(context).textTheme.displayMedium),
+                Text('WordSchool',
+                    style: Theme.of(context).textTheme.displayMedium),
                 const SizedBox(height: 6),
                 Text(
                   'Your daily word puzzle',
@@ -123,6 +126,24 @@ class DashboardPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
+          if (getIt<StoryModeConfig>().isEnabled) ...[
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 200),
+              child: ActionTile(
+                title: 'Detective Case',
+                subtitle: "Solve today's mystery",
+                icon: Icons.search_rounded,
+                accentColor: MyColors.gray6,
+                onTap: () {
+                  getIt<AnalyticsService>().logFeatureOpened(
+                    featureName: AnalyticsFeatures.storyMode,
+                  );
+                  context.push(StoryHomePage.routeName);
+                },
+              ),
+            ),
+            const SizedBox(height: 10),
+          ],
           FadeSlideIn(
             delay: const Duration(milliseconds: 220),
             child: ActionTile(
@@ -193,7 +214,9 @@ class DashboardPage extends StatelessWidget {
     if (todayGameData == null || !todayGameData.isCompleted) {
       return 'Play Today\'s Puzzle';
     }
-    return todayGameData.isCorrect ? 'Review Today\'s Win' : 'Review Today\'s Result';
+    return todayGameData.isCorrect
+        ? 'Review Today\'s Win'
+        : 'Review Today\'s Result';
   }
 
   IconData _playButtonIcon(UserGameDataEntity? todayGameData) {

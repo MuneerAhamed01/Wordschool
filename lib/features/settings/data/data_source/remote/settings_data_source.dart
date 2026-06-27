@@ -19,8 +19,12 @@ class SettingsDataSourceImpl implements SettingsDataSource {
       await _googleSignIn.signOut();
       await _firebaseAuth.signOut();
       return DataSuccess<bool>(data: true);
-    } catch (e) {
-      return DataError<bool>(error: AppError(error: e.toString(), code: '500'));
+    } catch (error, stackTrace) {
+      return DataError<bool>(
+        error: AppError.fromException(error),
+        stackTrace: stackTrace,
+        context: 'SettingsDataSource.signOut',
+      );
     }
   }
 }

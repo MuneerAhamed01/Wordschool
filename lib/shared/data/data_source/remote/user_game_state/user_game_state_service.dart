@@ -36,9 +36,9 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
       );
       await gameStateDoc.set(emptyUserData.toJson());
       return DataSuccess<UserGameStateModel>(data: emptyUserData);
-    } catch (error) {
+    } catch (error, stackTrace) {
       return DataError<UserGameStateModel>(
-        error: AppError(error: error.toString(), code: '500'),
+        error: AppError.fromException(error),
       );
     }
   }
@@ -55,9 +55,9 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
         'updatedDate': FieldValue.serverTimestamp(),
       });
       return DataSuccess<bool>(data: true);
-    } catch (error) {
+    } catch (error, stackTrace) {
       return DataError<bool>(
-        error: AppError(error: error.toString(), code: '500'),
+        error: AppError.fromException(error),
       );
     }
   }
@@ -76,9 +76,9 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
       );
       await gameDataDoc.set(emptyGameData.toJson());
       return DataSuccess<UserGameDataModel>(data: emptyGameData);
-    } catch (error) {
+    } catch (error, stackTrace) {
       return DataError<UserGameDataModel>(
-        error: AppError(error: error.toString(), code: '500'),
+        error: AppError.fromException(error),
       );
     }
   }
@@ -89,15 +89,18 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
       final gameStateDoc = await _userGameStateCollection().doc(userId).get();
       if (!gameStateDoc.exists) {
         return DataError<UserGameStateModel>(
-          error: AppError(error: 'Game state not found', code: '404'),
+          error: AppError.notFound(
+            message: 'Game state not found',
+            error: 'Game state not found',
+          ),
         );
       }
       return DataSuccess<UserGameStateModel>(
         data: UserGameStateModel.fromJson(gameStateDoc.data() ?? {}),
       );
-    } catch (error) {
+    } catch (error, stackTrace) {
       return DataError<UserGameStateModel>(
-        error: AppError(error: error.toString(), code: '500'),
+        error: AppError.fromException(error),
       );
     }
   }
@@ -113,16 +116,19 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
 
       if (!gameDataDoc.exists) {
         return DataError<UserGameDataModel>(
-          error: AppError(error: 'Game data not found', code: '404'),
+          error: AppError.notFound(
+            message: 'Game data not found',
+            error: 'Game data not found',
+          ),
         );
       }
 
       return DataSuccess<UserGameDataModel>(
         data: UserGameDataModel.fromJson(gameDataDoc.data() ?? {}),
       );
-    } catch (error) {
+    } catch (error, stackTrace) {
       return DataError<UserGameDataModel>(
-        error: AppError(error: error.toString(), code: '500'),
+        error: AppError.fromException(error),
       );
     }
   }
@@ -146,9 +152,9 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
       }).toList();
 
       return DataSuccess<List<UserGameDataModel>>(data: gameDataList);
-    } catch (error) {
+    } catch (error, stackTrace) {
       return DataError<List<UserGameDataModel>>(
-        error: AppError(error: error.toString(), code: '500'),
+        error: AppError.fromException(error),
       );
     }
   }
@@ -166,9 +172,9 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
         'updatedDate': FieldValue.serverTimestamp(),
       });
       return DataSuccess<bool>(data: true);
-    } catch (error) {
+    } catch (error, stackTrace) {
       return DataError<bool>(
-        error: AppError(error: error.toString(), code: '500'),
+        error: AppError.fromException(error),
       );
     }
   }
@@ -185,9 +191,9 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
         'updatedDate': FieldValue.serverTimestamp(),
       });
       return DataSuccess<bool>(data: true);
-    } catch (error) {
+    } catch (error, stackTrace) {
       return DataError<bool>(
-        error: AppError(error: error.toString(), code: '500'),
+        error: AppError.fromException(error),
       );
     }
   }
@@ -211,9 +217,9 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
         'updatedDate': FieldValue.serverTimestamp(),
       });
       return DataSuccess<bool>(data: true);
-    } catch (error) {
+    } catch (error, stackTrace) {
       return DataError<bool>(
-        error: AppError(error: error.toString(), code: '500'),
+        error: AppError.fromException(error),
       );
     }
   }
@@ -227,9 +233,9 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
           .doc(userGameState.id)
           .update(userGameState.toJson());
       return DataSuccess<UserGameStateModel>(data: userGameState);
-    } catch (error) {
+    } catch (error, stackTrace) {
       return DataError<UserGameStateModel>(
-        error: AppError(error: error.toString(), code: '500'),
+        error: AppError.fromException(error),
       );
     }
   }
@@ -244,9 +250,9 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
           .doc(userGameData.id)
           .update(userGameData.toJson());
       return DataSuccess<UserGameDataModel>(data: userGameData);
-    } catch (error) {
+    } catch (error, stackTrace) {
       return DataError<UserGameDataModel>(
-        error: AppError(error: error.toString(), code: '500'),
+        error: AppError.fromException(error),
       );
     }
   }

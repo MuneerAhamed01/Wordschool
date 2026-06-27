@@ -37,6 +37,12 @@ import 'package:wordshool/features/settings/data/data_source/settings_data_sourc
 import 'package:wordshool/features/settings/data/repositories/settings_repository_impl.dart';
 import 'package:wordshool/features/settings/domain/repositories/settings_repository.dart';
 import 'package:wordshool/features/settings/domain/usecases/logout_usecase.dart';
+import 'package:wordshool/core/remote_config/story_mode_config.dart';
+import 'package:wordshool/features/story_mode/data/data_source/remote/story_case_service.dart';
+import 'package:wordshool/features/story_mode/data/data_source/story_case_service.dart';
+import 'package:wordshool/features/story_mode/data/repositories/story_case_repository_impl.dart';
+import 'package:wordshool/features/story_mode/domain/repositories/story_case_repository.dart';
+import 'package:wordshool/features/story_mode/domain/usecases/load_today_detective_case.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -48,8 +54,32 @@ Future<void> initializeDependency() async {
   _initializeAnalytics();
   await _initializeAuthDependencies();
   await _initializeValidWords();
+  await _initializeRemoteConfig();
   _initializeGame();
+  _initializeStoryMode();
   _initializeSettings();
+}
+
+Future<void> _initializeRemoteConfig() async {
+  getIt.registerSingleton<StoryModeConfig>(FirebaseStoryModeConfig());
+  await getIt<StoryModeConfig>().initialize();
+}
+
+void _initializeStoryMode() {
+  getIt.registerSingleton<StoryCaseDataSource>(
+    StoryCaseDataSourceImpl(firestore: FirebaseFirestore.instance),
+  );
+
+  getIt.registerSingleton<StoryCaseRepository>(
+    StoryCaseRepositoryImpl(storyCaseDataSource: getIt<StoryCaseDataSource>()),
+  );
+
+  getIt.registerSingleton<LoadTodayDetectiveCaseUseCase>(
+    LoadTodayDetectiveCaseUseCase(
+      storyCaseRepository: getIt<StoryCaseRepository>(),
+      getCurrentUserUseCase: getIt<GetCurrentUserUseCase>(),
+    ),
+  );
 }
 
 Future<void> _initSessions() async {

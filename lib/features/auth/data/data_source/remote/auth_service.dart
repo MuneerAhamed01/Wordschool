@@ -38,11 +38,16 @@ class AuthDataSourceImpl extends AuthDataSource {
       }
 
       return DataError<WordSchoolUserModel?>(
-        error: AppError(error: 'User not found', code: '404'),
+        error: AppError.notFound(
+          message: 'User not found',
+          error: 'User not found',
+        ),
       );
-    } catch (e) {
+    } catch (error, stackTrace) {
       return DataError<WordSchoolUserModel?>(
-        error: AppError(error: e.toString(), code: '500'),
+        error: AppError.fromException(error),
+        stackTrace: stackTrace,
+        context: 'AuthDataSource.signInAnonymously',
       );
     }
   }
@@ -52,23 +57,36 @@ class AuthDataSourceImpl extends AuthDataSource {
     try {
       final googleUser = await _googleSignIn.authenticate();
       return _completeGoogleSignIn(googleUser);
-    } on GoogleSignInException catch (e) {
+    } on GoogleSignInException catch (e, stackTrace) {
       if (e.code == GoogleSignInExceptionCode.canceled) {
         return DataError<WordSchoolUserModel?>(
-          error: AppError(error: 'Google sign-in was cancelled', code: '499'),
+          error: AppError.cancelled(
+            message: 'Google sign-in was cancelled',
+            error: e,
+          ),
         );
       }
 
       return DataError<WordSchoolUserModel?>(
-        error: AppError(error: e.description ?? e.toString(), code: '500'),
+        error: AppError.fromException(e),
+        stackTrace: stackTrace,
+        context: 'AuthDataSource.signInWithGoogle',
       );
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e, stackTrace) {
       return DataError<WordSchoolUserModel?>(
-        error: AppError(error: e.message ?? e.code, code: e.code),
+        error: AppError.fromException(
+          e,
+          message: e.message ?? e.code,
+          code: e.code,
+        ),
+        stackTrace: stackTrace,
+        context: 'AuthDataSource.signInWithGoogle',
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
       return DataError<WordSchoolUserModel?>(
-        error: AppError(error: e.toString(), code: '500'),
+        error: AppError.fromException(e),
+        stackTrace: stackTrace,
+        context: 'AuthDataSource.signInWithGoogle',
       );
     }
   }
@@ -101,7 +119,10 @@ class AuthDataSourceImpl extends AuthDataSource {
 
       if (response.user == null) {
         return DataError<WordSchoolUserModel?>(
-          error: AppError(error: 'Authentication failed', code: '404'),
+          error: AppError.notFound(
+            message: 'Authentication failed',
+            error: 'Authentication failed',
+          ),
         );
       }
 
@@ -118,7 +139,10 @@ class AuthDataSourceImpl extends AuthDataSource {
 
       if (response.user == null) {
         return DataError<WordSchoolUserModel?>(
-          error: AppError(error: 'Authentication failed', code: '404'),
+          error: AppError.notFound(
+            message: 'Authentication failed',
+            error: 'Authentication failed',
+          ),
         );
       }
 

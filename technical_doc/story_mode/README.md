@@ -10,8 +10,8 @@ Living documentation for building Story Mode. Product requirements live in [full
 | ----- | --- | ------ | -------- | ------------ |
 | 0 — Foundation | [phase-00-foundation.md](./phase-00-foundation.md) | Complete | 4/4 steps | 2026-06-18 |
 | 1 — Backend | [phase-01-backend.md](./phase-01-backend.md) | Complete | 6/6 steps | 2026-06-21 |
-| 2 — Load case | [phase-02-load-case.md](./phase-02-load-case.md) | Not started | 0/4 steps | — |
-| 3 — Story UI | [phase-03-story-ui.md](./phase-03-story-ui.md) | Not started | 0/7 steps | — |
+| 2 — Load case | [phase-02-load-case.md](./phase-02-load-case.md) | Complete | 4/4 steps | 2026-06-22 |
+| 3 — Story UI | [phase-03-story-ui.md](./phase-03-story-ui.md) | Complete | 7/7 steps | 2026-06-22 |
 | 4 — Wordle clues | [phase-04-wordle-clues.md](./phase-04-wordle-clues.md) | Not started | 0/5 steps | — |
 | 5 — Scoring & outcomes | [phase-05-scoring-outcomes.md](./phase-05-scoring-outcomes.md) | Not started | 0/5 steps | — |
 | 6 — Leaderboards | [phase-06-leaderboards.md](./phase-06-leaderboards.md) | Not started | 0/5 steps | — |
@@ -20,7 +20,7 @@ Living documentation for building Story Mode. Product requirements live in [full
 | 9 — Monetization | [phase-09-monetization.md](./phase-09-monetization.md) | Not started | 0/4 steps | — |
 | 10 — Analytics & polish | [phase-10-analytics-polish.md](./phase-10-analytics-polish.md) | Not started | 0/4 steps | — |
 
-**Overall:** 10 / 51 steps complete
+**Overall:** 21 / 51 steps complete
 
 ---
 
@@ -74,6 +74,8 @@ Phase 1 (Backend) ──→ Phase 2 (Load case)
 
 | Date | Change |
 | ---- | ------ |
+| 2026-06-22 | Phase 3 complete — story flow routes, five narrative screens, Wordle stub, StoryFlowBloc gating, tests |
+| 2026-06-22 | Phase 2 complete — Firestore case load, StoryCaseBloc, Remote Config gating, dashboard tile |
 | 2026-06-21 | Phase 1 complete — Cloud Functions, Cursor API generation, validation, scheduled job, seed tools |
 | 2026-06-18 | Phase 0 complete — entities, Firestore schema/rules, `/story` route, unit tests |
 | 2026-06-18 | Initial phase documentation scaffold created (README + phases 0–10). |
@@ -91,7 +93,8 @@ Phase 1 (Backend) ──→ Phase 2 (Load case)
 | Leaderboard | `lib/features/leaderboard/` |
 | Dashboard entry | `lib/features/dashboard/` |
 | Audio (partial) | `just_audio` in `pubspec.yaml` |
-| Story mode foundation | `lib/features/story_mode/` — entities, models, `/story` stub (Phase 0) |
+| Story mode foundation | `lib/features/story_mode/` — entities, models, data layer, BLoC, story flow UI (Phase 0–3) |
 | Story mode backend | `functions/` — `generateDailyCase`, `seedDetectiveCase`, validation, seed script |
+| Remote Config | `lib/core/remote_config/story_mode_config.dart` — `story_mode_enabled` flag |
 
-**Not yet in app:** Remote Config, ads/IAP, `share_plus`, story data layer / full UI.
+**Not yet in app:** ads/IAP, `share_plus`, real Wordle per clue (Phase 4), progress writes (Phase 4).

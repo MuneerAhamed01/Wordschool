@@ -19,13 +19,27 @@ import 'package:wordshool/features/settings/domain/usecases/logout_usecase.dart'
 import 'package:wordshool/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:wordshool/features/settings/presentation/pages/legal_markdown_page.dart';
 import 'package:wordshool/features/settings/presentation/pages/settings_page.dart';
+import 'package:wordshool/features/story_mode/presentation/bloc/story_case_bloc/story_case_bloc.dart';
+import 'package:wordshool/features/story_mode/presentation/bloc/story_flow_bloc/story_flow_bloc.dart';
+import 'package:wordshool/features/story_mode/presentation/pages/case_intro_page.dart';
+import 'package:wordshool/features/story_mode/presentation/pages/case_resolution_page.dart';
+import 'package:wordshool/features/story_mode/presentation/pages/investigate_prompt_page.dart';
+import 'package:wordshool/features/story_mode/presentation/pages/story_hint_page.dart';
 import 'package:wordshool/features/story_mode/presentation/pages/story_home_page.dart';
+import 'package:wordshool/features/story_mode/presentation/pages/story_reaction_page.dart';
+import 'package:wordshool/features/story_mode/presentation/pages/story_wordle_stub_page.dart';
+import 'package:wordshool/features/story_mode/presentation/routing/story_flow_redirect.dart';
+import 'package:wordshool/features/story_mode/presentation/widgets/story_mode_widgets.dart';
 import 'package:wordshool/features/winning/presentation/pages/params/winning_page_param.dart';
 import 'package:wordshool/features/winning/presentation/pages/winning_page.dart';
 
 GoRouter appRouter(String initialRoute) {
   final analyticsObserver =
       AnalyticsRouteObserver(getIt<AnalyticsService>());
+  final storyCaseBloc = StoryCaseBloc(
+    loadTodayDetectiveCaseUseCase: getIt(),
+  );
+  final storyFlowBloc = StoryFlowBloc();
 
   return GoRouter(
     initialLocation: initialRoute,
@@ -91,10 +105,73 @@ GoRouter appRouter(String initialRoute) {
           child: const ArchivePage(),
         ),
       ),
-      GoRoute(
-        path: StoryHomePage.routeName,
-        name: StoryHomePage.routeName.replaceFirst(RegExp(r'0'), ''),
-        builder: (context, state) => const StoryHomePage(),
+      ShellRoute(
+        builder: (context, state, child) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: storyCaseBloc),
+              BlocProvider.value(value: storyFlowBloc),
+            ],
+            child: StoryModeShell(child: child),
+          );
+        },
+        routes: [
+          GoRoute(
+            path: StoryHomePage.routeName,
+            name: StoryHomePage.routeName.replaceFirst(RegExp(r'0'), ''),
+            builder: (context, state) => const StoryHomePage(),
+            routes: [
+              GoRoute(
+                path: 'intro',
+                name: 'storyIntro',
+                builder: (context, state) => const CaseIntroPage(),
+              ),
+              GoRoute(
+                path: 'clue/:index/hint',
+                name: 'storyHint',
+                redirect: (context, state) =>
+                    redirectStoryClueRoute(storyFlowBloc, state),
+                builder: (context, state) => StoryHintPage(
+                  clueIndex: int.parse(state.pathParameters['index']!),
+                ),
+              ),
+              GoRoute(
+                path: 'clue/:index/investigate',
+                name: 'storyInvestigate',
+                redirect: (context, state) =>
+                    redirectStoryClueRoute(storyFlowBloc, state),
+                builder: (context, state) => InvestigatePromptPage(
+                  clueIndex: int.parse(state.pathParameters['index']!),
+                ),
+              ),
+              GoRoute(
+                path: 'clue/:index/wordle',
+                name: 'storyWordle',
+                redirect: (context, state) =>
+                    redirectStoryWordleRoute(storyFlowBloc, state),
+                builder: (context, state) => StoryWordleStubPage(
+                  clueIndex: int.parse(state.pathParameters['index']!),
+                ),
+              ),
+              GoRoute(
+                path: 'clue/:index/reaction',
+                name: 'storyReaction',
+                redirect: (context, state) =>
+                    redirectStoryReactionRoute(storyFlowBloc, state),
+                builder: (context, state) => StoryReactionPage(
+                  clueIndex: int.parse(state.pathParameters['index']!),
+                ),
+              ),
+              GoRoute(
+                path: 'resolution',
+                name: 'storyResolution',
+                redirect: (context, state) =>
+                    redirectStoryResolution(storyFlowBloc),
+                builder: (context, state) => const CaseResolutionGate(),
+              ),
+            ],
+          ),
+        ],
       ),
       GoRoute(
         path: LeaderboardPage.routeName,
