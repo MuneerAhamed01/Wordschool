@@ -14,7 +14,6 @@ import 'package:wordshool/features/story_mode/presentation/pages/investigate_pro
 import 'package:wordshool/features/story_mode/presentation/pages/story_hint_page.dart';
 import 'package:wordshool/features/story_mode/presentation/pages/story_home_page.dart';
 import 'package:wordshool/features/story_mode/presentation/pages/story_reaction_page.dart';
-import 'package:wordshool/features/story_mode/presentation/pages/story_wordle_stub_page.dart';
 import 'package:wordshool/features/story_mode/presentation/routing/story_flow_gating.dart';
 import 'package:wordshool/features/story_mode/presentation/routing/story_flow_redirect.dart';
 import 'package:wordshool/features/story_mode/presentation/widgets/story_mode_widgets.dart';
@@ -92,6 +91,36 @@ DetectiveCaseModel sampleDetectiveCase() {
   );
 }
 
+class TestStoryWordlePage extends StatelessWidget {
+  const TestStoryWordlePage({super.key, required this.clueIndex});
+
+  final int clueIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () async {
+            final flowBloc = context.read<StoryFlowBloc>();
+            flowBloc.add(MarkClueResolved(clueIndex));
+            await flowBloc.stream.firstWhere(
+              (state) => state.maybeMap(
+                ready: (ready) => ready.completedClues[clueIndex],
+                orElse: () => false,
+              ),
+            );
+            if (context.mounted) {
+              context.push(StoryFlowGating.clueReactionPath(clueIndex));
+            }
+          },
+          child: const Text('Solve clue'),
+        ),
+      ),
+    );
+  }
+}
+
 GoRouter buildStoryTestRouter({
   required StoryCaseBloc storyCaseBloc,
   required StoryFlowBloc storyFlowBloc,
@@ -138,7 +167,7 @@ GoRouter buildStoryTestRouter({
                 path: 'clue/:index/wordle',
                 redirect: (context, state) =>
                     redirectStoryWordleRoute(storyFlowBloc, state),
-                builder: (context, state) => StoryWordleStubPage(
+                builder: (context, state) => TestStoryWordlePage(
                   clueIndex: int.parse(state.pathParameters['index']!),
                 ),
               ),
@@ -208,7 +237,7 @@ void main() {
         await tester.tap(find.text('Investigate'));
         await tester.pumpAndSettle();
 
-        expect(find.text('Investigation puzzle'), findsOneWidget);
+        expect(find.text('Solve clue'), findsOneWidget);
         await tester.tap(find.text('Solve clue'));
         await tester.pumpAndSettle();
 

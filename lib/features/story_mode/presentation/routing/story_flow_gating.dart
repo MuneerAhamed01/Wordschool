@@ -1,3 +1,4 @@
+import 'package:wordshool/features/story_mode/domain/entities/story_mode_progress.dart';
 import 'package:wordshool/features/story_mode/presentation/bloc/story_flow_bloc/story_flow_bloc.dart';
 import 'package:wordshool/features/story_mode/presentation/pages/story_home_page.dart';
 
@@ -6,6 +7,23 @@ class StoryFlowGating {
 
   static const int minClueIndex = 0;
   static const int maxClueIndex = 2;
+
+  static bool isMidClue(StoryModeProgressEntity? progress, int clueIndex) {
+    if (progress == null || !isValidClueIndex(clueIndex)) {
+      return false;
+    }
+
+    if (clueIndex < progress.currentClueIndex) {
+      return false;
+    }
+
+    if (progress.clueSolved.elementAtOrNull(clueIndex) ?? false) {
+      return false;
+    }
+
+    return progress.clueAttempts.elementAtOrNull(clueIndex) != null &&
+        progress.clueAttempts[clueIndex] > 0;
+  }
 
   static bool isValidClueIndex(int? index) {
     if (index == null) {
@@ -60,7 +78,13 @@ class StoryFlowGating {
     return state.maybeMap(
       ready: (readyState) {
         final resume = readyState.resumeClueIndex;
-        if (resume > minClueIndex && resume <= maxClueIndex) {
+        if (resume > maxClueIndex) {
+          return resolutionPath;
+        }
+        if (isMidClue(readyState.progress, resume)) {
+          return clueWordlePath(resume);
+        }
+        if (resume > minClueIndex) {
           return clueHintPath(resume);
         }
         return introPath;

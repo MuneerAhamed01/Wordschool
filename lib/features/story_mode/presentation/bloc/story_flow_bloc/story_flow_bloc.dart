@@ -18,6 +18,12 @@ final class Initialize extends StoryFlowEvent {
   final bool isReadOnly;
 }
 
+final class UpdateProgress extends StoryFlowEvent {
+  const UpdateProgress(this.progress);
+
+  final StoryModeProgressEntity progress;
+}
+
 final class MarkClueResolved extends StoryFlowEvent {
   const MarkClueResolved(this.index);
 
@@ -94,12 +100,14 @@ final class StoryFlowReady extends StoryFlowState {
     required this.completedClues,
     required this.isReadOnly,
     required this.resumeClueIndex,
+    this.progress,
   });
 
   final DetectiveCaseEntity detectiveCase;
   final List<bool> completedClues;
   final bool isReadOnly;
   final int resumeClueIndex;
+  final StoryModeProgressEntity? progress;
 
   int get firstIncompleteClueIndex {
     final index = completedClues.indexWhere((resolved) => !resolved);
@@ -113,12 +121,14 @@ final class StoryFlowReady extends StoryFlowState {
     List<bool>? completedClues,
     bool? isReadOnly,
     int? resumeClueIndex,
+    StoryModeProgressEntity? progress,
   }) {
     return StoryFlowReady(
       detectiveCase: detectiveCase ?? this.detectiveCase,
       completedClues: completedClues ?? this.completedClues,
       isReadOnly: isReadOnly ?? this.isReadOnly,
       resumeClueIndex: resumeClueIndex ?? this.resumeClueIndex,
+      progress: progress ?? this.progress,
     );
   }
 }
@@ -126,29 +136,59 @@ final class StoryFlowReady extends StoryFlowState {
 class StoryFlowBloc extends Bloc<StoryFlowEvent, StoryFlowState> {
   StoryFlowBloc() : super(const StoryFlowUninitialized()) {
     on<Initialize>(_onInitialize);
+    on<UpdateProgress>(_onUpdateProgress);
     on<MarkClueResolved>(_onMarkClueResolved);
   }
 
   void _onInitialize(Initialize event, Emitter<StoryFlowState> emit) {
     final current = state;
     if (current case StoryFlowReady ready
-        when ready.detectiveCase.id == event.detectiveCase.id) {
+        when ready.detectiveCase.id == event.detectiveCase.id &&
+            ready.progress == event.progress &&
+            ready.isReadOnly == event.isReadOnly) {
       return;
     }
 
-    final completedClues = _initialCompletedClues(
-      clueCount: event.detectiveCase.clues.length,
+    _emitReady(
+      emit,
+      detectiveCase: event.detectiveCase,
       progress: event.progress,
       isReadOnly: event.isReadOnly,
+    );
+  }
+
+  void _onUpdateProgress(UpdateProgress event, Emitter<StoryFlowState> emit) {
+    final current = state;
+    if (current case StoryFlowReady ready when !ready.isReadOnly) {
+      _emitReady(
+        emit,
+        detectiveCase: ready.detectiveCase,
+        progress: event.progress,
+        isReadOnly: ready.isReadOnly,
+      );
+    }
+  }
+
+  void _emitReady(
+    Emitter<StoryFlowState> emit, {
+    required DetectiveCaseEntity detectiveCase,
+    StoryModeProgressEntity? progress,
+    required bool isReadOnly,
+  }) {
+    final completedClues = _initialCompletedClues(
+      clueCount: detectiveCase.clues.length,
+      progress: progress,
+      isReadOnly: isReadOnly,
     );
     final resumeClueIndex = _resumeClueIndex(completedClues);
 
     emit(
       StoryFlowReady(
-        detectiveCase: event.detectiveCase,
+        detectiveCase: detectiveCase,
         completedClues: completedClues,
-        isReadOnly: event.isReadOnly,
+        isReadOnly: isReadOnly,
         resumeClueIndex: resumeClueIndex,
+        progress: progress,
       ),
     );
   }
@@ -185,8 +225,11 @@ class StoryFlowBloc extends Bloc<StoryFlowEvent, StoryFlowState> {
       return List<bool>.filled(clueCount, true);
     }
 
-    if (progress != null && progress.clueSolved.length == clueCount) {
-      return List<bool>.from(progress.clueSolved);
+    if (progress != null && progress.clueAttempts.length == clueCount) {
+      return List<bool>.generate(
+        clueCount,
+        (index) => index < progress.currentClueIndex,
+      );
     }
 
     return List<bool>.filled(clueCount, false);

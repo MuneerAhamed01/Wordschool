@@ -7,6 +7,8 @@ import 'package:wordshool/features/story_mode/data/models/story_mode_progress.da
 import 'package:wordshool/features/story_mode/data/repositories/story_case_repository_impl.dart';
 import 'package:wordshool/features/story_mode/domain/entities/clue_type.dart';
 
+import '../data_source/story_progress_service_test.dart';
+
 class FakeStoryCaseDataSource extends StoryCaseDataSource {
   FakeStoryCaseDataSource({
     this.caseResult,
@@ -74,7 +76,10 @@ void main() {
       final dataSource = FakeStoryCaseDataSource(
         caseResult: DataSuccess(data: _sampleCase()),
       );
-      final repository = StoryCaseRepositoryImpl(storyCaseDataSource: dataSource);
+      final repository = StoryCaseRepositoryImpl(
+        storyCaseDataSource: dataSource,
+        storyProgressDataSource: InMemoryStoryProgressDataSource(),
+      );
 
       final result = await repository.getTodayCase();
 
@@ -92,7 +97,10 @@ void main() {
           ),
         ),
       );
-      final repository = StoryCaseRepositoryImpl(storyCaseDataSource: dataSource);
+      final repository = StoryCaseRepositoryImpl(
+        storyCaseDataSource: dataSource,
+        storyProgressDataSource: InMemoryStoryProgressDataSource(),
+      );
 
       final result = await repository.getTodayCase();
 
@@ -109,7 +117,10 @@ void main() {
         caseId: '2026-06-18',
       );
       final dataSource = FakeStoryCaseDataSource(progress: progress);
-      final repository = StoryCaseRepositoryImpl(storyCaseDataSource: dataSource);
+      final repository = StoryCaseRepositoryImpl(
+        storyCaseDataSource: dataSource,
+        storyProgressDataSource: InMemoryStoryProgressDataSource(),
+      );
 
       final result = await repository.getTodayProgress('user-1');
 

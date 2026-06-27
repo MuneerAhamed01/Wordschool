@@ -1,14 +1,14 @@
 # Phase 4 — Wordle Per Clue
 
-> **Status:** Not started  
-> **Last updated:** —  
+> **Status:** Complete  
+> **Last updated:** 2026-06-25  
 > **Owner:** —  
 > **Depends on:** Phase 3  
 > **Blocks:** Phase 5  
 
 ## Goal
 
-Reuse the existing Wordle engine for each detective clue: 5 letters, max 6 guesses, persist progress, and resume mid-case.
+Reuse the existing Wordle engine for each detective clue: 5 letters, max 5 guesses (aligned with daily game), persist progress, and resume mid-case.
 
 ## Scope
 
@@ -16,7 +16,7 @@ Reuse the existing Wordle engine for each detective clue: 5 letters, max 6 guess
 
 - Story Wordle wrapper using `WordCubit`, tiles, keyboard
 - Per-clue answer from `DetectiveClue.answer`
-- 6-attempt limit and fail handling
+- 5-attempt limit and fail handling
 - Persist guesses and attempts to Firestore
 - Restore state on app reopen
 
@@ -28,19 +28,23 @@ Reuse the existing Wordle engine for each detective clue: 5 letters, max 6 guess
 
 ## Steps checklist
 
-- [ ] **Step 4.1** — `StoryWordlePage` wrapping existing Wordle widgets with clue answer
-- [ ] **Step 4.2** — Enforce 6-guess limit; on fail mark clue failed (0 pts) and allow reaction
-- [ ] **Step 4.3** — Persist guesses per clue to `userStoryProgress`
-- [ ] **Step 4.4** — Restore guesses + active row on app reopen (`WordCubit.restoreGuesses`)
-- [ ] **Step 4.5** — Win/fail events → navigate to Story Reaction screen
+- [x] **Step 4.1** — `StoryWordlePage` wrapping existing Wordle widgets with clue answer
+- [x] **Step 4.2** — Enforce 5-guess limit; on fail mark clue failed (0 pts) and allow reaction
+- [x] **Step 4.3** — Persist guesses per clue to `userStoryProgress`
+- [x] **Step 4.4** — Restore guesses + active row on app reopen (`WordCubit.restoreGuesses`)
+- [x] **Step 4.5** — Win/fail events → navigate to Story Reaction screen
 
 ## Technical decisions
 
 | Decision | Choice | Rationale | Date |
 | -------- | ------ | --------- | ---- |
-| Wordle state | Reuse `WordCubit` | Already handles evaluation + restore | — |
-| Valid words | Existing `ValidWords` / dictionary | Same rules as daily game | — |
-| Fail behavior | Advance to reaction with failed clue | Per fulldoc scoring (0 pts) | — |
+| Wordle state | Reuse `WordCubit` | Already handles evaluation + restore | 2026-06-25 |
+| Valid words | Existing `ValidWords` / dictionary | Same rules as daily game | 2026-06-25 |
+| Fail behavior | Advance to reaction with failed clue | Per fulldoc scoring (0 pts) | 2026-06-25 |
+| Attempt limit | 5 guesses (`GameConstants.maxWords`) | Match daily game; deviates from fulldoc 6 | 2026-06-25 |
+| Clue BLoC | `StoryClueBloc` per route with `clueIndex` | Mirrors `GameBloc` + `WordCubit` pattern | 2026-06-25 |
+| Invalid word UX | Copy shake + snackbar from `GamePageHelper` | Consistent daily game feel | 2026-06-25 |
+| Flow completion | Derive from `currentClueIndex`, not only `clueSolved` | Failed clues still unlock reaction | 2026-06-25 |
 
 ## Reuse map
 
@@ -55,32 +59,38 @@ Reuse the existing Wordle engine for each detective clue: 5 letters, max 6 guess
 
 | Path | Change |
 | ---- | ------ |
-| `lib/features/story_mode/presentation/pages/story_wordle_page.dart` | New |
-| `lib/features/story_mode/presentation/bloc/story_clue_bloc.dart` | New — clue-level game state |
-| `lib/features/story_mode/data/data_source/story_progress_service.dart` | New |
+| `lib/features/story_mode/presentation/pages/story_wordle_page.dart` | New — real Wordle UI |
+| `lib/features/story_mode/presentation/pages/story_wordle_page_helper.dart` | New — submit/win/fail logic |
+| `lib/features/story_mode/presentation/bloc/story_clue_bloc/story_clue_bloc.dart` | New — clue-level game state |
+| `lib/features/story_mode/data/data_source/story_progress_service.dart` | New — write interface |
+| `lib/features/story_mode/data/data_source/remote/story_progress_service.dart` | New — Firestore writes |
 | `lib/features/story_mode/domain/usecases/save_clue_guess.dart` | New |
-| `lib/features/story_mode/domain/usecases/load_story_progress.dart` | New |
+| `lib/features/story_mode/domain/usecases/complete_story_clue.dart` | New |
+| `lib/features/story_mode/presentation/bloc/story_flow_bloc/story_flow_bloc.dart` | Progress sync + completion derivation |
+| `lib/features/story_mode/presentation/routing/story_flow_gating.dart` | Mid-clue resume to wordle |
+| `lib/core/routes/app_router.dart` | Wire `StoryWordlePage` + providers |
 
 ## Acceptance criteria
 
-- [ ] Solving clue in ≤6 guesses navigates to reaction
-- [ ] Failing after 6 guesses still navigates to reaction
-- [ ] Closing app mid-clue restores guesses on return
-- [ ] Each clue uses its own answer, not daily `todayWord`
+- [x] Solving clue in ≤5 guesses navigates to reaction
+- [x] Failing after 5 guesses still navigates to reaction
+- [x] Closing app mid-clue restores guesses on return
+- [x] Each clue uses its own answer, not daily `todayWord`
 
 ## Testing notes
 
-- Unit test: attempt cap at 6
-- Integration: save → kill app → restore → continue
-- Reuse patterns from `game_page_helper.dart` where applicable
+- Unit test: attempt cap at 5 (`story_clue_bloc_test.dart`)
+- Progress save/complete round-trip (`story_progress_service_test.dart`)
+- Failed clue unlocks reaction via `currentClueIndex` (`story_flow_bloc_test.dart`)
+- Mid-clue resume path (`story_flow_gating_test.dart`)
 
 ## Completion log
 
 | Date | Step completed | Notes |
 | ---- | -------------- | ----- |
-| — | — | — |
+| 2026-06-25 | 4.1–4.5 | Real Wordle page, progress writes, restore, win/fail → reaction |
 
 ## Open questions / blockers
 
-- New BLoC per clue vs shared `StoryClueBloc` with clue index param?
-- Shake animation / invalid word snackbar — copy from `GamePage`?
+- ~~New BLoC per clue vs shared `StoryClueBloc` with clue index param?~~ → Per-route `StoryClueBloc` with index
+- ~~Shake animation / invalid word snackbar — copy from `GamePage`?~~ → Yes, via `StoryWordlePageHelper`

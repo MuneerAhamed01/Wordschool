@@ -20,18 +20,21 @@ mixin _$StoryCaseEvent {
   TResult when<TResult extends Object?>({
     required TResult Function() loadTodayCase,
     required TResult Function() retry,
+    required TResult Function(StoryModeProgressEntity progress) progressUpdated,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadTodayCase,
     TResult? Function()? retry,
+    TResult? Function(StoryModeProgressEntity progress)? progressUpdated,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadTodayCase,
     TResult Function()? retry,
+    TResult Function(StoryModeProgressEntity progress)? progressUpdated,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -39,18 +42,21 @@ mixin _$StoryCaseEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(LoadTodayCase value) loadTodayCase,
     required TResult Function(Retry value) retry,
+    required TResult Function(ProgressUpdated value) progressUpdated,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LoadTodayCase value)? loadTodayCase,
     TResult? Function(Retry value)? retry,
+    TResult? Function(ProgressUpdated value)? progressUpdated,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LoadTodayCase value)? loadTodayCase,
     TResult Function(Retry value)? retry,
+    TResult Function(ProgressUpdated value)? progressUpdated,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -120,6 +126,7 @@ class _$LoadTodayCaseImpl implements LoadTodayCase {
   TResult when<TResult extends Object?>({
     required TResult Function() loadTodayCase,
     required TResult Function() retry,
+    required TResult Function(StoryModeProgressEntity progress) progressUpdated,
   }) {
     return loadTodayCase();
   }
@@ -129,6 +136,7 @@ class _$LoadTodayCaseImpl implements LoadTodayCase {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadTodayCase,
     TResult? Function()? retry,
+    TResult? Function(StoryModeProgressEntity progress)? progressUpdated,
   }) {
     return loadTodayCase?.call();
   }
@@ -138,6 +146,7 @@ class _$LoadTodayCaseImpl implements LoadTodayCase {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadTodayCase,
     TResult Function()? retry,
+    TResult Function(StoryModeProgressEntity progress)? progressUpdated,
     required TResult orElse(),
   }) {
     if (loadTodayCase != null) {
@@ -151,6 +160,7 @@ class _$LoadTodayCaseImpl implements LoadTodayCase {
   TResult map<TResult extends Object?>({
     required TResult Function(LoadTodayCase value) loadTodayCase,
     required TResult Function(Retry value) retry,
+    required TResult Function(ProgressUpdated value) progressUpdated,
   }) {
     return loadTodayCase(this);
   }
@@ -160,6 +170,7 @@ class _$LoadTodayCaseImpl implements LoadTodayCase {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LoadTodayCase value)? loadTodayCase,
     TResult? Function(Retry value)? retry,
+    TResult? Function(ProgressUpdated value)? progressUpdated,
   }) {
     return loadTodayCase?.call(this);
   }
@@ -169,6 +180,7 @@ class _$LoadTodayCaseImpl implements LoadTodayCase {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LoadTodayCase value)? loadTodayCase,
     TResult Function(Retry value)? retry,
+    TResult Function(ProgressUpdated value)? progressUpdated,
     required TResult orElse(),
   }) {
     if (loadTodayCase != null) {
@@ -225,6 +237,7 @@ class _$RetryImpl implements Retry {
   TResult when<TResult extends Object?>({
     required TResult Function() loadTodayCase,
     required TResult Function() retry,
+    required TResult Function(StoryModeProgressEntity progress) progressUpdated,
   }) {
     return retry();
   }
@@ -234,6 +247,7 @@ class _$RetryImpl implements Retry {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadTodayCase,
     TResult? Function()? retry,
+    TResult? Function(StoryModeProgressEntity progress)? progressUpdated,
   }) {
     return retry?.call();
   }
@@ -243,6 +257,7 @@ class _$RetryImpl implements Retry {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadTodayCase,
     TResult Function()? retry,
+    TResult Function(StoryModeProgressEntity progress)? progressUpdated,
     required TResult orElse(),
   }) {
     if (retry != null) {
@@ -256,6 +271,7 @@ class _$RetryImpl implements Retry {
   TResult map<TResult extends Object?>({
     required TResult Function(LoadTodayCase value) loadTodayCase,
     required TResult Function(Retry value) retry,
+    required TResult Function(ProgressUpdated value) progressUpdated,
   }) {
     return retry(this);
   }
@@ -265,6 +281,7 @@ class _$RetryImpl implements Retry {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LoadTodayCase value)? loadTodayCase,
     TResult? Function(Retry value)? retry,
+    TResult? Function(ProgressUpdated value)? progressUpdated,
   }) {
     return retry?.call(this);
   }
@@ -274,6 +291,7 @@ class _$RetryImpl implements Retry {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LoadTodayCase value)? loadTodayCase,
     TResult Function(Retry value)? retry,
+    TResult Function(ProgressUpdated value)? progressUpdated,
     required TResult orElse(),
   }) {
     if (retry != null) {
@@ -285,6 +303,155 @@ class _$RetryImpl implements Retry {
 
 abstract class Retry implements StoryCaseEvent {
   const factory Retry() = _$RetryImpl;
+}
+
+/// @nodoc
+abstract class _$$ProgressUpdatedImplCopyWith<$Res> {
+  factory _$$ProgressUpdatedImplCopyWith(_$ProgressUpdatedImpl value,
+          $Res Function(_$ProgressUpdatedImpl) then) =
+      __$$ProgressUpdatedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({StoryModeProgressEntity progress});
+}
+
+/// @nodoc
+class __$$ProgressUpdatedImplCopyWithImpl<$Res>
+    extends _$StoryCaseEventCopyWithImpl<$Res, _$ProgressUpdatedImpl>
+    implements _$$ProgressUpdatedImplCopyWith<$Res> {
+  __$$ProgressUpdatedImplCopyWithImpl(
+      _$ProgressUpdatedImpl _value, $Res Function(_$ProgressUpdatedImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of StoryCaseEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? progress = null,
+  }) {
+    return _then(_$ProgressUpdatedImpl(
+      null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as StoryModeProgressEntity,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$ProgressUpdatedImpl implements ProgressUpdated {
+  const _$ProgressUpdatedImpl(this.progress);
+
+  @override
+  final StoryModeProgressEntity progress;
+
+  @override
+  String toString() {
+    return 'StoryCaseEvent.progressUpdated(progress: $progress)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ProgressUpdatedImpl &&
+            (identical(other.progress, progress) ||
+                other.progress == progress));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, progress);
+
+  /// Create a copy of StoryCaseEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ProgressUpdatedImplCopyWith<_$ProgressUpdatedImpl> get copyWith =>
+      __$$ProgressUpdatedImplCopyWithImpl<_$ProgressUpdatedImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loadTodayCase,
+    required TResult Function() retry,
+    required TResult Function(StoryModeProgressEntity progress) progressUpdated,
+  }) {
+    return progressUpdated(progress);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loadTodayCase,
+    TResult? Function()? retry,
+    TResult? Function(StoryModeProgressEntity progress)? progressUpdated,
+  }) {
+    return progressUpdated?.call(progress);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loadTodayCase,
+    TResult Function()? retry,
+    TResult Function(StoryModeProgressEntity progress)? progressUpdated,
+    required TResult orElse(),
+  }) {
+    if (progressUpdated != null) {
+      return progressUpdated(progress);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(LoadTodayCase value) loadTodayCase,
+    required TResult Function(Retry value) retry,
+    required TResult Function(ProgressUpdated value) progressUpdated,
+  }) {
+    return progressUpdated(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(LoadTodayCase value)? loadTodayCase,
+    TResult? Function(Retry value)? retry,
+    TResult? Function(ProgressUpdated value)? progressUpdated,
+  }) {
+    return progressUpdated?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(LoadTodayCase value)? loadTodayCase,
+    TResult Function(Retry value)? retry,
+    TResult Function(ProgressUpdated value)? progressUpdated,
+    required TResult orElse(),
+  }) {
+    if (progressUpdated != null) {
+      return progressUpdated(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class ProgressUpdated implements StoryCaseEvent {
+  const factory ProgressUpdated(final StoryModeProgressEntity progress) =
+      _$ProgressUpdatedImpl;
+
+  StoryModeProgressEntity get progress;
+
+  /// Create a copy of StoryCaseEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ProgressUpdatedImplCopyWith<_$ProgressUpdatedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc

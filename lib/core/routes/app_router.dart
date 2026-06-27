@@ -27,7 +27,8 @@ import 'package:wordshool/features/story_mode/presentation/pages/investigate_pro
 import 'package:wordshool/features/story_mode/presentation/pages/story_hint_page.dart';
 import 'package:wordshool/features/story_mode/presentation/pages/story_home_page.dart';
 import 'package:wordshool/features/story_mode/presentation/pages/story_reaction_page.dart';
-import 'package:wordshool/features/story_mode/presentation/pages/story_wordle_stub_page.dart';
+import 'package:wordshool/features/story_mode/presentation/bloc/story_clue_bloc/story_clue_bloc.dart';
+import 'package:wordshool/features/story_mode/presentation/pages/story_wordle_page.dart';
 import 'package:wordshool/features/story_mode/presentation/routing/story_flow_redirect.dart';
 import 'package:wordshool/features/story_mode/presentation/widgets/story_mode_widgets.dart';
 import 'package:wordshool/features/winning/presentation/pages/params/winning_page_param.dart';
@@ -149,9 +150,24 @@ GoRouter appRouter(String initialRoute) {
                 name: 'storyWordle',
                 redirect: (context, state) =>
                     redirectStoryWordleRoute(storyFlowBloc, state),
-                builder: (context, state) => StoryWordleStubPage(
-                  clueIndex: int.parse(state.pathParameters['index']!),
-                ),
+                builder: (context, state) {
+                  final clueIndex = int.parse(state.pathParameters['index']!);
+
+                  return MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (_) => WordCubit(validWords: getIt()),
+                      ),
+                      BlocProvider(
+                        create: (_) => StoryClueBloc(
+                          saveClueGuessUseCase: getIt(),
+                          completeStoryClueUseCase: getIt(),
+                        ),
+                      ),
+                    ],
+                    child: StoryWordlePage(clueIndex: clueIndex),
+                  );
+                },
               ),
               GoRoute(
                 path: 'clue/:index/reaction',

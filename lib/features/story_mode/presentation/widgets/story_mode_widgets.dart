@@ -97,7 +97,7 @@ class _StoryModeShellState extends State<StoryModeShell> {
   Widget build(BuildContext context) {
     return BlocListener<StoryCaseBloc, StoryCaseState>(
       listener: (context, state) => _syncFlowBloc(state),
-      child: widget.child,
+      child: StoryCaseProgressListener(child: widget.child),
     );
   }
 
@@ -121,6 +121,37 @@ class _StoryModeShellState extends State<StoryModeShell> {
               ),
             );
       },
+    );
+  }
+}
+
+class StoryCaseProgressListener extends StatelessWidget {
+  const StoryCaseProgressListener({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<StoryCaseBloc, StoryCaseState>(
+      listenWhen: (previous, current) {
+        final previousProgress = previous.whenOrNull(
+          loaded: (_, progress) => progress,
+        );
+        final currentProgress = current.whenOrNull(
+          loaded: (_, progress) => progress,
+        );
+        return previousProgress != currentProgress && currentProgress != null;
+      },
+      listener: (context, state) {
+        state.whenOrNull(
+          loaded: (_, progress) {
+            if (progress != null) {
+              context.read<StoryFlowBloc>().add(UpdateProgress(progress));
+            }
+          },
+        );
+      },
+      child: child,
     );
   }
 }

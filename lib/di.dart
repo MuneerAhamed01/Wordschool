@@ -39,10 +39,14 @@ import 'package:wordshool/features/settings/domain/repositories/settings_reposit
 import 'package:wordshool/features/settings/domain/usecases/logout_usecase.dart';
 import 'package:wordshool/core/remote_config/story_mode_config.dart';
 import 'package:wordshool/features/story_mode/data/data_source/remote/story_case_service.dart';
+import 'package:wordshool/features/story_mode/data/data_source/remote/story_progress_service.dart';
 import 'package:wordshool/features/story_mode/data/data_source/story_case_service.dart';
+import 'package:wordshool/features/story_mode/data/data_source/story_progress_service.dart';
 import 'package:wordshool/features/story_mode/data/repositories/story_case_repository_impl.dart';
 import 'package:wordshool/features/story_mode/domain/repositories/story_case_repository.dart';
+import 'package:wordshool/features/story_mode/domain/usecases/complete_story_clue.dart';
 import 'package:wordshool/features/story_mode/domain/usecases/load_today_detective_case.dart';
+import 'package:wordshool/features/story_mode/domain/usecases/save_clue_guess.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -70,8 +74,15 @@ void _initializeStoryMode() {
     StoryCaseDataSourceImpl(firestore: FirebaseFirestore.instance),
   );
 
+  getIt.registerSingleton<StoryProgressDataSource>(
+    StoryProgressDataSourceImpl(firestore: FirebaseFirestore.instance),
+  );
+
   getIt.registerSingleton<StoryCaseRepository>(
-    StoryCaseRepositoryImpl(storyCaseDataSource: getIt<StoryCaseDataSource>()),
+    StoryCaseRepositoryImpl(
+      storyCaseDataSource: getIt<StoryCaseDataSource>(),
+      storyProgressDataSource: getIt<StoryProgressDataSource>(),
+    ),
   );
 
   getIt.registerSingleton<LoadTodayDetectiveCaseUseCase>(
@@ -79,6 +90,14 @@ void _initializeStoryMode() {
       storyCaseRepository: getIt<StoryCaseRepository>(),
       getCurrentUserUseCase: getIt<GetCurrentUserUseCase>(),
     ),
+  );
+
+  getIt.registerSingleton<SaveClueGuessUseCase>(
+    SaveClueGuessUseCase(storyCaseRepository: getIt<StoryCaseRepository>()),
+  );
+
+  getIt.registerSingleton<CompleteStoryClueUseCase>(
+    CompleteStoryClueUseCase(storyCaseRepository: getIt<StoryCaseRepository>()),
   );
 }
 

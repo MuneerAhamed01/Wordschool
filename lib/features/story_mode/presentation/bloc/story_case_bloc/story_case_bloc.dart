@@ -16,6 +16,7 @@ class StoryCaseBloc extends Bloc<StoryCaseEvent, StoryCaseState> {
         super(const StoryCaseState.initial()) {
     on<LoadTodayCase>(_onLoadTodayCase);
     on<Retry>(_onRetry);
+    on<ProgressUpdated>(_onProgressUpdated);
 
     add(const StoryCaseEvent.loadTodayCase());
   }
@@ -62,5 +63,22 @@ class StoryCaseBloc extends Bloc<StoryCaseEvent, StoryCaseState> {
 
   Future<void> _onRetry(Retry event, Emitter<StoryCaseState> emit) async {
     add(const StoryCaseEvent.loadTodayCase());
+  }
+
+  void _onProgressUpdated(
+    ProgressUpdated event,
+    Emitter<StoryCaseState> emit,
+  ) {
+    final current = state;
+    current.whenOrNull(
+      loaded: (detectiveCase, progress) {
+        emit(
+          StoryCaseState.loaded(
+            detectiveCase: detectiveCase,
+            progress: event.progress,
+          ),
+        );
+      },
+    );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wordshool/features/story_mode/data/models/detective_case.dart';
 import 'package:wordshool/features/story_mode/data/models/detective_clue.dart';
+import 'package:wordshool/features/story_mode/data/models/story_mode_progress.dart';
 import 'package:wordshool/features/story_mode/domain/entities/clue_type.dart';
 import 'package:wordshool/features/story_mode/presentation/bloc/story_flow_bloc/story_flow_bloc.dart';
 import 'package:wordshool/features/story_mode/presentation/routing/story_flow_gating.dart';
@@ -8,6 +9,7 @@ import 'package:wordshool/features/story_mode/presentation/routing/story_flow_ga
 StoryFlowReady readyState({
   List<bool> completedClues = const [false, false, false],
   bool isReadOnly = false,
+  StoryModeProgressModel? progress,
 }) {
   final resumeIndex = completedClues.indexWhere((resolved) => !resolved);
   return StoryFlowReady(
@@ -47,6 +49,7 @@ StoryFlowReady readyState({
     completedClues: completedClues,
     isReadOnly: isReadOnly,
     resumeClueIndex: resumeIndex == -1 ? completedClues.length : resumeIndex,
+    progress: progress,
   );
 }
 
@@ -102,6 +105,49 @@ void main() {
       expect(
         StoryFlowGating.nextRouteAfterReaction(2),
         StoryFlowGating.resolutionPath,
+      );
+    });
+
+    test('beginPath resumes mid-clue at wordle', () {
+      final progress = StoryModeProgressModel(
+        userId: 'user-1',
+        caseId: '2026-06-18',
+        currentClueIndex: 0,
+        clueAttempts: const [2, 0, 0],
+        clueGuesses: const [
+          ['WRONG', 'STARE'],
+          [],
+          [],
+        ],
+        clueSolved: const [false, false, false],
+        totalScore: 0,
+      );
+      final state = readyState(progress: progress);
+
+      expect(
+        StoryFlowGating.beginPath(state),
+        StoryFlowGating.clueWordlePath(0),
+      );
+    });
+
+    test('beginPath resumes next clue at hint when previous finished', () {
+      final progress = StoryModeProgressModel(
+        userId: 'user-1',
+        caseId: '2026-06-18',
+        currentClueIndex: 1,
+        clueAttempts: const [2, 0, 0],
+        clueGuesses: const [[], [], []],
+        clueSolved: const [true, false, false],
+        totalScore: 80,
+      );
+      final state = readyState(
+        completedClues: const [true, false, false],
+        progress: progress,
+      );
+
+      expect(
+        StoryFlowGating.beginPath(state),
+        StoryFlowGating.clueHintPath(1),
       );
     });
   });
