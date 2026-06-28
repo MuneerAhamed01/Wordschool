@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:wordshool/di.dart';
+import 'package:wordshool/features/story_mode/presentation/routing/story_flow_navigation.dart';
 import 'package:wordshool/features/story_mode/domain/entities/detective_case.dart';
 import 'package:wordshool/features/story_mode/presentation/bloc/story_case_bloc/story_case_bloc.dart';
 import 'package:wordshool/features/story_mode/presentation/bloc/story_flow_bloc/story_flow_bloc.dart';
 import 'package:wordshool/features/story_mode/presentation/theme/story_theme.dart';
 import 'package:wordshool/features/story_mode/presentation/utils/story_audio_manager.dart';
+import 'package:wordshool/features/story_mode/presentation/widgets/story_detective_ui.dart';
 import 'package:wordshool/features/story_mode/presentation/widgets/typewriter_text.dart';
 import 'package:wordshool/shared/presentations/widgets/app_button.dart';
-import 'package:wordshool/shared/presentations/widgets/game_scaffold.dart';
 
 class StoryNarrativeScaffold extends StatelessWidget {
   const StoryNarrativeScaffold({
@@ -20,6 +23,7 @@ class StoryNarrativeScaffold extends StatelessWidget {
     this.body,
     this.bodyWidget,
     this.useTypewriter = true,
+    this.panelLabel,
   }) : assert(body != null || bodyWidget != null);
 
   final String title;
@@ -29,53 +33,61 @@ class StoryNarrativeScaffold extends StatelessWidget {
   final bool useTypewriter;
   final String continueLabel;
   final VoidCallback onContinue;
+  final String? panelLabel;
 
   @override
   Widget build(BuildContext context) {
-    return GameScaffold(
-      appBar: AppBar(
-        title: Text(title),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).maybePop(),
-        ),
+    return DetectiveScaffold(
+      appBar: DetectiveAppBar(
+        title: title,
+        onBack: () => StoryFlowNavigation.handleBack(context),
       ),
+      onBack: () => StoryFlowNavigation.handleBack(context),
+      showMagnifier: false,
       body: Column(
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   if (headline != null) ...[
-                    Text(
-                      headline!,
-                      style: Theme.of(context).textTheme.headlineMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 24),
+                    DetectiveCaseHeader(title: headline!),
+                    const SizedBox(height: 20),
+                    const CrimeSceneTape(label: 'CASE FILE'),
+                    const SizedBox(height: 20),
                   ],
-                  if (body != null && body!.isNotEmpty)
-                    useTypewriter
-                        ? TypewriterText(
-                            text: body!,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          )
-                        : Text(
-                            body!,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                  if (bodyWidget != null) bodyWidget!,
+                  GlassEvidencePanel(
+                    accentLabel: panelLabel ?? 'EVIDENCE',
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (body != null && body!.isNotEmpty)
+                          useTypewriter
+                              ? TypewriterText(
+                                  text: body!,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                )
+                              : Text(
+                                  body!,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                        if (bodyWidget != null) bodyWidget!,
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-            child: AppButton(
-              label: continueLabel,
-              onTap: onContinue,
+            child: DetectiveActionButton(
+              child: AppButton(
+                label: continueLabel,
+                onTap: onContinue,
+              ),
             ),
           ),
         ],
@@ -98,6 +110,7 @@ class StoryModeShell extends StatefulWidget {
 
 class _StoryModeShellState extends State<StoryModeShell> {
   StoryAudioManager? _audioManager;
+  GoRouter? _router;
 
   @override
   void initState() {
@@ -107,8 +120,35 @@ class _StoryModeShellState extends State<StoryModeShell> {
       if (!mounted) {
         return;
       }
-      _syncFlowBloc(context.read<StoryCaseBloc>().state);
+      final caseBloc = context.read<StoryCaseBloc>();
+      caseBloc.state.whenOrNull(
+        initial: () => caseBloc.add(const StoryCaseEvent.loadTodayCase()),
+      );
+      _syncFlowBloc(caseBloc.state);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final router = GoRouter.of(context);
+    if (!identical(_router, router)) {
+      _router?.routerDelegate.removeListener(_onRouteChanged);
+      _router = router;
+      _router!.routerDelegate.addListener(_onRouteChanged);
+    }
+  }
+
+  void _onRouteChanged() {
+    if (!mounted || _audioManager == null) return;
+
+    final location =
+        _router!.routerDelegate.currentConfiguration.uri.path;
+    if (StoryFlowNavigation.isStoryLocation(location)) {
+      _audioManager!.startStoryAmbience();
+    } else {
+      _audioManager!.stopAll();
+    }
   }
 
   Future<void> _initAudio() async {
@@ -117,11 +157,17 @@ class _StoryModeShellState extends State<StoryModeShell> {
     }
     _audioManager = getIt<StoryAudioManager>();
     await _audioManager!.initialize();
-    await _audioManager!.startStoryAmbience();
+    if (!mounted) return;
+
+    final location = GoRouter.of(context).routerDelegate.currentConfiguration.uri.path;
+    if (StoryFlowNavigation.isStoryLocation(location)) {
+      await _audioManager!.startStoryAmbience();
+    }
   }
 
   @override
   void dispose() {
+    _router?.routerDelegate.removeListener(_onRouteChanged);
     _audioManager?.stopAll();
     super.dispose();
   }
@@ -225,9 +271,43 @@ class StoryFlowGate extends StatelessWidget {
           ready: (detectiveCase, completedClues, isReadOnly, resumeClueIndex) {
             return builder(context, detectiveCase, flowState);
           },
-          orElse: () => const Center(child: CircularProgressIndicator()),
+          orElse: () => DetectiveScaffold(
+            body: Center(
+              child: CircularProgressIndicator(
+                color: StoryTheme.accent.withValues(alpha: 0.85),
+              ),
+            ),
+          ),
         );
       },
     );
+  }
+}
+
+class StoryLoadingPulse extends StatelessWidget {
+  const StoryLoadingPulse({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final indicator = SizedBox(
+      width: 36,
+      height: 36,
+      child: CircularProgressIndicator(
+        strokeWidth: 2.5,
+        color: StoryTheme.accent.withValues(alpha: 0.9),
+      ),
+    );
+
+    if (MediaQuery.disableAnimationsOf(context)) {
+      return indicator;
+    }
+
+    return indicator
+        .animate(onPlay: (c) => c.repeat(reverse: true))
+        .scale(
+          begin: const Offset(0.92, 0.92),
+          end: const Offset(1.05, 1.05),
+          duration: 900.ms,
+        );
   }
 }

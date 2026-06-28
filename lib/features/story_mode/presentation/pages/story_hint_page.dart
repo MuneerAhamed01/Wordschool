@@ -11,6 +11,8 @@ import 'package:wordshool/features/story_mode/presentation/analytics/story_analy
 import 'package:wordshool/features/story_mode/presentation/routing/story_flow_gating.dart';
 import 'package:wordshool/features/story_mode/presentation/utils/clue_type_labels.dart';
 import 'package:wordshool/features/story_mode/presentation/utils/story_hint_reveal.dart';
+import 'package:wordshool/features/story_mode/presentation/theme/story_theme.dart';
+import 'package:wordshool/features/story_mode/presentation/widgets/story_detective_ui.dart';
 import 'package:wordshool/features/story_mode/presentation/widgets/story_mode_widgets.dart';
 import 'package:wordshool/shared/presentations/widgets/app_button.dart';
 
@@ -107,55 +109,92 @@ class _StoryHintPageState extends State<StoryHintPage> {
 
         return StoryNarrativeScaffold(
           title: clueTypeLabel(clue.type),
+          panelLabel: 'INTEL',
           body: clue.hint,
           bodyWidget: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 24),
-              Text(
-                'Need more help?',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                extraHintHelpText,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: MyColors.textMuted,
-                    ),
-              ),
-              if (_statusMessage != null) ...[
-                const SizedBox(height: 12),
-                Text(
-                  _statusMessage!,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: MyColors.streakAccent,
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-              ],
-              if (_revealedLetterIndices.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                ..._revealedLetterIndices.map(
-                  (index) => Padding(
-                    padding: const EdgeInsets.only(bottom: 6),
-                    child: Text(
-                      StoryHintReveal.revealLabel(answer, index),
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                  ),
-                ),
-              ],
+              const CrimeSceneTape(label: 'HINTS'),
               const SizedBox(height: 16),
-              AppButton(
-                label: allRevealed
-                    ? 'All letters revealed'
-                    : _loadingExtraHint
-                        ? 'Unlocking…'
-                        : 'Reveal a letter',
-                variant: ButtonVariant.secondary,
-                onTap: allRevealed || _loadingExtraHint
-                    ? null
-                    : () => _requestExtraHint(answer),
+              GlassEvidencePanel(
+                accentLabel: 'ASSIST',
+                padding: const EdgeInsets.all(16),
+                animate: false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.lightbulb_outline_rounded,
+                          color: StoryTheme.accent.withValues(alpha: 0.9),
+                          size: 22,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Need more help?',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      extraHintHelpText,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: MyColors.textMuted,
+                          ),
+                    ),
+                    if (_statusMessage != null) ...[
+                      const SizedBox(height: 12),
+                      Text(
+                        _statusMessage!,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: MyColors.streakAccent,
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                    ],
+                    if (_revealedLetterIndices.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      ..._revealedLetterIndices.map(
+                        (index) => Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.visibility_outlined,
+                                size: 16,
+                                color: StoryTheme.accent.withValues(alpha: 0.8),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  StoryHintReveal.revealLabel(answer, index),
+                                  style:
+                                      Theme.of(context).textTheme.bodyLarge,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+                    AppButton(
+                      label: allRevealed
+                          ? 'All letters revealed'
+                          : _loadingExtraHint
+                              ? 'Unlocking…'
+                              : 'Reveal a letter',
+                      variant: ButtonVariant.secondary,
+                      icon: Icons.key_rounded,
+                      onTap: allRevealed || _loadingExtraHint
+                          ? null
+                          : () => _requestExtraHint(answer),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

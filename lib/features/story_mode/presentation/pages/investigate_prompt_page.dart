@@ -18,6 +18,7 @@ class InvestigatePromptPage extends StatelessWidget {
 
         return StoryNarrativeScaffold(
           title: clueTypeLabel(clue.type),
+          panelLabel: 'FIELD NOTES',
           body: clue.investigatePrompt,
           continueLabel: flowState.isReadOnly ? 'Continue' : 'Investigate',
           onContinue: () {

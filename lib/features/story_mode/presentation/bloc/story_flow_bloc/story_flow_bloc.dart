@@ -30,6 +30,10 @@ final class MarkClueResolved extends StoryFlowEvent {
   final int index;
 }
 
+final class ResetForLogout extends StoryFlowEvent {
+  const ResetForLogout();
+}
+
 sealed class StoryFlowState {
   const StoryFlowState();
 
@@ -138,6 +142,18 @@ class StoryFlowBloc extends Bloc<StoryFlowEvent, StoryFlowState> {
     on<Initialize>(_onInitialize);
     on<UpdateProgress>(_onUpdateProgress);
     on<MarkClueResolved>(_onMarkClueResolved);
+    on<ResetForLogout>(_onResetForLogout);
+  }
+
+  void resetForLogout() {
+    add(const ResetForLogout());
+  }
+
+  void _onResetForLogout(
+    ResetForLogout event,
+    Emitter<StoryFlowState> emit,
+  ) {
+    emit(const StoryFlowUninitialized());
   }
 
   void _onInitialize(Initialize event, Emitter<StoryFlowState> emit) {

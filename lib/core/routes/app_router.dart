@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wordshool/core/analytics/analytics_route_observer.dart';
 import 'package:wordshool/core/analytics/analytics_service.dart';
+import 'package:wordshool/core/routes/app_shell_page.dart';
 import 'package:wordshool/di.dart';
 import 'package:wordshool/features/archive/presentation/bloc/archive_bloc.dart';
 import 'package:wordshool/features/archive/presentation/pages/archive_page.dart';
@@ -32,6 +33,7 @@ import 'package:wordshool/features/story_mode/presentation/bloc/story_clue_bloc/
 import 'package:wordshool/features/story_mode/presentation/pages/story_wordle_page.dart';
 import 'package:wordshool/features/story_mode/presentation/routing/story_flow_redirect.dart';
 import 'package:wordshool/features/story_mode/presentation/routing/story_mode_feature_gate.dart';
+import 'package:wordshool/features/story_mode/presentation/utils/story_mode_session_controller.dart';
 import 'package:wordshool/features/story_mode/presentation/widgets/story_mode_widgets.dart';
 import 'package:wordshool/features/winning/presentation/pages/params/winning_page_param.dart';
 import 'package:wordshool/features/winning/presentation/pages/winning_page.dart';
@@ -43,6 +45,10 @@ GoRouter appRouter(String initialRoute) {
     loadTodayDetectiveCaseUseCase: getIt(),
   );
   final storyFlowBloc = StoryFlowBloc();
+  getIt<StoryModeSessionController>().bind(
+    caseBloc: storyCaseBloc,
+    flowBloc: storyFlowBloc,
+  );
 
   return GoRouter(
     initialLocation: initialRoute,
@@ -61,16 +67,56 @@ GoRouter appRouter(String initialRoute) {
           child: const AuthPage(),
         ),
       ),
-      GoRoute(
-        path: DashboardPage.routeName,
-        name: DashboardPage.routeName.replaceFirst(RegExp(r'0'), ''),
-        builder: (context, state) => BlocProvider(
-          create: (context) => DashboardBloc(
-            loadUserGameStateUseCase: getIt(),
-            loadUserSpecificGameStateUseCase: getIt(),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return AppShellPage(navigationShell: navigationShell);
+        },
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: DashboardPage.routeName,
+                name: DashboardPage.routeName.replaceFirst(RegExp(r'0'), ''),
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: _DashboardTab(),
+                ),
+              ),
+            ],
           ),
-          child: const DashboardPage(),
-        ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: ArchivePage.routeName,
+                name: ArchivePage.routeName.replaceFirst(RegExp(r'0'), ''),
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: _ArchiveTab(),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: LeaderboardPage.routeName,
+                name: LeaderboardPage.routeName.replaceFirst(RegExp(r'0'), ''),
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: _LeaderboardTab(),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: SettingsPage.routeName,
+                name: SettingsPage.routeName.replaceFirst(RegExp(r'0'), ''),
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: _SettingsTab(),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       GoRoute(
         path: GamePage.routeName,
@@ -97,16 +143,6 @@ GoRouter appRouter(String initialRoute) {
             child: const GamePage(),
           );
         },
-      ),
-      GoRoute(
-        path: ArchivePage.routeName,
-        name: ArchivePage.routeName.replaceFirst(RegExp(r'0'), ''),
-        builder: (context, state) => BlocProvider(
-          create: (context) => ArchiveBloc(
-            loadUserGameHistoryUseCase: getIt(),
-          ),
-          child: const ArchivePage(),
-        ),
       ),
       ShellRoute(
         redirect: (context, state) => redirectStoryModeFeatureGate(state),
@@ -194,27 +230,6 @@ GoRouter appRouter(String initialRoute) {
         ],
       ),
       GoRoute(
-        path: LeaderboardPage.routeName,
-        name: LeaderboardPage.routeName.replaceFirst(RegExp(r'0'), ''),
-        builder: (context, state) => BlocProvider(
-          create: (_) => LeaderboardBloc(
-            loadDetectiveLeaderboardUseCase: getIt(),
-          ),
-          child: const LeaderboardPage(),
-        ),
-      ),
-      GoRoute(
-        path: SettingsPage.routeName,
-        name: SettingsPage.routeName.replaceFirst(RegExp(r'0'), ''),
-        builder: (context, state) => BlocProvider(
-          create: (_) => SettingsBloc(
-            logoutUseCase: getIt<LogoutUseCase>(),
-            analytics: getIt(),
-          ),
-          child: const SettingsPage(),
-        ),
-      ),
-      GoRoute(
         path: '/terms',
         name: 'terms',
         builder: (context, state) => const LegalMarkdownPage(
@@ -261,4 +276,62 @@ GoRouter appRouter(String initialRoute) {
       ),
     ],
   );
+}
+
+class _DashboardTab extends StatelessWidget {
+  const _DashboardTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => DashboardBloc(
+        loadUserGameStateUseCase: getIt(),
+        loadUserSpecificGameStateUseCase: getIt(),
+      ),
+      child: const DashboardPage(),
+    );
+  }
+}
+
+class _ArchiveTab extends StatelessWidget {
+  const _ArchiveTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => ArchiveBloc(
+        loadUserGameHistoryUseCase: getIt(),
+      ),
+      child: const ArchivePage(),
+    );
+  }
+}
+
+class _LeaderboardTab extends StatelessWidget {
+  const _LeaderboardTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => LeaderboardBloc(
+        loadDetectiveLeaderboardUseCase: getIt(),
+      ),
+      child: const LeaderboardPage(),
+    );
+  }
+}
+
+class _SettingsTab extends StatelessWidget {
+  const _SettingsTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => SettingsBloc(
+        logoutUseCase: getIt<LogoutUseCase>(),
+        analytics: getIt(),
+      ),
+      child: const SettingsPage(),
+    );
+  }
 }

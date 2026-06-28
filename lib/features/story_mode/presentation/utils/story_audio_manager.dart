@@ -13,9 +13,12 @@ class StoryAudioManager {
   final SharedPreferences? _preferences;
   final AudioPlayer _ambientPlayer = AudioPlayer();
   final AudioPlayer _sfxPlayer = AudioPlayer();
+  final AudioPlayer _keyClickPlayer = AudioPlayer();
 
   bool _initialized = false;
   bool _muted = false;
+  bool _keyClickLoaded = false;
+  bool _ambientPlaying = false;
 
   bool get isMuted => _muted;
 
@@ -23,31 +26,53 @@ class StoryAudioManager {
     if (_initialized) return;
     _initialized = true;
     _muted = _preferences?.getBool(_muteKey) ?? false;
+    await _preloadKeyClick();
+  }
+
+  Future<void> _preloadKeyClick() async {
+    if (_keyClickLoaded) return;
+    try {
+      await _keyClickPlayer.setAsset('assets/audio/key_click.mp3');
+      await _keyClickPlayer.setVolume(0.5);
+      _keyClickLoaded = true;
+    } catch (error) {
+      debugPrint('StoryAudioManager: key_click asset unavailable ($error)');
+    }
   }
 
   Future<void> startStoryAmbience() async {
-    if (_muted) return;
+    if (_muted || _ambientPlaying) return;
     try {
+      await _ambientPlayer.stop();
       await _ambientPlayer.setAsset('assets/audio/rain_loop.mp3');
       await _ambientPlayer.setLoopMode(LoopMode.one);
       await _ambientPlayer.setVolume(0.35);
       await _ambientPlayer.play();
+      _ambientPlaying = true;
     } catch (error) {
       debugPrint('StoryAudioManager: rain asset unavailable ($error)');
+      _ambientPlaying = false;
     }
   }
 
   Future<void> stopAll() async {
-    await _ambientPlayer.stop();
-    await _sfxPlayer.stop();
+    _ambientPlaying = false;
+    await Future.wait([
+      _ambientPlayer.stop(),
+      _sfxPlayer.stop(),
+      _keyClickPlayer.stop(),
+    ]);
   }
 
   Future<void> playKeyClick() async {
     if (_muted) return;
     try {
-      await _sfxPlayer.setAsset('assets/audio/key_click.mp3');
-      await _sfxPlayer.setVolume(0.5);
-      await _sfxPlayer.play();
+      if (!_keyClickLoaded) {
+        await _preloadKeyClick();
+      }
+      if (!_keyClickLoaded) return;
+      await _keyClickPlayer.seek(Duration.zero);
+      await _keyClickPlayer.play();
     } catch (_) {
       // Optional asset.
     }
@@ -64,6 +89,7 @@ class StoryAudioManager {
   Future<void> _playSfx(String assetPath) async {
     if (_muted) return;
     try {
+      await _sfxPlayer.stop();
       await _sfxPlayer.setAsset(assetPath);
       await _sfxPlayer.setVolume(0.7);
       await _sfxPlayer.play();
@@ -81,7 +107,11 @@ class StoryAudioManager {
   }
 
   Future<void> dispose() async {
-    await _ambientPlayer.dispose();
-    await _sfxPlayer.dispose();
+    await stopAll();
+    await Future.wait([
+      _ambientPlayer.dispose(),
+      _sfxPlayer.dispose(),
+      _keyClickPlayer.dispose(),
+    ]);
   }
 }

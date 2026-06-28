@@ -102,5 +102,31 @@ void main() {
 
       await bloc.close();
     });
+
+    test('resetForLogout returns to initial state', () async {
+      final bloc = StoryCaseBloc(
+        loadTodayDetectiveCaseUseCase: FakeLoadTodayDetectiveCaseUseCase(
+          DataSuccess(
+            data: TodayDetectiveCaseResult(detectiveCase: _sampleCase()),
+          ),
+        ),
+      );
+
+      await bloc.stream.firstWhere(
+        (state) => state.maybeWhen(
+          loaded: (_, __) => true,
+          orElse: () => false,
+        ),
+      );
+
+      bloc.resetForLogout();
+      await bloc.stream.firstWhere(
+        (state) => state == const StoryCaseState.initial(),
+      );
+
+      expect(bloc.state, const StoryCaseState.initial());
+
+      await bloc.close();
+    });
   });
 }

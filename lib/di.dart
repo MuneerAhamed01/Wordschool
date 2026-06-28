@@ -59,6 +59,7 @@ import 'package:wordshool/core/monetization/iap_service.dart';
 import 'package:wordshool/core/monetization/story_entitlements.dart';
 import 'package:wordshool/features/story_mode/domain/usecases/consume_hint.dart';
 import 'package:wordshool/features/story_mode/presentation/utils/story_audio_manager.dart';
+import 'package:wordshool/features/story_mode/presentation/utils/story_mode_session_controller.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -74,6 +75,9 @@ Future<void> initializeDependency() async {
   getIt.registerSingleton<MonetizationConfig>(MonetizationConfig.fromEnv());
   _initializeGame();
   _initializeStoryMode();
+  getIt.registerSingleton<StoryModeSessionController>(
+    StoryModeSessionController(),
+  );
   _initializeLeaderboard();
   await _initializeStoryModeExtras();
   _initializeSettings();
@@ -295,6 +299,7 @@ void _initializeSettings() {
     SettingsRepositoryImpl(
       dataSource: getIt<SettingsDataSource>(),
       sessionRepository: getIt<SessionRepository>(),
+      storyModeSessionController: getIt<StoryModeSessionController>(),
     ),
   );
 

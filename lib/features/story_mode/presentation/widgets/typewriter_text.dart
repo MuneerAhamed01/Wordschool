@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:wordshool/features/story_mode/presentation/theme/story_theme.dart';
 
-/// Reveals text character-by-character. Respects reduced motion and is skippable.
+/// Reveals text character-by-character with a blinking cursor. Skippable.
 class TypewriterText extends StatefulWidget {
   const TypewriterText({
     super.key,
@@ -23,15 +24,27 @@ class TypewriterText extends StatefulWidget {
   State<TypewriterText> createState() => _TypewriterTextState();
 }
 
-class _TypewriterTextState extends State<TypewriterText> {
+class _TypewriterTextState extends State<TypewriterText>
+    with SingleTickerProviderStateMixin {
   int _visibleCount = 0;
   bool _skipped = false;
   bool _dependenciesReady = false;
   Timer? _revealTimer;
+  late final AnimationController _cursorController;
+
+  @override
+  void initState() {
+    super.initState();
+    _cursorController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 530),
+    );
+  }
 
   @override
   void dispose() {
     _revealTimer?.cancel();
+    _cursorController.dispose();
     super.dispose();
   }
 
@@ -60,6 +73,7 @@ class _TypewriterTextState extends State<TypewriterText> {
     }
 
     _revealTimer?.cancel();
+    _cursorController.stop();
 
     final disableAnimations =
         MediaQuery.maybeOf(context)?.disableAnimations ?? false;
@@ -71,6 +85,8 @@ class _TypewriterTextState extends State<TypewriterText> {
       return;
     }
 
+    _cursorController.repeat(reverse: true);
+
     _revealTimer = Timer.periodic(widget.durationPerChar, (timer) {
       if (!mounted || _skipped) {
         timer.cancel();
@@ -78,6 +94,7 @@ class _TypewriterTextState extends State<TypewriterText> {
       }
       if (_visibleCount >= widget.text.length) {
         timer.cancel();
+        _cursorController.stop();
         widget.onComplete?.call();
         return;
       }
@@ -88,6 +105,7 @@ class _TypewriterTextState extends State<TypewriterText> {
   void _skip() {
     if (_skipped) return;
     _revealTimer?.cancel();
+    _cursorController.stop();
     setState(() {
       _skipped = true;
       _visibleCount = widget.text.length;
@@ -101,14 +119,35 @@ class _TypewriterTextState extends State<TypewriterText> {
       0,
       _visibleCount.clamp(0, widget.text.length),
     );
+    final isComplete = _visibleCount >= widget.text.length;
+    final baseStyle = widget.style ??
+        Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.55);
 
     return GestureDetector(
       onTap: _skip,
       behavior: HitTestBehavior.translucent,
-      child: Text(
-        visible,
-        style: widget.style,
-        textAlign: widget.textAlign,
+      child: AnimatedBuilder(
+        animation: _cursorController,
+        builder: (context, _) {
+          final showCursor = !isComplete && !_skipped;
+          final cursorVisible = showCursor && _cursorController.value > 0.45;
+          final cursor = cursorVisible ? '▌' : '';
+
+          return Text(
+            '$visible$cursor',
+            style: baseStyle?.copyWith(
+              shadows: cursorVisible
+                  ? [
+                      Shadow(
+                        color: StoryTheme.accent.withValues(alpha: 0.25),
+                        blurRadius: 8,
+                      ),
+                    ]
+                  : null,
+            ),
+            textAlign: widget.textAlign,
+          );
+        },
       ),
     );
   }

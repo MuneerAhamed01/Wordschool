@@ -41,6 +41,7 @@ class _LeaderboardPageState extends State<LeaderboardPage>
         getIt<StoryModeConfig>().isEnabledForUser(null);
 
     return GameScaffold(
+      safeAreaBottom: false,
       appBar: AppBar(
         title: const Text('Leaderboard'),
         bottom: storyEnabled

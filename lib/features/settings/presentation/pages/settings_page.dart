@@ -40,6 +40,7 @@ class SettingsPage extends StatelessWidget {
         );
       },
       child: GameScaffold(
+        safeAreaBottom: false,
         appBar: AppBar(title: const Text('Settings')),
         body: ListView(
           padding: const EdgeInsets.all(20),

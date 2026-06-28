@@ -10,6 +10,7 @@ class GameLayoutFlags {
     this.hasGuessCounter = false,
     this.heroShowsAnswerTiles = false,
     this.footerHasTwoButtons = false,
+    this.hasEvidencePanel = false,
   });
 
   final bool hasBanner;
@@ -19,6 +20,7 @@ class GameLayoutFlags {
   final bool hasGuessCounter;
   final bool heroShowsAnswerTiles;
   final bool footerHasTwoButtons;
+  final bool hasEvidencePanel;
 }
 
 /// Responsive sizing for the game board, keyboard, and result chrome.
@@ -118,6 +120,7 @@ class GameLayoutMetrics {
     if (flags.hasKeyboard) {
       overhead += 4 * _defaultKeyHeight + 6;
     }
+    if (flags.hasEvidencePanel) overhead += 48;
 
     return overhead;
   }

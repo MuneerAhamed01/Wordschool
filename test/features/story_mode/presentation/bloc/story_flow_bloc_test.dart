@@ -160,5 +160,23 @@ void main() {
 
       expect((bloc.state as StoryFlowReady).completedClues, [true, true, true]);
     });
+
+    test('resetForLogout clears ready state', () async {
+      final bloc = StoryFlowBloc();
+      final detectiveCase = sampleDetectiveCase();
+
+      await initializeFlow(
+        bloc,
+        Initialize(
+          detectiveCase: detectiveCase,
+          isReadOnly: false,
+        ),
+      );
+
+      bloc.resetForLogout();
+      await bloc.stream.firstWhere((state) => state is StoryFlowUninitialized);
+
+      expect(bloc.state, isA<StoryFlowUninitialized>());
+    });
   });
 }

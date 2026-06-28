@@ -203,11 +203,13 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
                 ),
               SizedBox(height: metrics.isCompact ? 4 : 8),
               Expanded(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: _buildBoard(
-                    metrics: metrics,
-                    isReadOnly: isCompleted,
+                child: Center(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: _buildBoard(
+                      metrics: metrics,
+                      isReadOnly: isCompleted,
+                    ),
                   ),
                 ),
               ),

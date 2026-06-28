@@ -31,7 +31,12 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     LoadDashboard event,
     Emitter<DashboardState> emit,
   ) async {
-    emit(const DashboardState.loading());
+    final showLoading =
+        state.whenOrNull(loaded: (_, __) => true) != true;
+
+    if (showLoading) {
+      emit(const DashboardState.loading());
+    }
 
     final todayId = DateHelper.todayDateId();
     final userStateResult = await _loadUserGameStateUseCase();
@@ -51,7 +56,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         userGameState: userStateResult.data!,
         todayGameData: todayGame,
       ));
-    } else {
+    } else if (showLoading) {
       emit(DashboardState.error(
         userStateResult.error?.message ?? 'Failed to load dashboard',
       ));

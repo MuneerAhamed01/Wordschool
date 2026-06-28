@@ -10,6 +10,10 @@ class StoryTheme {
   static const Color surface = Color(0xFF141418);
   static const Color narrativeText = Color(0xFFD4CFC4);
   static const Color accent = Color(0xFFC9A227);
+  static const Color crimeRed = Color(0xFFB83A3A);
+  static const Color crimeTape = Color(0xFFD4A82A);
+  static const Color glassFill = Color(0xFFE8E0D0);
+  static const Color glassBorder = Color(0x66C9A227);
 
   static ThemeData dark() {
     const colorScheme = ColorScheme.dark(
@@ -25,9 +29,10 @@ class StoryTheme {
       colorScheme: colorScheme,
       scaffoldBackgroundColor: background,
       appBarTheme: const AppBarTheme(
-        backgroundColor: background,
+        backgroundColor: Colors.transparent,
         foregroundColor: narrativeText,
         elevation: 0,
+        scrolledUnderElevation: 0,
       ),
     );
 

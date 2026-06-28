@@ -2,16 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:wordshool/config/themes/app_theme.dart';
 import 'package:wordshool/core/analytics/analytics_service.dart';
+import 'package:wordshool/core/config/monetization_config.dart';
 import 'package:wordshool/core/remote_config/story_mode_config.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/di.dart';
 import 'package:wordshool/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:wordshool/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:wordshool/features/leaderboard/domain/entities/detective_leaderboard_entry.dart';
+import 'package:wordshool/features/leaderboard/domain/repositories/detective_leaderboard_repository.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_data.dart';
+import 'package:wordshool/shared/domains/entities/user_entity.dart';
+import 'package:wordshool/shared/domains/repostiories/session_repository.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_state.dart';
 import 'package:wordshool/shared/domains/repostiories/user_game_state_repository.dart';
+import 'package:wordshool/shared/domains/usercases/get_current_user_usecase.dart';
 import 'package:wordshool/shared/domains/usercases/load_user_game_state_usecase.dart';
 import 'package:wordshool/shared/domains/usercases/load_user_specific_game_state.dart';
 
@@ -24,7 +31,44 @@ class FakeStoryModeConfig implements StoryModeConfig {
   bool get isEnabled => enabled;
 
   @override
+  int get rolloutPercent => enabled ? 100 : 0;
+
+  @override
+  bool isEnabledForUser(String? userId) => enabled;
+
+  @override
   Future<void> initialize() async {}
+}
+
+class FakeDetectiveLeaderboardRepository
+    implements DetectiveLeaderboardRepository {
+  @override
+  Future<DataState<DetectiveLeaderboardSnapshot>> loadWeeklyLeaderboard({
+    required String? currentUserId,
+    int topLimit = 50,
+  }) async {
+    return DataSuccess(
+      data: const DetectiveLeaderboardSnapshot(
+        weekId: '2026-W25',
+        topEntries: [],
+        currentUserEntry: null,
+        currentUserRank: null,
+      ),
+    );
+  }
+}
+
+class FakeGetCurrentUserUseCase extends GetCurrentUserUseCase {
+  FakeGetCurrentUserUseCase()
+      : super(sessionRepository: _FakeSessionRepository());
+}
+
+class _FakeSessionRepository implements SessionRepository {
+  @override
+  WordSchoolUserEntity? getCurrentUser() => null;
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class FakeUserGameStateRepository implements UserGameStateRepository {
@@ -62,11 +106,27 @@ Future<void> _pumpDashboard(
   if (getIt.isRegistered<AnalyticsService>()) {
     await getIt.unregister<AnalyticsService>();
   }
+  if (getIt.isRegistered<MonetizationConfig>()) {
+    await getIt.unregister<MonetizationConfig>();
+  }
+  if (getIt.isRegistered<GetCurrentUserUseCase>()) {
+    await getIt.unregister<GetCurrentUserUseCase>();
+  }
+  if (getIt.isRegistered<DetectiveLeaderboardRepository>()) {
+    await getIt.unregister<DetectiveLeaderboardRepository>();
+  }
 
   getIt.registerSingleton<StoryModeConfig>(
     FakeStoryModeConfig(enabled: storyModeEnabled),
   );
   getIt.registerSingleton<AnalyticsService>(NoOpAnalyticsService());
+  getIt.registerSingleton<MonetizationConfig>(
+    const MonetizationConfig(isMonetizationAndPurchasesEnabled: false),
+  );
+  getIt.registerSingleton<GetCurrentUserUseCase>(FakeGetCurrentUserUseCase());
+  getIt.registerSingleton<DetectiveLeaderboardRepository>(
+    FakeDetectiveLeaderboardRepository(),
+  );
 
   final repository = FakeUserGameStateRepository();
   final bloc = DashboardBloc(
@@ -78,11 +138,19 @@ Future<void> _pumpDashboard(
   );
 
   await tester.pumpWidget(
-    MaterialApp(
+    MaterialApp.router(
       theme: AppTheme.gameDark(),
-      home: BlocProvider.value(
-        value: bloc,
-        child: const DashboardPage(),
+      routerConfig: GoRouter(
+        initialLocation: DashboardPage.routeName,
+        routes: [
+          GoRoute(
+            path: DashboardPage.routeName,
+            builder: (context, state) => BlocProvider.value(
+              value: bloc,
+              child: const DashboardPage(),
+            ),
+          ),
+        ],
       ),
     ),
   );
@@ -95,18 +163,22 @@ void main() {
     await getIt.reset();
   });
 
-  group('DashboardPage story mode tile', () {
-    testWidgets('shows Detective Case tile when story mode is enabled', (tester) async {
+  group('DashboardPage story mode hero', () {
+    testWidgets('shows Detective Case hero when story mode is enabled',
+        (tester) async {
       await _pumpDashboard(tester, storyModeEnabled: true);
 
       expect(find.text('Detective Case'), findsOneWidget);
-      expect(find.text("Solve today's mystery"), findsOneWidget);
+      expect(find.text('Play Today\'s Case'), findsOneWidget);
+      expect(find.text('Streak'), findsOneWidget);
     });
 
-    testWidgets('hides Detective Case tile when story mode is disabled', (tester) async {
+    testWidgets('hides Detective Case hero when story mode is disabled',
+        (tester) async {
       await _pumpDashboard(tester, storyModeEnabled: false);
 
       expect(find.text('Detective Case'), findsNothing);
+      expect(find.text('Play Today\'s Case'), findsNothing);
     });
   });
 }

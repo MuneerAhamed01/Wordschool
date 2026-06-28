@@ -19,6 +19,7 @@ class CaseIntroPage extends StatelessWidget {
           ready: (detectiveCase, completedClues, isReadOnly, resumeClueIndex) {
             return StoryNarrativeScaffold(
               title: 'Case Introduction',
+              panelLabel: 'DOSSIER',
               headline: detectiveCase.title,
               body: detectiveCase.introduction,
               continueLabel: 'Continue',

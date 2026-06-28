@@ -7,4 +7,5 @@ class StoryCaseEvent with _$StoryCaseEvent {
   const factory StoryCaseEvent.progressUpdated(
     StoryModeProgressEntity progress,
   ) = ProgressUpdated;
+  const factory StoryCaseEvent.resetForLogout() = ResetForLogout;
 }

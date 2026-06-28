@@ -7,11 +7,13 @@ class GameScaffold extends StatelessWidget {
     this.appBar,
     required this.body,
     this.floatingActionButton,
+    this.safeAreaBottom = true,
   });
 
   final PreferredSizeWidget? appBar;
   final Widget body;
   final Widget? floatingActionButton;
+  final bool safeAreaBottom;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +26,7 @@ class GameScaffold extends StatelessWidget {
         children: [
           const _AmbientBackground(),
           SafeArea(
+            bottom: safeAreaBottom,
             child: Padding(
               padding: EdgeInsets.only(
                 top: appBar != null ? kToolbarHeight : 0,

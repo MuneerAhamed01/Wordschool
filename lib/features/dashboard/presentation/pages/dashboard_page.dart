@@ -4,33 +4,70 @@ import 'package:go_router/go_router.dart';
 import 'package:wordshool/config/themes/colors.dart';
 import 'package:wordshool/core/analytics/analytics_events.dart';
 import 'package:wordshool/core/analytics/analytics_service.dart';
-import 'package:wordshool/di.dart';
-import 'package:wordshool/features/archive/presentation/pages/archive_page.dart';
-import 'package:wordshool/features/dashboard/presentation/bloc/dashboard_bloc.dart';
-import 'package:wordshool/features/game/presentation/pages/game_page.dart';
-import 'package:wordshool/features/leaderboard/presentation/pages/leaderboard_page.dart';
-import 'package:wordshool/features/settings/presentation/pages/settings_page.dart';
-import 'package:wordshool/features/story_mode/presentation/pages/story_home_page.dart';
 import 'package:wordshool/core/config/monetization_config.dart';
 import 'package:wordshool/core/remote_config/story_mode_config.dart';
+import 'package:wordshool/di.dart';
+import 'package:wordshool/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:wordshool/features/dashboard/presentation/widgets/daily_puzzle_hero.dart';
+import 'package:wordshool/features/dashboard/presentation/widgets/story_mode_hero.dart';
+import 'package:wordshool/features/game/presentation/pages/game_page.dart';
+import 'package:wordshool/features/story_mode/presentation/pages/story_home_page.dart';
+import 'package:wordshool/features/story_mode/presentation/widgets/story_banner_ad.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_data.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_state.dart';
-import 'package:wordshool/shared/presentations/widgets/action_tile.dart';
 import 'package:wordshool/shared/presentations/widgets/app_button.dart';
 import 'package:wordshool/shared/presentations/widgets/fade_slide_in.dart';
 import 'package:wordshool/shared/presentations/widgets/game_scaffold.dart';
-import 'package:wordshool/features/story_mode/presentation/widgets/story_banner_ad.dart';
-import 'package:wordshool/shared/presentations/widgets/detective_stats_panel.dart';
-import 'package:wordshool/shared/presentations/widgets/stats_panel.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   static const String routeName = '/home';
 
   const DashboardPage({super.key});
 
   @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  GoRouter? _router;
+  String? _lastLocation;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final router = GoRouter.of(context);
+    if (!identical(_router, router)) {
+      _router?.routerDelegate.removeListener(_onRouteChanged);
+      _router = router;
+      _lastLocation ??= _router!.routerDelegate.currentConfiguration.uri.path;
+      _router!.routerDelegate.addListener(_onRouteChanged);
+    }
+  }
+
+  void _onRouteChanged() {
+    if (!mounted || _router == null) return;
+
+    final location = _router!.routerDelegate.currentConfiguration.uri.path;
+    final returningHome = _lastLocation != null &&
+        _lastLocation != DashboardPage.routeName &&
+        location == DashboardPage.routeName;
+    _lastLocation = location;
+
+    if (returningHome) {
+      context.read<DashboardBloc>().add(const DashboardEvent.loadDashboard());
+    }
+  }
+
+  @override
+  void dispose() {
+    _router?.routerDelegate.removeListener(_onRouteChanged);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GameScaffold(
+      safeAreaBottom: false,
       body: BlocBuilder<DashboardBloc, DashboardState>(
         builder: (context, state) {
           return state.when(
@@ -72,141 +109,59 @@ class DashboardPage extends StatelessWidget {
     UserGameStateEntity userGameState,
     UserGameDataEntity? todayGameData,
   ) {
-    final playLabel = _playButtonLabel(todayGameData);
-    final playSubtitle = _playButtonSubtitle(todayGameData);
+    final storyEnabled =
+        getIt<StoryModeConfig>().isEnabledForUser(userGameState.id);
+    final showAd = storyEnabled &&
+        getIt<MonetizationConfig>().isMonetizationAndPurchasesEnabled;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          const SizedBox(height: 4),
           FadeSlideIn(
-            child: Column(
-              children: [
-                Text('WordSchool',
-                    style: Theme.of(context).textTheme.displayMedium),
-                const SizedBox(height: 6),
-                Text(
-                  'Your daily word puzzle',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ],
-            ),
+            child: _DashboardHeader(streak: userGameState.streak),
           ),
-          const SizedBox(height: 28),
-          FadeSlideIn(
-            delay: const Duration(milliseconds: 80),
-            child: StatsPanel(userGameState: userGameState),
-          ),
-          if (getIt<StoryModeConfig>()
-              .isEnabledForUser(userGameState.id)) ...[
-            const SizedBox(height: 16),
-            FadeSlideIn(
-              delay: const Duration(milliseconds: 120),
-              child: DetectiveStatsPanel(userGameState: userGameState),
-            ),
-            const SizedBox(height: 12),
-            if (getIt<MonetizationConfig>().isMonetizationAndPurchasesEnabled)
-              FadeSlideIn(
-                delay: const Duration(milliseconds: 130),
-                child: const Center(child: StoryBannerAd()),
-              ),
-          ],
-          const SizedBox(height: 28),
-          FadeSlideIn(
-            delay: const Duration(milliseconds: 160),
+          const SizedBox(height: 14),
+          Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                AppButton(
-                  label: playLabel,
-                  icon: _playButtonIcon(todayGameData),
-                  variant: ButtonVariant.primary,
-                  onTap: () {
-                    getIt<AnalyticsService>().logFeatureOpened(
-                      featureName: AnalyticsFeatures.dailyGame,
-                    );
-                    context.push(GamePage.routeName);
-                  },
+                Expanded(
+                  flex: storyEnabled ? 11 : 1,
+                  child: FadeSlideIn(
+                    delay: const Duration(milliseconds: 60),
+                    child: DailyPuzzleHero(
+                      userGameState: userGameState,
+                      todayGameData: todayGameData,
+                      expanded: true,
+                      onPlay: () => _openDailyGame(context),
+                    ),
+                  ),
                 ),
-                if (playSubtitle != null) ...[
+                if (storyEnabled) ...[
+                  const SizedBox(height: 10),
+                  Expanded(
+                    flex: 9,
+                    child: FadeSlideIn(
+                      delay: const Duration(milliseconds: 120),
+                      child: StoryModeHero(
+                        userGameState: userGameState,
+                        expanded: true,
+                        onOpen: () => _openStoryMode(context),
+                      ),
+                    ),
+                  ),
+                ],
+                if (showAd) ...[
                   const SizedBox(height: 8),
-                  Text(
-                    playSubtitle,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: MyColors.textMuted,
-                          fontWeight: FontWeight.w600,
-                        ),
-                    textAlign: TextAlign.center,
+                  FadeSlideIn(
+                    delay: const Duration(milliseconds: 140),
+                    child: const Center(child: StoryBannerAd()),
                   ),
                 ],
               ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          if (getIt<StoryModeConfig>()
-              .isEnabledForUser(userGameState.id)) ...[
-            FadeSlideIn(
-              delay: const Duration(milliseconds: 200),
-              child: ActionTile(
-                title: 'Detective Case',
-                subtitle: "Solve today's mystery",
-                icon: Icons.search_rounded,
-                accentColor: MyColors.gray6,
-                onTap: () {
-                  getIt<AnalyticsService>().logFeatureOpened(
-                    featureName: AnalyticsFeatures.storyMode,
-                  );
-                  context.push(StoryHomePage.routeName);
-                },
-              ),
-            ),
-            const SizedBox(height: 10),
-          ],
-          FadeSlideIn(
-            delay: const Duration(milliseconds: 220),
-            child: ActionTile(
-              title: 'Previous Games',
-              subtitle: 'Replay past daily puzzles',
-              icon: Icons.calendar_today_rounded,
-              accentColor: MyColors.lightBlue3,
-              onTap: () {
-                getIt<AnalyticsService>().logFeatureOpened(
-                  featureName: AnalyticsFeatures.archive,
-                );
-                context.push(ArchivePage.routeName);
-              },
-            ),
-          ),
-          const SizedBox(height: 10),
-          FadeSlideIn(
-            delay: const Duration(milliseconds: 280),
-            child: ActionTile(
-              title: 'Leaderboard',
-              subtitle: 'Weekly detective rankings',
-              icon: Icons.leaderboard_rounded,
-              accentColor: MyColors.streakAccent,
-              onTap: () {
-                getIt<AnalyticsService>().logFeatureOpened(
-                  featureName: AnalyticsFeatures.leaderboard,
-                );
-                context.push(LeaderboardPage.routeName);
-              },
-            ),
-          ),
-          const SizedBox(height: 10),
-          FadeSlideIn(
-            delay: const Duration(milliseconds: 340),
-            child: ActionTile(
-              title: 'Settings',
-              subtitle: 'Account, privacy & preferences',
-              icon: Icons.settings_outlined,
-              accentColor: MyColors.textMuted,
-              onTap: () {
-                getIt<AnalyticsService>().logFeatureOpened(
-                  featureName: AnalyticsFeatures.settings,
-                );
-                context.push(SettingsPage.routeName);
-              },
             ),
           ),
         ],
@@ -214,29 +169,106 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  String _playButtonLabel(UserGameDataEntity? todayGameData) {
-    if (todayGameData == null || !todayGameData.isCompleted) {
-      return 'Play Today\'s Puzzle';
-    }
-    return todayGameData.isCorrect
-        ? 'Review Today\'s Win'
-        : 'Review Today\'s Result';
+  void _openDailyGame(BuildContext context) {
+    getIt<AnalyticsService>().logFeatureOpened(
+      featureName: AnalyticsFeatures.dailyGame,
+    );
+    context.push(GamePage.routeName);
   }
 
-  IconData _playButtonIcon(UserGameDataEntity? todayGameData) {
-    if (todayGameData?.isCompleted == true && todayGameData!.isCorrect) {
-      return Icons.emoji_events_rounded;
-    }
-    return Icons.play_arrow_rounded;
+  void _openStoryMode(BuildContext context) {
+    getIt<AnalyticsService>().logFeatureOpened(
+      featureName: AnalyticsFeatures.storyMode,
+    );
+    context.push(StoryHomePage.routeName);
+  }
+}
+
+class _DashboardHeader extends StatelessWidget {
+  const _DashboardHeader({required this.streak});
+
+  final int streak;
+
+  String get _greeting {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
   }
 
-  String? _playButtonSubtitle(UserGameDataEntity? todayGameData) {
-    if (todayGameData == null || !todayGameData.isCompleted) {
-      return 'A new word is ready for you';
-    }
-    if (todayGameData.isCorrect) {
-      return 'Solved in ${todayGameData.guessedWords.length} — come back tomorrow';
-    }
-    return 'You played today — see how you did';
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _greeting,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: MyColors.textMuted,
+            letterSpacing: 0.3,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Expanded(
+              child: ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  colors: [MyColors.white, MyColors.accentGlow],
+                ).createShader(bounds),
+                child: Text(
+                  'WordSchool',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.5,
+                    color: MyColors.white,
+                  ),
+                ),
+              ),
+            ),
+            if (streak > 0)
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: MyColors.streakAccent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: MyColors.streakAccent.withValues(alpha: 0.35),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.local_fire_department_rounded,
+                      size: 14,
+                      color: MyColors.streakAccent,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '$streak day streak',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: MyColors.streakAccent,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Pick a mode and start playing',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: MyColors.textMuted,
+          ),
+        ),
+      ],
+    );
   }
 }

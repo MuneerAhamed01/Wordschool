@@ -1,8 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:wordshool/config/themes/colors.dart';
 import 'package:wordshool/core/enums/word_tile_type.dart';
 import 'package:wordshool/core/utils/game_layout_metrics.dart';
 import 'package:wordshool/di.dart';
@@ -16,11 +17,13 @@ import 'package:wordshool/features/story_mode/presentation/bloc/story_case_bloc/
 import 'package:wordshool/features/story_mode/presentation/bloc/story_clue_bloc/story_clue_bloc.dart';
 import 'package:wordshool/features/story_mode/presentation/bloc/story_flow_bloc/story_flow_bloc.dart';
 import 'package:wordshool/features/story_mode/presentation/routing/story_flow_gating.dart';
+import 'package:wordshool/features/story_mode/presentation/routing/story_flow_navigation.dart';
 import 'package:wordshool/features/story_mode/presentation/utils/story_audio_manager.dart';
 import 'package:wordshool/features/story_mode/presentation/utils/clue_type_labels.dart';
+import 'package:wordshool/features/story_mode/presentation/theme/story_theme.dart';
+import 'package:wordshool/features/story_mode/presentation/widgets/story_detective_ui.dart';
 import 'package:wordshool/features/story_mode/presentation/widgets/story_mode_widgets.dart';
 import 'package:wordshool/shared/domains/repostiories/session_repository.dart';
-import 'package:wordshool/shared/presentations/widgets/game_scaffold.dart';
 import 'package:wordshool/shared/presentations/widgets/snackbar.dart';
 import 'package:wordshool/shared/presentations/widgets/wordle_tile/tile.dart';
 
@@ -38,8 +41,8 @@ class StoryWordlePage extends StatefulWidget {
 class _StoryWordlePageState extends State<StoryWordlePage>
     with StoryWordlePageHelper {
   final Map<int, VoidCallback> _shakeFunctions = {};
-  String? _lastRestoredKey;
   bool _clueInitialized = false;
+  bool _guessesRestored = false;
   bool _hasNavigated = false;
 
   @override
@@ -105,54 +108,14 @@ class _StoryWordlePageState extends State<StoryWordlePage>
                 );
               },
             ),
-            BlocListener<StoryClueBloc, StoryClueState>(
-              listenWhen: (previous, current) =>
-                  previous != current &&
-                  current.maybeWhen(
-                    ready: (
-                      clueIndex,
-                      caseId,
-                      answer,
-                      userId,
-                      progress,
-                      isCompleted,
-                    ) =>
-                        !isCompleted && progress != null,
-                    orElse: () => false,
-                  ),
-              listener: (context, state) {
-                state.maybeWhen(
-                  ready: (clueIndex, caseId, answer, _, progress, isCompleted) {
-                    if (!isCompleted && progress != null) {
-                      _tryRestoreGuesses(
-                        caseId: caseId,
-                        clueIndex: clueIndex,
-                        answer: answer,
-                        guesses: progress.clueGuesses.elementAtOrNull(clueIndex) ??
-                            const [],
-                      );
-                    }
-                  },
-                  orElse: () {},
-                );
-              },
-            ),
-            BlocListener<WordCubit, List<Word>>(
-              listener: (context, words) => listenToWord(
-                context,
-                words,
-                answer: clue.answer.trim().toUpperCase(),
-              ),
-            ),
           ],
-          child: GameScaffold(
-            appBar: AppBar(
-              title: Text(clueTypeLabel(clue.type)),
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () => Navigator.of(context).maybePop(),
-              ),
+          child: DetectiveScaffold(
+            appBar: DetectiveAppBar(
+              title: clueTypeLabel(clue.type),
+              onBack: () => StoryFlowNavigation.handleBack(context),
             ),
+            onBack: () => StoryFlowNavigation.handleBack(context),
+            showMagnifier: false,
             body: BlocBuilder<StoryClueBloc, StoryClueState>(
               builder: (context, clueState) {
                 return clueState.maybeWhen(
@@ -165,18 +128,20 @@ class _StoryWordlePageState extends State<StoryWordlePage>
                     isCompleted,
                   ) {
                     if (isCompleted) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(child: StoryLoadingPulse());
                     }
                     return _buildContent(context);
                   },
                   error: (message) => Center(
                     child: Padding(
                       padding: const EdgeInsets.all(24),
-                      child: Text(message, textAlign: TextAlign.center),
+                      child: GlassEvidencePanel(
+                        accentLabel: 'ERROR',
+                        child: Text(message, textAlign: TextAlign.center),
+                      ),
                     ),
                   ),
-                  orElse: () =>
-                      const Center(child: CircularProgressIndicator()),
+                  orElse: () => const Center(child: StoryLoadingPulse()),
                 );
               },
             ),
@@ -214,25 +179,31 @@ class _StoryWordlePageState extends State<StoryWordlePage>
             progress: progress,
           ),
         );
+
+    final clue = detectiveCase.clues[widget.clueIndex];
+    final savedGuesses =
+        progress?.clueGuesses.elementAtOrNull(widget.clueIndex) ?? const [];
+    unawaited(
+      _restoreInitialGuesses(
+        caseId: detectiveCase.id,
+        answer: clue.answer,
+        guesses: savedGuesses,
+      ),
+    );
   }
 
-  void _tryRestoreGuesses({
+  Future<void> _restoreInitialGuesses({
     required String caseId,
-    required int clueIndex,
     required String answer,
     required List<String> guesses,
-  }) {
-    if (guesses.isEmpty) {
+  }) async {
+    if (_guessesRestored || guesses.isEmpty || !mounted) {
+      _guessesRestored = true;
       return;
     }
 
-    final key = '$caseId:$clueIndex:${guesses.length}:$answer';
-    if (_lastRestoredKey == key) {
-      return;
-    }
-    _lastRestoredKey = key;
-
-    context.read<WordCubit>().restoreGuesses(
+    _guessesRestored = true;
+    await context.read<WordCubit>().restoreGuesses(
           todayWord: answer,
           words: guesses,
         );
@@ -263,6 +234,7 @@ class _StoryWordlePageState extends State<StoryWordlePage>
           hasFooter: false,
           hasKeyboard: true,
           hasGuessCounter: true,
+          hasEvidencePanel: true,
         );
         final metrics = GameLayoutMetrics.compute(
           maxWidth: constraints.maxWidth,
@@ -276,9 +248,16 @@ class _StoryWordlePageState extends State<StoryWordlePage>
             children: [
               SizedBox(height: metrics.isCompact ? 4 : 8),
               Expanded(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: _buildBoard(metrics),
+                child: Center(
+                  child: GlassEvidencePanel(
+                    padding: EdgeInsets.all(metrics.isCompact ? 10 : 14),
+                    accentLabel: 'CLUE',
+                    animate: false,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: _buildBoard(metrics),
+                    ),
+                  ),
                 ),
               ),
               _buildGuessCounter(metrics),
@@ -341,13 +320,25 @@ class _StoryWordlePageState extends State<StoryWordlePage>
           padding: EdgeInsets.symmetric(
             vertical: metrics.isCompact ? 6 : 12,
           ),
-          child: Text(
-            'Guess ${(done + 1).clamp(1, GameConstants.maxWords)} of ${GameConstants.maxWords}',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: MyColors.textMuted,
-                  fontWeight: FontWeight.w600,
-                  fontSize: metrics.isCompact ? 13 : null,
-                ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.manage_search_rounded,
+                size: metrics.isCompact ? 16 : 18,
+                color: StoryTheme.accent.withValues(alpha: 0.85),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                'Deduction ${(done + 1).clamp(1, GameConstants.maxWords)} of ${GameConstants.maxWords}',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: StoryTheme.narrativeText.withValues(alpha: 0.75),
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.4,
+                      fontSize: metrics.isCompact ? 13 : null,
+                    ),
+              ),
+            ],
           ),
         );
       },

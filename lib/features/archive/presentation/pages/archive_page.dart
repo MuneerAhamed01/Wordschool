@@ -20,6 +20,7 @@ class ArchivePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GameScaffold(
+      safeAreaBottom: false,
       appBar: AppBar(title: const Text('Previous Games')),
       body: BlocBuilder<ArchiveBloc, ArchiveState>(
         builder: (context, state) {

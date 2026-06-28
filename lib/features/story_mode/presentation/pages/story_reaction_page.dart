@@ -18,6 +18,7 @@ class StoryReactionPage extends StatelessWidget {
 
         return StoryNarrativeScaffold(
           title: clueTypeLabel(clue.type),
+          panelLabel: 'DISCOVERY',
           body: clue.reaction,
           continueLabel: clueIndex >= StoryFlowGating.maxClueIndex
               ? 'Close the case'

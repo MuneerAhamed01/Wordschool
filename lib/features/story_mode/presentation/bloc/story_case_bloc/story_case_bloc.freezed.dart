@@ -21,6 +21,7 @@ mixin _$StoryCaseEvent {
     required TResult Function() loadTodayCase,
     required TResult Function() retry,
     required TResult Function(StoryModeProgressEntity progress) progressUpdated,
+    required TResult Function() resetForLogout,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -28,6 +29,7 @@ mixin _$StoryCaseEvent {
     TResult? Function()? loadTodayCase,
     TResult? Function()? retry,
     TResult? Function(StoryModeProgressEntity progress)? progressUpdated,
+    TResult? Function()? resetForLogout,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -35,6 +37,7 @@ mixin _$StoryCaseEvent {
     TResult Function()? loadTodayCase,
     TResult Function()? retry,
     TResult Function(StoryModeProgressEntity progress)? progressUpdated,
+    TResult Function()? resetForLogout,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -43,6 +46,7 @@ mixin _$StoryCaseEvent {
     required TResult Function(LoadTodayCase value) loadTodayCase,
     required TResult Function(Retry value) retry,
     required TResult Function(ProgressUpdated value) progressUpdated,
+    required TResult Function(ResetForLogout value) resetForLogout,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -50,6 +54,7 @@ mixin _$StoryCaseEvent {
     TResult? Function(LoadTodayCase value)? loadTodayCase,
     TResult? Function(Retry value)? retry,
     TResult? Function(ProgressUpdated value)? progressUpdated,
+    TResult? Function(ResetForLogout value)? resetForLogout,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -57,6 +62,7 @@ mixin _$StoryCaseEvent {
     TResult Function(LoadTodayCase value)? loadTodayCase,
     TResult Function(Retry value)? retry,
     TResult Function(ProgressUpdated value)? progressUpdated,
+    TResult Function(ResetForLogout value)? resetForLogout,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -127,6 +133,7 @@ class _$LoadTodayCaseImpl implements LoadTodayCase {
     required TResult Function() loadTodayCase,
     required TResult Function() retry,
     required TResult Function(StoryModeProgressEntity progress) progressUpdated,
+    required TResult Function() resetForLogout,
   }) {
     return loadTodayCase();
   }
@@ -137,6 +144,7 @@ class _$LoadTodayCaseImpl implements LoadTodayCase {
     TResult? Function()? loadTodayCase,
     TResult? Function()? retry,
     TResult? Function(StoryModeProgressEntity progress)? progressUpdated,
+    TResult? Function()? resetForLogout,
   }) {
     return loadTodayCase?.call();
   }
@@ -147,6 +155,7 @@ class _$LoadTodayCaseImpl implements LoadTodayCase {
     TResult Function()? loadTodayCase,
     TResult Function()? retry,
     TResult Function(StoryModeProgressEntity progress)? progressUpdated,
+    TResult Function()? resetForLogout,
     required TResult orElse(),
   }) {
     if (loadTodayCase != null) {
@@ -161,6 +170,7 @@ class _$LoadTodayCaseImpl implements LoadTodayCase {
     required TResult Function(LoadTodayCase value) loadTodayCase,
     required TResult Function(Retry value) retry,
     required TResult Function(ProgressUpdated value) progressUpdated,
+    required TResult Function(ResetForLogout value) resetForLogout,
   }) {
     return loadTodayCase(this);
   }
@@ -171,6 +181,7 @@ class _$LoadTodayCaseImpl implements LoadTodayCase {
     TResult? Function(LoadTodayCase value)? loadTodayCase,
     TResult? Function(Retry value)? retry,
     TResult? Function(ProgressUpdated value)? progressUpdated,
+    TResult? Function(ResetForLogout value)? resetForLogout,
   }) {
     return loadTodayCase?.call(this);
   }
@@ -181,6 +192,7 @@ class _$LoadTodayCaseImpl implements LoadTodayCase {
     TResult Function(LoadTodayCase value)? loadTodayCase,
     TResult Function(Retry value)? retry,
     TResult Function(ProgressUpdated value)? progressUpdated,
+    TResult Function(ResetForLogout value)? resetForLogout,
     required TResult orElse(),
   }) {
     if (loadTodayCase != null) {
@@ -238,6 +250,7 @@ class _$RetryImpl implements Retry {
     required TResult Function() loadTodayCase,
     required TResult Function() retry,
     required TResult Function(StoryModeProgressEntity progress) progressUpdated,
+    required TResult Function() resetForLogout,
   }) {
     return retry();
   }
@@ -248,6 +261,7 @@ class _$RetryImpl implements Retry {
     TResult? Function()? loadTodayCase,
     TResult? Function()? retry,
     TResult? Function(StoryModeProgressEntity progress)? progressUpdated,
+    TResult? Function()? resetForLogout,
   }) {
     return retry?.call();
   }
@@ -258,6 +272,7 @@ class _$RetryImpl implements Retry {
     TResult Function()? loadTodayCase,
     TResult Function()? retry,
     TResult Function(StoryModeProgressEntity progress)? progressUpdated,
+    TResult Function()? resetForLogout,
     required TResult orElse(),
   }) {
     if (retry != null) {
@@ -272,6 +287,7 @@ class _$RetryImpl implements Retry {
     required TResult Function(LoadTodayCase value) loadTodayCase,
     required TResult Function(Retry value) retry,
     required TResult Function(ProgressUpdated value) progressUpdated,
+    required TResult Function(ResetForLogout value) resetForLogout,
   }) {
     return retry(this);
   }
@@ -282,6 +298,7 @@ class _$RetryImpl implements Retry {
     TResult? Function(LoadTodayCase value)? loadTodayCase,
     TResult? Function(Retry value)? retry,
     TResult? Function(ProgressUpdated value)? progressUpdated,
+    TResult? Function(ResetForLogout value)? resetForLogout,
   }) {
     return retry?.call(this);
   }
@@ -292,6 +309,7 @@ class _$RetryImpl implements Retry {
     TResult Function(LoadTodayCase value)? loadTodayCase,
     TResult Function(Retry value)? retry,
     TResult Function(ProgressUpdated value)? progressUpdated,
+    TResult Function(ResetForLogout value)? resetForLogout,
     required TResult orElse(),
   }) {
     if (retry != null) {
@@ -378,6 +396,7 @@ class _$ProgressUpdatedImpl implements ProgressUpdated {
     required TResult Function() loadTodayCase,
     required TResult Function() retry,
     required TResult Function(StoryModeProgressEntity progress) progressUpdated,
+    required TResult Function() resetForLogout,
   }) {
     return progressUpdated(progress);
   }
@@ -388,6 +407,7 @@ class _$ProgressUpdatedImpl implements ProgressUpdated {
     TResult? Function()? loadTodayCase,
     TResult? Function()? retry,
     TResult? Function(StoryModeProgressEntity progress)? progressUpdated,
+    TResult? Function()? resetForLogout,
   }) {
     return progressUpdated?.call(progress);
   }
@@ -398,6 +418,7 @@ class _$ProgressUpdatedImpl implements ProgressUpdated {
     TResult Function()? loadTodayCase,
     TResult Function()? retry,
     TResult Function(StoryModeProgressEntity progress)? progressUpdated,
+    TResult Function()? resetForLogout,
     required TResult orElse(),
   }) {
     if (progressUpdated != null) {
@@ -412,6 +433,7 @@ class _$ProgressUpdatedImpl implements ProgressUpdated {
     required TResult Function(LoadTodayCase value) loadTodayCase,
     required TResult Function(Retry value) retry,
     required TResult Function(ProgressUpdated value) progressUpdated,
+    required TResult Function(ResetForLogout value) resetForLogout,
   }) {
     return progressUpdated(this);
   }
@@ -422,6 +444,7 @@ class _$ProgressUpdatedImpl implements ProgressUpdated {
     TResult? Function(LoadTodayCase value)? loadTodayCase,
     TResult? Function(Retry value)? retry,
     TResult? Function(ProgressUpdated value)? progressUpdated,
+    TResult? Function(ResetForLogout value)? resetForLogout,
   }) {
     return progressUpdated?.call(this);
   }
@@ -432,6 +455,7 @@ class _$ProgressUpdatedImpl implements ProgressUpdated {
     TResult Function(LoadTodayCase value)? loadTodayCase,
     TResult Function(Retry value)? retry,
     TResult Function(ProgressUpdated value)? progressUpdated,
+    TResult Function(ResetForLogout value)? resetForLogout,
     required TResult orElse(),
   }) {
     if (progressUpdated != null) {
@@ -452,6 +476,123 @@ abstract class ProgressUpdated implements StoryCaseEvent {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ProgressUpdatedImplCopyWith<_$ProgressUpdatedImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$ResetForLogoutImplCopyWith<$Res> {
+  factory _$$ResetForLogoutImplCopyWith(
+          _$ResetForLogoutImpl value, $Res Function(_$ResetForLogoutImpl) then) =
+      __$$ResetForLogoutImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$ResetForLogoutImplCopyWithImpl<$Res>
+    extends _$StoryCaseEventCopyWithImpl<$Res, _$ResetForLogoutImpl>
+    implements _$$ResetForLogoutImplCopyWith<$Res> {
+  __$$ResetForLogoutImplCopyWithImpl(
+      _$ResetForLogoutImpl _value, $Res Function(_$ResetForLogoutImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of StoryCaseEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$ResetForLogoutImpl implements ResetForLogout {
+  const _$ResetForLogoutImpl();
+
+  @override
+  String toString() {
+    return 'StoryCaseEvent.resetForLogout()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$ResetForLogoutImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loadTodayCase,
+    required TResult Function() retry,
+    required TResult Function(StoryModeProgressEntity progress) progressUpdated,
+    required TResult Function() resetForLogout,
+  }) {
+    return resetForLogout();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loadTodayCase,
+    TResult? Function()? retry,
+    TResult? Function(StoryModeProgressEntity progress)? progressUpdated,
+    TResult? Function()? resetForLogout,
+  }) {
+    return resetForLogout?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loadTodayCase,
+    TResult Function()? retry,
+    TResult Function(StoryModeProgressEntity progress)? progressUpdated,
+    TResult Function()? resetForLogout,
+    required TResult orElse(),
+  }) {
+    if (resetForLogout != null) {
+      return resetForLogout();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(LoadTodayCase value) loadTodayCase,
+    required TResult Function(Retry value) retry,
+    required TResult Function(ProgressUpdated value) progressUpdated,
+    required TResult Function(ResetForLogout value) resetForLogout,
+  }) {
+    return resetForLogout(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(LoadTodayCase value)? loadTodayCase,
+    TResult? Function(Retry value)? retry,
+    TResult? Function(ProgressUpdated value)? progressUpdated,
+    TResult? Function(ResetForLogout value)? resetForLogout,
+  }) {
+    return resetForLogout?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(LoadTodayCase value)? loadTodayCase,
+    TResult Function(Retry value)? retry,
+    TResult Function(ProgressUpdated value)? progressUpdated,
+    TResult Function(ResetForLogout value)? resetForLogout,
+    required TResult orElse(),
+  }) {
+    if (resetForLogout != null) {
+      return resetForLogout(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class ResetForLogout implements StoryCaseEvent {
+  const factory ResetForLogout() = _$ResetForLogoutImpl;
 }
 
 /// @nodoc

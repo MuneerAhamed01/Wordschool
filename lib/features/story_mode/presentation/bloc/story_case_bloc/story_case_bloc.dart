@@ -17,8 +17,20 @@ class StoryCaseBloc extends Bloc<StoryCaseEvent, StoryCaseState> {
     on<LoadTodayCase>(_onLoadTodayCase);
     on<Retry>(_onRetry);
     on<ProgressUpdated>(_onProgressUpdated);
+    on<ResetForLogout>(_onResetForLogout);
 
     add(const StoryCaseEvent.loadTodayCase());
+  }
+
+  void resetForLogout() {
+    add(const StoryCaseEvent.resetForLogout());
+  }
+
+  void _onResetForLogout(
+    ResetForLogout event,
+    Emitter<StoryCaseState> emit,
+  ) {
+    emit(const StoryCaseState.initial());
   }
 
   final LoadTodayDetectiveCaseUseCase _loadTodayDetectiveCaseUseCase;

@@ -82,6 +82,7 @@ class _CaseResolutionPageState extends State<CaseResolutionPage> {
 
             return StoryNarrativeScaffold(
               title: 'Case Resolution',
+              panelLabel: 'VERDICT',
               headline: readyState.detectiveCase.title,
               body: readyState.detectiveCase.resolution,
               bodyWidget: progress == null
