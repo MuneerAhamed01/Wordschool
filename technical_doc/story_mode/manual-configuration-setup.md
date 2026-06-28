@@ -74,14 +74,31 @@ firebase deploy --only firestore:rules,firestore:indexes
 
 ## 4. Daily case seeding
 
-Ensure cases exist for at least 7 days in staging/production:
+**Recommended (no Cursor API cost):** seed the 30-day local case catalog:
 
 ```bash
 cd functions
-npm run seed -- --date 2026-06-27
+npm run seed:planned -- --force
 ```
 
-Or rely on scheduled `generateDailyCase` (00:00 UTC).
+This writes `detectiveCases/{yyyy-MM-dd}` for **2026-06-28 through 2026-07-27** from `functions/src/data/planned-cases.json`.
+
+Single date or example case:
+
+```bash
+npm run seed -- --date 2026-06-28
+npm run seed:planned -- --date 2026-06-29 --force
+```
+
+**Scheduled generation:** `generateDailyCase` runs at **00:00 UTC** and publishes the planned case for that date when one exists in the catalog. Cursor API is only used as a fallback when no planned case exists and `CURSOR_API_KEY` is configured.
+
+After updating cases or functions:
+
+```bash
+cd functions
+npm run build
+firebase deploy --only functions:generateDailyCase
+```
 
 ---
 
@@ -185,4 +202,4 @@ Update store copy to mention Detective Case / Story Mode if shipping publicly.
 | Ad unit IDs | `lib/core/monetization/ad_config.dart` |
 | IAP product IDs | Store consoles + `lib/core/monetization/iap_products.dart` |
 | Audio files | `assets/audio/` |
-| Case seeds | `functions/` seed script or scheduled generator |
+| Case seeds | `functions/src/data/planned-cases.json` + `npm run seed:planned` |

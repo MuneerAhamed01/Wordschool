@@ -1,5 +1,6 @@
 import {caseExists, writeDetectiveCase} from "./caseWriter";
 import {generateCaseWithCursor} from "./cursor/client";
+import {getPlannedCase} from "./localCaseCatalog";
 import {todayUtcDateId} from "./utils/dateId";
 
 export interface GenerateCaseForDateOptions {
@@ -25,9 +26,27 @@ export async function generateCaseForDate(
     return {dateId, status: "skipped"};
   }
 
+  const plannedCase = getPlannedCase(dateId);
+  if (plannedCase) {
+    const status = await writeDetectiveCase(dateId, plannedCase, {
+      force: options.force,
+    });
+
+    console.log(JSON.stringify({
+      event: "generate_case_complete",
+      dateId,
+      status,
+      source: "planned",
+    }));
+
+    return {dateId, status};
+  }
+
   const apiKey = options.apiKey;
   if (!apiKey) {
-    throw new Error("CURSOR_API_KEY is not configured");
+    throw new Error(
+      `No planned case for ${dateId} and CURSOR_API_KEY is not configured`,
+    );
   }
 
   const payload = await generateCaseWithCursor({apiKey, dateId});
@@ -39,13 +58,14 @@ export async function generateCaseForDate(
     event: "generate_case_complete",
     dateId,
     status,
+    source: "cursor",
   }));
 
   return {dateId, status};
 }
 
 export async function runScheduledDailyCaseGeneration(
-  apiKey: string,
+  apiKey?: string,
 ): Promise<void> {
   const dateId = todayUtcDateId();
   await generateCaseForDate(dateId, {apiKey});

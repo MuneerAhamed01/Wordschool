@@ -1,0 +1,966 @@
+{
+  "version": 1,
+  "startDate": "2026-06-28",
+  "cases": [
+    {
+      "dateId": "2026-06-28",
+      "title": "The Midnight Ledger",
+      "introduction": "Rain hammers the precinct windows as Captain Hale slides a thin case file across your desk. A financier was found dead in a locked room where contracts are signed, and every witness claims they were elsewhere.",
+      "resolution": "The ledger proves the victim uncovered a forgery ring inside his own firm. The killer staged a robbery, but the location, weapon, and beneficiary trail expose the truth.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Contracts were signed behind oak doors where a leather chair still bears the victim's outline.",
+          "answer": "STUDY",
+          "reaction": "The study was locked from the inside, yet fresh ink on the ledger shows a meeting minutes before death.",
+          "investigatePrompt": "Find the five-letter room where the body was discovered."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "The coroner notes a narrow puncture wound—clean, precise, and close-range.",
+          "answer": "KNIFE",
+          "reaction": "A blade is missing from the silver service set, and the handle was wiped with solvent.",
+          "investigatePrompt": "Identify the five-letter weapon used in the attack."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Several parties stood to inherit control of the firm if the victim vanished.",
+          "answer": "HEIRS",
+          "reaction": "Fingerprints on the ledger match someone with everything to gain from the will.",
+          "investigatePrompt": "Uncover the five-letter word for those who inherit."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-06-29",
+      "title": "Glass at Midnight",
+      "introduction": "The museum director calls at 2 a.m. A crown jewel display lies shattered, alarms silent, and the security log shows no forced entry—only a shadow that knew exactly where to strike.",
+      "resolution": "The thief bypassed sensors by cutting power locally, smashed the case, and vanished through a service corridor. Glass shards and cargo manifests point to an inside job.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Steel walls, timed locks, and climate control guard the museum's most guarded treasures.",
+          "answer": "VAULT",
+          "reaction": "Scuff marks near the vault door suggest someone had legitimate access after hours.",
+          "investigatePrompt": "Name the five-letter secured room that was breached."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Forensics finds tempered fragments embedded in the display frame—not a tool, but evidence of force.",
+          "answer": "GLASS",
+          "reaction": "The case was struck from the inside angle, shattering outward toward the thief's escape route.",
+          "investigatePrompt": "What five-letter material shattered during the theft?"
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Someone who steals by opportunity rather than violence left no fingerprints—only habit.",
+          "answer": "THIEF",
+          "reaction": "A locker key tied to a part-time guard matches fibers found on the broken display.",
+          "investigatePrompt": "Reveal the five-letter word for the person who steals."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-06-30",
+      "title": "Harbor of Shadows",
+      "introduction": "Customs intercepts a suspicious manifest at the waterfront. Crates labeled as machinery hide something far more valuable—and someone on the dock is willing to kill to keep it moving.",
+      "resolution": "Smugglers used falsified paperwork and night shifts to move contraband through the harbor. The rogue operative orchestrated the route from dock to depot.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Cranes groan, gulls scatter, and shipping containers stack where the river meets the city.",
+          "answer": "DOCKS",
+          "reaction": "Fresh tire tracks lead from the loading bay to a warehouse with no listed tenant.",
+          "investigatePrompt": "Locate the five-letter waterfront where crates were loaded."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "The manifest lists freight—not a blade, but the smugglers' real payload.",
+          "answer": "CARGO",
+          "reaction": "Hidden compartments in the crates match weights inconsistent with their declared contents.",
+          "investigatePrompt": "Identify the five-letter word for smuggled freight."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "A dishonest operator who bends rules for profit runs the night shift without supervision.",
+          "answer": "ROGUE",
+          "reaction": "Radio logs show an unauthorized handler redirecting shipments after midnight.",
+          "investigatePrompt": "Uncover the five-letter word for a rule-breaking operator."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-01",
+      "title": "The Hanging Thread",
+      "introduction": "At dawn, staff at the old estate find the patriarch slumped in the library. No gunshot, no blood pool—only a length of fiber buried in the victim's neck and a house full of mourners who stand to gain.",
+      "resolution": "The killer used a common household item as a garrote, then staged the scene near the grand staircase. The elder's will had been altered the night before.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Portraits line the halls of a sprawling estate where generations hoard secrets.",
+          "answer": "MANOR",
+          "reaction": "A window on the second floor was latched from within, narrowing the suspect list to residents.",
+          "investigatePrompt": "Find the five-letter estate where the murder occurred."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Fibers recovered from the neck match braided cord from the garden shed.",
+          "answer": "ROPES",
+          "reaction": "A coil in the shed is shorter than yesterday's inventory log recorded.",
+          "investigatePrompt": "Name the five-letter binding used as a weapon."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "The family member with decades of grievances had the most to lose—and the most to gain.",
+          "answer": "ELDER",
+          "reaction": "The victim's revised will names one relative as executor, signed under suspicious circumstances.",
+          "investigatePrompt": "Who fits the five-letter word for a senior family member?"
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-02",
+      "title": "Brushstrokes of Deceit",
+      "introduction": "A celebrated painting sells at auction for a record sum—until experts declare it a modern imitation. The gallery owner vanishes, and a trail of forged certificates leads into the industrial district.",
+      "resolution": "The forger ran a workshop that aged paint and copied masters. Fraudulent provenance papers fooled buyers until chemical analysis revealed the scam.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Hammer strikes echo where metal is shaped and replicas are born in heat and smoke.",
+          "answer": "FORGE",
+          "reaction": "Pigment samples from the workshop match flecks found on the forged canvas.",
+          "investigatePrompt": "Identify the five-letter workshop where fakes were made."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Not steel—a substance layered on canvas to mimic centuries of patina.",
+          "answer": "PAINT",
+          "reaction": "Spectroscopy shows modern pigments disguised beneath a cracked varnish.",
+          "investigatePrompt": "What five-letter medium forged the masterpiece?"
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Deception for profit—the crime is not violence but systematic dishonesty.",
+          "answer": "FRAUD",
+          "reaction": "Bank transfers link the gallery owner to shell companies selling duplicate works.",
+          "investigatePrompt": "Name the five-letter word for financial deception."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-03",
+      "title": "Curtain of Ash",
+      "introduction": "Fire consumes a historic theater during final rehearsal. The troupe escapes, but the lead producer does not. Investigators smell accelerant—and jealousy— in the charred wings.",
+      "resolution": "A rival set the backstage curtains ablaze using a common ignition source. Safety logs show the fire started where only cast and crew could reach.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Spotlights, velvet seats, and painted flats—where audiences gather and dramas unfold.",
+          "answer": "STAGE",
+          "reaction": "Burn patterns originate from the rear wings, not the auditorium.",
+          "investigatePrompt": "Find the five-letter performance area where the fire began."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "A small struck flame left sulfur traces on a green room table.",
+          "answer": "MATCH",
+          "reaction": "Half-burned sticks were found near a can of solvent hidden in a prop trunk.",
+          "investigatePrompt": "Identify the five-letter ignition source."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "The understudy who lost the starring role had motive and access after dark.",
+          "answer": "RIVAL",
+          "reaction": "A threatening note in the victim's locker matches handwriting on a cast list.",
+          "investigatePrompt": "Uncover the five-letter word for a competing adversary."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-04",
+      "title": "The Sleeper Car",
+      "introduction": "Somewhere between two cities, a diplomat is found dead in a locked compartment. The train never stopped—but someone moved through the corridors like they owned them.",
+      "resolution": "An undercover operative silenced the diplomat before a summit. The blade was smuggled aboard inside a hollow book in the dining car.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Steel wheels, sleeping berths, and a timetable tighter than any alibi.",
+          "answer": "TRAIN",
+          "reaction": "Ticket scans place every passenger—but one badge was cloned.",
+          "investigatePrompt": "Name the five-letter vehicle where the murder occurred."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "A single slash, no gunpowder—a edged tool sharpened for quiet work.",
+          "answer": "BLADE",
+          "reaction": "Blood spatter angles confirm a right-handed thrust from close range.",
+          "investigatePrompt": "Identify the five-letter edged weapon."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Someone working under cover with a badge that doesn't match any roster.",
+          "answer": "AGENT",
+          "reaction": "Encrypted messages on a seized phone reference a handler and a dead drop.",
+          "investigatePrompt": "Reveal the five-letter word for an undercover operative."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-05",
+      "title": "Sealed in Envy",
+      "introduction": "A hotel guest dies after opening a package delivered to their suite. Inside: photographs, demands, and wax impressions that shouldn't exist. Blackmail turned fatal in a building where everyone uses an alias.",
+      "resolution": "The victim received extortion letters stamped with a forged seal. Another guest in the same wing photographed the handoffs from the mezzanine.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Room service carts, numbered suites, and strangers who share an elevator but not their names.",
+          "answer": "HOTEL",
+          "reaction": "Keycard logs show repeated visits to the victim's floor by a neighboring suite.",
+          "investigatePrompt": "Find the five-letter building where the victim stayed."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Not metal—the killer's leverage was pressed onto paper and wax.",
+          "answer": "STAMP",
+          "reaction": "The seal on the letters matches a desk set reported stolen from the lobby shop.",
+          "investigatePrompt": "What five-letter tool marked the blackmail letters?"
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Registered under a false name, yet charged meals to a card tied to the victim's past.",
+          "answer": "GUEST",
+          "reaction": "The neighboring guest checked in with cash and left before housekeeping found the body.",
+          "investigatePrompt": "Uncover the five-letter word for a hotel visitor."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-06",
+      "title": "Dust and Arrows",
+      "introduction": "Renovators open a sealed attic and find bones older than the case file suggests. A modern arrow shaft lies beside them—fresh fletching in a room untouched for years.",
+      "resolution": "The killer hid the body decades ago, then returned when the house sold. The scout who maps properties for developers knew the attic's weak floorboards.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Insulation, trunks, and rafters—where families store what they hope to forget.",
+          "answer": "ATTIC",
+          "reaction": "Disturbed dust patterns show someone visited within the last week.",
+          "investigatePrompt": "Identify the five-letter room above the house."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Feathers and a carbon shaft lodged in timber—archery, not accident.",
+          "answer": "ARROW",
+          "reaction": "The shaft matches hunting supplies sold at a shop near the developer's office.",
+          "investigatePrompt": "Name the five-letter projectile found at the scene."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Maps every parcel, notes every crawlspace—works ahead of bulldozers.",
+          "answer": "SCOUT",
+          "reaction": "Site surveys in their tablet include photos of the attic taken before listing.",
+          "investigatePrompt": "Who fits the five-letter word for a property surveyor?"
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-07",
+      "title": "The Gilded Snatch",
+      "introduction": "During a festival in the city square, a donor's diamond pendant vanishes mid-speech. Cameras catch a flash of movement—but the crowd is a wall of strangers.",
+      "resolution": "The thief used a chain wallet trick to bump the donor and pass the pendant to an accomplice. The plaza's chaos was choreographed.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Fountains, vendors, and cobblestones where the city gathers for speeches and protest.",
+          "answer": "PLAZA",
+          "reaction": "Witnesses describe a distraction near the podium at the exact moment of the theft.",
+          "investigatePrompt": "Find the five-letter public square where it happened."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Not a blade—a linked metal accessory used to hook and yank in a crowd.",
+          "answer": "CHAIN",
+          "reaction": "A broken link found near the stage matches the donor's scratched clasp.",
+          "investigatePrompt": "Identify the five-letter metal links used in the theft."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "The registered proprietor of a vacant kiosk had sightlines to the stage all afternoon.",
+          "answer": "OWNER",
+          "reaction": "The kiosk license lists an address that is an empty lot.",
+          "investigatePrompt": "Uncover the five-letter word for the person who holds title."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-08",
+      "title": "Ivory Under Lights",
+      "introduction": "An exclusive salon hosts a charity auction. By morning, rare ivory carvings are gone and the curator claims ignorance—but import records tell a different story.",
+      "resolution": "Illegal ivory was laundered through the salon's catalog. A clerk altered inventory tags to swap replicas for originals during the event.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Mirrors, stylists, and velvet chairs—where patrons pay for beauty and discretion.",
+          "answer": "SALON",
+          "reaction": "Security footage gaps align with the auction's closing toast.",
+          "investigatePrompt": "Name the five-letter venue where the auction was held."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "The stolen goods themselves—banned material worth more than gold on black markets.",
+          "answer": "IVORY",
+          "reaction": "Chemical tests on dust in an empty display confirm elephant tusk residue.",
+          "investigatePrompt": "What five-letter material was smuggled through the auction?"
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Handles receipts, tags, and the quiet work nobody notices during applause.",
+          "answer": "CLERK",
+          "reaction": "Inventory edits on the clerk's terminal timestamped during the final lot.",
+          "investigatePrompt": "Reveal the five-letter word for the records keeper."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-09",
+      "title": "Reeds and Silence",
+      "introduction": "Birdwatchers find a journalist face-down in the wetlands. No footprints lead in—only broken reeds and a wound consistent with something crude, not calculated.",
+      "resolution": "The journalist was ambushed while investigating land fraud. An enemy from a prior exposé waited among the reeds with a simple weapon.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Mud, reeds, and fog where trails vanish and phones lose signal.",
+          "answer": "MARSH",
+          "reaction": "Boot prints stop at the boardwalk—someone knew the hidden paths.",
+          "investigatePrompt": "Find the five-letter wetland where the body was found."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Splintered wood recovered from the skull—a crude tool, not factory-made.",
+          "answer": "STICK",
+          "reaction": "The grain matches fallen branches stacked near a hunting blind.",
+          "investigatePrompt": "Identify the five-letter crude weapon."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Someone the victim ruined in print swore revenge at a public hearing.",
+          "answer": "ENEMY",
+          "reaction": "Threatening emails tie a developer to phrases used in the victim's final draft.",
+          "investigatePrompt": "Uncover the five-letter word for a sworn adversary."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-10",
+      "title": "Counterfeit Welcome",
+      "introduction": "Visitors line up in a grand building to exchange currency—except some bills are wrong. A guard is found unconscious, and the printing plates are missing from a back office.",
+      "resolution": "Forgers printed fake notes and swapped them during the morning rush. The guard was overpowered after recognizing a bad serial number.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Marble floors, velvet ropes, and teller windows where fortunes change hands.",
+          "answer": "LOBBY",
+          "reaction": "CCTV shows a brief power flicker when the plates were removed.",
+          "investigatePrompt": "Name the five-letter entrance hall where the exchange happens."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "The forgers' tool wasn't steel—it reproduced portraits and serial numbers.",
+          "answer": "PRINT",
+          "reaction": "Ink on the guard's cuffs matches the batch of counterfeit twenties.",
+          "investigatePrompt": "What five-letter process created the fake money?"
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Uniform, badge, and keys—yet their break log doesn't match the cameras.",
+          "answer": "GUARD",
+          "reaction": "The guard's access card was cloned and used after they were found unconscious.",
+          "investigatePrompt": "Reveal the five-letter word for the building's protector."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-11",
+      "title": "Lights on the Water",
+      "introduction": "A luxury vessel anchors offshore for a private party. At sunrise, the host's safe is empty and the navigation logs are wiped—only scorch marks on the deck tell part of the story.",
+      "resolution": "The pilot diverted the yacht while a staged distraction burned on deck. The thief used the chaos to offload valuables to a waiting speedboat.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Deck chairs, champagne, and horizon lines—wealth floats here after dark.",
+          "answer": "YACHT",
+          "reaction": "GPS gaps show an unscheduled loop near an unmarked cove.",
+          "investigatePrompt": "Find the five-letter vessel where the heist occurred."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "A bright flare left soot on teak planks—a signal and a diversion.",
+          "answer": "TORCH",
+          "reaction": "Burn patterns confirm accelerant poured near the stern railing.",
+          "investigatePrompt": "Identify the five-letter fire source used as distraction."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Controls the route, reads the charts, and knows when the owner sleeps.",
+          "answer": "PILOT",
+          "reaction": "The helm login shows manual override during the party's loudest hour.",
+          "investigatePrompt": "Uncover the five-letter word for the person who steers the ship."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-12",
+      "title": "The High Window",
+      "introduction": "From a stone tower, a judge's confidential files disappear overnight. A pane is cracked cleanly—not shattered—and the only ladder is locked in a basement.",
+      "resolution": "The thief climbed using maintenance rigging and cut the glass silently. Judgment manuscripts were sold before the court session began.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Bell chambers, narrow stairs, and a view over the entire courthouse square.",
+          "answer": "TOWER",
+          "reaction": "Rope fibers on the parapet match rigging from renovation crews.",
+          "investigatePrompt": "Name the five-letter height where the break-in occurred."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "A circle cut from the window—a cold tool scored the pane before it was lifted free.",
+          "answer": "STEEL",
+          "reaction": "Glass dust on the floor forms an arc consistent with a suction cup and cutter.",
+          "investigatePrompt": "What five-letter metal tool cut the window?"
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Robes, gavel, authority—and access to every sealed brief in the building.",
+          "answer": "JUDGE",
+          "reaction": "Metadata on leaked files shows edits from the judge's own workstation.",
+          "investigatePrompt": "Reveal the five-letter word for the court's authority figure."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-13",
+      "title": "Bitter Water",
+      "introduction": "Two rivals meet by a stream to settle a land dispute. One collapses before signing. The cup is clean, the water clear—but something metallic taints the autopsy.",
+      "resolution": "Poison was dissolved in a metal flask swapped during the handshake. The rival had purchased chemicals labeled as farm supplies.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Shallow water, smooth stones, and willows where property lines are argued.",
+          "answer": "CREEK",
+          "reaction": "Mud on the victim's boots matches only the north bank.",
+          "investigatePrompt": "Find the five-letter stream where they met."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Lab results find residue in a dented container—not a gun, but a vessel.",
+          "answer": "METAL",
+          "reaction": "The flask's alloy matches shavings found in the rival's truck bed.",
+          "investigatePrompt": "Identify the five-letter material of the poison container."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Decades of boundary fights—this meeting was supposed to end the feud.",
+          "answer": "RIVAL",
+          "reaction": "The survivor's contract draft removes the victim's acreage entirely.",
+          "investigatePrompt": "Uncover the five-letter word for a long-standing opponent."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-14",
+      "title": "Blood on the Sand",
+      "introduction": "During championship games, an athlete collapses in the arena tunnel. The crowd thinks heatstroke—until medics find a puncture beneath the uniform.",
+      "resolution": "Sabotage before the match left a spear tip embedded in equipment. The team chief ordered the hit to cover gambling debts.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Roaring seats, floodlights, and tunnels where champions wait beneath the roar.",
+          "answer": "ARENA",
+          "reaction": "Locker room cameras were disabled ten minutes before warmups.",
+          "investigatePrompt": "Name the five-letter stadium where the attack occurred."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "A long puncture through padding—ancient design, modern intent.",
+          "answer": "SPEAR",
+          "reaction": "The tip matches decorative weapons sold at a souvenir kiosk.",
+          "investigatePrompt": "Identify the five-letter piercing weapon."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Signs the roster, controls the budget, and answers to sponsors.",
+          "answer": "CHIEF",
+          "reaction": "Wire transfers from the chief's account coincide with offshore betting spikes.",
+          "investigatePrompt": "Reveal the five-letter word for the team leader."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-15",
+      "title": "Tide Table Theft",
+      "introduction": "A famous pearl necklace is photographed on a celebrity at sunset. By low tide, it's gone— lifted during a beach cleanup that was anything but charitable.",
+      "resolution": "Organizers staged a volunteer event to pick pockets along the shoreline. A young accomplice passed the pearl to a runner in the dunes.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Salt air, folding chairs, and waves that erase footprints fast.",
+          "answer": "BEACH",
+          "reaction": "Drone footage shows a huddle around the celebrity seconds before the loss.",
+          "investigatePrompt": "Find the five-letter shore where the theft occurred."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "The prize itself—organic gem, iridescent, worth a fortune on a black market.",
+          "answer": "PEARL",
+          "reaction": "A single clasp tooth broken off matches pliers in a cleanup kit.",
+          "investigatePrompt": "What five-letter gem was stolen?"
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Too young for prison, old enough to weave through crowds unnoticed.",
+          "answer": "YOUTH",
+          "reaction": "A volunteer roster lists a minor whose emergency contact is a known fence.",
+          "investigatePrompt": "Uncover the five-letter word for a young person."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-16",
+      "title": "Dead Freight",
+      "introduction": "A night worker at the rail depot is found crushed between containers. Shipment manifests show extra weight on a car that should have been empty.",
+      "resolution": "Smugglers hid contraband in a sealed car. The guide who led inspectors away from that track also tampered with brakes.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Switching yards, diesel fumes, and cargo that moves while the city sleeps.",
+          "answer": "DEPOT",
+          "reaction": "Security badges were swiped at a side gate not on the official patrol.",
+          "investigatePrompt": "Name the five-letter rail hub where the worker died."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Tonnes of steel rolled forward—murder by logistics, not intent alone.",
+          "answer": "TRUCK",
+          "reaction": "Tire marks show a yard vehicle used to nudge the container car.",
+          "investigatePrompt": "Identify the five-letter vehicle involved in the crush."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Leads tours for auditors, knows which tracks to avoid—and which to hide.",
+          "answer": "GUIDE",
+          "reaction": "Radio chatter places the guide away from their assigned platform that night.",
+          "investigatePrompt": "Reveal the five-letter word for the person who leads others."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-17",
+      "title": "Order in the Court",
+      "introduction": "Violence erupts during a high-profile trial. A witness drops after something heavy flies from the gallery. Order is restored—but the witness never stands again.",
+      "resolution": "The attacker smuggled masonry inside a briefcase. The judge delayed recess by thirty seconds—just long enough for the throw.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Benches, bailiffs, and oak panels where verdicts change lives.",
+          "answer": "COURT",
+          "reaction": "Ballistics can't apply—this was thrown, not fired.",
+          "investigatePrompt": "Find the five-letter hall where the trial was held."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Red clay dust on the victim's collar—building material, not bullet.",
+          "answer": "BRICK",
+          "reaction": "Fragments match renovation waste from the courthouse annex.",
+          "investigatePrompt": "Identify the five-letter thrown object."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "White coat in the hallway, chart in hand—present when the witness seized.",
+          "answer": "NURSE",
+          "reaction": "The nurse's bag held sedatives inconsistent with courthouse duty.",
+          "investigatePrompt": "Uncover the five-letter word for the medical attendant."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-18",
+      "title": "Winter Lodge",
+      "introduction": "A hunting party retreats to a remote cabin after a blizzard. One member doesn't wake up. The rifle above the mantle is missing—and so is the only key.",
+      "resolution": "The killer used the cabin's own hunting piece, then staged a break-in. An adult guest with overdue loans had been arguing about inheritance all evening.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Log walls, a stone hearth, and snow deep enough to hide any escape until spring.",
+          "answer": "CABIN",
+          "reaction": "The door was bolted from inside; windows show frost undisturbed except one latch.",
+          "investigatePrompt": "Name the five-letter shelter where the party stayed."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "A long barrel, oiled stock—registered to the cabin owner, now absent.",
+          "answer": "RIFLE",
+          "reaction": "Powder residue on the hearth rug confirms a shot indoors.",
+          "investigatePrompt": "Identify the five-letter firearm from the wall."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Legally grown, financially desperate—the only guest with motive and strength.",
+          "answer": "ADULT",
+          "reaction": "Credit notices in their pack match threats left on the victim's phone.",
+          "investigatePrompt": "Reveal the five-letter word for a grown person."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-19",
+      "title": "Neon Alibi",
+      "introduction": "A motel clerk discovers a guest dead in a shower stall. The door chain was set from inside, yet the razor on the tile isn't the victim's brand.",
+      "resolution": "The killer posed as housekeeping, entered through a connecting room, and used a disposable blade. Inheritance papers were in the victim's glove box.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Flickering sign, numbered doors, and ice machine humming all night.",
+          "answer": "MOTEL",
+          "reaction": "The connecting room was paid in cash under a name that doesn't exist.",
+          "investigatePrompt": "Find the five-letter roadside inn where the guest died."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "A sharp edge left in the drain—personal grooming turned lethal.",
+          "answer": "RAZOR",
+          "reaction": "Packaging under the bed matches a bulk buy from a nearby discount store.",
+          "investigatePrompt": "Identify the five-letter blade found at the scene."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Beneficiaries who rushed to identify the body before police arrived.",
+          "answer": "HEIRS",
+          "reaction": "A forged signature on the victim's will matches a relative's handwriting sample.",
+          "investigatePrompt": "Uncover the five-letter word for those who inherit."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-20",
+      "title": "Buried Crown",
+      "introduction": "Archaeologists uncover a ceremonial sword at a dig site—then the lead researcher vanishes. Local officials call it a cave-in; you call it convenient.",
+      "resolution": "The scout selling coordinates to looters silenced the researcher. The sword was lifted before cataloging, replaced with a replica.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Broken columns, dust, and tape grids where history is measured in centimeters.",
+          "answer": "RUINS",
+          "reaction": "Fresh shovel marks appear in a sector marked closed for safety.",
+          "investigatePrompt": "Name the five-letter excavation site."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Bronze-green patina, edge still keen—a relic too valuable to stay buried.",
+          "answer": "SWORD",
+          "reaction": "Casting flaws on the remaining artifact prove it is a modern copy.",
+          "investigatePrompt": "Identify the five-letter ancient weapon stolen."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Walks the perimeter, sells maps, knows which stones hide chambers.",
+          "answer": "SCOUT",
+          "reaction": "GPS tracks show nightly visits to a sector off-limits to the team.",
+          "investigatePrompt": "Reveal the five-letter word for the site pathfinder."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-21",
+      "title": "Canal at Dusk",
+      "introduction": "Barges move silently through the canal after curfew. A customs officer floats face-up near lock seven, and two boats are missing from the registry.",
+      "resolution": "A smuggling guild ran unlisted boats through the locks. The officer's notebook was soaked, but one page lists a secret mooring code.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Lock gates, towpaths, and water that connects warehouses without roads.",
+          "answer": "CANAL",
+          "reaction": "Algae on the victim's shoes matches only the narrow channel section.",
+          "investigatePrompt": "Find the five-letter waterway where the officer was found."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Heavy hulls without lights—collision was no accident according to paint transfers.",
+          "answer": "BOATS",
+          "reaction": "Fiberglass chips on the victim's jacket match an unregistered skiff.",
+          "investigatePrompt": "Identify the five-letter vessels used in the attack."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "A secret society of traders who share passwords, routes, and silence.",
+          "answer": "GUILD",
+          "reaction": "Encrypted ledgers tie lock operators to shared payout accounts.",
+          "investigatePrompt": "Uncover the five-letter word for an organized trade group."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-22",
+      "title": "Mislabeled Fortune",
+      "introduction": "A mountain lodge markets itself as a wellness retreat. Guests pay premium rates—but the wine shipments contain something far more lucrative, and the books don't balance.",
+      "resolution": "Staff re-labeled bottles to smuggle rare spirits and skim revenue. The clerk who audited deliveries disappeared after asking questions.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Timber beams, fireplaces, and guest ledgers where city stress is sold as serenity.",
+          "answer": "LODGE",
+          "reaction": "Inventory shows twice as many cases received as sold—on paper.",
+          "investigatePrompt": "Name the five-letter retreat where the fraud occurred."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Not a blade—the fraud's tool was adhesive on glass, swapping names and vintages.",
+          "answer": "LABEL",
+          "reaction": "Glue residue on discarded bottles matches batches sent to discount shops.",
+          "investigatePrompt": "What five-letter tag was used to disguise the goods?"
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Counts stock, signs manifests, and notices when a crate weighs too little.",
+          "answer": "CLERK",
+          "reaction": "The clerk's last email requested a meeting about 'misprinted inventory'.",
+          "investigatePrompt": "Reveal the five-letter word for the records assistant."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-23",
+      "title": "Porchlight Witness",
+      "introduction": "Neighbors hear an argument on a quiet street. Minutes later, flames lick the front steps and a body lies half inside the doorway. Arson and assault—or something worse.",
+      "resolution": "The killer ignited the porch to destroy evidence, then fled through the garden. An adult neighbor's security cam caught a silhouette holding an accelerant.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Rocking chairs, welcome mats, and the place between street and living room.",
+          "answer": "PORCH",
+          "reaction": "Accelerant trails start at the steps and stop at the flower beds.",
+          "investigatePrompt": "Find the five-letter entrance where the fire began."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Heat damage on the ceiling, smell of kerosene—combustion as cover.",
+          "answer": "FLAME",
+          "reaction": "Char patterns show ignition from a cup left on the railing.",
+          "investigatePrompt": "Identify the five-letter fire that destroyed evidence."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Legally responsible, locally known—argued about property lines yesterday.",
+          "answer": "ADULT",
+          "reaction": "Ash on boots from the neighbor's garage matches the porch residue.",
+          "investigatePrompt": "Uncover the five-letter word for a grown neighbor."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-24",
+      "title": "Silent Alarm",
+      "introduction": "A safe house for relocated witnesses is breached without tripping sensors. Valuables remain—but one folder of testimony is gone, and the caretaker won't speak.",
+      "resolution": "An insider disabled alarms during a firmware update. The agent assigned to protect witnesses sold their locations instead.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "A protected refuge where people disappear from maps until trials conclude.",
+          "answer": "HAVEN",
+          "reaction": "Door logs show a maintenance window nobody scheduled.",
+          "investigatePrompt": "Name the five-letter safe refuge that was breached."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "The security system itself—silenced when it should have screamed.",
+          "answer": "ALARM",
+          "reaction": "Diagnostic codes prove the alert was muted from an admin console.",
+          "investigatePrompt": "What five-letter system failed to warn anyone?"
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Badge, clearance, and a oath broken for the right price.",
+          "answer": "AGENT",
+          "reaction": "Bank deposits to the handler match cryptocurrency traced from abroad.",
+          "investigatePrompt": "Reveal the five-letter word for the compromised operative."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-25",
+      "title": "Deep Claims",
+      "introduction": "A mine shaft inspection turns tragic when explosives detonate early. Safety records were falsified, and the company owner stands to collect a massive insurance payout.",
+      "resolution": "Sabotage in the shaft triggered a controlled blast ahead of schedule. The owner had recently doubled coverage on equipment alone.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Vertical dark, timber supports, and air that tastes of ore and risk.",
+          "answer": "SHAFT",
+          "reaction": "Timer fragments embedded in rubble weren't part of approved kit.",
+          "investigatePrompt": "Find the five-letter mine passage where the blast occurred."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Chemical cord and packed charges—industrial force miswired on purpose.",
+          "answer": "BOMBS",
+          "reaction": "Serial numbers on recovered caps were logged to a shipment reported stolen.",
+          "investigatePrompt": "Identify the five-letter explosives used."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Signs the policies, owns the land, and fired the safety officer last month.",
+          "answer": "OWNER",
+          "reaction": "Insurance amendments filed forty-eight hours before the accident.",
+          "investigatePrompt": "Uncover the five-letter word for the person who holds title."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-26",
+      "title": "Ghost Cargo",
+      "introduction": "Night fishermen report lights on the shoreline where no road exists. At dawn, customs finds empty crates and one set of footprints leading from the tide line to nowhere.",
+      "resolution": "Smugglers used a phantom company to move goods through the surf. Trace chemicals on the sand match a banned fertilizer used as cover product.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Waves, driftwood, and salt crust where land meets open water.",
+          "answer": "SHORE",
+          "reaction": "Tire ruts stop exactly where the tide reached its highest mark.",
+          "investigatePrompt": "Name the five-letter coastline where crates were found."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Not steel—microscopic residue that ties the crates to a banned shipment.",
+          "answer": "TRACE",
+          "reaction": "Lab results link white powder in the sand to invoices for agricultural goods.",
+          "investigatePrompt": "What five-letter evidence linked the cargo to smugglers?"
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "A shell company with no staff—only a name on paper and a bank account.",
+          "answer": "GHOST",
+          "reaction": "Corporate filings list a director whose address is an empty post box.",
+          "investigatePrompt": "Reveal the five-letter word for something that exists only on paper."
+        }
+      ]
+    },
+    {
+      "dateId": "2026-07-27",
+      "title": "The Last Debate",
+      "introduction": "On the eve of election week, a policy forum ends in chaos. A senator collapses backstage, and the ancient ceremonial blade displayed for photos is drenched.",
+      "resolution": "The chief of staff silenced the senator before a corruption vote. The sword was never meant to leave its case—yet fingerprints say otherwise.",
+      "clues": [
+        {
+          "index": 0,
+          "type": "location",
+          "hint": "Podiums, press risers, and debate rules where ideas become weapons.",
+          "answer": "FORUM",
+          "reaction": "Backstage access lists exclude the public but include senior aides.",
+          "investigatePrompt": "Find the five-letter debate hall where the attack occurred."
+        },
+        {
+          "index": 1,
+          "type": "weapon",
+          "hint": "Displayed under glass for ceremony—steel polished for cameras, not combat.",
+          "answer": "SWORD",
+          "reaction": "Blood on the guard matches the senator's type, wiped hastily with a flag.",
+          "investigatePrompt": "Identify the five-letter ceremonial blade."
+        },
+        {
+          "index": 2,
+          "type": "suspect",
+          "hint": "Runs the office, controls the schedule, and knew the senator's medication timing.",
+          "answer": "CHIEF",
+          "reaction": "Deleted calendar entries restored from backup show a private meeting minutes before.",
+          "investigatePrompt": "Uncover the five-letter word for the senior staff leader."
+        }
+      ]
+    }
+  ]
+}

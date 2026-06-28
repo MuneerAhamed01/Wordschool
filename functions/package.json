@@ -3,7 +3,7 @@
   "description": "Firebase Cloud Functions for Wordschool Story Mode",
   "scripts": {
     "lint": "eslint --ext .js,.ts .",
-    "build": "tsc",
+    "build": "tsc && cp -r src/data lib/data",
     "build:watch": "tsc --watch",
     "serve": "npm run build && firebase emulators:start --only functions,firestore",
     "shell": "npm run build && firebase functions:shell",
@@ -11,7 +11,8 @@
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
     "test": "jest",
-    "seed": "npm run build && node lib/scripts/seed.js"
+    "seed": "npm run build && node lib/scripts/seed.js",
+    "seed:planned": "npm run build && node lib/scripts/seedPlannedCases.js"
   },
   "engines": {
     "node": "20"
