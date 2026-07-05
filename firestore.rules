@@ -56,6 +56,84 @@ service cloud.firestore {
         && isValidCaseOutcome(data.outcome)
         && (data.completedAt == null || data.completedAt is timestamp);
     }
+    function isValidNotificationPreferences(prefs) {
+      return prefs is map
+        && prefs.keys().hasOnly([
+          'enabled',
+          'dailyPuzzleEnabled',
+          'detectiveCaseEnabled',
+          'streakReminderEnabled',
+          'dailyReminderHour',
+          'streakReminderHour',
+        ])
+        && prefs.enabled is bool
+        && prefs.dailyPuzzleEnabled is bool
+        && prefs.detectiveCaseEnabled is bool
+        && prefs.streakReminderEnabled is bool
+        && prefs.dailyReminderHour is int
+        && prefs.dailyReminderHour >= 0
+        && prefs.dailyReminderHour <= 23
+        && prefs.streakReminderHour is int
+        && prefs.streakReminderHour >= 0
+        && prefs.streakReminderHour <= 23;
+    }
+    function isNotificationOnlyUpdate() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['timezone', 'notifications', 'fcmTokens', 'updatedDate']);
+    }
+    function intOrZero(data, field) {
+      return field in data && data[field] is int ? data[field] : 0;
+    }
+    function userGameStateCoreImmutable(uid) {
+      return request.resource.data.id == uid
+        && resource.data.id == uid
+        && request.resource.data.createdDate == resource.data.createdDate;
+    }
+    function isValidUserGameStateCreate(uid) {
+      return request.resource.data.id == uid
+        && request.resource.data.createdDate is timestamp
+        && request.resource.data.updatedDate is timestamp
+        && isNonNegativeInt(request.resource.data.totalGames)
+        && isNonNegativeInt(request.resource.data.completedGames)
+        && isNonNegativeInt(request.resource.data.streak)
+        && isNonNegativeInt(request.resource.data.longestStreak)
+        && isNonNegativeInt(request.resource.data.detectivePoints)
+        && isNonNegativeInt(request.resource.data.storyModeStreak)
+        && isNonNegativeInt(request.resource.data.storyModeLongestStreak)
+        && isNonNegativeInt(request.resource.data.hintPackBalance)
+        && request.resource.data.hasRemoveAds is bool
+        && request.resource.data.isDetectivePro is bool;
+    }
+    function isDailyStreakUpdate() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly([
+          'streak', 'lastStreakDate', 'longestStreak',
+          'completedGames', 'totalGames', 'updatedDate',
+        ]);
+    }
+    function isStoryStatsUpdate() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly([
+          'detectivePoints', 'storyModeStreak',
+          'lastStoryModeStreakDate', 'storyModeLongestStreak', 'updatedDate',
+        ]);
+    }
+    function isHintBalanceUpdate() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['hintPackBalance', 'updatedDate']);
+    }
+    function isRemoveAdsUpdate() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['hasRemoveAds', 'updatedDate']);
+    }
+    function isDetectiveProUpdate() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['isDetectivePro', 'hasRemoveAds', 'updatedDate']);
+    }
+    function isFcmTokenRemoveUpdate() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['fcmTokens', 'updatedDate']);
+    }
 
     // ---------- "games" (daily puzzle) ----------
     match /games/{gameId} {
@@ -88,47 +166,74 @@ service cloud.firestore {
     // Root doc holds aggregates: totalGames, completedGames, streak, timestamps...
     // Subcollection holds per-day user data keyed by YYYY-MM-DD.
     match /userGameStates/{uid} {
-      // Only the owner can read their state
       allow read: if isOwner(uid);
 
-      // Create user's state document
-      allow create: if isOwner(uid)
-        && request.resource.data.id == uid
-        && request.resource.data.createdDate is timestamp
-        && request.resource.data.updatedDate is timestamp
-        && isNonNegativeInt(request.resource.data.totalGames)
-        && isNonNegativeInt(request.resource.data.completedGames)
-        && isNonNegativeInt(request.resource.data.streak)
-        && isNonNegativeInt(request.resource.data.longestStreak)
-        && isNonNegativeInt(request.resource.data.detectivePoints)
-        && isNonNegativeInt(request.resource.data.storyModeStreak)
-        && isNonNegativeInt(request.resource.data.storyModeLongestStreak)
-        && isNonNegativeInt(request.resource.data.hintPackBalance);
+      allow create: if isOwner(uid) && isValidUserGameStateCreate(uid);
 
-      // Update with sane constraints: id and createdDate immutable; counts not decreasing
       allow update: if isOwner(uid)
-        && request.resource.data.id == uid
-        && resource.data.id == uid
-        && request.resource.data.createdDate == resource.data.createdDate
+        && userGameStateCoreImmutable(uid)
+        && isNotificationOnlyUpdate()
         && request.resource.data.updatedDate is timestamp
-        && isNonNegativeInt(request.resource.data.totalGames)
-        && isNonNegativeInt(request.resource.data.completedGames)
+        && request.resource.data.timezone is string
+        && isValidNotificationPreferences(request.resource.data.notifications)
+        && (
+          !('fcmTokens' in request.resource.data)
+          || request.resource.data.fcmTokens is list
+        );
+
+      allow update: if isOwner(uid)
+        && userGameStateCoreImmutable(uid)
+        && isFcmTokenRemoveUpdate()
+        && request.resource.data.updatedDate is timestamp
+        && (
+          !('fcmTokens' in request.resource.data)
+          || request.resource.data.fcmTokens is list
+        );
+
+      allow update: if isOwner(uid)
+        && userGameStateCoreImmutable(uid)
+        && isDailyStreakUpdate()
+        && request.resource.data.updatedDate is timestamp
         && isNonNegativeInt(request.resource.data.streak)
         && isNonNegativeInt(request.resource.data.longestStreak)
+        && isNonNegativeInt(request.resource.data.completedGames)
+        && isNonNegativeInt(request.resource.data.totalGames)
+        && request.resource.data.totalGames >= intOrZero(resource.data, 'totalGames')
+        && request.resource.data.completedGames >= intOrZero(resource.data, 'completedGames')
+        && request.resource.data.longestStreak >= intOrZero(resource.data, 'longestStreak');
+
+      allow update: if isOwner(uid)
+        && userGameStateCoreImmutable(uid)
+        && isStoryStatsUpdate()
+        && request.resource.data.updatedDate is timestamp
         && isNonNegativeInt(request.resource.data.detectivePoints)
         && isNonNegativeInt(request.resource.data.storyModeStreak)
         && isNonNegativeInt(request.resource.data.storyModeLongestStreak)
-        && request.resource.data.totalGames >= resource.data.totalGames
-        && request.resource.data.completedGames >= resource.data.completedGames
-        && request.resource.data.streak >= 0
-        && request.resource.data.longestStreak >= resource.data.longestStreak
-        && request.resource.data.detectivePoints >= resource.data.detectivePoints
-        && request.resource.data.storyModeStreak >= 0
-        && request.resource.data.storyModeLongestStreak >= resource.data.storyModeLongestStreak
-        && request.resource.data.hintPackBalance >= 0
-        && request.resource.data.hintPackBalance >= resource.data.hintPackBalance - 5;
+        && request.resource.data.detectivePoints >= intOrZero(resource.data, 'detectivePoints')
+        && request.resource.data.storyModeLongestStreak
+           >= intOrZero(resource.data, 'storyModeLongestStreak');
 
-      // Clients should not delete their state container
+      allow update: if isOwner(uid)
+        && userGameStateCoreImmutable(uid)
+        && isHintBalanceUpdate()
+        && request.resource.data.updatedDate is timestamp
+        && isNonNegativeInt(request.resource.data.hintPackBalance)
+        && request.resource.data.hintPackBalance >= intOrZero(resource.data, 'hintPackBalance') - 1
+        && request.resource.data.hintPackBalance <= intOrZero(resource.data, 'hintPackBalance') + 5;
+
+      allow update: if isOwner(uid)
+        && userGameStateCoreImmutable(uid)
+        && isRemoveAdsUpdate()
+        && request.resource.data.updatedDate is timestamp
+        && request.resource.data.hasRemoveAds == true;
+
+      allow update: if isOwner(uid)
+        && userGameStateCoreImmutable(uid)
+        && isDetectiveProUpdate()
+        && request.resource.data.updatedDate is timestamp
+        && request.resource.data.isDetectivePro == true
+        && request.resource.data.hasRemoveAds == true;
+
       allow delete: if false;
 
       // Per-day user data for each game day

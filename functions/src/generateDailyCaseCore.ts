@@ -1,6 +1,7 @@
 import {caseExists, writeDetectiveCase} from "./caseWriter";
 import {generateCaseWithCursor} from "./cursor/client";
 import {getPlannedCase} from "./localCaseCatalog";
+import {notifyNewDetectiveCase} from "./notifications/sendNewDetectiveCaseNotification";
 import {todayUtcDateId} from "./utils/dateId";
 
 export interface GenerateCaseForDateOptions {
@@ -39,6 +40,10 @@ export async function generateCaseForDate(
       source: "planned",
     }));
 
+    if (status === "created") {
+      await notifyNewDetectiveCase(dateId, plannedCase.title);
+    }
+
     return {dateId, status};
   }
 
@@ -60,6 +65,10 @@ export async function generateCaseForDate(
     status,
     source: "cursor",
   }));
+
+  if (status === "created") {
+    await notifyNewDetectiveCase(dateId, payload.title);
+  }
 
   return {dateId, status};
 }

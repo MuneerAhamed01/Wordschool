@@ -176,8 +176,10 @@ mixin _$DashboardState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(UserGameStateEntity userGameState,
-            UserGameDataEntity? todayGameData)
+    required TResult Function(
+            UserGameStateEntity userGameState,
+            UserGameDataEntity? todayGameData,
+            StoryModeProgressEntity? todayStoryProgress)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -186,8 +188,10 @@ mixin _$DashboardState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(UserGameStateEntity userGameState,
-            UserGameDataEntity? todayGameData)?
+    TResult? Function(
+            UserGameStateEntity userGameState,
+            UserGameDataEntity? todayGameData,
+            StoryModeProgressEntity? todayStoryProgress)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -196,8 +200,10 @@ mixin _$DashboardState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(UserGameStateEntity userGameState,
-            UserGameDataEntity? todayGameData)?
+    TResult Function(
+            UserGameStateEntity userGameState,
+            UserGameDataEntity? todayGameData,
+            StoryModeProgressEntity? todayStoryProgress)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -294,8 +300,10 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(UserGameStateEntity userGameState,
-            UserGameDataEntity? todayGameData)
+    required TResult Function(
+            UserGameStateEntity userGameState,
+            UserGameDataEntity? todayGameData,
+            StoryModeProgressEntity? todayStoryProgress)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -307,8 +315,10 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(UserGameStateEntity userGameState,
-            UserGameDataEntity? todayGameData)?
+    TResult? Function(
+            UserGameStateEntity userGameState,
+            UserGameDataEntity? todayGameData,
+            StoryModeProgressEntity? todayStoryProgress)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -320,8 +330,10 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(UserGameStateEntity userGameState,
-            UserGameDataEntity? todayGameData)?
+    TResult Function(
+            UserGameStateEntity userGameState,
+            UserGameDataEntity? todayGameData,
+            StoryModeProgressEntity? todayStoryProgress)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -417,8 +429,10 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(UserGameStateEntity userGameState,
-            UserGameDataEntity? todayGameData)
+    required TResult Function(
+            UserGameStateEntity userGameState,
+            UserGameDataEntity? todayGameData,
+            StoryModeProgressEntity? todayStoryProgress)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -430,8 +444,10 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(UserGameStateEntity userGameState,
-            UserGameDataEntity? todayGameData)?
+    TResult? Function(
+            UserGameStateEntity userGameState,
+            UserGameDataEntity? todayGameData,
+            StoryModeProgressEntity? todayStoryProgress)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -443,8 +459,10 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(UserGameStateEntity userGameState,
-            UserGameDataEntity? todayGameData)?
+    TResult Function(
+            UserGameStateEntity userGameState,
+            UserGameDataEntity? todayGameData,
+            StoryModeProgressEntity? todayStoryProgress)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -504,7 +522,9 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
   $Res call(
-      {UserGameStateEntity userGameState, UserGameDataEntity? todayGameData});
+      {UserGameStateEntity userGameState,
+      UserGameDataEntity? todayGameData,
+      StoryModeProgressEntity? todayStoryProgress});
 }
 
 /// @nodoc
@@ -522,6 +542,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
   $Res call({
     Object? userGameState = null,
     Object? todayGameData = freezed,
+    Object? todayStoryProgress = freezed,
   }) {
     return _then(_$LoadedImpl(
       userGameState: null == userGameState
@@ -532,6 +553,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.todayGameData
           : todayGameData // ignore: cast_nullable_to_non_nullable
               as UserGameDataEntity?,
+      todayStoryProgress: freezed == todayStoryProgress
+          ? _value.todayStoryProgress
+          : todayStoryProgress // ignore: cast_nullable_to_non_nullable
+              as StoryModeProgressEntity?,
     ));
   }
 }
@@ -539,16 +564,21 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl({required this.userGameState, this.todayGameData});
+  const _$LoadedImpl(
+      {required this.userGameState,
+      this.todayGameData,
+      this.todayStoryProgress});
 
   @override
   final UserGameStateEntity userGameState;
   @override
   final UserGameDataEntity? todayGameData;
+  @override
+  final StoryModeProgressEntity? todayStoryProgress;
 
   @override
   String toString() {
-    return 'DashboardState.loaded(userGameState: $userGameState, todayGameData: $todayGameData)';
+    return 'DashboardState.loaded(userGameState: $userGameState, todayGameData: $todayGameData, todayStoryProgress: $todayStoryProgress)';
   }
 
   @override
@@ -559,11 +589,14 @@ class _$LoadedImpl implements _Loaded {
             (identical(other.userGameState, userGameState) ||
                 other.userGameState == userGameState) &&
             (identical(other.todayGameData, todayGameData) ||
-                other.todayGameData == todayGameData));
+                other.todayGameData == todayGameData) &&
+            (identical(other.todayStoryProgress, todayStoryProgress) ||
+                other.todayStoryProgress == todayStoryProgress));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, userGameState, todayGameData);
+  int get hashCode => Object.hash(
+      runtimeType, userGameState, todayGameData, todayStoryProgress);
 
   /// Create a copy of DashboardState
   /// with the given fields replaced by the non-null parameter values.
@@ -578,12 +611,14 @@ class _$LoadedImpl implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(UserGameStateEntity userGameState,
-            UserGameDataEntity? todayGameData)
+    required TResult Function(
+            UserGameStateEntity userGameState,
+            UserGameDataEntity? todayGameData,
+            StoryModeProgressEntity? todayStoryProgress)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(userGameState, todayGameData);
+    return loaded(userGameState, todayGameData, todayStoryProgress);
   }
 
   @override
@@ -591,12 +626,14 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(UserGameStateEntity userGameState,
-            UserGameDataEntity? todayGameData)?
+    TResult? Function(
+            UserGameStateEntity userGameState,
+            UserGameDataEntity? todayGameData,
+            StoryModeProgressEntity? todayStoryProgress)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(userGameState, todayGameData);
+    return loaded?.call(userGameState, todayGameData, todayStoryProgress);
   }
 
   @override
@@ -604,14 +641,16 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(UserGameStateEntity userGameState,
-            UserGameDataEntity? todayGameData)?
+    TResult Function(
+            UserGameStateEntity userGameState,
+            UserGameDataEntity? todayGameData,
+            StoryModeProgressEntity? todayStoryProgress)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(userGameState, todayGameData);
+      return loaded(userGameState, todayGameData, todayStoryProgress);
     }
     return orElse();
   }
@@ -657,10 +696,12 @@ class _$LoadedImpl implements _Loaded {
 abstract class _Loaded implements DashboardState {
   const factory _Loaded(
       {required final UserGameStateEntity userGameState,
-      final UserGameDataEntity? todayGameData}) = _$LoadedImpl;
+      final UserGameDataEntity? todayGameData,
+      final StoryModeProgressEntity? todayStoryProgress}) = _$LoadedImpl;
 
   UserGameStateEntity get userGameState;
   UserGameDataEntity? get todayGameData;
+  StoryModeProgressEntity? get todayStoryProgress;
 
   /// Create a copy of DashboardState
   /// with the given fields replaced by the non-null parameter values.
@@ -739,8 +780,10 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(UserGameStateEntity userGameState,
-            UserGameDataEntity? todayGameData)
+    required TResult Function(
+            UserGameStateEntity userGameState,
+            UserGameDataEntity? todayGameData,
+            StoryModeProgressEntity? todayStoryProgress)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -752,8 +795,10 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(UserGameStateEntity userGameState,
-            UserGameDataEntity? todayGameData)?
+    TResult? Function(
+            UserGameStateEntity userGameState,
+            UserGameDataEntity? todayGameData,
+            StoryModeProgressEntity? todayStoryProgress)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -765,8 +810,10 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(UserGameStateEntity userGameState,
-            UserGameDataEntity? todayGameData)?
+    TResult Function(
+            UserGameStateEntity userGameState,
+            UserGameDataEntity? todayGameData,
+            StoryModeProgressEntity? todayStoryProgress)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

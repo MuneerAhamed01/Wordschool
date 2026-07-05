@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
 
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:wordshool/config/google_auth_config.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/features/auth/data/data_source/auth_service.dart';
@@ -48,6 +52,71 @@ class AuthDataSourceImpl extends AuthDataSource {
         error: AppError.fromException(error),
         stackTrace: stackTrace,
         context: 'AuthDataSource.signInAnonymously',
+      );
+    }
+  }
+
+  @override
+  Future<DataState<WordSchoolUserModel?>> signInWithApple() async {
+    try {
+      final rawNonce = _generateNonce();
+      final nonce = _sha256ofString(rawNonce);
+
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: nonce,
+      );
+
+      final idToken = appleCredential.identityToken;
+      if (idToken == null || idToken.isEmpty) {
+        return DataError<WordSchoolUserModel?>(
+          error: AppError(
+            error: 'Failed to retrieve Apple ID token.',
+            code: '401',
+          ),
+        );
+      }
+
+      final credential = OAuthProvider('apple.com').credential(
+        idToken: idToken,
+        rawNonce: rawNonce,
+        accessToken: appleCredential.authorizationCode,
+      );
+
+      return await _completeOAuthSignIn(credential);
+    } on SignInWithAppleAuthorizationException catch (e, stackTrace) {
+      if (e.code == AuthorizationErrorCode.canceled) {
+        return DataError<WordSchoolUserModel?>(
+          error: AppError.cancelled(
+            message: 'Apple sign-in was cancelled',
+            error: e,
+          ),
+        );
+      }
+
+      return DataError<WordSchoolUserModel?>(
+        error: AppError.fromException(e),
+        stackTrace: stackTrace,
+        context: 'AuthDataSource.signInWithApple',
+      );
+    } on FirebaseAuthException catch (e, stackTrace) {
+      return DataError<WordSchoolUserModel?>(
+        error: AppError.fromException(
+          e,
+          message: e.message ?? e.code,
+          code: e.code,
+        ),
+        stackTrace: stackTrace,
+        context: 'AuthDataSource.signInWithApple',
+      );
+    } catch (e, stackTrace) {
+      return DataError<WordSchoolUserModel?>(
+        error: AppError.fromException(e),
+        stackTrace: stackTrace,
+        context: 'AuthDataSource.signInWithApple',
       );
     }
   }
@@ -107,6 +176,12 @@ class AuthDataSourceImpl extends AuthDataSource {
     }
 
     final credential = GoogleAuthProvider.credential(idToken: idToken);
+    return await _completeOAuthSignIn(credential);
+  }
+
+  Future<DataState<WordSchoolUserModel?>> _completeOAuthSignIn(
+    AuthCredential credential,
+  ) async {
     final currentUser = _firebaseAuth.currentUser;
 
     try {
@@ -150,5 +225,19 @@ class AuthDataSourceImpl extends AuthDataSource {
         data: WordSchoolUserModel.fromFirebase(user: response.user!),
       );
     }
+  }
+
+  String _generateNonce([int length = 32]) {
+    const charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+    final random = Random.secure();
+    return List.generate(length, (_) => charset[random.nextInt(charset.length)])
+        .join();
+  }
+
+  String _sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
   }
 }

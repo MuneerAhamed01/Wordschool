@@ -44,6 +44,23 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
   }
 
   @override
+  Future<DataState<UserGameStateModel>> ensureUserGameState(
+    String userId,
+  ) async {
+    final existing = await getUserGameState(userId);
+    if (existing is DataSuccess<UserGameStateModel>) {
+      return existing;
+    }
+
+    if (existing is DataError<UserGameStateModel> &&
+        existing.error?.code == '404') {
+      return createUserGameState(userId);
+    }
+
+    return existing;
+  }
+
+  @override
   Future<DataState<bool>> addGuessedWord(
     String userId,
     String gameId,

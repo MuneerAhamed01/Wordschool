@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:wordshool/di.dart';
 import 'package:wordshool/features/story_mode/presentation/routing/story_flow_navigation.dart';
 import 'package:wordshool/features/story_mode/domain/entities/detective_case.dart';
@@ -99,9 +98,11 @@ class StoryNarrativeScaffold extends StatelessWidget {
 class StoryModeShell extends StatefulWidget {
   const StoryModeShell({
     super.key,
+    required this.location,
     required this.child,
   });
 
+  final String location;
   final Widget child;
 
   @override
@@ -110,7 +111,6 @@ class StoryModeShell extends StatefulWidget {
 
 class _StoryModeShellState extends State<StoryModeShell> {
   StoryAudioManager? _audioManager;
-  GoRouter? _router;
 
   @override
   void initState() {
@@ -129,25 +129,10 @@ class _StoryModeShellState extends State<StoryModeShell> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final router = GoRouter.of(context);
-    if (!identical(_router, router)) {
-      _router?.routerDelegate.removeListener(_onRouteChanged);
-      _router = router;
-      _router!.routerDelegate.addListener(_onRouteChanged);
-    }
-  }
-
-  void _onRouteChanged() {
-    if (!mounted || _audioManager == null) return;
-
-    final location =
-        _router!.routerDelegate.currentConfiguration.uri.path;
-    if (StoryFlowNavigation.isStoryLocation(location)) {
-      _audioManager!.startStoryAmbience();
-    } else {
-      _audioManager!.stopAll();
+  void didUpdateWidget(covariant StoryModeShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.location != widget.location) {
+      _syncAudioForLocation(widget.location);
     }
   }
 
@@ -158,16 +143,21 @@ class _StoryModeShellState extends State<StoryModeShell> {
     _audioManager = getIt<StoryAudioManager>();
     await _audioManager!.initialize();
     if (!mounted) return;
+    await _syncAudioForLocation(widget.location);
+  }
 
-    final location = GoRouter.of(context).routerDelegate.currentConfiguration.uri.path;
+  Future<void> _syncAudioForLocation(String location) async {
+    if (_audioManager == null) return;
+
     if (StoryFlowNavigation.isStoryLocation(location)) {
       await _audioManager!.startStoryAmbience();
+    } else {
+      await _audioManager!.stopAll();
     }
   }
 
   @override
   void dispose() {
-    _router?.routerDelegate.removeListener(_onRouteChanged);
     _audioManager?.stopAll();
     super.dispose();
   }

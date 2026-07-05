@@ -15,6 +15,11 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<DataState<WordSchoolUserModel?>> signInWithApple() {
+    return _authDataSource.signInWithApple();
+  }
+
+  @override
   Future<DataState<WordSchoolUserModel?>> signInWithGoogle() {
     return _authDataSource.signInWithGoogle();
   }

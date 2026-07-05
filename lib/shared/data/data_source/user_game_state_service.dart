@@ -5,6 +5,8 @@ import 'package:wordshool/shared/data/models/user_game_state/user_game_state.dar
 abstract class UserGameStateDataSource {
   Future<DataState<UserGameStateModel>> createUserGameState(String userId);
 
+  Future<DataState<UserGameStateModel>> ensureUserGameState(String userId);
+
   Future<DataState<UserGameStateModel>> getUserGameState(String userId);
 
   Future<DataState<UserGameStateModel>> updateUserGameState(

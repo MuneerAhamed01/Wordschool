@@ -17,6 +17,13 @@ abstract final class AnalyticsEvents {
   static const storyCaseCompleted = 'story_case_completed';
   static const storyShareTapped = 'story_share_tapped';
   static const storyHintUsed = 'story_hint_used';
+  static const notificationPermissionRequested =
+      'notification_permission_requested';
+  static const notificationPermissionGranted =
+      'notification_permission_granted';
+  static const notificationPermissionDenied = 'notification_permission_denied';
+  static const notificationOpened = 'notification_opened';
+  static const notificationSettingsChanged = 'notification_settings_changed';
 }
 
 /// Parameter keys shared across events.
@@ -38,6 +45,12 @@ abstract final class AnalyticsParams {
   static const outcome = 'outcome';
   static const score = 'score';
   static const hintSource = 'source';
+  static const notificationType = 'notification_type';
+  static const notificationSource = 'notification_source';
+  static const notificationsEnabled = 'notifications_enabled';
+  static const dailyPuzzleReminder = 'daily_puzzle_reminder';
+  static const detectiveCaseReminder = 'detective_case_reminder';
+  static const streakReminder = 'streak_reminder';
 }
 
 /// Known features for adoption reporting in Firebase.

@@ -6,7 +6,10 @@ import 'package:wordshool/core/utils/iso_week_id.dart';
 import 'package:wordshool/di.dart';
 import 'package:wordshool/features/leaderboard/domain/entities/detective_leaderboard_entry.dart';
 import 'package:wordshool/features/leaderboard/domain/repositories/detective_leaderboard_repository.dart';
+import 'package:wordshool/features/story_mode/domain/entities/story_mode_progress.dart';
+import 'package:wordshool/features/story_mode/domain/utils/detective_score_calculator.dart';
 import 'package:wordshool/features/story_mode/presentation/theme/story_theme.dart';
+import 'package:wordshool/features/story_mode/presentation/utils/case_outcome_labels.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_state.dart';
 import 'package:wordshool/shared/domains/usercases/get_current_user_usecase.dart';
 import 'package:wordshool/shared/presentations/widgets/pressable_scale.dart';
@@ -16,10 +19,12 @@ class StoryModeHero extends StatefulWidget {
     super.key,
     required this.userGameState,
     required this.onOpen,
+    this.todayStoryProgress,
     this.expanded = false,
   });
 
   final UserGameStateEntity userGameState;
+  final StoryModeProgressEntity? todayStoryProgress;
   final VoidCallback onOpen;
   final bool expanded;
 
@@ -32,10 +37,20 @@ class _StoryModeHeroState extends State<StoryModeHero> {
   int? _weeklyRank;
   bool _loaded = false;
 
+  bool get _isCompleted => widget.todayStoryProgress?.completedAt != null;
+
   @override
   void initState() {
     super.initState();
     _loadWeeklyStats();
+  }
+
+  @override
+  void didUpdateWidget(covariant StoryModeHero oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.userGameState != widget.userGameState) {
+      _loadWeeklyStats();
+    }
   }
 
   Future<void> _loadWeeklyStats() async {
@@ -125,13 +140,13 @@ class _StoryModeHeroState extends State<StoryModeHero> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Detective Case',
+                          _isCompleted ? 'Case closed!' : 'Detective Case',
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w800,
                           ),
                         ),
                         Text(
-                          "A new mystery drops every day",
+                          _statusSubtitle(),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: MyColors.textMuted,
                           ),
@@ -180,6 +195,8 @@ class _StoryModeHeroState extends State<StoryModeHero> {
               SizedBox(height: widget.expanded ? 12 : 10),
               _DetectivePlayButton(
                 height: widget.expanded ? 52 : 44,
+                label: _playLabel(),
+                icon: _playIcon(),
                 onTap: widget.onOpen,
               ),
             ],
@@ -248,16 +265,43 @@ class _StoryModeHeroState extends State<StoryModeHero> {
         margin: const EdgeInsets.symmetric(vertical: 8),
         color: MyColors.gameBorder.withValues(alpha: 0.6),
       );
+
+  String _statusSubtitle() {
+    if (!_isCompleted) {
+      return 'A new mystery drops every day';
+    }
+
+    final progress = widget.todayStoryProgress!;
+    final outcome = progress.outcome;
+    if (outcome != null) {
+      return '${caseOutcomeLabel(outcome)} · ${progress.totalScore}/${DetectiveScoreCalculator.maxPointsPerDay} pts';
+    }
+    return '${progress.totalScore}/${DetectiveScoreCalculator.maxPointsPerDay} pts scored today';
+  }
+
+  String _playLabel() {
+    if (!_isCompleted) return 'Play Today\'s Case';
+    return 'Review Today\'s Case';
+  }
+
+  IconData _playIcon() {
+    if (_isCompleted) return Icons.folder_open_rounded;
+    return Icons.play_arrow_rounded;
+  }
 }
 
 class _DetectivePlayButton extends StatelessWidget {
   const _DetectivePlayButton({
     required this.onTap,
     required this.height,
+    required this.label,
+    required this.icon,
   });
 
   final VoidCallback onTap;
   final double height;
+  final String label;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -288,13 +332,13 @@ class _DetectivePlayButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.play_arrow_rounded,
+              icon,
               color: StoryTheme.background,
               size: 22,
             ),
             const SizedBox(width: 6),
             Text(
-              'Play Today\'s Case',
+              label,
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
                     color: StoryTheme.background,
                     fontWeight: FontWeight.w800,

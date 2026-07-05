@@ -8,6 +8,7 @@ class WordSchoolUserModel extends WordSchoolUserEntity {
     required super.email,
     required super.isAnonymous,
     super.name,
+    super.authMethod,
   });
 
   factory WordSchoolUserModel.fromFirebase({
@@ -26,6 +27,7 @@ class WordSchoolUserModel extends WordSchoolUserEntity {
         'email': email,
         'name': name,
         'isAnonymous': isAnonymous,
+        if (authMethod != null) 'authMethod': authMethod,
       };
 
   factory WordSchoolUserModel.fromJson(Map<String, dynamic> json) {
@@ -34,6 +36,17 @@ class WordSchoolUserModel extends WordSchoolUserEntity {
       email: json['email'],
       isAnonymous: json['isAnonymous'],
       name: json['name'],
+      authMethod: json['authMethod'] as String?,
+    );
+  }
+
+  WordSchoolUserModel withAuthMethod(String method) {
+    return WordSchoolUserModel(
+      id: id,
+      email: email,
+      name: name,
+      isAnonymous: isAnonymous,
+      authMethod: method,
     );
   }
 }

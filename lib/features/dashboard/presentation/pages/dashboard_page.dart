@@ -7,10 +7,14 @@ import 'package:wordshool/core/analytics/analytics_service.dart';
 import 'package:wordshool/core/config/monetization_config.dart';
 import 'package:wordshool/core/remote_config/story_mode_config.dart';
 import 'package:wordshool/di.dart';
+import 'package:wordshool/features/notifications/notification_service.dart';
+import 'package:wordshool/shared/data/data_source/session_handler.dart';
 import 'package:wordshool/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:wordshool/features/dashboard/presentation/widgets/daily_puzzle_hero.dart';
 import 'package:wordshool/features/dashboard/presentation/widgets/story_mode_hero.dart';
 import 'package:wordshool/features/game/presentation/pages/game_page.dart';
+import 'package:wordshool/features/notifications/presentation/notification_permission_prompt.dart';
+import 'package:wordshool/features/story_mode/domain/entities/story_mode_progress.dart';
 import 'package:wordshool/features/story_mode/presentation/pages/story_home_page.dart';
 import 'package:wordshool/features/story_mode/presentation/widgets/story_banner_ad.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_data.dart';
@@ -31,6 +35,15 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   GoRouter? _router;
   String? _lastLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = getIt<SessionHandler>().currentUser;
+    if (user != null) {
+      getIt<NotificationService>().bindUser(user.id);
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -68,16 +81,45 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return GameScaffold(
       safeAreaBottom: false,
-      body: BlocBuilder<DashboardBloc, DashboardState>(
-        builder: (context, state) {
-          return state.when(
-            initial: () => const Center(child: CircularProgressIndicator()),
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (message) => _buildError(context, message),
-            loaded: (userGameState, todayGameData) =>
-                _buildContent(context, userGameState, todayGameData),
-          );
-        },
+      body: Stack(
+        children: [
+          BlocListener<DashboardBloc, DashboardState>(
+            listener: (context, state) {
+              state.whenOrNull(
+                loaded: (userGameState, todayGameData, todayStoryProgress) {
+                  final storyEnabled = getIt<StoryModeConfig>()
+                      .isEnabledForUser(userGameState.id);
+                  getIt<NotificationService>().rescheduleLocalNotifications(
+                    dailyStreak: userGameState.streak,
+                    dailyPlayedToday: todayGameData?.isCompleted ?? false,
+                    detectivePlayedToday:
+                        todayStoryProgress?.completedAt != null,
+                    storyModeEnabled: storyEnabled,
+                  );
+                },
+              );
+            },
+            child: BlocBuilder<DashboardBloc, DashboardState>(
+              builder: (context, state) {
+                return state.when(
+                  initial: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (message) => _buildError(context, message),
+                  loaded: (userGameState, todayGameData, todayStoryProgress) =>
+                      _buildContent(
+                    context,
+                    userGameState,
+                    todayGameData,
+                    todayStoryProgress,
+                  ),
+                );
+              },
+            ),
+          ),
+          const NotificationPermissionPrompt(),
+        ],
       ),
     );
   }
@@ -108,6 +150,7 @@ class _DashboardPageState extends State<DashboardPage> {
     BuildContext context,
     UserGameStateEntity userGameState,
     UserGameDataEntity? todayGameData,
+    StoryModeProgressEntity? todayStoryProgress,
   ) {
     final storyEnabled =
         getIt<StoryModeConfig>().isEnabledForUser(userGameState.id);
@@ -148,6 +191,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       delay: const Duration(milliseconds: 120),
                       child: StoryModeHero(
                         userGameState: userGameState,
+                        todayStoryProgress: todayStoryProgress,
                         expanded: true,
                         onOpen: () => _openStoryMode(context),
                       ),
@@ -176,11 +220,13 @@ class _DashboardPageState extends State<DashboardPage> {
     context.push(GamePage.routeName);
   }
 
-  void _openStoryMode(BuildContext context) {
+  Future<void> _openStoryMode(BuildContext context) async {
     getIt<AnalyticsService>().logFeatureOpened(
       featureName: AnalyticsFeatures.storyMode,
     );
-    context.push(StoryHomePage.routeName);
+    await context.push(StoryHomePage.routeName);
+    if (!context.mounted) return;
+    context.read<DashboardBloc>().add(const DashboardEvent.loadDashboard());
   }
 }
 

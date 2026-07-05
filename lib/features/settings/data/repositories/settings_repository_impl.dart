@@ -1,4 +1,6 @@
 import 'package:wordshool/core/resorces/data_state.dart';
+import 'package:wordshool/di.dart';
+import 'package:wordshool/features/notifications/notification_service.dart';
 import 'package:wordshool/features/settings/data/data_source/settings_data_source.dart';
 import 'package:wordshool/features/settings/domain/repositories/settings_repository.dart';
 import 'package:wordshool/features/story_mode/presentation/utils/story_mode_session_controller.dart';
@@ -30,6 +32,10 @@ class SettingsRepositoryImpl implements SettingsRepository {
     }
 
     await _storyModeSessionController.resetOnLogout();
+
+    if (getIt.isRegistered<NotificationService>()) {
+      await getIt<NotificationService>().clearOnLogout();
+    }
 
     return DataSuccess<bool>(data: true);
   }

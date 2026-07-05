@@ -101,6 +101,14 @@ class StoryCaseBloc extends Bloc<StoryCaseEvent, StoryCaseState> {
           ),
         );
       },
+      alreadyCompleted: (detectiveCase, progress) {
+        emit(
+          StoryCaseState.alreadyCompleted(
+            detectiveCase: detectiveCase,
+            progress: event.progress,
+          ),
+        );
+      },
     );
   }
 }

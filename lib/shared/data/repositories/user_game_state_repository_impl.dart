@@ -39,6 +39,13 @@ class UserGameStateRepositoryImpl implements UserGameStateRepository {
   }
 
   @override
+  Future<DataState<UserGameStateEntity>> ensureUserGameState(
+    String userId,
+  ) async {
+    return _dataSource.ensureUserGameState(userId);
+  }
+
+  @override
   Future<DataState<bool>> addGuessedWord(
     String gameId,
     String guessedWord,
@@ -207,7 +214,7 @@ class UserGameStateRepositoryImpl implements UserGameStateRepository {
 
     final error = result as DataError<UserGameStateModel>;
     if (error.error?.code == '404') {
-      return _dataSource.createUserGameState(userId);
+      return _dataSource.ensureUserGameState(userId);
     }
 
     return DataError<UserGameStateEntity>(error: error.error);

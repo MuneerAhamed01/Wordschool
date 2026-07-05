@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,8 @@ import 'package:wordshool/core/routes/app_router.dart';
 import 'package:wordshool/di.dart';
 import 'package:wordshool/features/auth/presentation/pages/auth_page.dart';
 import 'package:wordshool/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:wordshool/features/notifications/firebase_messaging_background.dart';
+import 'package:wordshool/features/notifications/notification_service.dart';
 import 'package:wordshool/firebase_options.dart';
 import 'package:wordshool/shared/data/data_source/session_handler.dart';
 
@@ -18,11 +21,26 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   AppLogger.instance.init();
+
   _configureGlobalErrorHandlers();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+  // Attach before other plugins init so iOS forwards foreground FCM to Dart.
+  FirebaseMessaging.onMessage.listen((message) {
+    if (kDebugMode) {
+      debugPrint(
+        'FCM onMessage at main: ${message.messageId ?? 'no-id'}',
+      );
+    }
+    if (getIt.isRegistered<NotificationService>()) {
+      getIt<NotificationService>().handleForegroundMessage(message);
+    }
+  });
 
   await dotenv.load();
 
@@ -30,18 +48,28 @@ Future<void> main() async {
 
   final sessionUser = getIt<SessionHandler>().currentUser;
   final analytics = getIt<AnalyticsService>();
+  final notificationService = getIt<NotificationService>();
 
   if (sessionUser != null) {
     await analytics.setUserId(sessionUser.id);
+    final authMethod = sessionUser.authMethod ??
+        (sessionUser.isAnonymous ? 'anonymous' : 'google');
     await analytics.setUserProperty(
       name: 'auth_method',
-      value: sessionUser.isAnonymous ? 'anonymous' : 'google',
+      value: authMethod,
     );
+    await notificationService.bindUser(sessionUser.id);
   }
 
   final hasUser = sessionUser != null;
   final initialRoute = hasUser ? DashboardPage.routeName : AuthPage.routeName;
   final router = appRouter(initialRoute);
+
+  notificationService.onRouteTap = (route) {
+    router.go(route);
+  };
+
+  // await notificationService.handleColdStartMessage();
 
   runApp(MainApp(router: router));
 }

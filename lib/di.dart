@@ -11,6 +11,7 @@ import 'package:wordshool/features/auth/data/data_source/auth_service.dart';
 import 'package:wordshool/features/auth/data/data_source/remote/auth_service.dart';
 import 'package:wordshool/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:wordshool/features/auth/domain/repositories/auth_repository.dart';
+import 'package:wordshool/features/auth/domain/usecases/sign_in_with_apple.dart';
 import 'package:wordshool/features/auth/domain/usecases/sign_anonymosly.dart';
 import 'package:wordshool/features/auth/domain/usecases/sign_with_google.dart';
 import 'package:wordshool/features/game/data/data_source/game_service.dart';
@@ -60,6 +61,9 @@ import 'package:wordshool/core/monetization/story_entitlements.dart';
 import 'package:wordshool/features/story_mode/domain/usecases/consume_hint.dart';
 import 'package:wordshool/features/story_mode/presentation/utils/story_audio_manager.dart';
 import 'package:wordshool/features/story_mode/presentation/utils/story_mode_session_controller.dart';
+import 'package:wordshool/features/notifications/data/notification_preferences_store.dart';
+import 'package:wordshool/features/notifications/data/notification_token_service.dart';
+import 'package:wordshool/features/notifications/notification_service.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -81,6 +85,27 @@ Future<void> initializeDependency() async {
   _initializeLeaderboard();
   await _initializeStoryModeExtras();
   _initializeSettings();
+  await _initializeNotifications();
+}
+
+Future<void> _initializeNotifications() async {
+  getIt.registerSingleton<NotificationPreferencesStore>(
+    NotificationPreferencesStore(getIt<SharedPreferences>()),
+  );
+
+  getIt.registerSingleton<NotificationTokenService>(
+    NotificationTokenService(firestore: FirebaseFirestore.instance),
+  );
+
+  getIt.registerSingleton<NotificationService>(
+    NotificationService(
+      preferencesStore: getIt<NotificationPreferencesStore>(),
+      tokenService: getIt<NotificationTokenService>(),
+      analytics: getIt<AnalyticsService>(),
+    ),
+  );
+
+  await getIt<NotificationService>().initialize();
 }
 
 Future<void> _initializeStoryModeExtras() async {
@@ -196,9 +221,6 @@ Future<void> _initSessions() async {
   getIt.registerSingleton<SessionRepository>(
       SessionRepositoryImpl(getIt<SessionHandler>()));
 
-  getIt.registerSingleton<SaveUserSessionUseCase>(
-      SaveUserSessionUseCase(sessionRepository: getIt<SessionRepository>()));
-
   getIt.registerSingleton<GetCurrentUserUseCase>(
       GetCurrentUserUseCase(sessionRepository: getIt<SessionRepository>()));
 }
@@ -230,6 +252,9 @@ Future<void> _initializeAuthDependencies() async {
 
   getIt.registerSingleton<SignInWithGoogleUseCase>(
       SignInWithGoogleUseCase(authRepo: getIt<AuthRepository>()));
+
+  getIt.registerSingleton<SignInWithAppleUseCase>(
+      SignInWithAppleUseCase(authRepo: getIt<AuthRepository>()));
 }
 
 Future<void> _initializeValidWords() async {
@@ -285,6 +310,13 @@ void _initializeGame() {
   getIt.registerSingleton<MarkGameCompletedUseCase>(MarkGameCompletedUseCase(
     userGameStateRepository: getIt<UserGameStateRepository>(),
   ));
+
+  getIt.registerSingleton<SaveUserSessionUseCase>(
+    SaveUserSessionUseCase(
+      sessionRepository: getIt<SessionRepository>(),
+      userGameStateRepository: getIt<UserGameStateRepository>(),
+    ),
+  );
 }
 
 void _initializeSettings() {

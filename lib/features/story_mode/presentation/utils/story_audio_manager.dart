@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,7 +21,7 @@ class StoryAudioManager {
   bool _initialized = false;
   bool _muted = false;
   bool _keyClickLoaded = false;
-  bool _ambientPlaying = false;
+  Future<void> _ambientLock = Future<void>.value();
 
   bool get isMuted => _muted;
 
@@ -26,7 +29,38 @@ class StoryAudioManager {
     if (_initialized) return;
     _initialized = true;
     _muted = _preferences?.getBool(_muteKey) ?? false;
+    await _configureAudioSession();
     await _preloadKeyClick();
+  }
+
+  Future<void> _ensureInitialized() async {
+    if (!_initialized) {
+      await initialize();
+    }
+  }
+
+  Future<void> _configureAudioSession() async {
+    try {
+      final session = await AudioSession.instance;
+      await session.configure(const AudioSessionConfiguration.music());
+    } catch (error) {
+      debugPrint('StoryAudioManager: audio session setup failed ($error)');
+    }
+  }
+
+  Future<void> _activateAudioSession() async {
+    try {
+      final session = await AudioSession.instance;
+      await session.setActive(true);
+    } catch (error) {
+      debugPrint('StoryAudioManager: audio session activation failed ($error)');
+    }
+  }
+
+  Future<void> _withAmbientLock(Future<void> Function() action) {
+    final run = _ambientLock.then((_) => action());
+    _ambientLock = run.catchError((_) {});
+    return run;
   }
 
   Future<void> _preloadKeyClick() async {
@@ -40,41 +74,47 @@ class StoryAudioManager {
     }
   }
 
-  Future<void> startStoryAmbience() async {
-    if (_muted || _ambientPlaying) return;
-    try {
-      await _ambientPlayer.stop();
-      await _ambientPlayer.setAsset('assets/audio/rain_loop.mp3');
-      await _ambientPlayer.setLoopMode(LoopMode.one);
-      await _ambientPlayer.setVolume(0.35);
-      await _ambientPlayer.play();
-      _ambientPlaying = true;
-    } catch (error) {
-      debugPrint('StoryAudioManager: rain asset unavailable ($error)');
-      _ambientPlaying = false;
-    }
+  Future<void> startStoryAmbience() {
+    return _withAmbientLock(() async {
+      await _ensureInitialized();
+      if (_muted || _ambientPlayer.playing) return;
+      try {
+        await _activateAudioSession();
+        await _ambientPlayer.stop();
+        await _ambientPlayer.setAsset('assets/audio/rain_loop.mp3');
+        await _ambientPlayer.setLoopMode(LoopMode.one);
+        await _ambientPlayer.setVolume(0.35);
+        // Looping playback never ends, so do not await play() or it blocks SFX.
+        unawaited(_ambientPlayer.play());
+      } catch (error) {
+        debugPrint('StoryAudioManager: rain asset unavailable ($error)');
+      }
+    });
   }
 
-  Future<void> stopAll() async {
-    _ambientPlaying = false;
-    await Future.wait([
-      _ambientPlayer.stop(),
-      _sfxPlayer.stop(),
-      _keyClickPlayer.stop(),
-    ]);
+  Future<void> stopAll() {
+    return _withAmbientLock(() async {
+      await Future.wait([
+        _ambientPlayer.stop(),
+        _sfxPlayer.stop(),
+        _keyClickPlayer.stop(),
+      ]);
+    });
   }
 
   Future<void> playKeyClick() async {
+    await _ensureInitialized();
     if (_muted) return;
     try {
       if (!_keyClickLoaded) {
         await _preloadKeyClick();
       }
       if (!_keyClickLoaded) return;
+      await _activateAudioSession();
       await _keyClickPlayer.seek(Duration.zero);
-      await _keyClickPlayer.play();
-    } catch (_) {
-      // Optional asset.
+      unawaited(_keyClickPlayer.play());
+    } catch (error) {
+      debugPrint('StoryAudioManager: key_click playback failed ($error)');
     }
   }
 
@@ -87,14 +127,16 @@ class StoryAudioManager {
   }
 
   Future<void> _playSfx(String assetPath) async {
+    await _ensureInitialized();
     if (_muted) return;
     try {
+      await _activateAudioSession();
       await _sfxPlayer.stop();
       await _sfxPlayer.setAsset(assetPath);
       await _sfxPlayer.setVolume(0.7);
-      await _sfxPlayer.play();
-    } catch (_) {
-      // Optional asset.
+      unawaited(_sfxPlayer.play());
+    } catch (error) {
+      debugPrint('StoryAudioManager: sfx playback failed ($assetPath, $error)');
     }
   }
 

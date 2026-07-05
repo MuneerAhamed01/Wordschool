@@ -100,6 +100,9 @@ class _StoryWordlePageState extends State<StoryWordlePage>
                           );
                     }
                     context.read<StoryFlowBloc>().add(
+                          UpdateProgress(progress!),
+                        );
+                    context.read<StoryFlowBloc>().add(
                           MarkClueResolved(widget.clueIndex),
                         );
                     _navigateToReaction(context);

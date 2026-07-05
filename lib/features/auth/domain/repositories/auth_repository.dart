@@ -4,5 +4,7 @@ import 'package:wordshool/shared/domains/entities/user_entity.dart';
 abstract class AuthRepository {
   Future<DataState<WordSchoolUserEntity?>> signInWithGoogle();
 
+  Future<DataState<WordSchoolUserEntity?>> signInWithApple();
+
   Future<DataState<WordSchoolUserEntity?>> signInAnonymously();
 }

@@ -3,7 +3,7 @@ import 'package:wordshool/config/themes/colors.dart';
 import 'package:wordshool/shared/presentations/widgets/pressable_scale.dart';
 import 'package:wordshool/shared/presentations/widgets/progress_indicator.dart';
 
-enum ButtonVariant { primary, secondary, ghost, google }
+enum ButtonVariant { primary, secondary, ghost, google, apple }
 
 class AppButton extends StatelessWidget {
   const AppButton({
@@ -68,7 +68,8 @@ class AppButton extends StatelessWidget {
                       label ?? '',
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
                             color: colors.foreground,
-                            fontWeight: variant == ButtonVariant.google
+                            fontWeight: variant == ButtonVariant.google ||
+                                    variant == ButtonVariant.apple
                                 ? FontWeight.w600
                                 : FontWeight.w700,
                           ),
@@ -105,6 +106,11 @@ class AppButton extends StatelessWidget {
           background: MyColors.white,
           foreground: Color(0xFF1F1F1F),
           border: Color(0xFFDADCE0),
+        );
+      case ButtonVariant.apple:
+        return const _ButtonColors(
+          background: Color(0xFF000000),
+          foreground: MyColors.white,
         );
     }
   }

@@ -61,8 +61,10 @@ GoRouter appRouter(String initialRoute) {
           create: (context) => AuthBloc(
             signInAnonymouslyUseCase: getIt(),
             signInWithGoogleUseCase: getIt(),
+            signInWithAppleUseCase: getIt(),
             saveUserSessionUseCase: getIt(),
             analytics: getIt(),
+            notificationService: getIt(),
           ),
           child: const AuthPage(),
         ),
@@ -152,7 +154,10 @@ GoRouter appRouter(String initialRoute) {
               BlocProvider.value(value: storyCaseBloc),
               BlocProvider.value(value: storyFlowBloc),
             ],
-            child: StoryModeShell(child: child),
+            child: StoryModeShell(
+              location: state.uri.path,
+              child: child,
+            ),
           );
         },
         routes: [
@@ -287,6 +292,7 @@ class _DashboardTab extends StatelessWidget {
       create: (context) => DashboardBloc(
         loadUserGameStateUseCase: getIt(),
         loadUserSpecificGameStateUseCase: getIt(),
+        loadTodayDetectiveCaseUseCase: getIt(),
       ),
       child: const DashboardPage(),
     );

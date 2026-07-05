@@ -7,6 +7,7 @@ import 'package:wordshool/core/monetization/story_entitlements.dart';
 import 'package:wordshool/core/monetization/iap_service.dart';
 import 'package:wordshool/di.dart';
 import 'package:wordshool/features/auth/presentation/pages/auth_page.dart';
+import 'package:wordshool/features/notifications/presentation/notification_settings_tiles.dart';
 import 'package:wordshool/features/settings/presentation/widgets/story_settings_tiles.dart';
 import 'package:wordshool/shared/presentations/popup/general_pop_up.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -65,6 +66,11 @@ class SettingsPage extends StatelessWidget {
                 onTap: () =>
                     _launchUrl('https://sites.google.com/view/wordschool/home'),
               ),
+            ),
+            const SizedBox(height: 10),
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 100),
+              child: const NotificationSettingsSection(),
             ),
             const SizedBox(height: 10),
             FadeSlideIn(

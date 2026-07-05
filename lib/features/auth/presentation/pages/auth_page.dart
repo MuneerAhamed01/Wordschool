@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -24,7 +26,8 @@ class AuthPage extends StatelessWidget {
           state.whenOrNull(
             authenticated: (_) => ctx.go(DashboardPage.routeName),
             error: (message) {
-              if (message == 'Google sign-in was cancelled') {
+              if (message == 'Google sign-in was cancelled' ||
+                  message == 'Apple sign-in was cancelled') {
                 return;
               }
               CustomSnackBar.show(
@@ -141,6 +144,13 @@ class AuthPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (Platform.isIOS) ...[
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 80),
+              child: _buildAppleButton(),
+            ),
+            const SizedBox(height: 12),
+          ],
           FadeSlideIn(
             delay: const Duration(milliseconds: 120),
             child: _buildGoogleButton(),
@@ -157,6 +167,29 @@ class AuthPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAppleButton() {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        final isApple =
+            state.whenOrNull<AuthType?>(loading: (t) => t) == AuthType.apple;
+        return AppButton(
+          label: 'Continue with Apple',
+          leading: SvgPicture.asset(
+            'assets/svgs/apple_logo.svg',
+            width: 20,
+            height: 20,
+            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+          ),
+          variant: ButtonVariant.apple,
+          isLoading: state is AuthLoading && isApple,
+          isDisabled: state is AuthLoading,
+          onTap: () =>
+              context.read<AuthBloc>().add(const AuthEvent.signInWithApple()),
+        );
+      },
     );
   }
 

@@ -7,3 +7,7 @@ if (getApps().length === 0) {
 export {generateDailyCase} from "./generateDailyCase";
 export {seedDetectiveCase} from "./seedCase";
 export {updateDetectiveLeaderboard} from "./updateDetectiveLeaderboard";
+export {sendStreakAtRiskReminders} from "./notifications/sendStreakAtRiskReminders";
+export {sendStreakMilestoneNotification} from "./notifications/sendStreakMilestoneNotification";
+export {sendReengagementNotification} from "./notifications/sendReengagementNotification";
+export {notifyNewDetectiveCase} from "./notifications/sendNewDetectiveCaseNotification";

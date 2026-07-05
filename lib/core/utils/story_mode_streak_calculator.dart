@@ -23,10 +23,11 @@ class StoryModeStreakCalculator {
     required String completedCaseDateId,
     required int score,
   }) {
-    final todayDateId = DateHelper.todayDateId();
+    // Story case IDs use UTC date keys (see StoryCaseDataSource.getTodayCase).
+    final todayCaseDateId = DateHelper.todayUtcDateId();
     final updatedDetectivePoints = currentState.detectivePoints + score;
 
-    if (completedCaseDateId != todayDateId) {
+    if (completedCaseDateId != todayCaseDateId) {
       return StoryModeStreakUpdateResult(
         detectivePoints: updatedDetectivePoints,
         storyModeStreak: currentState.storyModeStreak,
@@ -35,16 +36,16 @@ class StoryModeStreakCalculator {
       );
     }
 
-    if (currentState.lastStoryModeStreakDate == todayDateId) {
+    if (currentState.lastStoryModeStreakDate == todayCaseDateId) {
       return StoryModeStreakUpdateResult(
         detectivePoints: updatedDetectivePoints,
         storyModeStreak: currentState.storyModeStreak,
-        lastStoryModeStreakDate: todayDateId,
+        lastStoryModeStreakDate: todayCaseDateId,
         storyModeLongestStreak: currentState.storyModeLongestStreak,
       );
     }
 
-    final yesterdayDateId = DateHelper.previousDateId(todayDateId);
+    final yesterdayDateId = DateHelper.previousDateId(todayCaseDateId);
     final updatedStreak = currentState.lastStoryModeStreakDate == yesterdayDateId
         ? currentState.storyModeStreak + 1
         : 1;
@@ -56,7 +57,7 @@ class StoryModeStreakCalculator {
     return StoryModeStreakUpdateResult(
       detectivePoints: updatedDetectivePoints,
       storyModeStreak: updatedStreak,
-      lastStoryModeStreakDate: todayDateId,
+      lastStoryModeStreakDate: todayCaseDateId,
       storyModeLongestStreak: updatedLongestStreak,
     );
   }

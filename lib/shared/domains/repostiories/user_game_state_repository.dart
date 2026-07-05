@@ -7,6 +7,8 @@ import 'package:wordshool/shared/domains/usercases/mark_game_usecase/utils/mark_
 abstract class UserGameStateRepository {
   Future<DataState<UserGameStateEntity>> createUserGameState();
 
+  Future<DataState<UserGameStateEntity>> ensureUserGameState(String userId);
+
   Future<DataState<bool>> addGuessedWord(
     String gameId,
     String guessedWord,

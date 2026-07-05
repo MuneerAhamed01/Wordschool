@@ -4,6 +4,7 @@ part of 'auth_bloc.dart';
 
 @freezed
 class AuthEvent with _$AuthEvent {
+  const factory AuthEvent.signInWithApple() = SignInWithApple;
   const factory AuthEvent.signInWithGoogle() = SignInWithGoogle;
   const factory AuthEvent.signInAnonymously() = SignInAnonymously;
 }

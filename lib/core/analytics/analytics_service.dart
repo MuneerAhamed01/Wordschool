@@ -79,6 +79,24 @@ abstract class AnalyticsService {
   Future<void> logStoryShareTapped();
 
   Future<void> logStoryHintUsed({required String source});
+
+  Future<void> logNotificationPermissionRequested();
+
+  Future<void> logNotificationPermissionGranted();
+
+  Future<void> logNotificationPermissionDenied();
+
+  Future<void> logNotificationOpened({
+    required String type,
+    required String source,
+  });
+
+  Future<void> logNotificationSettingsChanged({
+    required bool enabled,
+    required bool dailyPuzzle,
+    required bool detectiveCase,
+    required bool streakReminder,
+  });
 }
 
 class FirebaseAnalyticsService implements AnalyticsService {
@@ -268,6 +286,51 @@ class FirebaseAnalyticsService implements AnalyticsService {
         name: AnalyticsEvents.storyHintUsed,
         parameters: {AnalyticsParams.hintSource: source},
       );
+
+  @override
+  Future<void> logNotificationPermissionRequested() => _analytics.logEvent(
+        name: AnalyticsEvents.notificationPermissionRequested,
+      );
+
+  @override
+  Future<void> logNotificationPermissionGranted() => _analytics.logEvent(
+        name: AnalyticsEvents.notificationPermissionGranted,
+      );
+
+  @override
+  Future<void> logNotificationPermissionDenied() => _analytics.logEvent(
+        name: AnalyticsEvents.notificationPermissionDenied,
+      );
+
+  @override
+  Future<void> logNotificationOpened({
+    required String type,
+    required String source,
+  }) =>
+      _analytics.logEvent(
+        name: AnalyticsEvents.notificationOpened,
+        parameters: {
+          AnalyticsParams.notificationType: type,
+          AnalyticsParams.notificationSource: source,
+        },
+      );
+
+  @override
+  Future<void> logNotificationSettingsChanged({
+    required bool enabled,
+    required bool dailyPuzzle,
+    required bool detectiveCase,
+    required bool streakReminder,
+  }) =>
+      _analytics.logEvent(
+        name: AnalyticsEvents.notificationSettingsChanged,
+        parameters: {
+          AnalyticsParams.notificationsEnabled: enabled ? 1 : 0,
+          AnalyticsParams.dailyPuzzleReminder: dailyPuzzle ? 1 : 0,
+          AnalyticsParams.detectiveCaseReminder: detectiveCase ? 1 : 0,
+          AnalyticsParams.streakReminder: streakReminder ? 1 : 0,
+        },
+      );
 }
 
 /// No-op implementation for tests.
@@ -365,4 +428,27 @@ class NoOpAnalyticsService implements AnalyticsService {
 
   @override
   Future<void> logStoryHintUsed({required String source}) async {}
+
+  @override
+  Future<void> logNotificationPermissionRequested() async {}
+
+  @override
+  Future<void> logNotificationPermissionGranted() async {}
+
+  @override
+  Future<void> logNotificationPermissionDenied() async {}
+
+  @override
+  Future<void> logNotificationOpened({
+    required String type,
+    required String source,
+  }) async {}
+
+  @override
+  Future<void> logNotificationSettingsChanged({
+    required bool enabled,
+    required bool dailyPuzzle,
+    required bool detectiveCase,
+    required bool streakReminder,
+  }) async {}
 }

@@ -480,8 +480,8 @@ abstract class ProgressUpdated implements StoryCaseEvent {
 
 /// @nodoc
 abstract class _$$ResetForLogoutImplCopyWith<$Res> {
-  factory _$$ResetForLogoutImplCopyWith(
-          _$ResetForLogoutImpl value, $Res Function(_$ResetForLogoutImpl) then) =
+  factory _$$ResetForLogoutImplCopyWith(_$ResetForLogoutImpl value,
+          $Res Function(_$ResetForLogoutImpl) then) =
       __$$ResetForLogoutImplCopyWithImpl<$Res>;
 }
 
