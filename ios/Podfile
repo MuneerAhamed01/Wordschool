@@ -5,9 +5,12 @@ platform :ios, '15.0'
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
-  'Debug' => :debug,
-  'Profile' => :release,
-  'Release' => :release,
+  'Debug-prod' => :debug,
+  'Profile-prod' => :release,
+  'Release-prod' => :release,
+  'Debug-dev' => :debug,
+  'Profile-dev' => :release,
+  'Release-dev' => :release,
 }
 
 def flutter_root
@@ -38,13 +41,22 @@ target 'Runner' do
     :tag => '12.4.0'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-  target 'RunnerTests' do
-    inherit! :search_paths
-  end
+  # RunnerTests omitted — flavor build configs caused CocoaPods SWIFT_VERSION conflicts.
+  # Re-enable when unit tests are needed with matching *-prod / *-dev test configurations.
+  # target 'RunnerTests' do
+  #   inherit! :search_paths
+  # end
 end
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+  end
+  installer.aggregate_targets.each do |aggregate_target|
+    aggregate_target.user_project.native_targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['SWIFT_VERSION'] = '5.0'
+      end
+    end
   end
 end

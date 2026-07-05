@@ -1,9 +1,9 @@
 import {initializeApp, getApps} from "firebase-admin/app";
-import {getFirestore} from "firebase-admin/firestore";
 import * as fs from "fs";
 import * as path from "path";
 import {validateCase} from "../validation/validateCase";
 import {writeDetectiveCase} from "../caseWriter";
+import {configureEmulatorIfNeeded, dbFromEnv} from "../firestore";
 import {DetectiveCasePayload} from "../types/detectiveCase";
 import {isValidDateId, todayUtcDateId} from "../utils/dateId";
 
@@ -53,21 +53,18 @@ async function main(): Promise<void> {
     });
   }
 
-  if (process.env.FIRESTORE_EMULATOR_HOST) {
-    getFirestore().settings({
-      host: process.env.FIRESTORE_EMULATOR_HOST,
-      ssl: false,
-    });
-  }
+  const db = dbFromEnv();
+  configureEmulatorIfNeeded(db);
 
   const payload = loadExampleCase(dateId);
-  const status = await writeDetectiveCase(dateId, payload, {force});
+  const status = await writeDetectiveCase(dateId, payload, {force, db});
 
   console.log(JSON.stringify({
     event: "seed_case_complete",
     dateId,
     status,
     force,
+    databaseId: process.env.FIRESTORE_DATABASE_ID ?? "(default)",
   }));
 }
 

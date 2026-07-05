@@ -1,5 +1,7 @@
+import {Firestore} from "firebase-admin/firestore";
 import {caseExists, writeDetectiveCase} from "./caseWriter";
 import {generateCaseWithCursor} from "./cursor/client";
+import {prodDb} from "./firestore";
 import {getPlannedCase} from "./localCaseCatalog";
 import {notifyNewDetectiveCase} from "./notifications/sendNewDetectiveCaseNotification";
 import {todayUtcDateId} from "./utils/dateId";
@@ -7,6 +9,10 @@ import {todayUtcDateId} from "./utils/dateId";
 export interface GenerateCaseForDateOptions {
   apiKey?: string;
   force?: boolean;
+  /** Target database; defaults to production `(default)`. */
+  db?: Firestore;
+  /** Send FCM topic notification when a case is created. Default true. */
+  notify?: boolean;
 }
 
 export interface GenerateCaseForDateResult {
@@ -18,7 +24,10 @@ export async function generateCaseForDate(
   dateId: string,
   options: GenerateCaseForDateOptions = {},
 ): Promise<GenerateCaseForDateResult> {
-  if (!options.force && await caseExists(dateId)) {
+  const db = options.db ?? prodDb();
+  const shouldNotify = options.notify !== false;
+
+  if (!options.force && await caseExists(dateId, db)) {
     console.log(JSON.stringify({
       event: "generate_case_skipped",
       dateId,
@@ -31,6 +40,7 @@ export async function generateCaseForDate(
   if (plannedCase) {
     const status = await writeDetectiveCase(dateId, plannedCase, {
       force: options.force,
+      db,
     });
 
     console.log(JSON.stringify({
@@ -40,7 +50,7 @@ export async function generateCaseForDate(
       source: "planned",
     }));
 
-    if (status === "created") {
+    if (status === "created" && shouldNotify) {
       await notifyNewDetectiveCase(dateId, plannedCase.title);
     }
 
@@ -57,6 +67,7 @@ export async function generateCaseForDate(
   const payload = await generateCaseWithCursor({apiKey, dateId});
   const status = await writeDetectiveCase(dateId, payload, {
     force: options.force,
+    db,
   });
 
   console.log(JSON.stringify({
@@ -66,7 +77,7 @@ export async function generateCaseForDate(
     source: "cursor",
   }));
 
-  if (status === "created") {
+  if (status === "created" && shouldNotify) {
     await notifyNewDetectiveCase(dateId, payload.title);
   }
 

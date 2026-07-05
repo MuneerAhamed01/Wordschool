@@ -1,19 +1,23 @@
-import {getFirestore, FieldValue} from "firebase-admin/firestore";
+import {FieldValue, Firestore} from "firebase-admin/firestore";
+import {prodDb} from "./firestore";
 import {DetectiveCasePayload} from "./types/detectiveCase";
 
 const COLLECTION = "detectiveCases";
 
-export async function caseExists(dateId: string): Promise<boolean> {
-  const doc = await getFirestore().collection(COLLECTION).doc(dateId).get();
+export async function caseExists(
+  dateId: string,
+  db: Firestore = prodDb(),
+): Promise<boolean> {
+  const doc = await db.collection(COLLECTION).doc(dateId).get();
   return doc.exists;
 }
 
 export async function writeDetectiveCase(
   dateId: string,
   payload: DetectiveCasePayload,
-  options?: {force?: boolean},
+  options?: {force?: boolean; db?: Firestore},
 ): Promise<"created" | "skipped"> {
-  const db = getFirestore();
+  const db = options?.db ?? prodDb();
   const docRef = db.collection(COLLECTION).doc(dateId);
 
   if (!options?.force) {

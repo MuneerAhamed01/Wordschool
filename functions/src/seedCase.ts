@@ -4,6 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import {generateCaseForDate} from "./generateDailyCaseCore";
 import {cursorApiKey, seedSecret} from "./config/secrets";
+import {DEV_DATABASE_ID, dbForDatabaseId} from "./firestore";
 import {validateCase} from "./validation/validateCase";
 import {writeDetectiveCase} from "./caseWriter";
 import {DetectiveCasePayload} from "./types/detectiveCase";
@@ -18,6 +19,8 @@ interface SeedDetectiveCaseRequest {
   force?: boolean;
   useExample?: boolean;
   secret?: string;
+  /** Target Firestore database. Only `dev` is allowed besides default prod. */
+  databaseId?: string;
 }
 
 function loadExampleCase(dateId: string): DetectiveCasePayload {
@@ -58,19 +61,42 @@ export const seedDetectiveCase = onCall(
       throw new HttpsError("invalid-argument", "dateId must be YYYY-MM-DD");
     }
 
+    if (data.databaseId && data.databaseId !== DEV_DATABASE_ID) {
+      throw new HttpsError(
+        "invalid-argument",
+        `databaseId must be '${DEV_DATABASE_ID}' or omitted`,
+      );
+    }
+
+    const useDevDatabase = data.databaseId === DEV_DATABASE_ID;
+    const db = dbForDatabaseId(data.databaseId);
+
     if (data.useExample) {
       const payload = loadExampleCase(dateId);
       const status = await writeDetectiveCase(dateId, payload, {
         force: data.force === true,
+        db,
       });
-      return {dateId, status, source: "example"};
+      return {
+        dateId,
+        status,
+        source: "example",
+        databaseId: useDevDatabase ? DEV_DATABASE_ID : "(default)",
+      };
     }
 
     const result = await generateCaseForDate(dateId, {
       apiKey: cursorApiKey.value(),
       force: data.force === true,
+      db,
+      notify: !useDevDatabase,
     });
 
-    return {dateId: result.dateId, status: result.status, source: "cursor"};
+    return {
+      dateId: result.dateId,
+      status: result.status,
+      source: "cursor",
+      databaseId: useDevDatabase ? DEV_DATABASE_ID : "(default)",
+    };
   },
 );

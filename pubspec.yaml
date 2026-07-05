@@ -81,6 +81,8 @@ flutter:
   assets:
     - assets/svgs/
     - .env
+    - .env.dev
+    - .env.prod
     - assets/words/words.txt
     - assets/words/answers.txt
     - assets/legal/

@@ -43,14 +43,24 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.wordschool.mat"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+    }
+
+    flavorDimensions += "environment"
+    productFlavors {
+        create("prod") {
+            dimension = "environment"
+            applicationId = "com.wordschool.mat"
+            resValue("string", "app_name", "WordSchool")
+        }
+        create("dev") {
+            dimension = "environment"
+            applicationId = "com.wordschool.mat.dev"
+            resValue("string", "app_name", "WordSchool Dev")
+        }
     }
 
     buildTypes {

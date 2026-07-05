@@ -5,6 +5,8 @@ import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordshool/core/analytics/analytics_service.dart';
+import 'package:wordshool/core/config/app_config.dart';
+import 'package:wordshool/core/firebase/firestore_provider.dart';
 import 'package:wordshool/core/utils/valid_words.dart';
 import 'package:wordshool/features/archive/domain/usecases/load_user_game_history_usecase.dart';
 import 'package:wordshool/features/auth/data/data_source/auth_service.dart';
@@ -67,13 +69,18 @@ import 'package:wordshool/features/notifications/notification_service.dart';
 
 final GetIt getIt = GetIt.instance;
 
-Future<void> initializeDependency() async {
+Future<void> initializeDependency({required AppConfig appConfig}) async {
   final sharedPref = await SharedPreferences.getInstance();
   getIt.registerSingleton<SharedPreferences>(sharedPref);
 
+  getIt.registerSingleton<AppConfig>(appConfig);
+
+  final firestore = FirestoreProvider.instanceFor(appConfig);
+  getIt.registerSingleton<FirebaseFirestore>(firestore);
+
   await _initSessions();
   _initializeAnalytics();
-  await _initializeAuthDependencies();
+  await _initializeAuthDependencies(appConfig);
   await _initializeValidWords();
   await _initializeRemoteConfig();
   getIt.registerSingleton<MonetizationConfig>(MonetizationConfig.fromEnv());
@@ -94,7 +101,7 @@ Future<void> _initializeNotifications() async {
   );
 
   getIt.registerSingleton<NotificationTokenService>(
-    NotificationTokenService(firestore: FirebaseFirestore.instance),
+    NotificationTokenService(firestore: getIt<FirebaseFirestore>()),
   );
 
   getIt.registerSingleton<NotificationService>(
@@ -152,7 +159,7 @@ Future<void> _initializeStoryModeExtras() async {
 void _initializeLeaderboard() {
   getIt.registerSingleton<DetectiveLeaderboardDataSource>(
     DetectiveLeaderboardDataSourceImpl(
-      firestore: FirebaseFirestore.instance,
+      firestore: getIt<FirebaseFirestore>(),
     ),
   );
 
@@ -177,11 +184,11 @@ Future<void> _initializeRemoteConfig() async {
 
 void _initializeStoryMode() {
   getIt.registerSingleton<StoryCaseDataSource>(
-    StoryCaseDataSourceImpl(firestore: FirebaseFirestore.instance),
+    StoryCaseDataSourceImpl(firestore: getIt<FirebaseFirestore>()),
   );
 
   getIt.registerSingleton<StoryProgressDataSource>(
-    StoryProgressDataSourceImpl(firestore: FirebaseFirestore.instance),
+    StoryProgressDataSourceImpl(firestore: getIt<FirebaseFirestore>()),
   );
 
   getIt.registerSingleton<StoryCaseRepository>(
@@ -231,8 +238,8 @@ void _initializeAnalytics() {
   );
 }
 
-Future<void> _initializeAuthDependencies() async {
-  await AuthDataSourceImpl.initializeGoogleSignIn();
+Future<void> _initializeAuthDependencies(AppConfig appConfig) async {
+  await AuthDataSourceImpl.initializeGoogleSignIn(appConfig);
 
   getIt.registerSingleton<AuthDataSource>(
     AuthDataSourceImpl(
@@ -264,7 +271,7 @@ Future<void> _initializeValidWords() async {
 
 void _initializeGame() {
   getIt.registerSingleton<GameDataSource>(GameDataSourceImpl(
-    firestore: FirebaseFirestore.instance,
+    firestore: getIt<FirebaseFirestore>(),
     validWords: getIt<ValidWords>(),
   ));
 
@@ -273,7 +280,7 @@ void _initializeGame() {
   ));
 
   getIt.registerSingleton<UserGameStateDataSource>(
-      UserGameStateDataSourceImpl(firestore: FirebaseFirestore.instance));
+      UserGameStateDataSourceImpl(firestore: getIt<FirebaseFirestore>()));
 
   getIt.registerSingleton<UserGameStateRepository>(UserGameStateRepositoryImpl(
     dataSource: getIt<UserGameStateDataSource>(),

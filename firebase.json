@@ -1,7 +1,14 @@
 {
-  "firestore": {
-    "rules": "firestore.rules"
-  },
+  "firestore": [
+    {
+      "database": "(default)",
+      "rules": "firestore.rules"
+    },
+    {
+      "database": "development",
+      "rules": "firestore.rules"
+    }
+  ],
   "functions": [
     {
       "source": "functions",
@@ -20,15 +27,9 @@
     }
   ],
   "emulators": {
-    "functions": {
-      "port": 5001
-    },
-    "firestore": {
-      "port": 8080
-    },
-    "ui": {
-      "enabled": true
-    },
+    "functions": { "port": 5001 },
+    "firestore": { "port": 8080 },
+    "ui": { "enabled": true },
     "singleProjectMode": true
   },
   "flutter": {
@@ -37,7 +38,14 @@
         "default": {
           "projectId": "wordschool-dev",
           "appId": "1:87702505475:android:88daf17b6d2895a3d02636",
-          "fileOutput": "android/app/google-services.json"
+          "fileOutput": "android/app/src/prod/google-services.json"
+        },
+        "buildConfigurations": {
+          "dev": {
+            "projectId": "wordschool-dev",
+            "appId": "1:87702505475:android:b1908ac159cb745dd02636",
+            "fileOutput": "android/app/src/dev/google-services.json"
+          }
         }
       },
       "ios": {
@@ -45,15 +53,30 @@
           "projectId": "wordschool-dev",
           "appId": "1:87702505475:ios:9ffac947fb5fa204d02636",
           "uploadDebugSymbols": false,
-          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+          "fileOutput": "ios/flavors/prod/GoogleService-Info.plist"
+        },
+        "buildConfigurations": {
+          "dev": {
+            "projectId": "wordschool-dev",
+            "appId": "1:87702505475:ios:04ce67948906fa66d02636",
+            "uploadDebugSymbols": false,
+            "fileOutput": "ios/flavors/dev/GoogleService-Info.plist"
+          }
         }
       },
       "dart": {
-        "lib/firebase_options.dart": {
+        "lib/firebase_options_prod.dart": {
           "projectId": "wordschool-dev",
           "configurations": {
             "android": "1:87702505475:android:88daf17b6d2895a3d02636",
             "ios": "1:87702505475:ios:9ffac947fb5fa204d02636"
+          }
+        },
+        "lib/firebase_options_dev.dart": {
+          "projectId": "wordschool-dev",
+          "configurations": {
+            "android": "1:87702505475:android:b1908ac159cb745dd02636",
+            "ios": "1:87702505475:ios:04ce67948906fa66d02636"
           }
         }
       }

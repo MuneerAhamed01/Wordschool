@@ -1,6 +1,6 @@
 import {initializeApp, getApps} from "firebase-admin/app";
-import {getFirestore} from "firebase-admin/firestore";
 import {writeDetectiveCase} from "../caseWriter";
+import {configureEmulatorIfNeeded, dbFromEnv} from "../firestore";
 import {listPlannedCaseDateIds, getPlannedCase} from "../localCaseCatalog";
 
 function parseArgs(argv: string[]): {force: boolean; dateId?: string} {
@@ -29,12 +29,8 @@ async function main(): Promise<void> {
     });
   }
 
-  if (process.env.FIRESTORE_EMULATOR_HOST) {
-    getFirestore().settings({
-      host: process.env.FIRESTORE_EMULATOR_HOST,
-      ssl: false,
-    });
-  }
+  const db = dbFromEnv();
+  configureEmulatorIfNeeded(db);
 
   const dateIds = dateId ? [dateId] : listPlannedCaseDateIds();
   const results: Array<{dateId: string; status: string}> = [];
@@ -45,7 +41,7 @@ async function main(): Promise<void> {
       throw new Error(`No planned case found for ${id}`);
     }
 
-    const status = await writeDetectiveCase(id, payload, {force});
+    const status = await writeDetectiveCase(id, payload, {force, db});
     results.push({dateId: id, status});
     console.log(JSON.stringify({
       event: "seed_planned_case",
@@ -59,6 +55,7 @@ async function main(): Promise<void> {
     event: "seed_planned_cases_complete",
     count: results.length,
     force,
+    databaseId: process.env.FIRESTORE_DATABASE_ID ?? "(default)",
     results,
   }));
 }

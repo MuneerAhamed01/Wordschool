@@ -1,0 +1,153 @@
+{
+  "project_info": {
+    "project_number": "87702505475",
+    "project_id": "wordschool-dev",
+    "storage_bucket": "wordschool-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87702505475:android:88daf17b6d2895a3d02636",
+        "android_client_info": {
+          "package_name": "com.wordschool.mat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "87702505475-d76u6b420qtver76mc2u1tete9730oea.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wordschool.mat",
+            "certificate_hash": "c397905adc3345ae21f6c21f5eb41640415ee4b0"
+          }
+        },
+        {
+          "client_id": "87702505475-ksivqp8p9639iq5pketffhp358g06415.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wordschool.mat",
+            "certificate_hash": "ac980953952905365eb0895eed5534855deb2407"
+          }
+        },
+        {
+          "client_id": "87702505475-l1usqotgavs3tntk5bpa6od4q6jalh1l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wordschool.mat",
+            "certificate_hash": "b4c6811746797e7fecf00d7cd795fa7df1bcafb0"
+          }
+        },
+        {
+          "client_id": "87702505475-q5e1dnbkt8hd1kjl8et9gj0li4kqdolp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wordschool.mat",
+            "certificate_hash": "ceb000183b4785b0ea7650c35952de0d6eb99c9f"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAbP47CHhfIwuFe6v3D7c1GQbljC9qTOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "87702505475-0jobqk13evdmu8qiinmdsgfrq33cscfj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "87702505475-id78b5gh16rqa8eirni1jveo6orrkd81.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wordschool.mat"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87702505475:android:b1908ac159cb745dd02636",
+        "android_client_info": {
+          "package_name": "com.wordschool.mat.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAbP47CHhfIwuFe6v3D7c1GQbljC9qTOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "87702505475-0jobqk13evdmu8qiinmdsgfrq33cscfj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "87702505475-id78b5gh16rqa8eirni1jveo6orrkd81.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wordschool.mat"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87702505475:android:71ecbdaa65a9ae49d02636",
+        "android_client_info": {
+          "package_name": "com.wordschoolgame.mat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "87702505475-hd86el48ffi4o4inms6p0ne61mh8s7b2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wordschoolgame.mat",
+            "certificate_hash": "ceb000183b4785b0ea7650c35952de0d6eb99c9f"
+          }
+        },
+        {
+          "client_id": "87702505475-mabsh2lh05m7tu84ap46eunfcmcurs7r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wordschoolgame.mat",
+            "certificate_hash": "c397905adc3345ae21f6c21f5eb41640415ee4b0"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAbP47CHhfIwuFe6v3D7c1GQbljC9qTOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "87702505475-0jobqk13evdmu8qiinmdsgfrq33cscfj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "87702505475-id78b5gh16rqa8eirni1jveo6orrkd81.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wordschool.mat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

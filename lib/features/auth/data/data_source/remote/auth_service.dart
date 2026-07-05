@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:wordshool/config/google_auth_config.dart';
+import 'package:wordshool/core/config/app_config.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/features/auth/data/data_source/auth_service.dart';
 import 'package:wordshool/shared/data/models/user.dart';
@@ -22,12 +23,12 @@ class AuthDataSourceImpl extends AuthDataSource {
   })  : _firebaseAuth = firebaseAuth,
         _googleSignIn = googleSignIn;
 
-  static Future<void> initializeGoogleSignIn() async {
+  static Future<void> initializeGoogleSignIn(AppConfig config) async {
     await GoogleSignIn.instance.initialize(
       clientId: defaultTargetPlatform == TargetPlatform.iOS
-          ? GoogleAuthConfig.iosClientId
+          ? GoogleAuthConfig.iosClientId(config)
           : null,
-      serverClientId: GoogleAuthConfig.webClientId,
+      serverClientId: GoogleAuthConfig.webClientId(config),
     );
   }
 

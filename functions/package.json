@@ -12,7 +12,8 @@
     "logs": "firebase functions:log",
     "test": "jest",
     "seed": "npm run build && node lib/scripts/seed.js",
-    "seed:planned": "npm run build && node lib/scripts/seedPlannedCases.js"
+    "seed:planned": "npm run build && node lib/scripts/seedPlannedCases.js",
+    "copy:firestore": "npm run build && node lib/scripts/copyFirestoreDatabase.js"
   },
   "engines": {
     "node": "20"
