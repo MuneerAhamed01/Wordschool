@@ -2,7 +2,6 @@ import 'package:wordshool/core/monetization/story_entitlements.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/core/resorces/usecase.dart';
 import 'package:wordshool/shared/data/data_source/user_game_state_service.dart';
-import 'package:wordshool/shared/domains/entities/user_game_state/user_game_state.dart';
 import 'package:wordshool/shared/domains/usercases/get_current_user_usecase.dart';
 
 enum HintConsumptionSource { hintPack, detectivePro, rewardedAd }

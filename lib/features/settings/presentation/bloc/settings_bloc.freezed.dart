@@ -19,32 +19,40 @@ mixin _$SettingsEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() logoutRequested,
+    required TResult Function(String firestoreDatabaseId)
+        deleteAccountRequested,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? logoutRequested,
+    TResult? Function(String firestoreDatabaseId)? deleteAccountRequested,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? logoutRequested,
+    TResult Function(String firestoreDatabaseId)? deleteAccountRequested,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(LogoutRequested value) logoutRequested,
+    required TResult Function(DeleteAccountRequested value)
+        deleteAccountRequested,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LogoutRequested value)? logoutRequested,
+    TResult? Function(DeleteAccountRequested value)? deleteAccountRequested,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LogoutRequested value)? logoutRequested,
+    TResult Function(DeleteAccountRequested value)? deleteAccountRequested,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -113,6 +121,8 @@ class _$LogoutRequestedImpl implements LogoutRequested {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() logoutRequested,
+    required TResult Function(String firestoreDatabaseId)
+        deleteAccountRequested,
   }) {
     return logoutRequested();
   }
@@ -121,6 +131,7 @@ class _$LogoutRequestedImpl implements LogoutRequested {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? logoutRequested,
+    TResult? Function(String firestoreDatabaseId)? deleteAccountRequested,
   }) {
     return logoutRequested?.call();
   }
@@ -129,6 +140,7 @@ class _$LogoutRequestedImpl implements LogoutRequested {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? logoutRequested,
+    TResult Function(String firestoreDatabaseId)? deleteAccountRequested,
     required TResult orElse(),
   }) {
     if (logoutRequested != null) {
@@ -141,6 +153,8 @@ class _$LogoutRequestedImpl implements LogoutRequested {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(LogoutRequested value) logoutRequested,
+    required TResult Function(DeleteAccountRequested value)
+        deleteAccountRequested,
   }) {
     return logoutRequested(this);
   }
@@ -149,6 +163,7 @@ class _$LogoutRequestedImpl implements LogoutRequested {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LogoutRequested value)? logoutRequested,
+    TResult? Function(DeleteAccountRequested value)? deleteAccountRequested,
   }) {
     return logoutRequested?.call(this);
   }
@@ -157,6 +172,7 @@ class _$LogoutRequestedImpl implements LogoutRequested {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LogoutRequested value)? logoutRequested,
+    TResult Function(DeleteAccountRequested value)? deleteAccountRequested,
     required TResult orElse(),
   }) {
     if (logoutRequested != null) {
@@ -168,6 +184,154 @@ class _$LogoutRequestedImpl implements LogoutRequested {
 
 abstract class LogoutRequested implements SettingsEvent {
   const factory LogoutRequested() = _$LogoutRequestedImpl;
+}
+
+/// @nodoc
+abstract class _$$DeleteAccountRequestedImplCopyWith<$Res> {
+  factory _$$DeleteAccountRequestedImplCopyWith(
+          _$DeleteAccountRequestedImpl value,
+          $Res Function(_$DeleteAccountRequestedImpl) then) =
+      __$$DeleteAccountRequestedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String firestoreDatabaseId});
+}
+
+/// @nodoc
+class __$$DeleteAccountRequestedImplCopyWithImpl<$Res>
+    extends _$SettingsEventCopyWithImpl<$Res, _$DeleteAccountRequestedImpl>
+    implements _$$DeleteAccountRequestedImplCopyWith<$Res> {
+  __$$DeleteAccountRequestedImplCopyWithImpl(
+      _$DeleteAccountRequestedImpl _value,
+      $Res Function(_$DeleteAccountRequestedImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of SettingsEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? firestoreDatabaseId = null,
+  }) {
+    return _then(_$DeleteAccountRequestedImpl(
+      firestoreDatabaseId: null == firestoreDatabaseId
+          ? _value.firestoreDatabaseId
+          : firestoreDatabaseId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$DeleteAccountRequestedImpl implements DeleteAccountRequested {
+  const _$DeleteAccountRequestedImpl({required this.firestoreDatabaseId});
+
+  @override
+  final String firestoreDatabaseId;
+
+  @override
+  String toString() {
+    return 'SettingsEvent.deleteAccountRequested(firestoreDatabaseId: $firestoreDatabaseId)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DeleteAccountRequestedImpl &&
+            (identical(other.firestoreDatabaseId, firestoreDatabaseId) ||
+                other.firestoreDatabaseId == firestoreDatabaseId));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, firestoreDatabaseId);
+
+  /// Create a copy of SettingsEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DeleteAccountRequestedImplCopyWith<_$DeleteAccountRequestedImpl>
+      get copyWith => __$$DeleteAccountRequestedImplCopyWithImpl<
+          _$DeleteAccountRequestedImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() logoutRequested,
+    required TResult Function(String firestoreDatabaseId)
+        deleteAccountRequested,
+  }) {
+    return deleteAccountRequested(firestoreDatabaseId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? logoutRequested,
+    TResult? Function(String firestoreDatabaseId)? deleteAccountRequested,
+  }) {
+    return deleteAccountRequested?.call(firestoreDatabaseId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? logoutRequested,
+    TResult Function(String firestoreDatabaseId)? deleteAccountRequested,
+    required TResult orElse(),
+  }) {
+    if (deleteAccountRequested != null) {
+      return deleteAccountRequested(firestoreDatabaseId);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(LogoutRequested value) logoutRequested,
+    required TResult Function(DeleteAccountRequested value)
+        deleteAccountRequested,
+  }) {
+    return deleteAccountRequested(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(LogoutRequested value)? logoutRequested,
+    TResult? Function(DeleteAccountRequested value)? deleteAccountRequested,
+  }) {
+    return deleteAccountRequested?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(LogoutRequested value)? logoutRequested,
+    TResult Function(DeleteAccountRequested value)? deleteAccountRequested,
+    required TResult orElse(),
+  }) {
+    if (deleteAccountRequested != null) {
+      return deleteAccountRequested(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class DeleteAccountRequested implements SettingsEvent {
+  const factory DeleteAccountRequested(
+          {required final String firestoreDatabaseId}) =
+      _$DeleteAccountRequestedImpl;
+
+  String get firestoreDatabaseId;
+
+  /// Create a copy of SettingsEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$DeleteAccountRequestedImplCopyWith<_$DeleteAccountRequestedImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc

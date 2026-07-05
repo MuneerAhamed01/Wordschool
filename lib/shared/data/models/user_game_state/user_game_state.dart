@@ -16,6 +16,7 @@ class UserGameStateModel extends UserGameStateEntity {
     super.hintPackBalance = 0,
     super.hasRemoveAds = false,
     super.isDetectivePro = false,
+    super.deletedAt,
     required super.createdDate,
     required super.updatedDate,
   });
@@ -34,6 +35,7 @@ class UserGameStateModel extends UserGameStateEntity {
     int? hintPackBalance,
     bool? hasRemoveAds,
     bool? isDetectivePro,
+    DateTime? deletedAt,
     DateTime? createdDate,
     DateTime? updatedDate,
   }) {
@@ -53,6 +55,7 @@ class UserGameStateModel extends UserGameStateEntity {
       hintPackBalance: hintPackBalance ?? this.hintPackBalance,
       hasRemoveAds: hasRemoveAds ?? this.hasRemoveAds,
       isDetectivePro: isDetectivePro ?? this.isDetectivePro,
+      deletedAt: deletedAt ?? this.deletedAt,
       createdDate: createdDate ?? this.createdDate,
       updatedDate: updatedDate ?? this.updatedDate,
     );
@@ -73,6 +76,9 @@ class UserGameStateModel extends UserGameStateEntity {
       hintPackBalance: (json['hintPackBalance'] as int?) ?? 0,
       hasRemoveAds: (json['hasRemoveAds'] as bool?) ?? false,
       isDetectivePro: (json['isDetectivePro'] as bool?) ?? false,
+      deletedAt: json['deletedAt'] == null
+          ? null
+          : FirebaseDTConverter.fromTimestamp(json['deletedAt']),
       createdDate: FirebaseDTConverter.fromTimestamp(json['createdDate']),
       updatedDate: FirebaseDTConverter.fromTimestamp(json['updatedDate']),
     );
@@ -94,6 +100,8 @@ class UserGameStateModel extends UserGameStateEntity {
       'hintPackBalance': hintPackBalance,
       'hasRemoveAds': hasRemoveAds,
       'isDetectivePro': isDetectivePro,
+      if (deletedAt != null)
+        'deletedAt': FirebaseDTConverter.toTimestamp(deletedAt!),
       'createdDate': FirebaseDTConverter.toTimestamp(createdDate),
       'updatedDate': FirebaseDTConverter.toTimestamp(updatedDate),
     };

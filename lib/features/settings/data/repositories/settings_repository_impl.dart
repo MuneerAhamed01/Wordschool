@@ -21,9 +21,33 @@ class SettingsRepositoryImpl implements SettingsRepository {
 
   @override
   Future<DataState<bool>> logout() async {
-    final signOutResult = await _dataSource.signOut();
-    if (signOutResult is DataError) {
-      return signOutResult;
+    return _clearLocalSession(clearRemoteAuth: true);
+  }
+
+  @override
+  Future<DataState<bool>> deleteAccount({
+    required String firestoreDatabaseId,
+  }) async {
+    final deleteResult = await _dataSource.softDeleteAccount(
+      firestoreDatabaseId: firestoreDatabaseId,
+    );
+    if (deleteResult is DataError) {
+      return deleteResult;
+    }
+
+    return _clearLocalSession(clearRemoteAuth: false);
+  }
+
+  Future<DataState<bool>> _clearLocalSession({
+    required bool clearRemoteAuth,
+  }) async {
+    if (clearRemoteAuth) {
+      final signOutResult = await _dataSource.signOut();
+      if (signOutResult is DataError) {
+        return signOutResult;
+      }
+    } else {
+      await _dataSource.signOut();
     }
 
     final clearResult = await _sessionRepository.clearUser();

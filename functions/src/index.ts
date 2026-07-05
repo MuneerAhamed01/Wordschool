@@ -11,3 +11,4 @@ export {sendStreakAtRiskReminders} from "./notifications/sendStreakAtRiskReminde
 export {sendStreakMilestoneNotification} from "./notifications/sendStreakMilestoneNotification";
 export {sendReengagementNotification} from "./notifications/sendReengagementNotification";
 export {notifyNewDetectiveCase} from "./notifications/sendNewDetectiveCaseNotification";
+export {softDeleteUserAccount} from "./softDeleteUserAccount";

@@ -1,8 +1,13 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core_platform_interface/test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordshool/config/themes/app_theme.dart';
 import 'package:wordshool/core/analytics/analytics_service.dart';
 import 'package:wordshool/core/config/monetization_config.dart';
@@ -13,6 +18,14 @@ import 'package:wordshool/features/dashboard/presentation/bloc/dashboard_bloc.da
 import 'package:wordshool/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:wordshool/features/leaderboard/domain/entities/detective_leaderboard_entry.dart';
 import 'package:wordshool/features/leaderboard/domain/repositories/detective_leaderboard_repository.dart';
+import 'package:wordshool/features/story_mode/domain/entities/detective_case.dart';
+import 'package:wordshool/features/story_mode/domain/repositories/story_case_repository.dart';
+import 'package:wordshool/features/story_mode/domain/usecases/load_today_detective_case.dart';
+import 'package:wordshool/features/story_mode/domain/usecases/today_detective_case_result.dart';
+import 'package:wordshool/shared/data/data_source/session_handler.dart';
+import 'package:wordshool/features/notifications/data/notification_preferences_store.dart';
+import 'package:wordshool/features/notifications/data/notification_token_service.dart';
+import 'package:wordshool/features/notifications/notification_service.dart';
 import 'package:wordshool/shared/domains/entities/user_game_state/user_game_data.dart';
 import 'package:wordshool/shared/domains/entities/user_entity.dart';
 import 'package:wordshool/shared/domains/repostiories/session_repository.dart';
@@ -69,6 +82,29 @@ class _FakeSessionRepository implements SessionRepository {
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class FakeStoryCaseRepository implements StoryCaseRepository {
+  @override
+  Future<DataState<DetectiveCaseEntity>> getTodayCase() async {
+    return DataError(error: AppError(error: 'skipped', code: 'test'));
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class FakeLoadTodayDetectiveCaseUseCase extends LoadTodayDetectiveCaseUseCase {
+  FakeLoadTodayDetectiveCaseUseCase()
+      : super(
+          storyCaseRepository: FakeStoryCaseRepository(),
+          getCurrentUserUseCase: FakeGetCurrentUserUseCase(),
+        );
+
+  @override
+  Future<DataState<TodayDetectiveCaseResult>> call({void param}) async {
+    return DataError(error: AppError(error: 'skipped', code: 'test'));
+  }
 }
 
 class FakeUserGameStateRepository implements UserGameStateRepository {
@@ -135,6 +171,7 @@ Future<void> _pumpDashboard(
     loadUserSpecificGameStateUseCase: LoadUserSpecificGameStateUseCase(
       userGameStateRepository: repository,
     ),
+    loadTodayDetectiveCaseUseCase: FakeLoadTodayDetectiveCaseUseCase(),
   );
 
   await tester.pumpWidget(
@@ -159,6 +196,38 @@ Future<void> _pumpDashboard(
 }
 
 void main() {
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    setupFirebaseCoreMocks();
+    await Firebase.initializeApp();
+  });
+
+  setUp(() async {
+    SharedPreferences.setMockInitialValues({
+      'notification_preferences': jsonEncode(
+        const {'permissionPromptShown': true},
+      ),
+    });
+    if (getIt.isRegistered<SessionHandler>()) {
+      await getIt.unregister<SessionHandler>();
+    }
+    if (getIt.isRegistered<NotificationService>()) {
+      await getIt.unregister<NotificationService>();
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    getIt.registerSingleton<SessionHandler>(SessionHandler(prefs));
+    getIt.registerSingleton<NotificationService>(
+      NotificationService(
+        preferencesStore: NotificationPreferencesStore(prefs),
+        tokenService: NotificationTokenService(
+          firestore: FirebaseFirestore.instance,
+        ),
+        analytics: NoOpAnalyticsService(),
+      ),
+    );
+  });
+
   tearDown(() async {
     await getIt.reset();
   });

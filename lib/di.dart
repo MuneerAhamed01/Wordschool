@@ -1,3 +1,4 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -39,6 +40,7 @@ import 'package:wordshool/features/settings/data/data_source/remote/settings_dat
 import 'package:wordshool/features/settings/data/data_source/settings_data_source.dart';
 import 'package:wordshool/features/settings/data/repositories/settings_repository_impl.dart';
 import 'package:wordshool/features/settings/domain/repositories/settings_repository.dart';
+import 'package:wordshool/features/settings/domain/usecases/delete_account_usecase.dart';
 import 'package:wordshool/features/settings/domain/usecases/logout_usecase.dart';
 import 'package:wordshool/core/config/monetization_config.dart';
 import 'package:wordshool/core/remote_config/story_mode_config.dart';
@@ -327,10 +329,13 @@ void _initializeGame() {
 }
 
 void _initializeSettings() {
+  getIt.registerSingleton<FirebaseFunctions>(FirebaseFunctions.instance);
+
   getIt.registerSingleton<SettingsDataSource>(
     SettingsDataSourceImpl(
       firebaseAuth: FirebaseAuth.instance,
       googleSignIn: GoogleSignIn.instance,
+      functions: getIt<FirebaseFunctions>(),
     ),
   );
 
@@ -344,5 +349,9 @@ void _initializeSettings() {
 
   getIt.registerSingleton<LogoutUseCase>(
     LogoutUseCase(repository: getIt<SettingsRepository>()),
+  );
+
+  getIt.registerSingleton<DeleteAccountUseCase>(
+    DeleteAccountUseCase(repository: getIt<SettingsRepository>()),
   );
 }

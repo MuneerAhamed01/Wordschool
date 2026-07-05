@@ -1,6 +1,15 @@
 ## WordSchool
 
-WordSchool is a Wordle-style word game built with Flutter. It includes anonymous and Google auth, a clean feature-first architecture, state management with BLoC/Cubit, DI via GetIt, routing with GoRouter, and theming. The game validates words against an embedded dictionary and evaluates guesses with Wordle logic (green/orange/none).
+WordSchool is a Wordle-style daily puzzle app with **Story Mode** (detective cases), streaks, leaderboards, and Firebase backend.
+
+> **Production release:** See [`technical_doc/PRODUCTION_READINESS.md`](technical_doc/PRODUCTION_READINESS.md) for current inventory, vulnerability report, test status, and launch checklist.
+
+## Quick Start
+
+```bash
+fvm flutter pub get
+fvm flutter run -t lib/main_dev.dart --flavor dev
+```
 
 ### Tech Stack
 - **Flutter**: UI framework

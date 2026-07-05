@@ -49,6 +49,9 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
   ) async {
     final existing = await getUserGameState(userId);
     if (existing is DataSuccess<UserGameStateModel>) {
+      if (existing.data?.deletedAt != null) {
+        return reactivateUserGameState(userId);
+      }
       return existing;
     }
 
@@ -58,6 +61,25 @@ class UserGameStateDataSourceImpl extends UserGameStateDataSource {
     }
 
     return existing;
+  }
+
+  @override
+  Future<DataState<UserGameStateModel>> reactivateUserGameState(
+    String userId,
+  ) async {
+    try {
+      await _userGameStateCollection().doc(userId).update({
+        'deletedAt': FieldValue.delete(),
+        'updatedDate': FieldValue.serverTimestamp(),
+      });
+      return getUserGameState(userId);
+    } catch (error, stackTrace) {
+      return DataError<UserGameStateModel>(
+        error: AppError.fromException(error),
+        stackTrace: stackTrace,
+        context: 'UserGameStateDataSource.reactivateUserGameState',
+      );
+    }
   }
 
   @override

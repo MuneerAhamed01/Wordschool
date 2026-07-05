@@ -14,6 +14,7 @@ class UserGameStateEntity extends Equatable {
   final int hintPackBalance;
   final bool hasRemoveAds;
   final bool isDetectivePro;
+  final DateTime? deletedAt;
   final DateTime createdDate;
   final DateTime updatedDate;
 
@@ -31,6 +32,7 @@ class UserGameStateEntity extends Equatable {
     this.hintPackBalance = 0,
     this.hasRemoveAds = false,
     this.isDetectivePro = false,
+    this.deletedAt,
     required this.createdDate,
     required this.updatedDate,
   });
@@ -50,6 +52,7 @@ class UserGameStateEntity extends Equatable {
         hintPackBalance,
         hasRemoveAds,
         isDetectivePro,
+        deletedAt,
         createdDate,
         updatedDate,
       ];

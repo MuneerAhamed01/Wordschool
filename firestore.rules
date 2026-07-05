@@ -134,6 +134,12 @@ service cloud.firestore {
       return request.resource.data.diff(resource.data).affectedKeys()
         .hasOnly(['fcmTokens', 'updatedDate']);
     }
+    function isReactivateUpdate() {
+      return resource.data.deletedAt != null
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['deletedAt', 'updatedDate'])
+        && !('deletedAt' in request.resource.data);
+    }
 
     // ---------- "games" (daily puzzle) ----------
     match /games/{gameId} {
@@ -233,6 +239,11 @@ service cloud.firestore {
         && request.resource.data.updatedDate is timestamp
         && request.resource.data.isDetectivePro == true
         && request.resource.data.hasRemoveAds == true;
+
+      allow update: if isOwner(uid)
+        && userGameStateCoreImmutable(uid)
+        && isReactivateUpdate()
+        && request.resource.data.updatedDate is timestamp;
 
       allow delete: if false;
 

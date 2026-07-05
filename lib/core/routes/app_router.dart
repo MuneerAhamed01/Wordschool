@@ -17,6 +17,8 @@ import 'package:wordshool/features/game/presentation/pages/game_page.dart';
 import 'package:wordshool/features/game/presentation/utils/game_route_parser.dart';
 import 'package:wordshool/features/leaderboard/presentation/bloc/leaderboard_bloc.dart';
 import 'package:wordshool/features/leaderboard/presentation/pages/leaderboard_page.dart';
+import 'package:wordshool/core/config/app_config.dart';
+import 'package:wordshool/features/settings/domain/usecases/delete_account_usecase.dart';
 import 'package:wordshool/features/settings/domain/usecases/logout_usecase.dart';
 import 'package:wordshool/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:wordshool/features/settings/presentation/pages/legal_markdown_page.dart';
@@ -335,9 +337,10 @@ class _SettingsTab extends StatelessWidget {
     return BlocProvider(
       create: (_) => SettingsBloc(
         logoutUseCase: getIt<LogoutUseCase>(),
+        deleteAccountUseCase: getIt<DeleteAccountUseCase>(),
         analytics: getIt(),
       ),
-      child: const SettingsPage(),
+      child: SettingsPage(appConfig: getIt<AppConfig>()),
     );
   }
 }

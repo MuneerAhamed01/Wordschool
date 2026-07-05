@@ -7,6 +7,8 @@ abstract class UserGameStateDataSource {
 
   Future<DataState<UserGameStateModel>> ensureUserGameState(String userId);
 
+  Future<DataState<UserGameStateModel>> reactivateUserGameState(String userId);
+
   Future<DataState<UserGameStateModel>> getUserGameState(String userId);
 
   Future<DataState<UserGameStateModel>> updateUserGameState(

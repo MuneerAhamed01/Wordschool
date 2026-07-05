@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wordshool/config/themes/colors.dart';
+import 'package:wordshool/core/config/app_config.dart';
 import 'package:wordshool/core/config/monetization_config.dart';
 import 'package:wordshool/core/monetization/story_entitlements.dart';
 import 'package:wordshool/core/monetization/iap_service.dart';
@@ -21,7 +22,9 @@ class SettingsPage extends StatelessWidget {
   static const String routeName = '/settings';
   static const String termsRouteName = '/terms';
   static const String privacyRouteName = '/privacy';
-  const SettingsPage({super.key});
+  const SettingsPage({super.key, required this.appConfig});
+
+  final AppConfig appConfig;
 
   @override
   Widget build(BuildContext context) {
@@ -112,6 +115,17 @@ class SettingsPage extends StatelessWidget {
               const SizedBox(height: 10),
             ],
             FadeSlideIn(
+              delay: const Duration(milliseconds: 220),
+              child: ActionTile(
+                title: 'Delete account',
+                subtitle: 'Remove your account and reset all progress',
+                icon: Icons.delete_forever_outlined,
+                accentColor: Colors.red,
+                onTap: () => _confirmDeleteAccount(context),
+              ),
+            ),
+            const SizedBox(height: 10),
+            FadeSlideIn(
               delay: const Duration(milliseconds: 240),
               child: ActionTile(
                 title: 'Log out',
@@ -134,6 +148,22 @@ class SettingsPage extends StatelessWidget {
       onPressContinue: () {
         if (Navigator.of(context).canPop()) Navigator.of(context).pop();
         context.read<SettingsBloc>().add(const SettingsEvent.logoutRequested());
+      },
+    );
+  }
+
+  Future<void> _confirmDeleteAccount(BuildContext context) async {
+    await SlidingDialog.show(
+      context,
+      title:
+          'Delete your account? All progress will be permanently reset. This cannot be undone.',
+      onPressContinue: () {
+        if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+        context.read<SettingsBloc>().add(
+              SettingsEvent.deleteAccountRequested(
+                firestoreDatabaseId: appConfig.firestoreDatabaseId,
+              ),
+            );
       },
     );
   }
