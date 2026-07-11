@@ -30,6 +30,17 @@ class SaveUserSessionUseCase
       return DataError<bool>(error: ensureResult.error);
     }
 
+    final stateResult = await _userGameStateRepository.getUserGameState();
+    if (stateResult is DataSuccess && stateResult.data?.blockedAt != null) {
+      await _sessionRepository.clearUser();
+      return DataError<bool>(
+        error: AppError.validation(
+          message: 'Your account has been blocked.',
+          error: 'account_blocked',
+        ),
+      );
+    }
+
     return saveResult;
   }
 }

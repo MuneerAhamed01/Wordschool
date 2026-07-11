@@ -67,6 +67,7 @@ import 'package:wordshool/features/story_mode/presentation/utils/story_audio_man
 import 'package:wordshool/features/story_mode/presentation/utils/story_mode_session_controller.dart';
 import 'package:wordshool/features/notifications/data/notification_preferences_store.dart';
 import 'package:wordshool/features/notifications/data/notification_token_service.dart';
+import 'package:wordshool/features/dashboard/presentation/utils/dashboard_refresh_controller.dart';
 import 'package:wordshool/features/notifications/notification_service.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -90,6 +91,9 @@ Future<void> initializeDependency({required AppConfig appConfig}) async {
   _initializeStoryMode();
   getIt.registerSingleton<StoryModeSessionController>(
     StoryModeSessionController(),
+  );
+  getIt.registerSingleton<DashboardRefreshController>(
+    DashboardRefreshController(),
   );
   _initializeLeaderboard();
   await _initializeStoryModeExtras();

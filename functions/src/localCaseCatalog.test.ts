@@ -31,7 +31,7 @@ describe("localCaseCatalog", () => {
     const titles = listPlannedCaseDateIds()
       .map((dateId) => getPlannedCase(dateId)!.title.toLowerCase());
 
-    expect(titles.some((title) => title.includes("ledger") || title.includes("midnight"))).toBe(true);
+    expect(titles.some((title) => title.includes("silent") || title.includes("apartment") || title.includes("hanging"))).toBe(true);
     expect(titles.some((title) => title.includes("glass") || title.includes("theft") || title.includes("snatch"))).toBe(true);
   });
 });

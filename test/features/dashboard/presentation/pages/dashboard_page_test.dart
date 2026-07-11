@@ -15,6 +15,7 @@ import 'package:wordshool/core/remote_config/story_mode_config.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/di.dart';
 import 'package:wordshool/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:wordshool/features/dashboard/presentation/utils/dashboard_refresh_controller.dart';
 import 'package:wordshool/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:wordshool/features/leaderboard/domain/entities/detective_leaderboard_entry.dart';
 import 'package:wordshool/features/leaderboard/domain/repositories/detective_leaderboard_repository.dart';
@@ -162,6 +163,9 @@ Future<void> _pumpDashboard(
   getIt.registerSingleton<GetCurrentUserUseCase>(FakeGetCurrentUserUseCase());
   getIt.registerSingleton<DetectiveLeaderboardRepository>(
     FakeDetectiveLeaderboardRepository(),
+  );
+  getIt.registerSingleton<DashboardRefreshController>(
+    DashboardRefreshController(),
   );
 
   final repository = FakeUserGameStateRepository();

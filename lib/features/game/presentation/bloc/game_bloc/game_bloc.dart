@@ -139,15 +139,23 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       ),
     );
 
+    final gameId = state.userSpecificGameData!.id;
     final userStateResult = await _loadUserGameStateUseCase();
-    if (userStateResult is DataSuccess) {
-      emit(
-        state.maybeMap(
-          loaded: (loadedState) =>
-              loadedState.copyWith(userGameState: userStateResult.data!),
-          orElse: () => state,
+    final gameDataResult =
+        await _loadUserSpecificGameStateUseCase(param: gameId);
+
+    emit(
+      state.maybeMap(
+        loaded: (loadedState) => loadedState.copyWith(
+          userGameState: userStateResult is DataSuccess
+              ? userStateResult.data!
+              : loadedState.userGameState,
+          userSpecificGameData: gameDataResult is DataSuccess
+              ? gameDataResult.data!
+              : loadedState.userSpecificGameData,
         ),
-      );
-    }
+        orElse: () => state,
+      ),
+    );
   }
 }

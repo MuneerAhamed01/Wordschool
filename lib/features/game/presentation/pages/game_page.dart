@@ -7,7 +7,7 @@ import 'package:wordshool/core/enums/game_mode.dart';
 import 'package:wordshool/core/enums/word_tile_type.dart';
 import 'package:wordshool/core/analytics/analytics_service.dart';
 import 'package:wordshool/di.dart';
-import 'package:wordshool/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:wordshool/features/dashboard/presentation/utils/dashboard_navigation.dart';
 import 'package:wordshool/features/game/presentation/bloc/game_bloc/game_bloc.dart';
 import 'package:wordshool/features/game/presentation/bloc/word_cubit/word_cubit.dart';
 import 'package:wordshool/features/game/presentation/utils/constants.dart';
@@ -89,7 +89,7 @@ class _GamePageState extends State<GamePage> with GamePageHelper {
     return AppBar(
       leading: IconButton(
         icon: const Icon(Icons.close_rounded),
-        onPressed: () => context.go(DashboardPage.routeName),
+        onPressed: () => navigateToDashboardHome(context),
       ),
       title: Text(_titleForState(state)),
       actions: [

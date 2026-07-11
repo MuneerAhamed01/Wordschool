@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wordshool/di.dart';
-import 'package:wordshool/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:wordshool/features/dashboard/presentation/utils/dashboard_navigation.dart';
 import 'package:wordshool/features/story_mode/presentation/bloc/story_flow_bloc/story_flow_bloc.dart';
 import 'package:wordshool/features/story_mode/presentation/pages/story_home_page.dart';
 import 'package:wordshool/features/story_mode/presentation/routing/story_flow_gating.dart';
@@ -92,6 +92,6 @@ class StoryFlowNavigation {
       return;
     }
 
-    context.go(DashboardPage.routeName);
+    navigateToDashboardHome(context);
   }
 }

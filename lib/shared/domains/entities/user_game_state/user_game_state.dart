@@ -15,6 +15,9 @@ class UserGameStateEntity extends Equatable {
   final bool hasRemoveAds;
   final bool isDetectivePro;
   final DateTime? deletedAt;
+  final DateTime? blockedAt;
+  final String? blockedReason;
+  final String? blockedBy;
   final DateTime createdDate;
   final DateTime updatedDate;
 
@@ -33,6 +36,9 @@ class UserGameStateEntity extends Equatable {
     this.hasRemoveAds = false,
     this.isDetectivePro = false,
     this.deletedAt,
+    this.blockedAt,
+    this.blockedReason,
+    this.blockedBy,
     required this.createdDate,
     required this.updatedDate,
   });
@@ -53,6 +59,9 @@ class UserGameStateEntity extends Equatable {
         hasRemoveAds,
         isDetectivePro,
         deletedAt,
+        blockedAt,
+        blockedReason,
+        blockedBy,
         createdDate,
         updatedDate,
       ];

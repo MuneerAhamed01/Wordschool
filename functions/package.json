@@ -13,13 +13,15 @@
     "test": "jest",
     "seed": "npm run build && node lib/scripts/seed.js",
     "seed:planned": "npm run build && node lib/scripts/seedPlannedCases.js",
-    "copy:firestore": "npm run build && node lib/scripts/copyFirestoreDatabase.js"
+    "copy:firestore": "npm run build && node lib/scripts/copyFirestoreDatabase.js",
+    "admin:claim": "npm run build && GOOGLE_CLOUD_QUOTA_PROJECT=${FIREBASE_PROJECT_ID:-wordschool-dev} FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID:-wordschool-dev} node lib/scripts/setAdminClaim.js"
   },
   "engines": {
     "node": "20"
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@google-analytics/data": "^5.1.0",
     "firebase-admin": "^13.0.2",
     "firebase-functions": "^6.3.0"
   },

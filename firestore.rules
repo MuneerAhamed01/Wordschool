@@ -8,6 +8,11 @@ service cloud.firestore {
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
+    function isNotBlocked(userId) {
+      return !exists(/databases/$(database)/documents/userGameStates/$(userId))
+        || !('blockedAt' in get(/databases/$(database)/documents/userGameStates/$(userId)).data)
+        || get(/databases/$(database)/documents/userGameStates/$(userId)).data.blockedAt == null;
+    }
     function isDateId(id) {
       // YYYY-MM-DD
       return id.matches('^\\d{4}-\\d{2}-\\d{2}$');
@@ -148,6 +153,7 @@ service cloud.firestore {
 
       // Allow authenticated clients to create daily game docs with validated shape.
       allow create: if isAuthenticated()
+        && isNotBlocked(request.auth.uid)
         && isDateId(gameId)
         && request.resource.data.id == gameId
         && request.resource.data.todayWord is string
@@ -157,6 +163,7 @@ service cloud.firestore {
 
       // Allow guarded updates by authenticated clients; keep invariants.
       allow update: if isAuthenticated()
+        && isNotBlocked(request.auth.uid)
         && isDateId(gameId)
         && request.resource.data.id == resource.data.id
         && request.resource.data.createdDate == resource.data.createdDate
@@ -174,9 +181,10 @@ service cloud.firestore {
     match /userGameStates/{uid} {
       allow read: if isOwner(uid);
 
-      allow create: if isOwner(uid) && isValidUserGameStateCreate(uid);
+      allow create: if isOwner(uid) && isNotBlocked(uid) && isValidUserGameStateCreate(uid);
 
       allow update: if isOwner(uid)
+        && isNotBlocked(uid)
         && userGameStateCoreImmutable(uid)
         && isNotificationOnlyUpdate()
         && request.resource.data.updatedDate is timestamp
@@ -188,6 +196,7 @@ service cloud.firestore {
         );
 
       allow update: if isOwner(uid)
+        && isNotBlocked(uid)
         && userGameStateCoreImmutable(uid)
         && isFcmTokenRemoveUpdate()
         && request.resource.data.updatedDate is timestamp
@@ -197,6 +206,7 @@ service cloud.firestore {
         );
 
       allow update: if isOwner(uid)
+        && isNotBlocked(uid)
         && userGameStateCoreImmutable(uid)
         && isDailyStreakUpdate()
         && request.resource.data.updatedDate is timestamp
@@ -209,6 +219,7 @@ service cloud.firestore {
         && request.resource.data.longestStreak >= intOrZero(resource.data, 'longestStreak');
 
       allow update: if isOwner(uid)
+        && isNotBlocked(uid)
         && userGameStateCoreImmutable(uid)
         && isStoryStatsUpdate()
         && request.resource.data.updatedDate is timestamp
@@ -220,6 +231,7 @@ service cloud.firestore {
            >= intOrZero(resource.data, 'storyModeLongestStreak');
 
       allow update: if isOwner(uid)
+        && isNotBlocked(uid)
         && userGameStateCoreImmutable(uid)
         && isHintBalanceUpdate()
         && request.resource.data.updatedDate is timestamp
@@ -228,12 +240,14 @@ service cloud.firestore {
         && request.resource.data.hintPackBalance <= intOrZero(resource.data, 'hintPackBalance') + 5;
 
       allow update: if isOwner(uid)
+        && isNotBlocked(uid)
         && userGameStateCoreImmutable(uid)
         && isRemoveAdsUpdate()
         && request.resource.data.updatedDate is timestamp
         && request.resource.data.hasRemoveAds == true;
 
       allow update: if isOwner(uid)
+        && isNotBlocked(uid)
         && userGameStateCoreImmutable(uid)
         && isDetectiveProUpdate()
         && request.resource.data.updatedDate is timestamp
@@ -255,11 +269,12 @@ service cloud.firestore {
         // Create a per-day record only for valid date IDs
         // and only if the corresponding game document exists
         allow create: if isOwner(uid)
+          && isNotBlocked(uid)
           && isDateId(dateId)
           && exists(/databases/$(database)/documents/games/$(dateId));
 
         // Updates allowed to owner; keep ID format guard
-        allow update: if isOwner(uid) && isDateId(dateId);
+        allow update: if isOwner(uid) && isNotBlocked(uid) && isDateId(dateId);
 
         // Do not allow deletes from clients
         allow delete: if false;
@@ -279,11 +294,13 @@ service cloud.firestore {
         allow read: if isOwner(uid);
 
         allow create: if isOwner(uid)
+          && isNotBlocked(uid)
           && isDateId(dateId)
           && exists(/databases/$(database)/documents/detectiveCases/$(dateId))
           && isStoryProgressData(request.resource.data);
 
         allow update: if isOwner(uid)
+          && isNotBlocked(uid)
           && isDateId(dateId)
           && isStoryProgressData(request.resource.data)
           && resource.data.completedAt == null

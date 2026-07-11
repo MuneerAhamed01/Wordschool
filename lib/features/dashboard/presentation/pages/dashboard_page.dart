@@ -10,6 +10,7 @@ import 'package:wordshool/di.dart';
 import 'package:wordshool/features/notifications/notification_service.dart';
 import 'package:wordshool/shared/data/data_source/session_handler.dart';
 import 'package:wordshool/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:wordshool/features/dashboard/presentation/utils/dashboard_refresh_controller.dart';
 import 'package:wordshool/features/dashboard/presentation/widgets/daily_puzzle_hero.dart';
 import 'package:wordshool/features/dashboard/presentation/widgets/story_mode_hero.dart';
 import 'package:wordshool/features/game/presentation/pages/game_page.dart';
@@ -43,6 +44,12 @@ class _DashboardPageState extends State<DashboardPage> {
     if (user != null) {
       getIt<NotificationService>().bindUser(user.id);
     }
+    getIt<DashboardRefreshController>().bind(_refreshDashboard);
+  }
+
+  void _refreshDashboard() {
+    if (!mounted) return;
+    context.read<DashboardBloc>().add(const DashboardEvent.loadDashboard());
   }
 
   @override
@@ -52,7 +59,7 @@ class _DashboardPageState extends State<DashboardPage> {
     if (!identical(_router, router)) {
       _router?.routerDelegate.removeListener(_onRouteChanged);
       _router = router;
-      _lastLocation ??= _router!.routerDelegate.currentConfiguration.uri.path;
+      _lastLocation ??= _router!.state.uri.path;
       _router!.routerDelegate.addListener(_onRouteChanged);
     }
   }
@@ -60,19 +67,20 @@ class _DashboardPageState extends State<DashboardPage> {
   void _onRouteChanged() {
     if (!mounted || _router == null) return;
 
-    final location = _router!.routerDelegate.currentConfiguration.uri.path;
+    final location = _router!.state.uri.path;
     final returningHome = _lastLocation != null &&
         _lastLocation != DashboardPage.routeName &&
         location == DashboardPage.routeName;
     _lastLocation = location;
 
     if (returningHome) {
-      context.read<DashboardBloc>().add(const DashboardEvent.loadDashboard());
+      _refreshDashboard();
     }
   }
 
   @override
   void dispose() {
+    getIt<DashboardRefreshController>().unbind();
     _router?.routerDelegate.removeListener(_onRouteChanged);
     super.dispose();
   }
@@ -213,11 +221,13 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  void _openDailyGame(BuildContext context) {
+  Future<void> _openDailyGame(BuildContext context) async {
     getIt<AnalyticsService>().logFeatureOpened(
       featureName: AnalyticsFeatures.dailyGame,
     );
-    context.push(GamePage.routeName);
+    await context.push(GamePage.routeName);
+    if (!context.mounted) return;
+    _refreshDashboard();
   }
 
   Future<void> _openStoryMode(BuildContext context) async {
@@ -226,7 +236,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
     await context.push(StoryHomePage.routeName);
     if (!context.mounted) return;
-    context.read<DashboardBloc>().add(const DashboardEvent.loadDashboard());
+    _refreshDashboard();
   }
 }
 

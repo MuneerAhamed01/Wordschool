@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:wordshool/config/themes/colors.dart';
 import 'package:wordshool/core/enums/word_tile_type.dart';
 import 'package:wordshool/core/utils/date_helper.dart';
+import 'package:wordshool/features/dashboard/presentation/utils/dashboard_navigation.dart';
 import 'package:wordshool/features/archive/presentation/pages/archive_page.dart';
-import 'package:wordshool/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:wordshool/features/winning/presentation/widgets/animated_checkmark.dart';
 import 'package:wordshool/shared/presentations/widgets/app_button.dart';
 import 'package:wordshool/shared/presentations/widgets/fade_slide_in.dart';
@@ -127,7 +127,7 @@ class _WinningPageState extends State<WinningPage>
                   label: 'Back to Home',
                   icon: Icons.home_outlined,
                   variant: ButtonVariant.primary,
-                  onTap: () => context.go(DashboardPage.routeName),
+                  onTap: () => navigateToDashboardHome(context),
                 ),
               ),
               if (widget.isLost && !widget.isArchiveMode) ...[

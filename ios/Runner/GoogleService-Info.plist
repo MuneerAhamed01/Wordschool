@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>87702505475-7mjteelebbalmv9r989ol3j6lbnvpagu.apps.googleusercontent.com</string>
+	<string>87702505475-id78b5gh16rqa8eirni1jveo6orrkd81.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.87702505475-7mjteelebbalmv9r989ol3j6lbnvpagu</string>
+	<string>com.googleusercontent.apps.87702505475-id78b5gh16rqa8eirni1jveo6orrkd81</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>87702505475-d76u6b420qtver76mc2u1tete9730oea.apps.googleusercontent.com</string>
+	<string>87702505475-hd86el48ffi4o4inms6p0ne61mh8s7b2.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDhUeESiay4f92p2VfMZAmZnMHKV7kDK6A</string>
 	<key>GCM_SENDER_ID</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.wordschool.mat.dev</string>
+	<string>com.wordschool.mat</string>
 	<key>PROJECT_ID</key>
 	<string>wordschool-dev</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:87702505475:ios:04ce67948906fa66d02636</string>
+	<string>1:87702505475:ios:9ffac947fb5fa204d02636</string>
 </dict>
 </plist>

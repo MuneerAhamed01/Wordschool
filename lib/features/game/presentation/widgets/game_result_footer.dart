@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wordshool/config/themes/colors.dart';
 import 'package:wordshool/core/utils/game_layout_metrics.dart';
+import 'package:wordshool/features/dashboard/presentation/utils/dashboard_navigation.dart';
 import 'package:wordshool/features/archive/presentation/pages/archive_page.dart';
-import 'package:wordshool/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:wordshool/shared/presentations/widgets/app_button.dart';
 import 'package:wordshool/shared/presentations/widgets/fade_slide_in.dart';
 
@@ -44,7 +44,7 @@ class GameResultFooter extends StatelessWidget {
               icon: Icons.home_outlined,
               variant: ButtonVariant.primary,
               height: buttonHeight,
-              onTap: () => context.go(DashboardPage.routeName),
+              onTap: () => navigateToDashboardHome(context),
             ),
             if (!isArchiveMode) ...[
               SizedBox(height: compact ? 8 : 10),

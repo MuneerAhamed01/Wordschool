@@ -9,6 +9,7 @@ import 'package:wordshool/features/archive/presentation/bloc/archive_bloc.dart';
 import 'package:wordshool/features/archive/presentation/pages/archive_page.dart';
 import 'package:wordshool/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:wordshool/features/auth/presentation/pages/auth_page.dart';
+import 'package:wordshool/features/auth/presentation/pages/blocked_user_page.dart';
 import 'package:wordshool/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:wordshool/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:wordshool/features/game/presentation/bloc/game_bloc/game_bloc.dart';
@@ -70,6 +71,10 @@ GoRouter appRouter(String initialRoute) {
           ),
           child: const AuthPage(),
         ),
+      ),
+      GoRoute(
+        path: BlockedUserPage.routeName,
+        builder: (context, state) => const BlockedUserPage(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {

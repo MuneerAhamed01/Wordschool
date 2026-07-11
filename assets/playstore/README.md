@@ -2,6 +2,8 @@
 
 Generated marketing images for Play Console upload.
 
+**Listing copy (title, descriptions, tags, ASO):** see [PLAY_STORE_LISTING.md](./PLAY_STORE_LISTING.md)
+
 ## Files
 
 | File | Size | Use in Play Console |

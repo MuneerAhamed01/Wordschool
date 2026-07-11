@@ -44,6 +44,8 @@
 	<string>WordSchool uses approximate location (country/region) to improve analytics and product experience.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>WordSchool uses approximate location (country/region) to improve analytics and product experience.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>WordSchool does not record audio. This is required by the audio playback library used for story mode sound effects.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -70,8 +72,6 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
-		<string>fetch</string>
-		<string>processing</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

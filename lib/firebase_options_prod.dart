@@ -8,10 +8,7 @@ import 'package:flutter/foundation.dart'
 class ProdFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'ProdFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -46,6 +43,16 @@ class ProdFirebaseOptions {
     messagingSenderId: '87702505475',
     projectId: 'wordschool-dev',
     storageBucket: 'wordschool-dev.firebasestorage.app',
+  );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDPLXWtWySzMFB5Ya_sGJN_0f1cOgah5Ig',
+    appId: '1:87702505475:web:acd1380a2f28a95fd02636',
+    messagingSenderId: '87702505475',
+    projectId: 'wordschool-dev',
+    authDomain: 'wordschool-dev.firebaseapp.com',
+    storageBucket: 'wordschool-dev.firebasestorage.app',
+    measurementId: 'G-Q0QGW7W4RX',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(

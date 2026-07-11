@@ -17,6 +17,9 @@ class UserGameStateModel extends UserGameStateEntity {
     super.hasRemoveAds = false,
     super.isDetectivePro = false,
     super.deletedAt,
+    super.blockedAt,
+    super.blockedReason,
+    super.blockedBy,
     required super.createdDate,
     required super.updatedDate,
   });
@@ -36,6 +39,9 @@ class UserGameStateModel extends UserGameStateEntity {
     bool? hasRemoveAds,
     bool? isDetectivePro,
     DateTime? deletedAt,
+    DateTime? blockedAt,
+    String? blockedReason,
+    String? blockedBy,
     DateTime? createdDate,
     DateTime? updatedDate,
   }) {
@@ -56,6 +62,9 @@ class UserGameStateModel extends UserGameStateEntity {
       hasRemoveAds: hasRemoveAds ?? this.hasRemoveAds,
       isDetectivePro: isDetectivePro ?? this.isDetectivePro,
       deletedAt: deletedAt ?? this.deletedAt,
+      blockedAt: blockedAt ?? this.blockedAt,
+      blockedReason: blockedReason ?? this.blockedReason,
+      blockedBy: blockedBy ?? this.blockedBy,
       createdDate: createdDate ?? this.createdDate,
       updatedDate: updatedDate ?? this.updatedDate,
     );
@@ -79,6 +88,11 @@ class UserGameStateModel extends UserGameStateEntity {
       deletedAt: json['deletedAt'] == null
           ? null
           : FirebaseDTConverter.fromTimestamp(json['deletedAt']),
+      blockedAt: json['blockedAt'] == null
+          ? null
+          : FirebaseDTConverter.fromTimestamp(json['blockedAt']),
+      blockedReason: json['blockedReason'] as String?,
+      blockedBy: json['blockedBy'] as String?,
       createdDate: FirebaseDTConverter.fromTimestamp(json['createdDate']),
       updatedDate: FirebaseDTConverter.fromTimestamp(json['updatedDate']),
     );
@@ -102,6 +116,10 @@ class UserGameStateModel extends UserGameStateEntity {
       'isDetectivePro': isDetectivePro,
       if (deletedAt != null)
         'deletedAt': FirebaseDTConverter.toTimestamp(deletedAt!),
+      if (blockedAt != null)
+        'blockedAt': FirebaseDTConverter.toTimestamp(blockedAt!),
+      if (blockedReason != null) 'blockedReason': blockedReason,
+      if (blockedBy != null) 'blockedBy': blockedBy,
       'createdDate': FirebaseDTConverter.toTimestamp(createdDate),
       'updatedDate': FirebaseDTConverter.toTimestamp(updatedDate),
     };

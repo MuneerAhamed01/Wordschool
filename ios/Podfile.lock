@@ -17,6 +17,10 @@ PODS:
     - Firebase/Firestore (= 12.4.0)
     - firebase_core
     - Flutter
+  - cloud_functions (6.0.3):
+    - Firebase/Functions (= 12.4.0)
+    - firebase_core
+    - Flutter
   - Firebase/Auth (12.4.0):
     - Firebase/CoreOnly
     - FirebaseAuth (~> 12.4.0)
@@ -25,6 +29,9 @@ PODS:
   - Firebase/Firestore (12.4.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 12.4.0)
+  - Firebase/Functions (12.4.0):
+    - Firebase/CoreOnly
+    - FirebaseFunctions (~> 12.4.0)
   - Firebase/Messaging (12.4.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 12.4.0)
@@ -101,6 +108,14 @@ PODS:
     - FirebaseFirestoreGRPCCPPBinary (= 1.69.0)
     - leveldb-library (~> 1.22)
     - nanopb (~> 3.30910.0)
+  - FirebaseFunctions (12.4.0):
+    - FirebaseAppCheckInterop (~> 12.4.0)
+    - FirebaseAuthInterop (~> 12.4.0)
+    - FirebaseCore (~> 12.4.0)
+    - FirebaseCoreExtension (~> 12.4.0)
+    - FirebaseMessagingInterop (~> 12.4.0)
+    - FirebaseSharedSwift (~> 12.4.0)
+    - GTMSessionFetcher/Core (< 6.0, >= 3.4)
   - FirebaseInstallations (12.4.0):
     - FirebaseCore (~> 12.4.0)
     - GoogleUtilities/Environment (~> 8.1)
@@ -115,6 +130,7 @@ PODS:
     - GoogleUtilities/Reachability (~> 8.1)
     - GoogleUtilities/UserDefaults (~> 8.1)
     - nanopb (~> 3.30910.0)
+  - FirebaseMessagingInterop (12.4.0)
   - FirebaseRemoteConfig (12.4.0):
     - FirebaseABTesting (~> 12.4.0)
     - FirebaseCore (~> 12.4.0)
@@ -228,6 +244,7 @@ PODS:
 DEPENDENCIES:
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
+  - cloud_functions (from `.symlinks/plugins/cloud_functions/ios`)
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
@@ -268,8 +285,10 @@ SPEC REPOS:
     - FirebaseFirestoreGRPCCoreBinary
     - FirebaseFirestoreGRPCCPPBinary
     - FirebaseFirestoreInternalBinary
+    - FirebaseFunctions
     - FirebaseInstallations
     - FirebaseMessaging
+    - FirebaseMessagingInterop
     - FirebaseRemoteConfig
     - FirebaseRemoteConfigInterop
     - FirebaseSharedSwift
@@ -292,6 +311,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/audio_session/ios"
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
+  cloud_functions:
+    :path: ".symlinks/plugins/cloud_functions/ios"
   firebase_analytics:
     :path: ".symlinks/plugins/firebase_analytics/ios"
   firebase_auth:
@@ -344,6 +365,7 @@ SPEC CHECKSUMS:
   AppCheckCore: 214137f5c378d1dec88a68425c467fe65aaff637
   audio_session: 19e9480dbdd4e5f6c4543826b2e8b0e4ab6145fe
   cloud_firestore: 3e492984b292c052ae33914223a2602c96fa6cbd
+  cloud_functions: 497ebe2eb67cca760561a4d0b07b173d33578933
   Firebase: f07b15ae5a6ec0f93713e30b923d9970d144af3e
   firebase_analytics: ebbd4a5e430a3dcc946ed8a1045cf0bbdc84cef7
   firebase_auth: 94f869a4693400d256f03138cb91afa1e2e3ffde
@@ -365,8 +387,10 @@ SPEC CHECKSUMS:
   FirebaseFirestoreGRPCCoreBinary: 565534e160a0415d12185f7f171c52a567382fbd
   FirebaseFirestoreGRPCCPPBinary: 6c0134e8d230ee58b9d51dec2a30a48efd6d5dc7
   FirebaseFirestoreInternalBinary: a8b8c76b1d98d2c7f7c94015f1558f07727ce149
+  FirebaseFunctions: 9b6439272c887dfc15439b95cf56ddda95722bc7
   FirebaseInstallations: ae9f4902cb5bf1d0c5eaa31ec1f4e5495a0714e2
   FirebaseMessaging: d33971b7bb252745ea6cd31ab190d1a1df4b8ed5
+  FirebaseMessagingInterop: c1454390729ce3c91c184cffd0c347369d7cc48a
   FirebaseRemoteConfig: 28e071a214ec66cdb113ed9ff4ce63e9abe018db
   FirebaseRemoteConfigInterop: 1e31ec72b89c9924367c59bfb5ec9ab60d1d6766
   FirebaseSharedSwift: 93426a1de92f19e1199fac5295a4f8df16458daa
