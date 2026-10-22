@@ -44,8 +44,23 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# FVM Version Cache
-.fvm/.env*
-
-
+# Environment secrets (copy .env.example to .env)
 .env
+.env.*
+!.env.example
+
+# FVM: local SDK symlinks/cache (version is pinned in .fvmrc)
+.fvm/
+
+# Firebase CLI
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+
+# Signing keys
+*.jks
+*.keystore
+**/android/key.properties
+
+# Test coverage
+coverage/

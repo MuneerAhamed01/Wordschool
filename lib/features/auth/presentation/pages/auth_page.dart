@@ -1,133 +1,234 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:wordshool/config/themes/colors.dart';
 import 'package:wordshool/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:wordshool/features/auth/utils/auth_type.dart';
 import 'package:wordshool/features/game/presentation/pages/game_page.dart';
 import 'package:wordshool/shared/presentations/widgets/app_button.dart';
-import 'package:wordshool/shared/presentations/widgets/gradient_logo.dart';
+import 'package:wordshool/shared/presentations/widgets/fade_slide_in.dart';
+import 'package:wordshool/shared/presentations/widgets/game_scaffold.dart';
+import 'package:wordshool/shared/presentations/widgets/snackbar.dart';
 
 class AuthPage extends StatelessWidget {
   static const String routeName = '/auth';
   const AuthPage({super.key});
 
+  // Text styles are local because the app theme doesn't define them yet
+  static final TextStyle _titleStyle = GoogleFonts.inter(
+    fontSize: 40,
+    fontWeight: FontWeight.w700,
+    letterSpacing: -0.5,
+    color: MyColors.white,
+  );
+
+  static final TextStyle _subtitleStyle = GoogleFonts.inter(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    height: 1.5,
+    color: MyColors.white.withValues(alpha: 0.9),
+  );
+
+  static final TextStyle _mutedStyle = GoogleFonts.inter(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    color: MyColors.textMuted,
+  );
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-          child: BlocListener<AuthBloc, AuthState>(
+    return GameScaffold(
+      body: BlocListener<AuthBloc, AuthState>(
         listener: (ctx, state) {
           state.whenOrNull(
-              authenticated: (_) => _onAuthenticate(ctx), error: (message) {});
+            // Replace the auth route so back doesn't return to sign-in
+            authenticated: (_) => ctx.go(GamePage.routeName),
+            error: (message) => CustomSnackBar.show(
+              ctx,
+              message: message,
+              type: SnackBarType.error,
+            ),
+          );
         },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 12),
-            const AnimatedGradientSquares(squareSize: 32),
-            Text(
-              'WordSchool',
-              style: GoogleFonts.crimsonText(fontSize: 54, color: Colors.white),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              children: [
+                Expanded(
+                  child: Center(
+                    child: FadeSlideIn(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildLogoMark(),
+                          const SizedBox(height: 28),
+                          Text(
+                            'WordSchool',
+                            style: _titleStyle,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Guess the word. Build your streak.',
+                            style: _subtitleStyle,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'One puzzle, every day.',
+                            style: _mutedStyle,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                _buildActions(context),
+                const SizedBox(height: 16),
+              ],
             ),
-            Text(
-              'Start your day by brainstorming once :)',
-              style: GoogleFonts.crimsonText(fontSize: 16, color: Colors.white),
-            ),
-            const SizedBox(height: 50),
-            _buildAppButtonForGoogle(),
-            const SizedBox(height: 24),
-            _buildAppButtonForAnonymous(),
-            const SizedBox(height: 32),
-          ],
+          ),
         ),
-      )),
-      bottomSheet: _buildTermsAndConditions(),
+      ),
     );
   }
 
-  Widget _buildAppButtonForGoogle() {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-        final isGoogleAuth =
-            state.whenOrNull<AuthType?>(loading: (type) => type) ==
-                AuthType.google;
-
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: SizedBox(
-            height: 48,
-            child: AppButton(
-              onTap: () {
-                context.read<AuthBloc>().add(AuthEvent.signInWithGoogle());
-              },
-              isLoading: state is AuthLoading && isGoogleAuth,
-              isDisabled: state is AuthLoading,
-              label: 'Continue with google',
-            ),
+  Widget _buildLogoMark() {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: MyColors.gameSurface.withValues(alpha: 0.85),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: MyColors.gameBorder.withValues(alpha: 0.8),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.25),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildAppButtonForAnonymous() {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: SizedBox(
-            height: 48,
-            child: AppButton(
-              onTap: () {
-                context.read<AuthBloc>().add(AuthEvent.signInAnonymously());
-              },
-              isLoading: state is AuthLoading &&
-                  state.whenOrNull<AuthType?>(loading: (type) => type) ==
-                      AuthType.anonymous,
-              isDisabled: state is AuthLoading,
-              label: 'Sign up anonymously',
-              type: ButtonType.background,
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildTermsAndConditions() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: GestureDetector(
-            onTap: () {
-              _launchUrl('https://sites.google.com/view/wordschool/home');
-            },
-            child: const Text(
-              'By continue you are accepting our privacy policy. Click here to see privacy policy',
-              style: TextStyle(
-                color: Colors.blue,
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(5, (index) {
+            final letters = ['W', 'O', 'R', 'D', 'S'];
+            return Padding(
+              padding: EdgeInsets.only(left: index == 0 ? 0 : 6),
+              child: Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: index == 2 ? MyColors.tileCorrect : MyColors.tileAbsent,
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: MyColors.tileFilled),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  letters[index],
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 17,
+                    height: 1,
+                  ),
+                ),
               ),
-              textAlign: TextAlign.center,
-            ),
-          ),
+            );
+          }),
         ),
-        const SizedBox(height: 30)
-      ],
+      ),
+    );
+  }
+
+  Widget _buildActions(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 400),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          FadeSlideIn(
+            delay: const Duration(milliseconds: 120),
+            child: _buildGoogleButton(),
+          ),
+          const SizedBox(height: 12),
+          FadeSlideIn(
+            delay: const Duration(milliseconds: 180),
+            child: _buildGuestButton(),
+          ),
+          const SizedBox(height: 20),
+          FadeSlideIn(
+            delay: const Duration(milliseconds: 240),
+            child: _buildTermsLink(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGoogleButton() {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        final isGoogle = state.whenOrNull<AuthType?>(loading: (t) => t) ==
+            AuthType.google;
+        return AppButton(
+          label: 'Continue with Google',
+          leading: SvgPicture.asset(
+            'assets/svgs/google_logo.svg',
+            width: 20,
+            height: 20,
+          ),
+          variant: ButtonVariant.google,
+          isLoading: state is AuthLoading && isGoogle,
+          isDisabled: state is AuthLoading,
+          onTap: () =>
+              context.read<AuthBloc>().add(AuthEvent.signInWithGoogle()),
+        );
+      },
+    );
+  }
+
+  Widget _buildGuestButton() {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        final isGuest = state.whenOrNull<AuthType?>(loading: (t) => t) ==
+            AuthType.anonymous;
+        return AppButton(
+          label: 'Continue as Guest',
+          variant: ButtonVariant.ghost,
+          isLoading: state is AuthLoading && isGuest,
+          isDisabled: state is AuthLoading,
+          onTap: () =>
+              context.read<AuthBloc>().add(AuthEvent.signInAnonymously()),
+        );
+      },
+    );
+  }
+
+  Widget _buildTermsLink() {
+    return GestureDetector(
+      onTap: () => _launchUrl('https://sites.google.com/view/wordschool/home'),
+      child: Text(
+        'By continuing, you agree to our Privacy Policy',
+        style: _mutedStyle.copyWith(
+          decoration: TextDecoration.underline,
+          decorationColor: MyColors.textMuted.withValues(alpha: 0.6),
+        ),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 
   Future<void> _launchUrl(String url) async {
-    final myurl = Uri.parse(url);
-    if (!await launchUrl(myurl)) {
-      throw Exception('Could not launch $myurl');
+    if (!await launchUrl(Uri.parse(url))) {
+      throw Exception('Could not launch $url');
     }
-  }
-
-  void _onAuthenticate(BuildContext context) {
-    context.push(GamePage.routeName);
   }
 }

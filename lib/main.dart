@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -26,8 +27,17 @@ Future<void> main() async {
 
   await initializeDependency();
 
-  // Compute initial route and create a single GoRouter instance
-  final hasUser = getIt<SessionHandler>().currentUser != null;
+  // Compute initial route and create a single GoRouter instance.
+  // Firebase is the source of truth; the cached user must match it.
+  final firebaseUser = await FirebaseAuth.instance.authStateChanges().first;
+  final sessionHandler = getIt<SessionHandler>();
+  final hasUser = firebaseUser != null &&
+      sessionHandler.currentUser?.id == firebaseUser.uid;
+
+  if (!hasUser) {
+    await sessionHandler.clear();
+  }
+
   final initialRoute = hasUser ? GamePage.routeName : AuthPage.routeName;
   final router = appRouter(initialRoute);
 

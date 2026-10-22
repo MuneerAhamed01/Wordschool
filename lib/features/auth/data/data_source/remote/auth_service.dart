@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/features/auth/data/data_source/auth_service.dart';
+import 'package:wordshool/features/auth/utils/auth_type.dart';
 import 'package:wordshool/shared/data/models/user.dart';
 
 class AuthDataSourceImpl extends AuthDataSource {
@@ -38,31 +39,21 @@ class AuthDataSourceImpl extends AuthDataSource {
   @override
   Future<DataState<WordSchoolUserModel?>> signInWithGoogle() async {
     try {
-      await GoogleSignIn.instance.initialize();
+      final googleUser = await _googleSignIn.authenticate(
+        scopeHint: const ['email', 'profile'],
+      );
 
-      const scopes = [
-        'https://www.googleapis.com/auth/userinfo.email',
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'openid',
-      ];
+      // Firebase only needs the ID token; no separate authorization step
+      final idToken = googleUser.authentication.idToken;
 
-      final googleUser = await _googleSignIn.authenticate(scopeHint: scopes);
-
-      final googleAuthentication = googleUser.authentication;
-      final googleAuthorization =
-          await googleUser.authorizationClient.authorizationForScopes(scopes);
-
-      if (googleAuthorization == null) {
+      if (idToken == null) {
         return DataError<WordSchoolUserModel?>(
           error: AppError(
               error: 'Failed to retrieve Google ID Token', code: '401'),
         );
       }
 
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuthorization.accessToken,
-        idToken: googleAuthentication.idToken,
-      );
+      final credential = GoogleAuthProvider.credential(idToken: idToken);
 
       final response = await _firebaseAuth.signInWithCredential(credential);
 
@@ -74,6 +65,16 @@ class AuthDataSourceImpl extends AuthDataSource {
 
       return DataSuccess<WordSchoolUserModel?>(
         data: WordSchoolUserModel.fromFirebase(user: response.user!),
+      );
+    } on GoogleSignInException catch (e) {
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        return DataError<WordSchoolUserModel?>(
+          error: AppError(error: 'Sign-in cancelled', code: authCancelledCode),
+        );
+      }
+
+      return DataError<WordSchoolUserModel?>(
+        error: AppError(error: e.description ?? e.toString(), code: '500'),
       );
     } catch (e) {
       return DataError<WordSchoolUserModel?>(

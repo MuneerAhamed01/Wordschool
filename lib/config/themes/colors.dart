@@ -130,4 +130,20 @@ class MyColors {
   static const Color lightGray = Color(0xFFD3D3D3);
 
   static const Color errorColor = Colors.red;
+
+  // Professional game palette (Wordle-inspired, accessible contrast)
+  static const Color gameBackground = Color(0xFF121213);
+  static const Color gameSurface = Color(0xFF1A1A1B);
+  static const Color gameSurfaceElevated = Color(0xFF252526);
+  static const Color gameBorder = Color(0xFF3A3A3C);
+  static const Color tileEmpty = Color(0xFF121213);
+  static const Color tileFilled = Color(0xFF565658);
+  static const Color tileCorrect = Color(0xFF538D4E);
+  static const Color tilePresent = Color(0xFFB59F3B);
+  static const Color tileAbsent = Color(0xFF3A3A3C);
+  static const Color keyDefault = Color(0xFF818384);
+  static const Color keyAction = Color(0xFF565658);
+  static const Color textMuted = Color(0xFF818384);
+  static const Color accentGlow = Color(0xFF6AAA64);
+  static const Color streakAccent = Color(0xFFF5793A);
 }

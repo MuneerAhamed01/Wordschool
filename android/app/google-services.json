@@ -1,32 +1,45 @@
 {
   "project_info": {
-    "project_number": "87702505475",
-    "project_id": "wordschool-dev",
-    "storage_bucket": "wordschool-dev.firebasestorage.app"
+    "project_number": "913674768179",
+    "project_id": "kerala-pcs-dev",
+    "storage_bucket": "kerala-pcs-dev.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:87702505475:android:71ecbdaa65a9ae49d02636",
+        "mobilesdk_app_id": "1:913674768179:android:65c00ce005c85e9966b846",
         "android_client_info": {
           "package_name": "com.wordschoolgame.mat"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "913674768179-nkc2jftebu1plmmg7dbs0gpd3v22hl6l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wordschoolgame.mat",
+            "certificate_hash": "9dd975de6a1fbd0557db5a8f6eeeba31cf9157f8"
+          }
+        },
+        {
+          "client_id": "913674768179-bo3k5s1ebevlodsaoaqgt64lu633tig7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyDAbP47CHhfIwuFe6v3D7c1GQbljC9qTOM"
+          "current_key": "AIzaSyD6CwpBpqtTZhElTXg77vPzwEU-QwUiajc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "87702505475-0jobqk13evdmu8qiinmdsgfrq33cscfj.apps.googleusercontent.com",
+              "client_id": "913674768179-bo3k5s1ebevlodsaoaqgt64lu633tig7.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "87702505475-s42orbp34e2q414urk3ivdqha3iq4p87.apps.googleusercontent.com",
+              "client_id": "913674768179-jei6rj3emoh33hl4aj71t4voa3nnu9id.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.wordschoolgame.mat"

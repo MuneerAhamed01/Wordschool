@@ -28,7 +28,7 @@ Future<void> initializeDependency() async {
   getIt.registerSingleton<SharedPreferences>(sharedPref);
 
   await _initSessions();
-  _initializeAuthDependencies();
+  await _initializeAuthDependencies();
   await _initializeValidWords();
   _initializeGame();
 }
@@ -49,7 +49,15 @@ Future<void> _initSessions() async {
       GetCurrentUserUseCase(sessionRepository: getIt<SessionRepository>()));
 }
 
-void _initializeAuthDependencies() {
+Future<void> _initializeAuthDependencies() async {
+  // google_sign_in v7 must be initialized exactly once.
+  // serverClientId is the Web client (client_type 3) of Firebase project
+  // `kerala-pcs-dev`; Android needs it to issue an ID token for Firebase Auth.
+  await GoogleSignIn.instance.initialize(
+    serverClientId:
+        '913674768179-bo3k5s1ebevlodsaoaqgt64lu633tig7.apps.googleusercontent.com',
+  );
+
   getIt.registerSingleton<AuthDataSource>(
     AuthDataSourceImpl(
       firebaseAuth: FirebaseAuth.instance,

@@ -50,21 +50,18 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDAbP47CHhfIwuFe6v3D7c1GQbljC9qTOM',
-    appId: '1:87702505475:android:71ecbdaa65a9ae49d02636',
-    messagingSenderId: '87702505475',
-    projectId: 'wordschool-dev',
-    storageBucket: 'wordschool-dev.firebasestorage.app',
+    apiKey: 'AIzaSyD6CwpBpqtTZhElTXg77vPzwEU-QwUiajc',
+    appId: '1:913674768179:android:65c00ce005c85e9966b846',
+    messagingSenderId: '913674768179',
+    projectId: 'kerala-pcs-dev',
+    storageBucket: 'kerala-pcs-dev.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDhUeESiay4f92p2VfMZAmZnMHKV7kDK6A',
-    appId: '1:87702505475:ios:1121678a38e1d161d02636',
-    messagingSenderId: '87702505475',
-    projectId: 'wordschool-dev',
-    storageBucket: 'wordschool-dev.firebasestorage.app',
-    androidClientId: '87702505475-hd86el48ffi4o4inms6p0ne61mh8s7b2.apps.googleusercontent.com',
-    iosClientId: '87702505475-s42orbp34e2q414urk3ivdqha3iq4p87.apps.googleusercontent.com',
+    apiKey: 'AIzaSyD8U5Zbb_0j7dPiVIaDzUOouakq-VCkaRY',
+    appId: '1:913674768179:ios:d2f78e579677c6f366b846',
+    messagingSenderId: '913674768179',
+    projectId: 'kerala-pcs-dev',
+    storageBucket: 'kerala-pcs-dev.firebasestorage.app',
     iosBundleId: 'com.wordschoolgame.mat',
   );
 }

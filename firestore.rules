@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Daily word: any signed-in user (incl. anonymous) can read and create
+    match /games/{gameId} {
+      allow read, create: if request.auth != null;
+    }
+
+    // Per-user profile (reserved, not written by the app yet)
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}

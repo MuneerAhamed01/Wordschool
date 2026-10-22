@@ -45,7 +45,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             saveUserSessionResult.error?.error ?? 'Save user session failed',
           ),
         );
+
+        return;
       }
+
       emit(AuthState.authenticated(result.data!));
     } else {
       emit(AuthState.error(result.error?.error ?? 'Anonymous sign-in failed'));
@@ -75,6 +78,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
 
       emit(AuthState.authenticated(result.data!));
+    } else if (result.error?.code == authCancelledCode) {
+      // User dismissed the Google picker; not an error
+      emit(const AuthState.initial());
     } else {
       emit(AuthState.error(result.error?.error ?? 'Google sign-in failed'));
     }
