@@ -30,7 +30,7 @@ This file is the single source of truth for project work. The **status board** b
 
 - "**Start CW-019**" → Claude reads the card, sets it to `doing`, follows the matching skill, and checks every "Done when" box before setting `review`.
 - "**What's next?**" → Claude picks the first `todo` task whose dependencies are all `done` (skill: `task-workflow`).
-- One task = one branch = one PR: `feat/CW-019-submit-crossword` → PR into `psc-dev`, title `CW-019: submitCrossword callable`.
+- One task = one branch: `feat/CW-019-submit-crossword`. Claude commits only when asked, then pushes the branch; no PRs (the user reviews the pushed branch).
 - Note notable changes in `docs/daily/YYYY-MM-DD.md` (what changed, why, files).
 
 **Adding a task:** next free number in its milestone block, add a row to the board **and** a card. Never reuse an ID.
@@ -48,17 +48,17 @@ This file is the single source of truth for project work. The **status board** b
 ### M0 · Foundations — target 2026-11-04
 
 
-| ID     | Task                                                   | Area           | Est   | Depends | Status | Notes                                                                                                                         |
-| ------ | ------------------------------------------------------ | -------------- | ----- | ------- | ------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| CW-001 | Untrack `.env*` files from git                         | ops            | 0.25d | —       | done   | b0e1aa3                                                                                                                       |
-| CW-002 | Decide environment setup (DEC-002)                     | ops            | 0.25d | —       | done   | Separate projects; dev = `kerala-pcs-dev`                                                                                     |
-| CW-003 | Add AI kit to repo (incl. `.claude/`, `.cursor/`)      | ops            | 0.25d | —       | done   | `.claude/` + `.cursor/` added; check `/` menu + Cursor rules manually                                                         |
-| CW-004 | Crossword collection constants (Dart + Python)         | app, functions | 0.25d | CW-007  | review | Python–Dart drift test in `collections_test.py`; stacked on CW-007 (not in `psc-dev` yet)                                    |
-| CW-005 | Remote Config (package + typed config class)           | app            | 0.5d  | —       | done   | Offline first launch needs a manual device check                                                                              |
-| CW-006 | App shell: bottom navigation + routes                  | app            | 1d    | —       | todo   | Needs DEC-007                                                                                                                 |
-| CW-007 | Create `functions/` codebase (Python) + shared helpers | functions      | 1d    | CW-008  | done   | Python (DEC-010); ruff + 32 pytest green; emulators boot (Java from Android Studio)                                           |
-| CW-008 | Blaze plan, budget alerts, confirm Firestore location  | ops            | 0.25d | —       | done   | `(default)` recreated in `asia-south1` (free tier). Rules + indexes redeploy pending (`firebase deploy` is user-only)         |
-| CW-009 | Test setup (Flutter `test/`) + first green run         | app            | 0.5d  | —       | done   | 7 model tests green. `analyze` has 6 pre-existing issues in `lib/` (unused `get` import, deprecations) — needs a cleanup task |
+| ID     | Task                                                   | Area           | Est   | Depends | Status | Notes                                                                                     |
+| ------ | ------------------------------------------------------ | -------------- | ----- | ------- | ------ | ----------------------------------------------------------------------------------------- |
+| CW-001 | Untrack `.env*` files from git                         | ops            | 0.25d | —       | done   | b0e1aa3                                                                                   |
+| CW-002 | Decide environment setup (DEC-002)                     | ops            | 0.25d | —       | done   | Separate projects; dev = `kerala-pcs-dev`                                                 |
+| CW-003 | Add AI kit to repo (incl. `.claude/`, `.cursor/`)      | ops            | 0.25d | —       | done   | `.claude/` + `.cursor/` added; `/` menu + Cursor rules checked                            |
+| CW-004 | Crossword collection constants (Dart + Python)         | app, functions | 0.25d | CW-007  | done   | Python–Dart drift test in `collections_test.py`; stacked on CW-007 (not in `psc-dev` yet) |
+| CW-005 | Remote Config (package + typed config class)           | app            | 0.5d  | —       | done   | Offline first launch checked on a device                                                  |
+| CW-006 | App shell: bottom navigation + routes                  | app            | 1d    | —       | todo   | Needs DEC-007                                                                             |
+| CW-007 | Create `functions/` codebase (Python) + shared helpers | functions      | 1d    | CW-008  | done   | Python (DEC-010); ruff + 32 pytest green; emulators boot (Java from Android Studio)       |
+| CW-008 | Blaze plan, budget alerts, confirm Firestore location  | ops            | 0.25d | —       | done   | `(default)` recreated in `asia-south1` (free tier). Rules + indexes redeployed            |
+| CW-009 | Test setup (Flutter `test/`) + first green run         | app            | 0.5d  | —       | done   | 7 model tests green. 6 pre-existing `analyze` issues in `lib/` accepted (no cleanup task) |
 
 
 
@@ -192,9 +192,9 @@ This file is the single source of truth for project work. The **status board** b
 | DEC-004 | Answer alphabet                | Accepted     | Phase 1 answers are English A–Z only; Malayalam crossword is NEXT-002.                                                                                                                                                          |
 | DEC-005 | Bloc style for new code        | Accepted     | `sealed class` events/states in one bloc file. Existing freezed blocs (`auth`, `game`) stay as they are.                                                                                                                        |
 | DEC-006 | Player root document           | Accepted     | `users/{uid}` (already in `FirebaseCollections`) replaces `userGameStates/{uid}` from the `development` design.                                                                                                                 |
-| DEC-007 | App home                       | **Open**     | Recommended: Crossword Home becomes the start screen (bottom nav: Play · Revise · Ranks · Profile); today's daily word game moves to a card on Home. Today `/game` is the start route.                                          |
+| DEC-007 | App home                       | **Accepted** | Recommended: Crossword Home becomes the start screen (bottom nav: Play · Revise · Ranks · Profile); today's daily word game moves to a card on Home. Today `/game` is the start route.                                          |
 | DEC-008 | Hints in phase 1               | Proposed     | No ads or purchases at launch: "Show a clue" is free; each puzzle allows 3 reveals (letter = 1, word = 3) with XP penalties. Monetization is NEXT-005/006.                                                                      |
-| DEC-009 | Firebase region                | Accepted     | **`asia-south1` (Mumbai)** for Firestore and Functions in every environment. Dev's `(default)` DB (first made in `nam5`) is recreated in CW-008.                                                                                |
+| DEC-009 | Firebase region                | Accepted     | `asia-south1` **(Mumbai)** for Firestore and Functions in every environment. Dev's `(default)` DB (first made in `nam5`) is recreated in CW-008.                                                                                |
 | DEC-010 | Cloud Functions language       | Accepted     | **Python 3.12** (`firebase-functions` Python SDK, ruff, pytest) instead of TypeScript. Code under `functions/` with `main.py` as the entry point. Rules tests are not covered by a Python library — CW-010 chooses the harness. |
 
 
@@ -225,7 +225,7 @@ Docs, design and content were committed in 40b6343. The hidden folders `.claude/
 Done when:
 
 - [x] `git ls-files .claude .cursor` lists 6 skill/settings files and 7 rule files
-- [ ] Claude Code shows the skills in the `/` menu; Cursor lists the rules under Settings → Rules
+- [x] Claude Code shows the skills in the `/` menu; Cursor lists the rules under Settings → Rules
 
 
 
@@ -246,7 +246,7 @@ Add `firebase_remote_config`; create `lib/core/remote_config/app_remote_config.d
 Done when:
 
 - [x] Keys with defaults: `crossword_hint_penalties` (`{"letter":5,"word":15}`), `crossword_reveals_per_puzzle` (3), `xp_level_formula` (`{"base":100,"growth":1.25}`), `crossword_autosave_seconds` (30), `min_supported_build` (0)
-- [ ] App works offline on first launch using defaults
+- [x] App works offline on first launch using defaults
 
 
 
