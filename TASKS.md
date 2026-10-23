@@ -95,7 +95,7 @@ This file is the single source of truth for project work. The **status board** b
 | ID     | Task                                                                          | Area  | Est  | Depends                | Status | Notes                         |
 | ------ | ----------------------------------------------------------------------------- | ----- | ---- | ---------------------- | ------ | ----------------------------- |
 | CW-029 | Admin foundation: web target, `main_admin.dart`, claim login, shell, API base | admin | 1.5d | CW-024                 | review | Web app on dev; Google popup + claim |
-| CW-030 | `AdminApiService` crossword methods + models                                  | admin | 1d   | CW-029, CW-023, CW-025 | todo   |                               |
+| CW-030 | `AdminApiService` crossword methods + models                                  | admin | 1d   | CW-029, CW-023, CW-025 | review | Daily docs read via Firestore |
 | CW-031 | Categories page                                                               | admin | 0.5d | CW-030                 | todo   |                               |
 | CW-032 | Question bank page (list, add/edit, verify)                                   | admin | 1.5d | CW-030                 | todo   |                               |
 | CW-033 | Puzzle builder (grid editor + live validation)                                | admin | 3d   | CW-030, CW-014         | todo   | Biggest admin task            |
@@ -529,9 +529,11 @@ Done when:
 
 Typed methods for every crossword callable; models in `lib/features/admin/domain/models/`.
 
+**Done:** every method returns `DataState<T>`; `listAllQuestions` pages at 100 for import matching and the builder. `crosswordDaily` docs are read straight from Firestore (players may read them; one `get()` per day) instead of a new callable. `LocalizedText` added in `lib/shared/domains/entities/` (CW-040 reuses it); `toJson` leaves out empty optional text because the server rejects e.g. an empty `topic`. Errors: `showAdminError` shows the server message in a snackbar, with "See all" when the server lists several problems.
+
 Done when:
 
-- [ ] Each method has a `fromJson` model; errors surface as snackbars with the server message
+- [x] Each method has a `fromJson` model; errors surface as snackbars with the server message
 
 
 

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
@@ -22,6 +23,7 @@ void _initializeAdmin() {
   adminGetIt.registerSingleton<AdminApiService>(
     AdminApiService(
       functions: FirebaseFunctions.instanceFor(region: adminFunctionsRegion),
+      firestore: FirebaseFirestore.instance,
     ),
   );
 }
