@@ -78,8 +78,8 @@ This file is the single source of truth for project work. The **status board** b
 | CW-017 | `adminSaveCrosswordPuzzle`                                       | functions      | 1d    | CW-013, CW-014, CW-016 | done   | Numbers from `lastPuzzleNumber`                              |
 | CW-018 | `adminSetPuzzleStatus` + `adminScheduleDaily`                    | functions      | 1d    | CW-017                 | done   |                                                              |
 | CW-019 | `submitCrossword` (scoring, XP, leaderboard, mistakes)           | functions      | 2d    | CW-013, CW-017         | done   | Scoring per DEC-011 (Accepted)                               |
-| CW-020 | `crosswordDailyRollover` scheduled job                           | functions      | 0.5d  | CW-018                 | review | Deployed; manual run on dev pending                          |
-| CW-021 | `refreshLeaderboardTop` scheduled job                            | functions      | 0.5d  | CW-019                 | review |                                                              |
+| CW-020 | `crosswordDailyRollover` scheduled job                           | functions      | 0.5d  | CW-018                 | done   | Force-run on dev checked 2026-10-23                          |
+| CW-021 | `refreshLeaderboardTop` scheduled job                            | functions      | 0.5d  | CW-019                 | done   |                                                              |
 | CW-022 | `adminListReports` + `adminResolveReport`                        | functions      | 0.5d  | CW-012                 | done   |                                                              |
 | CW-023 | Export, deploy to `kerala-pcs-dev`, smoke test                   | functions      | 0.5d  | CW-015…CW-022          | done   | Emulator flow test green; 11 functions live on dev           |
 | CW-024 | `setAdminClaim` script + first admin account                     | functions, ops | 0.25d | CW-007                 | done   | muneerahamed.dev@gmail.com is admin on dev                   |
@@ -439,7 +439,7 @@ Done when:
 
 Done when:
 
-- [ ] Unit test for the selection logic; manual run on dev — unit + emulator tests done; manual run on dev after deploy
+- [x] Unit test for the selection logic; manual run on dev — force run from Cloud Scheduler on 2026-10-23; logs showed the expected "No crosswordDaily doc" errors (no content yet)
 
 
 
