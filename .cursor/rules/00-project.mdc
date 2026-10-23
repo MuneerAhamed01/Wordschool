@@ -1,0 +1,15 @@
+---
+description: Kerala PSC app (psc-dev) — project basics, always on
+globs:
+alwaysApply: true
+---
+
+# Kerala PSC app — always-on rules
+
+- Branch `psc-dev`, Firebase project `kerala-pcs-dev`. Read `CLAUDE.md` for conventions and `TASKS.md` for the current task. Work on one task ID at a time; keep changes inside its scope.
+- Flutter commands always use FVM: `fvm flutter analyze`, `fvm flutter test`.
+- Package name is `wordshool` (sic). Never rename it or the misspelled folders `resorces`, `repostiories`, `usercases`.
+- Content collections are admin-only (written by Cloud Functions). Scores/XP/leaderboards are server-only.
+- Firestore schema lives in `docs/firebase/FIREBASE_DESIGN.md` — update it in the same change when the schema changes.
+- Never commit `.env*` (except `.env.example`), keys or service accounts.
+- Before finishing: analyze + tests pass; tick the task card's "Done when" boxes; set board status to `review`.

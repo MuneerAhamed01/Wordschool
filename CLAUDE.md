@@ -1,45 +1,47 @@
-# CLAUDE.md — WordSchool PSC
+# CLAUDE.md — Kerala PSC App
 
 Guidance for Claude Code (and Cursor) working in this repository. Read this first, then `TASKS.md`.
 
 ## What this project is
 
-**WordSchool** is a Flutter app of daily word games, now growing into a **Kerala PSC exam-prep games app**.
+A Flutter app of **Kerala PSC exam-prep games**, built on the `psc-dev` branch (a fresh, slim start from the WordSchool codebase).
 
-- **Live today:** daily Wordle, Story Mode (detective cases), streaks, weekly leaderboards, ads/IAP, admin panel (Flutter web).
-- **Phase 1 (now):** **PSC Crossword** — topic crosswords built from a verified PSC fact bank.
+- **On the branch today:** Google + guest sign-in, a daily word game (`features/game`), shared UI widgets.
+- **Phase 1 (now):** **PSC Crossword** — topic crosswords built from a verified PSC fact bank, with an admin panel and Cloud Functions.
 - **Phase 2 (later):** Kerala Map Challenge (designs ready in `design/`).
 
-Package name is `wordshool` (sic). **Do not rename** it, or existing misspelled folders (`resorces`, `repostiories`, `usercases`) — imports depend on them.
+The older full WordSchool app lives on `development`. Port code from there when a task says so (admin panel, functions tooling, flavors, analytics) — don't merge the branches.
+
+Package name is `wordshool` (sic). **Do not rename** it, or the misspelled folders `resorces`, `repostiories`, `usercases` — imports depend on them.
 
 ## Where things are
 
 | Need | Look in |
 | --- | --- |
-| What to work on | `TASKS.md` (status board + task cards) |
+| What to work on | `TASKS.md` (status board + task cards + decisions) |
 | Firestore schema, rules, indexes, costs | `docs/firebase/FIREBASE_DESIGN.md` |
 | Screen specs, tokens, prototypes | `design/` |
-| Older feature docs (Story Mode phases, environments) | `technical_doc/` |
-| Daily change log | `daily update/YYYY-MM-DD.md` |
-| Generators and workflows | `.claude/skills/` (see "Skills" below) |
+| PSC content drafts | `content/` |
+| Daily change log | `docs/daily/YYYY-MM-DD.md` |
+| Generators and workflows | `.claude/skills/` (see "Skills") |
 
 ## Commands
 
-Flutter is pinned with **FVM** — always prefix with `fvm`.
+Flutter **3.32.0** pinned with **FVM** (`.fvmrc`) — always prefix with `fvm`.
 
 ```bash
+cp .env.example .env                      # first time
 fvm flutter pub get
-fvm flutter run -t lib/main_dev.dart --flavor dev      # player app, dev DB
-fvm flutter run -t lib/main.dart -d chrome             # admin panel (web)
+fvm flutter run                           # player app → Firebase project kerala-pcs-dev
 fvm flutter analyze
 fvm flutter test
 fvm dart run build_runner build --delete-conflicting-outputs   # only for existing freezed files
 
-cd functions
-npm run lint && npm run build && npm test
-npm run serve                                          # emulators: functions + firestore
-firebase deploy --only firestore:rules,firestore:indexes -P default
-firebase deploy --only functions -P default
+# after CW-007 (functions) / CW-029 (admin):
+cd functions && npm run lint && npm run build && npm test
+firebase emulators:start --only functions,firestore
+fvm flutter run -t lib/main_admin.dart -d chrome
+firebase deploy --only firestore:rules,firestore:indexes,functions   # project kerala-pcs-dev
 ```
 
 Before saying a task is done: `fvm flutter analyze` and `fvm flutter test` pass; if `functions/` changed, `npm run lint && npm test` pass.
@@ -50,98 +52,98 @@ Clean architecture per feature, `get_it` for DI, `flutter_bloc` for state, `go_r
 
 ```
 lib/
-  app/            bootstrap (game + admin)
-  config/themes/  colors, fonts, theme
-  core/           analytics, config, firebase, logging, monetization, remote_config,
-                  resorces (DataState, UseCase), routes, utils
-  shared/         cross-feature data/domain/widgets (user game state, session)
+  config/themes/  colors.dart (MyColors, MyColorScheme.dark), fonts.dart (Nunito)
+  core/           constants, enums, firebase (collections, dt_converter), resorces (DataState, UseCase),
+                  routes (app_router.dart), utils
+  shared/         session (SessionHandler, user entity/model), shared widgets
   features/<feature>/
     domain/
-      entities/       <name>.dart           → class <Name>Entity extends Equatable
+      entities/       <name>.dart                → class <Name>Entity extends Equatable
       repositories/   <feature>_repository.dart  → abstract class <Feature>Repository
-      usecases/       <verb>_<noun>.dart    → class <Verb><Noun>UseCase extends UseCase<R, P>
+      usecases/       <verb>_<noun>.dart         → class <Verb><Noun>UseCase extends UseCase<R, P>
       usecases/utils/ <verb>_<noun>_param.dart   → class <Verb><Noun>Param
-      utils/          pure logic (calculators, engines) — fully unit tested
+      utils/          pure logic (engines, calculators) — fully unit tested
     data/
-      models/         <name>.dart           → class <Name>Model extends <Name>Entity (fromJson/toJson)
-      data_source/    <name>_service.dart   → abstract class <Name>DataSource
-      data_source/remote/ <name>_service.dart → class <Name>DataSourceImpl extends <Name>DataSource
+      models/         <name>.dart                → class <Name>Model extends <Name>Entity (fromJson/toJson)
+      data_source/    <name>_service.dart        → abstract class <Name>DataSource
+      data_source/remote/ <name>_service.dart    → class <Name>DataSourceImpl extends <Name>DataSource
       repositories/   <feature>_repository_impl.dart
     presentation/
-      bloc/<name>_bloc/<name>_bloc.dart     (sealed events + states in the same file)
-      pages/          <name>_page.dart      (static const routeName)
+      bloc/<name>_bloc/<name>_bloc.dart          (new code: sealed events + states in this file)
+      pages/          <name>_page.dart           (static const routeName)
       widgets/
-      utils/
-  di.dart         _initialize<Feature>() per feature, called from initializeDependency
-  di_admin.dart   admin panel DI
+  di.dart         _initialize<Feature>() per feature, called from initializeDependency()
+  main.dart       Firebase init → dotenv → DI → initial route from FirebaseAuth state
 ```
 
 ### Rules that keep the code consistent
 
-- **Results:** data sources and repositories return `Future<DataState<T>>` — `DataSuccess(data:)` or `DataError(error: AppError…)`. Use `AppError.notFound / validation / cancelled / fromException`. Never throw across layers.
-- **Use cases:** `extends UseCase<ReturnType, ParamType>`, single `call({required param})`. Params are small immutable classes in `usecases/utils/`. `void` when there is no param.
-- **Firestore:** inject `FirebaseFirestore` via constructor (it is environment-scoped by `FirestoreProvider`). **Never** use `FirebaseFirestore.instance` in features. Collection names come from `lib/core/firebase/collections.dart`.
-- **DI:** `getIt.registerSingleton<Abstract>(Impl(...))` in a `_initialize<Feature>()` function; blocs are created in the router/page, not registered.
-- **Bloc (new code):** `sealed class XEvent` / `sealed class XState` with `final class` subclasses in the bloc file (see `features/leaderboard/presentation/bloc/leaderboard_bloc.dart`). Do **not** add new freezed blocs.
+- **Results:** data sources and repositories return `Future<DataState<T>>` — `DataSuccess(data:)` or `DataError(error: AppError(...))`. Never throw across layers. Catch in the data source and include the error code and context.
+- **Use cases:** `extends UseCase<ReturnType, ParamType>`, single `call({required param})`; params are small immutable classes in `usecases/utils/`.
+- **Firebase access:** data sources receive `FirebaseFirestore` / `FirebaseFunctions` / `FirebaseAuth` through their constructor; only `di.dart` touches `.instance`. Collection names come from `lib/core/firebase/collections.dart`.
+- **DI:** `getIt.registerSingleton<Abstract>(Impl(...))` inside `_initialize<Feature>()`; blocs are created in `app_router.dart` / `BlocProvider`, not registered.
+- **Bloc (new code):** `sealed class XEvent` / `sealed class XState` with `final class` subclasses in the bloc file (DEC-005). The existing freezed blocs in `auth` and `game` stay as they are.
 - **Domain is pure:** no Flutter, Firebase or `get_it` imports in `domain/`.
-- **Models:** `factory X.fromJson(Map<String, dynamic> json, {String? documentId})` + `Map<String, dynamic> toJson()`. Timestamps via `FirebaseDTConverter` (`core/firebase/dt_converter.dart`). Localized text as `LocalizedText` (`{en, ml}` map — added in CW-040).
-- **Logging:** `AppLogger.instance` — no `print`.
-- **Config:** feature flags and tunables live in Remote Config (`core/remote_config/`), env flags in `.env.dev/.env.prod` (`MonetizationConfig.fromEnv()`).
-- **Dates:** existing games use UTC date ids (`DateHelper.todayUtcDateId`). Crossword uses **IST** date ids (DEC-001).
+- **Models:** `factory X.fromJson(Map<String, dynamic> json, {String? documentId})` + `toJson()`. Timestamps via `FirebaseDTConverter`. Localized text as `LocalizedText` (`{en, ml}`, added in CW-040).
+- **UI:** build on the shared widgets — `GameScaffold`, `AppButton` (variants), `PressableScale`, `FadeSlideIn`, `ShimmerGridItem`, `snackbar.dart`. Colours from `MyColors` / tokens in `design/tokens/`; no hex in widgets.
+- **Config:** tunables in Remote Config (CW-005); secrets/keys in `.env` (never committed).
+- **Dates:** daily keys are IST `YYYY-MM-DD` (DEC-001).
+- **No `print`** in new code (add a small logger if needed; `development` has `AppLogger` to port).
 
 ## Firebase
 
-- Project `wordschool-dev`. Dev data = named database **`development`**; prod = **`(default)`** (see DEC-002 in `TASKS.md`).
-- **Content is admin-only.** Apps never write content collections. Admin panel → admin callables (`assertAdmin`, `parseDatabaseId`, `writeAuditLog`) → Firestore.
-- **Scores are server-side.** XP, streaks, leaderboards, results come from functions (`submitCrossword`), never from the client.
-- **Rules are operation-scoped:** each client update rule lists exactly which keys may change (`affectedKeys().hasOnly([...])`). Follow the pattern in `firestore.rules`; add new matches **above** the catch-all deny.
-- **Cost habits:** one-time `get()` instead of listeners for lists; paginate (20); batch progress saves (pause / leave / 30 s, never per keystroke); read summary docs (`top50`) instead of collections; turn off indexing on big fields with `fieldOverrides`.
-- Full schema: `docs/firebase/FIREBASE_DESIGN.md`. If you change the schema, update that doc in the same PR.
+- **One project per environment (DEC-002).** Dev = `kerala-pcs-dev`, `(default)` database. Prod project comes in CW-076. No `databaseId` parameters anywhere.
+- **Player root doc is `users/{uid}` (DEC-006).** The client may write only profile fields; `xp`, `crossword`, `rateLimit`, `blockedAt` are server-only.
+- **Content is admin-only.** Apps never write content collections. Admin panel → admin callables (`assertAdmin` → validate → batch → `writeAuditLog`) → Firestore.
+- **Scores are server-side.** XP, streaks, leaderboards, results come from functions (`submitCrossword`).
+- **Rules are operation-scoped:** each client update lists exactly which keys may change (`diff(resource.data).affectedKeys().hasOnly([...])`); values that only go up are checked; everything not matched is denied.
+- **Cost habits:** one-time `get()` for lists (no list listeners); paginate at 20; batch progress saves (pause / leave / 30 s, never per keystroke); read summary docs (`top50`, `crosswordDaily`) instead of collections; `fieldOverrides` to turn off indexing on big fields.
+- Full schema: `docs/firebase/FIREBASE_DESIGN.md`. Schema change = update that doc in the same PR.
 
-## Cloud Functions (`functions/`)
+## Cloud Functions (`functions/`, from CW-007)
 
-- TypeScript, Node 20, `firebase-functions` v2 (`onCall`, `onSchedule`, `onDocument*`), Admin SDK.
-- Style: ESLint google config — **double quotes, 2-space indent, max line 100**.
-- Admin callables: first line `const adminUid = assertAdmin(request);`, then `const databaseId = parseDatabaseId(data.databaseId); const db = dbForDatabaseId(databaseId);`, end with `writeAuditLog(...)`. Throw `HttpsError` with clear messages.
-- Pure logic (validators, scoring) lives in its own file with a `*.test.ts` next to it (Jest, `ts-jest`).
-- Export every function from `src/index.ts`. New crossword code goes in `src/crossword/`.
-- Region: `asia-south1` for new crossword functions (`setGlobalOptions` or per-function `region`).
+- TypeScript, Node 20, `firebase-functions` v2 (`onCall`, `onSchedule`, `onDocument*`), modular Admin SDK.
+- ESLint google style: **double quotes, 2-space indent, max line 100**, JSDoc on exported functions.
+- Region `asia-south1` via `setGlobalOptions`; schedules use `timeZone: "Asia/Kolkata"`.
+- Admin callables: `const adminUid = assertAdmin(request);` first, `writeAuditLog(...)` last. Player callables: auth check, `users/{uid}.blockedAt` check, idempotent.
+- Pure logic (validation, scoring, encoding) in its own file with a `*.test.ts` beside it (Jest).
+- Crossword code in `src/crossword/`; every function exported from `src/index.ts`.
 
 ## Tests
 
-- Flutter: `test/` mirrors `lib/` (`test/features/<feature>/domain/utils/..._test.dart`). Pure logic first: grid engine, scoring, validators, model `fromJson`.
-- Functions: Jest unit tests for every validator and scoring rule; rules tests on the emulator for every new collection.
+- Flutter: `test/` mirrors `lib/`. Pure logic first (grid engine, scoring, model `fromJson`), then bloc and widget tests.
+- Functions: Jest for every validator and scoring rule; emulator rules tests for every collection.
 - Bug fix = a failing test first.
 
 ## Working on tasks
 
 1. Find the task in `TASKS.md`; set its board status to `doing`.
-2. Branch `feat/CW-0XX-short-name` from `development`.
-3. Use the matching skill (below). Keep the change to the task's scope.
+2. Branch `feat/CW-0XX-short-name` from `psc-dev` (`chore/` for ops, `fix/` for bugs).
+3. Use the matching skill. Keep the change inside the card's scope; extra work becomes a new task.
 4. Tick the card's "Done when" boxes; run analyze/tests; set status `review`.
-5. Commit messages: `CW-0XX: what changed` (imperative). One task per PR into `development`.
-6. Note notable changes in `daily update/YYYY-MM-DD.md`.
+5. Commit `CW-0XX: what changed`; one task per PR into `psc-dev`.
+6. Add notable changes to `docs/daily/YYYY-MM-DD.md`.
 
 ## Skills (`.claude/skills/`)
 
 | Skill | Use it to |
 | --- | --- |
-| `task-workflow` | Pick the next task, update status, close out a task |
-| `flutter-feature` | Scaffold a feature or a slice (entity → model → data source → repo → use case → bloc → page) and wire DI/routes |
+| `task-workflow` | Pick the next task, start one, finish one, add/split tasks |
+| `flutter-feature` | Scaffold entity → model → data source → repo → use case → bloc → page, and wire DI/routes |
 | `cloud-function` | Scaffold an admin callable, player callable, scheduled job or trigger, with tests |
-| `firestore-collection` | Add a collection end-to-end: constants, model, rules + rules test, indexes, design doc |
-| `crossword-content` | Draft PSC questions and crossword puzzles as JSON and validate grids |
+| `firestore-collection` | Add a collection end to end: constants, rules + tests, indexes, design doc |
+| `crossword-content` | Draft PSC questions and crossword puzzles as JSON; validate grids |
 
 ## Design
 
-- Player app: dark Wordle palette (`lib/config/themes/colors.dart`) — tiles `tileCorrect #538D4E`, `tilePresent #B59F3B`, background `#121213`. Tokens in `design/tokens/`.
-- Screen specs: `design/screens/psc-crossword.md`. Match spacing and states there; touch targets ≥ 44 px; works at 360 px width.
+- Dark theme (`MyColorScheme.dark()`): background `#121213`, tiles `#538D4E` / `#B59F3B`. Filled buttons with white text use `#467A41` (contrast). Tokens in `design/tokens/psc-crossword.tokens.json`.
+- Screen specs: `design/screens/psc-crossword.md`. Touch targets ≥ 44 px; works at 360 px width.
 
 ## Don'ts
 
-- Don't write to content collections from the app, or compute XP/score on the client for storage.
-- Don't add listeners (`snapshots()`) for lists, or save on every keystroke.
+- Don't write content or score fields from the app.
+- Don't add list listeners or save on every keystroke.
 - Don't hard-delete content — set `status: archived`.
-- Don't commit `.env*` (except `.env.example`), service accounts or API keys.
-- Don't change existing Wordle/Story Mode schemas or rules unless the task says so.
-- Don't add packages without noting why in the PR; prefer what is already in `pubspec.yaml`.
+- Don't commit `.env`, service-account keys or signing files.
+- Don't merge `development` into `psc-dev`; port only what a task names.
+- Don't add packages without saying why in the PR.

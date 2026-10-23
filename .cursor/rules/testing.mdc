@@ -1,0 +1,15 @@
+---
+description: Testing conventions
+globs: test/**/*.dart, functions/**/*.test.ts
+alwaysApply: false
+---
+
+# Testing
+
+- `test/` mirrors `lib/` paths; file name `<source>_test.dart`.
+- Unit-test pure logic first: grid engine, scoring, validators, streak math, model `fromJson`/`toJson` with real-shaped fixtures.
+- Repositories/data sources: fake the data source interface; don't hit Firebase in unit tests.
+- Bloc tests: drive events, assert emitted state sequence.
+- Functions: Jest (`ts-jest`), `*.test.ts` beside the source. One `describe` per function, cases for every rejection path.
+- Firestore rules: emulator tests with `@firebase/rules-unit-testing` — prove both what is allowed and what is denied.
+- A bug fix starts with a failing test.

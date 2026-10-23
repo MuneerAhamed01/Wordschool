@@ -1,0 +1,16 @@
+---
+description: Bloc state management and UI conventions
+globs: lib/**/presentation/**/*.dart
+alwaysApply: false
+---
+
+# Bloc and UI
+
+- New blocs: `sealed class <X>Event` and `sealed class <X>State` with `final class` subclasses in the same file as the bloc (template: `.claude/skills/flutter-feature/scripts/scaffold_feature.py --bloc`). Do not add new freezed blocs; existing `auth`/`game` freezed blocs stay.
+- Bloc handlers: `on<Event>(_onEvent)`; emit `Loading` → `Loaded`/`Error`. Map `DataError.error?.message` to the error state.
+- Blocs receive use cases via constructor and are created in `app_router.dart` / the page's `BlocProvider` — not registered in `get_it`.
+- Pages: `static const String routeName = '/...';` routes added in `lib/core/routes/app_router.dart`.
+- Build on shared widgets: `GameScaffold`, `AppButton`, `PressableScale`, `FadeSlideIn`, `ShimmerGridItem`, `snackbar.dart`. Colors from `MyColors` (`lib/config/themes/colors.dart`), text from the theme (Nunito). No hard-coded hex in widgets.
+- Match the specs in `design/screens/`. Touch targets ≥ 44 px, works at 360 px width, text contrast ≥ 4.5:1.
+- Long lists: `ListView.builder` with pagination; never load a whole collection.
+- Track user actions with `AnalyticsService` events (`core/analytics/`, added in CW-053).

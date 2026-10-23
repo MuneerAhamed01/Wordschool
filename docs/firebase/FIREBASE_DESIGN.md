@@ -1,9 +1,9 @@
 # Firebase Design — PSC Crossword (Phase 1)
 
-> **Status:** Approved for build · **Last updated:** 2026-10-22 · **Tasks:** CW-004 – CW-023 in `TASKS.md`
-> Shared doc version: https://claude.ai/artifact/MFySVtYQEnWF5U3QF94bMH
+> **Status:** Approved for build · **Branch:** `psc-dev` · **Project (dev):** `kerala-pcs-dev` · **Last updated:** 2026-10-23 · **Tasks:** CW-004 – CW-024, CW-055 in `TASKS.md`
+> This file is the source of truth. The older shared doc (https://claude.ai/artifact/MFySVtYQEnWF5U3QF94bMH) was written for the `development` branch (`userGameStates`, `databaseId`) — where they differ, this file wins.
 
-PSC Crossword adds **9 Firestore collections** to the existing WordSchool project. Only admins can create or change content, scores are computed on the server, and the cost is **$0 up to ~2,000 daily players** and **under $5/month at 10,000**.
+PSC Crossword adds **9 Firestore collections** to the Kerala PSC Firebase project. Only admins can create or change content, scores are computed on the server, and the cost is **$0 up to ~2,000 daily players** and **under $5/month at 10,000**.
 
 **Contents:** [Decisions](#decisions) · [Design rules](#design-rules) · [At a glance](#at-a-glance) · [Collections](#collections) · [Flows](#flows) · [Security rules](#security-rules) · [Indexes](#indexes) · [Cloud Functions](#cloud-functions) · [Cost](#cost) · [Later phases](#later-phases)
 
@@ -15,7 +15,7 @@ PSC Crossword adds **9 Firestore collections** to the existing WordSchool projec
 2. **A question bank sits under puzzles.** Each PSC fact lives once in `pscQuestions`, is verified, then copied into puzzles. Later games reuse it.
 3. **One puzzle = one document.** Opening a puzzle costs 1 read. Answers ship **encoded** for offline Check/Reveal; the real key is in private `crosswordSolutions`.
 4. **Scores are server-side.** The app saves in-progress letters; finishing goes through `submitCrossword`, which scores, gives XP, updates the leaderboard and saves mistakes in one batch.
-5. **Builds on the existing schema.** Players stay in `userGameStates/{uid}`; rules reuse `isOwner`, `isNotBlocked`; admin callables accept `databaseId` like the existing ones (dev = `development`, prod = `(default)` — see DEC-002).
+5. **One project per environment.** Dev = `kerala-pcs-dev`, prod = a separate project (CW-076), both on the `(default)` database — so functions never take a `databaseId` (DEC-002). The player root is `users/{uid}` (DEC-006).
 
 ---
 
@@ -47,7 +47,7 @@ flowchart LR
   AF -->|writes| C[(Content<br/>crosswordCategories<br/>crosswordPuzzles<br/>crosswordDaily<br/>pscQuestions · private<br/>crosswordSolutions · private)]
   PA[Player app] -->|reads published| C
   PA -->|on finish| SC[submitCrossword<br/>reads crosswordSolutions<br/>scores · one batch]
-  SC -->|writes| P[(Player data<br/>userGameStates · xp, stats<br/>crosswordProgress<br/>revisionItems<br/>leaderboards<br/>contentReports)]
+  SC -->|writes| P[(Player data<br/>users · xp, stats<br/>crosswordProgress<br/>revisionItems<br/>leaderboards<br/>contentReports)]
   PA -->|saves progress, files reports| P
   SJ[Scheduled jobs<br/>daily rollover 00:05 IST<br/>top50 every 15 min] -->|writes| C
   SJ -->|writes| P
@@ -60,12 +60,12 @@ flowchart LR
 | 3 | `crosswordPuzzles/{puzzleId}` | Admin functions | Published only |
 | 4 | `crosswordSolutions/{puzzleId}` | Admin functions | **No** |
 | 5 | `crosswordDaily/{YYYY-MM-DD}` | Scheduled job / admin | Yes |
-| 6 | `userGameStates/{uid}/crosswordProgress/{puzzleId}` | Player (in progress) + `submitCrossword` | Own |
-| 7 | `userGameStates/{uid}/revisionItems/{questionId}` | `submitCrossword` (+ player toggles `mastered`) | Own |
+| 6 | `users/{uid}/crosswordProgress/{puzzleId}` | Player (in progress) + `submitCrossword` | Own |
+| 7 | `users/{uid}/revisionItems/{questionId}` | `submitCrossword` (+ player toggles `mastered`) | Own |
 | 8 | `leaderboards/{boardId}/entries/{uid}` | `submitCrossword` + scheduled job | Signed-in |
 | 9 | `contentReports/{reportId}` | Player (create only) | **No** |
 
-Plus new server-only fields on `userGameStates/{uid}`: `xp`, `crossword`.
+Plus the player root `users/{uid}`: profile fields written by the app, `xp` / `crossword` / `rateLimit` / `blockedAt` written only by the server.
 
 ---
 
@@ -156,7 +156,7 @@ Obfuscation only. The server re-checks with `crosswordSolutions`. Fixture: `VAIK
 
 `puzzleId`, `categoryId`, `title`, `difficulty`, `wordCount`, `xpReward`, `estimatedMinutes`.
 
-### 6. `userGameStates/{uid}/crosswordProgress/{puzzleId}` — Player state
+### 6. `users/{uid}/crosswordProgress/{puzzleId}` — Player state
 
 | Field | Type | Notes |
 | --- | --- | --- |
@@ -169,7 +169,7 @@ Obfuscation only. The server re-checks with `crosswordSolutions`. Fixture: `VAIK
 | `result` | map | Server: `{ score, correctWords, totalWords, xpEarned, timeSec, wrongWordIds[] }` |
 | `completedAt` | timestamp | Server |
 
-### 7. `userGameStates/{uid}/revisionItems/{questionId}` — "My mistakes"
+### 7. `users/{uid}/revisionItems/{questionId}` — "My mistakes"
 
 Server upserts on every wrong or revealed word. Fields: `answer`, `answerDisplay`, `clue`, `fact`, `subject`, `source` (`{ "game": "crossword", "puzzleId": "…" }`), `wrongCount`, `lastWrongAt`, `mastered` (player may toggle only this), `nextReviewAt` (reserved), `updatedAt`.
 
@@ -181,13 +181,21 @@ Server upserts on every wrong or revealed word. Fields: `answer`, `answerDisplay
 
 `uid`, `puzzleId`, `wordId`, `questionId`, `reason` (`wrong_answer` · `typo` · `other`), `message` (≤ 500), `status` (`open` · `fixed` · `rejected`), `createdAt`.
 
-### New fields on `userGameStates/{uid}` (server-only)
+### `users/{uid}` — Player root (DEC-006)
 
-- `xp` — total across games. Level is computed in the app from Remote Config `xp_level_formula`, never stored.
-- `crossword` — `{ played, solved, currentStreak, longestStreak, lastSolvedDate, bestTimeSec }`.
-- `rateLimit` — `{ submitWindowStart, submitCount }` used by `submitCrossword`.
+Already reserved in `FirebaseCollections.users` on psc-dev.
 
-The current rules already stop clients changing fields outside their allowed lists.
+| Field | Written by | Notes |
+| --- | --- | --- |
+| `displayName` | App (CW-055) | Google name, or "Guest 1234" |
+| `photoUrl` | App | nullable |
+| `isAnonymous` | App | |
+| `createdAt` | App, on create only | server timestamp |
+| `lastSeenAt` | App | server timestamp |
+| `xp` | **Server** | Total across games. Level computed in the app from Remote Config `xp_level_formula` |
+| `crossword` | **Server** | `{ played, solved, currentStreak, longestStreak, lastSolvedDate, bestTimeSec }` |
+| `rateLimit` | **Server** | `{ submitWindowStart, submitCount }` for `submitCrossword` |
+| `blockedAt` | **Server / admin** | Set to block a player |
 
 ---
 
@@ -215,16 +223,16 @@ stateDiagram-v2
 
 ### Player: open and play
 
-1. **Home** reads `crosswordDaily/{today IST}`, active categories (cached), own `userGameStates/{uid}`.
+1. **Home** reads `crosswordDaily/{today IST}`, active categories (cached), own `users/{uid}`.
 2. **Category list**: published puzzles in the category, `number` desc, 20 per page.
 3. **Puzzle**: puzzle doc + own progress doc.
-4. **Play**: Check / Reveal / Show clue are offline; progress saved on pause, leave, or every 30 s; paid hints use `hintPackBalance`.
+4. **Play**: Check / Reveal / Show clue are offline; progress saved on pause, leave, or every 30 s; reveals are limited per puzzle (DEC-008).
 
 ### Player: finish
 
 1. App calls `submitCrossword({ puzzleId, letters, elapsedSec })`.
 2. Function reads `crosswordSolutions` + progress; scores each word; XP = `xpReward` − 5 per revealed letter − 15 per revealed word (min 0).
-3. One batch: progress `result` + `completed`; `userGameStates.xp` + `crossword` stats; `leaderboards/crossword-{week}/entries/{uid}`; `revisionItems` for wrong/revealed words.
+3. One batch: progress `result` + `completed`; `users/{uid}.xp` + `crossword` stats; `leaderboards/crossword-{week}/entries/{uid}`; `revisionItems` for wrong/revealed words.
 4. Returns the result — the Results screen needs no extra reads.
 5. Calling again returns the stored result (idempotent).
 
@@ -232,125 +240,168 @@ stateDiagram-v2
 
 ## Security rules
 
-Extends `firestore.rules`, reusing `isAuthenticated`, `isOwner`, `isNotBlocked`, `isDateId`, `isNonNegativeInt`. Functions use the Admin SDK and bypass rules.
+psc-dev's current `firestore.rules` is open for `users/{uid}` (any write by the owner, so a player could set their own `xp`). **Replace the whole file** with the version below (task CW-010). Cloud Functions use the Admin SDK and bypass rules.
 
 | Collection | App can read | App can write |
 | --- | --- | --- |
+| `games` (daily word game) | Signed-in | Create (unchanged for now) |
+| `users/{uid}` | Own | Profile fields only |
 | `crosswordCategories` | Active only | No |
 | `crosswordPuzzles` | Published only | No |
-| `crosswordDaily` | Yes | No |
-| `pscQuestions`, `crosswordSolutions` | No | No |
-| `crosswordProgress` (own) | Yes | Create/update while `in_progress`; values only go up |
-| `revisionItems` (own) | Yes | Only `mastered` |
+| `crosswordDaily` | Signed-in | No |
+| `pscQuestions`, `crosswordSolutions`, `adminAuditLog` | No | No |
+| `users/{uid}/crosswordProgress` | Own | Create/update while `in_progress`; values only go up |
+| `users/{uid}/revisionItems` | Own | Only `mastered` |
 | `leaderboards` | Signed-in | No |
 | `contentReports` | No | Create only |
 
-**1. Helpers** (add to the `Helpers` block):
-
 ```js
-function isHintCount(h) {
-  return h is map
-    && h.keys().hasAll(['letter', 'word', 'clue'])
-    && h.keys().hasOnly(['letter', 'word', 'clue'])
-    && isNonNegativeInt(h.letter)
-    && isNonNegativeInt(h.word)
-    && isNonNegativeInt(h.clue);
-}
-function isCrosswordProgress(d) {
-  return d.status == 'in_progress'
-    && d.letters is string && d.letters.size() <= 400
-    && isNonNegativeInt(d.elapsedSec)
-    && isNonNegativeInt(d.checksUsed)
-    && isHintCount(d.hintsUsed)
-    && d.updatedAt == request.time;
-}
-```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
 
-**2. Inside `match /userGameStates/{uid} { … }`:**
+    // ---------- Helpers ----------
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+    function isNotBlocked(uid) {
+      return !exists(/databases/$(database)/documents/users/$(uid))
+        || get(/databases/$(database)/documents/users/$(uid)).data.get('blockedAt', null) == null;
+    }
+    function isDateId(id) {
+      return id.matches('^\\d{4}-\\d{2}-\\d{2}$');
+    }
+    function isNonNegativeInt(n) {
+      return n is int && n >= 0;
+    }
+    function isHintCount(h) {
+      return h is map
+        && h.keys().hasAll(['letter', 'word', 'clue'])
+        && h.keys().hasOnly(['letter', 'word', 'clue'])
+        && isNonNegativeInt(h.letter)
+        && isNonNegativeInt(h.word)
+        && isNonNegativeInt(h.clue);
+    }
+    function isCrosswordProgress(d) {
+      return d.status == 'in_progress'
+        && d.letters is string && d.letters.size() <= 400
+        && isNonNegativeInt(d.elapsedSec)
+        && isNonNegativeInt(d.checksUsed)
+        && isHintCount(d.hintsUsed)
+        && d.updatedAt == request.time;
+    }
+    function isProfile(d) {
+      return d.displayName is string && d.displayName.size() <= 40
+        && (!('photoUrl' in d) || d.photoUrl == null || d.photoUrl is string)
+        && d.isAnonymous is bool
+        && d.lastSeenAt == request.time;
+    }
 
-```js
-match /crosswordProgress/{puzzleId} {
-  allow read: if isOwner(uid);
+    // ---------- Daily word game (existing; tighten when it moves server-side) ----------
+    match /games/{gameId} {
+      allow read, create: if isAuthenticated();
+    }
 
-  allow create: if isOwner(uid) && isNotBlocked(uid)
-    && request.resource.data.keys().hasOnly(['status', 'letters', 'elapsedSec',
-         'hintsUsed', 'checksUsed', 'startedAt', 'updatedAt'])
-    && isCrosswordProgress(request.resource.data)
-    && request.resource.data.startedAt == request.time
-    && get(/databases/$(database)/documents/crosswordPuzzles/$(puzzleId)).data.status == 'published';
+    // ---------- Player root ----------
+    match /users/{uid} {
+      allow read: if isOwner(uid);
 
-  allow update: if isOwner(uid) && isNotBlocked(uid)
-    && resource.data.status == 'in_progress'
-    && request.resource.data.diff(resource.data).affectedKeys()
-         .hasOnly(['letters', 'elapsedSec', 'hintsUsed', 'checksUsed', 'updatedAt'])
-    && isCrosswordProgress(request.resource.data)
-    && request.resource.data.letters.size() == resource.data.letters.size()
-    && request.resource.data.elapsedSec >= resource.data.elapsedSec
-    && request.resource.data.checksUsed >= resource.data.checksUsed
-    && request.resource.data.hintsUsed.letter >= resource.data.hintsUsed.letter
-    && request.resource.data.hintsUsed.word >= resource.data.hintsUsed.word
-    && request.resource.data.hintsUsed.clue >= resource.data.hintsUsed.clue;
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['displayName', 'photoUrl', 'isAnonymous',
+             'createdAt', 'lastSeenAt'])
+        && isProfile(request.resource.data)
+        && request.resource.data.createdAt == request.time;
 
-  allow delete: if false;
-}
+      allow update: if isOwner(uid) && isNotBlocked(uid)
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['displayName', 'photoUrl', 'isAnonymous', 'lastSeenAt'])
+        && isProfile(request.resource.data);
 
-match /revisionItems/{questionId} {
-  allow read: if isOwner(uid);
-  allow update: if isOwner(uid) && isNotBlocked(uid)
-    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['mastered', 'updatedAt'])
-    && request.resource.data.mastered is bool
-    && request.resource.data.updatedAt == request.time;
-  allow create, delete: if false;
-}
-```
+      allow delete: if false;
 
-**3. Top level, above the catch-all deny:**
+      match /crosswordProgress/{puzzleId} {
+        allow read: if isOwner(uid);
 
-```js
-// ---------- PSC Crossword content (written only by Cloud Functions) ----------
-match /crosswordCategories/{categoryId} {
-  allow read: if resource.data.isActive == true;
-  allow write: if false;
-}
-match /crosswordPuzzles/{puzzleId} {
-  allow read: if resource.data.status == 'published';
-  allow write: if false;
-}
-match /crosswordDaily/{dateId} {
-  allow read: if isDateId(dateId);
-  allow write: if false;
-}
+        allow create: if isOwner(uid) && isNotBlocked(uid)
+          && request.resource.data.keys().hasOnly(['status', 'letters', 'elapsedSec',
+               'hintsUsed', 'checksUsed', 'startedAt', 'updatedAt'])
+          && isCrosswordProgress(request.resource.data)
+          && request.resource.data.startedAt == request.time
+          && get(/databases/$(database)/documents/crosswordPuzzles/$(puzzleId)).data.status == 'published';
 
-// ---------- Private ----------
-match /pscQuestions/{questionId} {
-  allow read, write: if false;
-}
-match /crosswordSolutions/{puzzleId} {
-  allow read, write: if false;
-}
+        // Only while in progress; time, hints and checks can only go up.
+        allow update: if isOwner(uid) && isNotBlocked(uid)
+          && resource.data.status == 'in_progress'
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['letters', 'elapsedSec', 'hintsUsed', 'checksUsed', 'updatedAt'])
+          && isCrosswordProgress(request.resource.data)
+          && request.resource.data.letters.size() == resource.data.letters.size()
+          && request.resource.data.elapsedSec >= resource.data.elapsedSec
+          && request.resource.data.checksUsed >= resource.data.checksUsed
+          && request.resource.data.hintsUsed.letter >= resource.data.hintsUsed.letter
+          && request.resource.data.hintsUsed.word >= resource.data.hintsUsed.word
+          && request.resource.data.hintsUsed.clue >= resource.data.hintsUsed.clue;
 
-// ---------- Weekly leaderboards (server-written) ----------
-match /leaderboards/{boardId} {
-  allow read: if isAuthenticated();
-  allow write: if false;
-  match /entries/{userId} {
-    allow read: if isAuthenticated();
-    allow write: if false;
+        allow delete: if false;
+      }
+
+      match /revisionItems/{questionId} {
+        allow read: if isOwner(uid);
+        allow update: if isOwner(uid) && isNotBlocked(uid)
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['mastered', 'updatedAt'])
+          && request.resource.data.mastered is bool
+          && request.resource.data.updatedAt == request.time;
+        allow create, delete: if false;
+      }
+    }
+
+    // ---------- PSC Crossword content (written only by Cloud Functions) ----------
+    match /crosswordCategories/{categoryId} {
+      allow read: if isAuthenticated() && resource.data.isActive == true;
+      allow write: if false;
+    }
+    match /crosswordPuzzles/{puzzleId} {
+      allow read: if isAuthenticated() && resource.data.status == 'published';
+      allow write: if false;
+    }
+    match /crosswordDaily/{dateId} {
+      allow read: if isAuthenticated() && isDateId(dateId);
+      allow write: if false;
+    }
+
+    // ---------- Weekly leaderboards (server-written) ----------
+    match /leaderboards/{boardId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+      match /entries/{userId} {
+        allow read: if isAuthenticated();
+        allow write: if false;
+      }
+    }
+
+    // ---------- Player reports: create only ----------
+    match /contentReports/{reportId} {
+      allow create: if isAuthenticated() && isNotBlocked(request.auth.uid)
+        && request.resource.data.keys().hasOnly(['uid', 'puzzleId', 'wordId',
+             'questionId', 'reason', 'message', 'status', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.reason in ['wrong_answer', 'typo', 'other']
+        && request.resource.data.message is string
+        && request.resource.data.message.size() <= 500
+        && request.resource.data.status == 'open'
+        && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if false;
+    }
+
+    // ---------- Everything else (pscQuestions, crosswordSolutions, adminAuditLog, …) ----------
+    match /{document=**} {
+      allow read, write: if false;
+    }
   }
-}
-
-// ---------- Player reports: create only ----------
-match /contentReports/{reportId} {
-  allow create: if isAuthenticated() && isNotBlocked(request.auth.uid)
-    && request.resource.data.keys().hasOnly(['uid', 'puzzleId', 'wordId',
-         'questionId', 'reason', 'message', 'status', 'createdAt'])
-    && request.resource.data.uid == request.auth.uid
-    && request.resource.data.reason in ['wrong_answer', 'typo', 'other']
-    && request.resource.data.message is string
-    && request.resource.data.message.size() <= 500
-    && request.resource.data.status == 'open'
-    && request.resource.data.createdAt == request.time;
-  allow read, update, delete: if false;
 }
 ```
 
@@ -405,7 +456,7 @@ Leaderboard `orderBy('points', 'desc')` and rank `where('points', '>', mine).cou
 
 ## Cloud Functions
 
-In `functions/src/crossword/`, region `asia-south1`. Admin callables: `assertAdmin` → `parseDatabaseId` → `dbForDatabaseId` → … → `writeAuditLog`.
+In `functions/src/crossword/` (codebase created in CW-007), region `asia-south1`. Admin callables: `assertAdmin` → validate → `db().batch()` → `writeAuditLog`. No `databaseId` parameter (DEC-002).
 
 | Function | Type | Caller | Does |
 | --- | --- | --- | --- |
@@ -420,7 +471,7 @@ In `functions/src/crossword/`, region `asia-south1`. Admin callables: `assertAdm
 | `crosswordDailyRollover` | Scheduled 00:05 IST | System | Publish due puzzles; warn if tomorrow is empty |
 | `refreshLeaderboardTop` | Scheduled 15 min | System | Copy top 50 into parent doc |
 
-`submitCrossword` also rejects impossible results (`elapsedSec < wordCount × 2`) and allows 30 calls/hour/player (`rateLimit` on the user doc).
+`submitCrossword` also rejects impossible results (`elapsedSec < wordCount × 2`) and allows 30 calls/hour/player (`users/{uid}.rateLimit`).
 
 ---
 
@@ -437,7 +488,7 @@ Per player per day ≈ **20 reads** (Home 3, list ≤ 10, puzzle 2, results/rank
 | 10,000 | 205,000 | 90,000 | ≈ $3.30 |
 | 50,000 | 1,005,000 | 450,000 | ≈ $20 |
 
-Firestore Standard: free 50,000 reads, 20,000 writes, 1 GiB per day on the `(default)` database; then $0.03 / 100k reads and $0.09 / 100k writes ([pricing](https://cloud.google.com/firestore/pricing), checked 2026-10-22). **Named databases (like `development`) get no free quota** — fine for dev traffic, never for prod. Functions stay inside 2M free invocations/month even at 50,000 players.
+Firestore Standard: free 50,000 reads, 20,000 writes, 1 GiB per day on the `(default)` database; then $0.03 / 100k reads and $0.09 / 100k writes ([pricing](https://cloud.google.com/firestore/pricing), checked 2026-10-22). Each project's `(default)` database gets its own free quota. Functions stay inside 2M free invocations/month even at 50,000 players, but **need the Blaze plan** (CW-008).
 
 **Keep it low:** no list listeners · offline cache on · paginate at 20 · read `top50` not entries · batch progress saves · App Check on Firestore + Functions · budget alerts at $10 and $25.
 
@@ -448,10 +499,10 @@ Firestore Standard: free 50,000 reads, 20,000 writes, 1 GiB per day on the `(def
 | Shared piece | Phase 1 | Later |
 | --- | --- | --- |
 | `pscQuestions` | Crossword words | Clue Wordle, Map Challenge facts (`geo` fields), quizzes |
-| `userGameStates.xp` | Crossword XP | One XP/level across games |
+| `users/{uid}.xp` | Crossword XP | One XP/level across games |
 | `revisionItems` | Crossword mistakes | Every game (`source.game`) |
 | `leaderboards/{game}-{week}` | `crossword-…` | `map-…`, overall `xp-…` |
 | `contentReports` | Crossword | Any game (`game` field) |
 | Admin callable + audit pattern | Crossword | Every content type |
 
-**Kerala Map Challenge:** `mapChallenges/{challengeId}` (routes, landmarks, district sets as coordinates), `userGameStates/{uid}/mapProgress/{challengeId}`, `submitMapChallenge` (server-side route accuracy). Map shapes ship as app assets, not Firestore docs.
+**Kerala Map Challenge:** `mapChallenges/{challengeId}` (routes, landmarks, district sets as coordinates), `users/{uid}/mapProgress/{challengeId}`, `submitMapChallenge` (server-side route accuracy). Map shapes ship as app assets, not Firestore docs.

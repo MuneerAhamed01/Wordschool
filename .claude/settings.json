@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(fvm flutter analyze:*)",
+      "Bash(fvm flutter test:*)",
+      "Bash(fvm flutter pub get)",
+      "Bash(fvm dart format:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run build)",
+      "Bash(npm test:*)",
+      "Bash(npm --prefix functions run lint)",
+      "Bash(npm --prefix functions run build)",
+      "Bash(npm --prefix functions test:*)",
+      "Bash(python3 .claude/skills/flutter-feature/scripts/scaffold_feature.py:*)",
+      "Bash(python3 .claude/skills/cloud-function/scripts/scaffold_function.py:*)",
+      "Bash(python3 .claude/skills/crossword-content/scripts/validate_crossword.py:*)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.dev)",
+      "Read(./.env.prod)",
+      "Bash(firebase deploy:*)"
+    ]
+  }
+}
