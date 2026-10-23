@@ -96,7 +96,7 @@ This file is the single source of truth for project work. The **status board** b
 | ------ | ----------------------------------------------------------------------------- | ----- | ---- | ---------------------- | ------ | ----------------------------- |
 | CW-029 | Admin foundation: web target, `main_admin.dart`, claim login, shell, API base | admin | 1.5d | CW-024                 | review | Web app on dev; Google popup + claim |
 | CW-030 | `AdminApiService` crossword methods + models                                  | admin | 1d   | CW-029, CW-023, CW-025 | review | Daily docs read via Firestore |
-| CW-031 | Categories page                                                               | admin | 0.5d | CW-030                 | todo   |                               |
+| CW-031 | Categories page                                                               | admin | 0.5d | CW-030                 | review | Drag to reorder; ID from name |
 | CW-032 | Question bank page (list, add/edit, verify)                                   | admin | 1.5d | CW-030                 | todo   |                               |
 | CW-033 | Puzzle builder (grid editor + live validation)                                | admin | 3d   | CW-030, CW-014         | todo   | Biggest admin task            |
 | CW-034 | Puzzle preview, status workflow, schedule calendar                            | admin | 1d   | CW-033                 | todo   |                               |
@@ -540,6 +540,8 @@ Done when:
 #### CW-031 · Categories page
 
 List, add/edit, reorder (`order`), toggle `isActive`.
+
+**Done:** list with drag handles (orders become 10, 20, 30… and only changed categories are re-saved), a "Visible to players" switch, and an add/edit dialog. The ID is made from the English name (editable only when adding), the icon and colour are picked from 12 icons and 8 colours.
 
 #### CW-032 · Question bank page
 

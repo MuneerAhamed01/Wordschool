@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wordshool/features/admin/data/admin_auth_service.dart';
 import 'package:wordshool/features/admin/presentation/admin_sections.dart';
+import 'package:wordshool/features/admin/presentation/pages/admin_categories_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_home_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_login_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_shell_page.dart';
@@ -20,6 +21,14 @@ String? adminRedirect({
   }
   return atLogin ? AdminHomePage.routeName : null;
 }
+
+const _unbuiltSections = [
+  AdminSection.questions,
+  AdminSection.puzzles,
+  AdminSection.schedule,
+  AdminSection.reports,
+  AdminSection.bulkUpload,
+];
 
 GoRouter adminRouter(AdminAuthService auth) {
   return GoRouter(
@@ -44,7 +53,11 @@ GoRouter adminRouter(AdminAuthService auth) {
             path: AdminHomePage.routeName,
             builder: (context, state) => const AdminHomePage(),
           ),
-          for (final section in AdminSection.values.skip(1))
+          GoRoute(
+            path: AdminCategoriesPage.routeName,
+            builder: (context, state) => const AdminCategoriesPage(),
+          ),
+          for (final section in _unbuiltSections)
             GoRoute(
               path: section.path,
               builder: (context, state) =>
