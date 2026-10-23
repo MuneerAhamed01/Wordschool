@@ -56,7 +56,7 @@ This file is the single source of truth for project work. The **status board** b
 | CW-004 | Crossword collection constants (Dart + TS)            | app, functions | 0.25d | CW-007  | todo   |                                                                                                                               |
 | CW-005 | Remote Config (package + typed config class)          | app            | 0.5d  | —       | review | Offline first launch needs a manual device check                                                                              |
 | CW-006 | App shell: bottom navigation + routes                 | app            | 1d    | —       | todo   | Needs DEC-007                                                                                                                 |
-| CW-007 | Create `functions/` codebase + shared helpers         | functions      | 1d    | CW-008  | todo   |                                                                                                                               |
+| CW-007 | Create `functions/` codebase + shared helpers         | functions      | 1d    | CW-008  | review | Functions emulator boots; Firestore emulator needs Java (not installed) |
 | CW-008 | Blaze plan, budget alerts, confirm Firestore location | ops            | 0.25d | —       | blocked | Blaze + budgets done. DB is in `nam5` → recreate `(default)` in `asia-south1` |
 | CW-009 | Test setup (Flutter `test/`) + first green run        | app            | 0.5d  | —       | review | 7 model tests green. `analyze` has 6 pre-existing issues in `lib/` (unused `get` import, deprecations) — needs a cleanup task |
 
@@ -272,7 +272,7 @@ Create the Cloud Functions project (TypeScript, Node 20, `firebase-functions` v2
 
 Done when:
 
-- [ ] `npm run lint && npm run build && npm test` pass with tests for `assertAdmin`, `dateId`, `isoWeekId`
+- [x] `npm run lint && npm run build && npm test` pass with tests for `assertAdmin`, `dateId`, `isoWeekId`
 - [ ] `firebase emulators:start --only functions,firestore` boots
 
 
