@@ -21,7 +21,8 @@
           "projectId": "kerala-pcs-dev",
           "configurations": {
             "android": "1:913674768179:android:65c00ce005c85e9966b846",
-            "ios": "1:913674768179:ios:d2f78e579677c6f366b846"
+            "ios": "1:913674768179:ios:d2f78e579677c6f366b846",
+            "web": "1:913674768179:web:dd78c776ba7bd0af66b846"
           }
         }
       }

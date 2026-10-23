@@ -149,4 +149,25 @@ class MyColors {
   static const Color gameBorderSubtle = Color(0xFF2E2E30);
   static const Color navBarBackground = Color(0xFF161617);
   static const Color navInactive = Color(0xFF9A9B9C);
+
+  // PSC Crossword tokens (design/tokens/psc-crossword.tokens.json)
+  static const Color buttonFill = Color(0xFF467A41);
+  static const Color textSecondary = Color(0xFFA9A9AB);
+  static const Color hint = Color(0xFFC9B458);
+  static const Color gridCell = Color(0xFF2A2A2C);
+  static const Color gridBlock = Color(0xFF0A0A0B);
+  static const Color gridWordBg = Color(0xFF3A3524);
+  static const Color gridWordBorder = Color(0xFF7C6C2A);
+  static const Color gridWrongBg = Color(0xFF7A2A22);
+  static const Color gridWrongBorder = Color(0xFFB54A3C);
+  static const Color successBg = Color(0xFF253323);
+  static const Color successText = Color(0xFF9FD39A);
+  static const Color errorBg = Color(0xFF3A1F1B);
+  static const Color errorText = Color(0xFFF2B8AE);
+  static const Color warnBg = Color(0xFF3A3524);
+  static const Color warnText = Color(0xFFE5D27A);
+
+  // Admin panel
+  static const Color infoBg = Color(0xFF1B2A3A);
+  static const Color infoText = Color(0xFF9CC4F2);
 }

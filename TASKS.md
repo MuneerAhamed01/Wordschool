@@ -94,7 +94,7 @@ This file is the single source of truth for project work. The **status board** b
 
 | ID     | Task                                                                          | Area  | Est  | Depends                | Status | Notes                         |
 | ------ | ----------------------------------------------------------------------------- | ----- | ---- | ---------------------- | ------ | ----------------------------- |
-| CW-029 | Admin foundation: web target, `main_admin.dart`, claim login, shell, API base | admin | 1.5d | CW-024                 | todo   | Port from `development`       |
+| CW-029 | Admin foundation: web target, `main_admin.dart`, claim login, shell, API base | admin | 1.5d | CW-024                 | review | Web app on dev; Google popup + claim |
 | CW-030 | `AdminApiService` crossword methods + models                                  | admin | 1d   | CW-029, CW-023, CW-025 | todo   |                               |
 | CW-031 | Categories page                                                               | admin | 0.5d | CW-030                 | todo   |                               |
 | CW-032 | Question bank page (list, add/edit, verify)                                   | admin | 1.5d | CW-030                 | todo   |                               |
@@ -516,9 +516,11 @@ Done when:
 
 psc-dev has no web target. Add it (`fvm flutter create --platforms web .`, then `flutterfire configure` for a web app in `kerala-pcs-dev`). Port from `development`: `lib/main_admin.dart` (entry), `lib/app/bootstrap_admin.dart`, `lib/di_admin.dart`, `lib/core/routes/admin_router.dart`, `features/admin/data/admin_auth_service.dart` (Google sign-in + `admin` claim check), `admin_shell_page.dart`, `admin_login_page.dart`, and an `AdminApiService` with a `_call(name, data)` helper using `FirebaseFunctions.instanceFor(region: 'asia-south1')`. Drop the database switcher (DEC-002); show the project id as an environment badge.
 
+**Done (branch `module/m2`):** web target added; Firebase web app `wordshool (web)` created in `kerala-pcs-dev` with the Firebase CLI (no FlutterFire CLI here) and added to `firebase_options.dart`. Sign-in is a Google popup (`signInWithPopup`, no `google_sign_in` on web); `AdminAuthService` is a `ChangeNotifier` the router listens to, so a non-admin is signed out and stays on `/login`. Sections: Home, Categories, Questions, Puzzles, Daily schedule, Reports, Bulk upload. Env badge shows `TEST · kerala-pcs-dev` (any non `-dev` project shows `LIVE` in red). Pages are `StatefulWidget`s that call `AdminApiService` directly (as on `development`); pure logic lives in `features/admin/domain/utils/` with tests.
+
 Done when:
 
-- [ ] `fvm flutter run -t lib/main_admin.dart -d chrome` → non-admin is refused, admin reaches the shell
+- [ ] `fvm flutter run -t lib/main_admin.dart -d chrome` → non-admin is refused, admin reaches the shell — `flutter build web -t lib/main_admin.dart` compiles; redirect logic unit-tested; needs one manual sign-in
 - [ ] The mobile app build is unaffected
 
 
