@@ -16,6 +16,7 @@ PSC Crossword adds **9 Firestore collections** to the Kerala PSC Firebase projec
 3. **One puzzle = one document.** Opening a puzzle costs 1 read. Answers ship **encoded** for offline Check/Reveal; the real key is in private `crosswordSolutions`.
 4. **Scores are server-side.** The app saves in-progress letters; finishing goes through `submitCrossword`, which scores, gives XP, updates the leaderboard and saves mistakes in one batch.
 5. **One project per environment.** Dev = `kerala-pcs-dev`, prod = a separate project (CW-076), both on the `(default)` database — so functions never take a `databaseId` (DEC-002). The player root is `users/{uid}` (DEC-006).
+6. **Everything lives in Mumbai (`asia-south1`).** Firestore `(default)` and all Cloud Functions run in `asia-south1`, close to players in Kerala. Firestore's location can't change after creation, so prod (CW-076) must also pick `asia-south1` when its database is created. (`kerala-pcs-dev` was first created in `nam5` on 2026-10-22 and recreated in `asia-south1` under CW-008.)
 
 ---
 
