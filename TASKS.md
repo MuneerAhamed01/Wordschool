@@ -45,7 +45,7 @@ This file is the single source of truth for project work. The **status board** b
 | CW-002 | Decide environment setup (DEC-002) | ops | 0.25d | — | done | Separate projects; dev = `kerala-pcs-dev` |
 | CW-003 | Add AI kit to repo (incl. `.claude/`, `.cursor/`) | ops | 0.25d | — | review | `.claude/` + `.cursor/` added; check `/` menu + Cursor rules manually |
 | CW-004 | Crossword collection constants (Dart + TS) | app, functions | 0.25d | CW-007 | todo | |
-| CW-005 | Remote Config (package + typed config class) | app | 0.5d | — | todo | |
+| CW-005 | Remote Config (package + typed config class) | app | 0.5d | — | review | Offline first launch needs a manual device check |
 | CW-006 | App shell: bottom navigation + routes | app | 1d | — | todo | Needs DEC-007 |
 | CW-007 | Create `functions/` codebase + shared helpers | functions | 1d | CW-008 | todo | |
 | CW-008 | Blaze plan, budget alerts, confirm Firestore location | ops | 0.25d | — | todo | Functions need Blaze |
@@ -187,7 +187,7 @@ Done when:
 Add `firebase_remote_config`; create `lib/core/remote_config/app_remote_config.dart` (abstract class + Firebase impl, pattern from `development`'s `story_mode_config.dart`), initialize in `di.dart` with in-app defaults, fetch with a 1 h minimum interval.
 
 Done when:
-- [ ] Keys with defaults: `crossword_hint_penalties` (`{"letter":5,"word":15}`), `crossword_reveals_per_puzzle` (3), `xp_level_formula` (`{"base":100,"growth":1.25}`), `crossword_autosave_seconds` (30), `min_supported_build` (0)
+- [x] Keys with defaults: `crossword_hint_penalties` (`{"letter":5,"word":15}`), `crossword_reveals_per_puzzle` (3), `xp_level_formula` (`{"base":100,"growth":1.25}`), `crossword_autosave_seconds` (30), `min_supported_build` (0)
 - [ ] App works offline on first launch using defaults
 
 #### CW-006 · App shell

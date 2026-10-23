@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wordshool/core/remote_config/app_remote_config.dart';
 import 'package:wordshool/core/utils/valid_words.dart';
 import 'package:wordshool/features/auth/data/data_source/auth_service.dart';
 import 'package:wordshool/features/auth/data/data_source/remote/auth_service.dart';
@@ -27,10 +29,18 @@ Future<void> initializeDependency() async {
   final sharedPref = await SharedPreferences.getInstance();
   getIt.registerSingleton<SharedPreferences>(sharedPref);
 
+  await _initializeRemoteConfig();
   await _initSessions();
   await _initializeAuthDependencies();
   await _initializeValidWords();
   _initializeGame();
+}
+
+Future<void> _initializeRemoteConfig() async {
+  getIt.registerSingleton<AppRemoteConfig>(
+    FirebaseAppRemoteConfig(remoteConfig: FirebaseRemoteConfig.instance),
+  );
+  await getIt<AppRemoteConfig>().initialize();
 }
 
 Future<void> _initSessions() async {
