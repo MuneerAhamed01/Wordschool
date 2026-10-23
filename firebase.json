@@ -1,1 +1,67 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"kerala-pcs-dev","appId":"1:913674768179:android:65c00ce005c85e9966b846","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"kerala-pcs-dev","appId":"1:913674768179:ios:d2f78e579677c6f366b846","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"kerala-pcs-dev","configurations":{"android":"1:913674768179:android:65c00ce005c85e9966b846","ios":"1:913674768179:ios:d2f78e579677c6f366b846"}}}}},"firestore":{"rules":"firestore.rules","indexes":"firestore.indexes.json"}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "kerala-pcs-dev",
+          "appId": "1:913674768179:android:65c00ce005c85e9966b846",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "kerala-pcs-dev",
+          "appId": "1:913674768179:ios:d2f78e579677c6f366b846",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "kerala-pcs-dev",
+          "configurations": {
+            "android": "1:913674768179:android:65c00ce005c85e9966b846",
+            "ios": "1:913674768179:ios:d2f78e579677c6f366b846"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "runtime": "python312",
+      "ignore": [
+        "venv",
+        ".git",
+        "__pycache__",
+        ".pytest_cache",
+        ".ruff_cache",
+        "*_test.py",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "\"$RESOURCE_DIR/venv/bin/ruff\" check \"$RESOURCE_DIR\"",
+        "\"$RESOURCE_DIR/venv/bin/pytest\" -q --rootdir \"$RESOURCE_DIR\" \"$RESOURCE_DIR\""
+      ]
+    }
+  ],
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "ui": {
+      "enabled": true
+    }
+  }
+}

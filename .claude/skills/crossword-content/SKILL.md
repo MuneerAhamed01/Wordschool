@@ -70,7 +70,7 @@ The published puzzle stores `answerEnc` instead of `answer` (DEC-003):
 answerEnc = base64( utf8(answer) XOR utf8(puzzleId + ":" + wordId) )   # key repeated
 ```
 
-`--encode` prints it. The server (`adminSaveCrosswordPuzzle`) does this for you; the script is for seed files and for checking the TS/Dart implementations (CW-014) — all three must produce the same strings. Fixtures: `VAIKOM` / `kerala-history-0012` / `2D` → `PSQ7KiMs`.
+`--encode` prints it. The server (`adminSaveCrosswordPuzzle`) does this for you; the script is for seed files and for checking the Python/Dart implementations (CW-014) — all three must produce the same strings. Fixtures: `VAIKOM` / `kerala-history-0012` / `2D` → `PSQ7KiMs`.
 
 ## Quality bar for a puzzle
 

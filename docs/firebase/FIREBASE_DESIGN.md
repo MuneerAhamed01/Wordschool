@@ -457,7 +457,7 @@ Leaderboard `orderBy('points', 'desc')` and rank `where('points', '>', mine).cou
 
 ## Cloud Functions
 
-In `functions/src/crossword/` (codebase created in CW-007), region `asia-south1`. Admin callables: `assertAdmin` → validate → `db().batch()` → `writeAuditLog`. No `databaseId` parameter (DEC-002).
+In `functions/crossword/` (Python codebase created in CW-007, DEC-010), region `asia-south1`. Deployed names below are what the apps call. Admin callables: `assert_admin` → validate → `db().batch()` → `write_audit_log`. No `databaseId` parameter (DEC-002).
 
 | Function | Type | Caller | Does |
 | --- | --- | --- | --- |

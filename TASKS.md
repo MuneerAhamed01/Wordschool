@@ -53,11 +53,11 @@ This file is the single source of truth for project work. The **status board** b
 | CW-001 | Untrack `.env*` files from git                        | ops            | 0.25d | —       | done   | b0e1aa3                                                                                                                       |
 | CW-002 | Decide environment setup (DEC-002)                    | ops            | 0.25d | —       | done   | Separate projects; dev = `kerala-pcs-dev`                                                                                     |
 | CW-003 | Add AI kit to repo (incl. `.claude/`, `.cursor/`)     | ops            | 0.25d | —       | review | `.claude/` + `.cursor/` added; check `/` menu + Cursor rules manually                                                         |
-| CW-004 | Crossword collection constants (Dart + TS)            | app, functions | 0.25d | CW-007  | todo   |                                                                                                                               |
+| CW-004 | Crossword collection constants (Dart + Python)        | app, functions | 0.25d | CW-007  | todo   |                                                                                                                               |
 | CW-005 | Remote Config (package + typed config class)          | app            | 0.5d  | —       | review | Offline first launch needs a manual device check                                                                              |
 | CW-006 | App shell: bottom navigation + routes                 | app            | 1d    | —       | todo   | Needs DEC-007                                                                                                                 |
-| CW-007 | Create `functions/` codebase + shared helpers         | functions      | 1d    | CW-008  | todo   |                                                                                                                               |
-| CW-008 | Blaze plan, budget alerts, confirm Firestore location | ops            | 0.25d | —       | blocked | Blaze + budgets done. DB is in `nam5` → recreate `(default)` in `asia-south1` |
+| CW-007 | Create `functions/` codebase (Python) + shared helpers | functions      | 1d    | CW-008  | review | Python (DEC-010); ruff + 32 pytest green; emulators boot (Java from Android Studio) |
+| CW-008 | Blaze plan, budget alerts, confirm Firestore location | ops            | 0.25d | —       | review | `(default)` recreated in `asia-south1` (free tier). Rules + indexes redeploy pending (`firebase deploy` is user-only) |
 | CW-009 | Test setup (Flutter `test/`) + first green run        | app            | 0.5d  | —       | review | 7 model tests green. `analyze` has 6 pre-existing issues in `lib/` (unused `get` import, deprecations) — needs a cleanup task |
 
 
@@ -70,9 +70,9 @@ This file is the single source of truth for project work. The **status board** b
 | ------ | ---------------------------------------------------------------- | -------------- | ----- | ---------------------- | ------ | -------------------------------------------- |
 | CW-010 | Firestore rules (incl. lock down `users`, `games`) + rules tests | rules          | 2d    | CW-004, CW-007         | todo   | `users/{uid}` is fully client-writable today |
 | CW-011 | Indexes + field overrides                                        | rules          | 0.25d | —                      | todo   |                                              |
-| CW-012 | Shared TS types for crossword                                    | functions      | 0.5d  | CW-004                 | todo   |                                              |
+| CW-012 | Shared Python types for crossword                                | functions      | 0.5d  | CW-004                 | todo   |                                              |
 | CW-013 | Grid validator + tests                                           | functions      | 1.5d  | CW-012                 | todo   |                                              |
-| CW-014 | Answer encoding (TS + Dart, same algorithm)                      | functions, app | 0.5d  | CW-007, CW-009         | todo   |                                              |
+| CW-014 | Answer encoding (Python + Dart, same algorithm)                  | functions, app | 0.5d  | CW-007, CW-009         | todo   |                                              |
 | CW-015 | `adminSaveCategory`                                              | functions      | 0.5d  | CW-012                 | todo   |                                              |
 | CW-016 | `adminSaveQuestion` + `adminVerifyQuestion`                      | functions      | 1d    | CW-012                 | todo   |                                              |
 | CW-017 | `adminSaveCrosswordPuzzle`                                       | functions      | 1d    | CW-013, CW-014, CW-016 | todo   |                                              |
@@ -195,6 +195,7 @@ This file is the single source of truth for project work. The **status board** b
 | DEC-007 | App home                       | **Open**     | Recommended: Crossword Home becomes the start screen (bottom nav: Play · Revise · Ranks · Profile); today's daily word game moves to a card on Home. Today `/game` is the start route. |
 | DEC-008 | Hints in phase 1               | Proposed     | No ads or purchases at launch: "Show a clue" is free; each puzzle allows 3 reveals (letter = 1, word = 3) with XP penalties. Monetization is NEXT-005/006.                             |
 | DEC-009 | Firebase region | Accepted | **`asia-south1` (Mumbai)** for Firestore and Functions in every environment. Dev's `(default)` DB (first made in `nam5`) is recreated in CW-008. |
+| DEC-010 | Cloud Functions language | Accepted | **Python 3.12** (`firebase-functions` Python SDK, ruff, pytest) instead of TypeScript. Code under `functions/` with `main.py` as the entry point. Rules tests are not covered by a Python library — CW-010 chooses the harness. |
 
 
 ---
@@ -230,7 +231,7 @@ Done when:
 
 #### CW-004 · Crossword collection constants
 
-Add to `lib/core/firebase/collections.dart` (keep `games`, `users`) and to `functions/src/crossword/collections.ts`. No string literals for collection names anywhere else.
+Add to `lib/core/firebase/collections.dart` (keep `games`, `users`) and to `functions/crossword/collections.py` (`UPPER_SNAKE` constants). No string literals for collection names anywhere else.
 
 Done when:
 
@@ -262,18 +263,18 @@ Done when:
 
 #### CW-007 · `functions/` codebase
 
-Create the Cloud Functions project (TypeScript, Node 20, `firebase-functions` v2, `firebase-admin`), copying tooling from `development/functions`: `package.json` scripts, `tsconfig*.json`, `.eslintrc.js` (google style), `jest.config.js`. Add `functions` to `firebase.json`. Shared helpers:
+Create the Cloud Functions project in **Python 3.12** (DEC-010): `firebase-functions` + `firebase-admin` in `requirements.txt`, ruff + pytest in `requirements-dev.txt`, config in `pyproject.toml`, venv in `functions/venv`. Add `functions` (runtime `python312`) to `firebase.json`. Shared helpers:
 
-- `src/firestore.ts` → `export const db = () => getFirestore();`
-- `src/admin/assertAdmin.ts` → `assertAdmin(request): string` (no `parseDatabaseId`)
-- `src/admin/auditLog.ts` → `writeAuditLog({action, adminUid, targetId?, payload?})`
-- `src/utils/dateId.ts` (`todayIstDateId()`, `isValidDateId()`), `src/utils/isoWeekId.ts`
-- `setGlobalOptions({region: "asia-south1", maxInstances: 10})` in `src/index.ts`
+- `firestore_client.py` → `db()` (default database)
+- `admin/assert_admin.py` → `assert_admin(req) -> str` (no `parseDatabaseId`)
+- `admin/audit_log.py` → `write_audit_log(action=, admin_uid=, target_id=None, payload=None)`
+- `utils/date_id.py` (`today_ist_date_id()`, `is_valid_date_id()`), `utils/iso_week_id.py` (`iso_week_id()`, `ist_iso_week_id()`)
+- `set_global_options(region="asia-south1", max_instances=10)` in `main.py`
 
 Done when:
 
-- [ ] `npm run lint && npm run build && npm test` pass with tests for `assertAdmin`, `dateId`, `isoWeekId`
-- [ ] `firebase emulators:start --only functions,firestore` boots
+- [x] `ruff check`, `ruff format --check` and `pytest` pass with tests for `assert_admin`, `date_id`, `iso_week_id`
+- [x] `firebase emulators:start --only functions,firestore` boots
 
 
 
@@ -285,7 +286,7 @@ Done when:
 
 - [x] Blaze enabled; budget alerts at $10 and $25 / month on the billing account
 - [x] Firestore location written in `docs/firebase/FIREBASE_DESIGN.md` (ideally `asia-south1`; it can't change later — if it's elsewhere, keep functions in the nearest region)
-- [ ] `firebase firestore:databases:list` shows `(default)` with `locationId: asia-south1`
+- [x] `firebase firestore:databases:list` shows `(default)` with `locationId: asia-south1`
 
 
 
@@ -310,7 +311,7 @@ Replace the open rules on psc-dev with the rules in `docs/firebase/FIREBASE_DESI
 - `users/{uid}`: owner may create/update **only** profile fields (`displayName`, `photoUrl`, `isAnonymous`, `lastSeenAt`, `createdAt`); `xp`, `crossword`, `rateLimit`, `blockedAt` are server-only.
 - `games/{id}`: keep current behaviour for the daily word game until it moves server-side (note in card when done).
 - All crossword collections as designed.
-Add `@firebase/rules-unit-testing` to `functions` dev deps and `src/rules/rules.test.ts` running on the emulator. The rules in the design doc were reviewed by hand but not yet run on the emulator — expect small fixes.
+Rules tests run on the emulator. Functions are Python (DEC-010), which has no rules-testing library: either a small Node package (`firestore-tests/`, `@firebase/rules-unit-testing` + Jest) or pytest calling the emulator REST API with mock auth tokens — pick one and note it here. The rules in the design doc were reviewed by hand but not yet run on the emulator — expect small fixes.
 
 Done when:
 
@@ -329,34 +330,34 @@ Done when:
 
 
 
-#### CW-012 · Shared TS types
+#### CW-012 · Shared Python types
 
-`functions/src/crossword/types.ts`: `CrosswordCategory`, `PscQuestion`, `CrosswordPuzzle`, `CrosswordWord`, `CrosswordProgress`, `CrosswordResult`, `RevisionItem`, `LeaderboardEntry`, `ContentReport`, `UserProfile`, plus enums as string unions. Field names exactly as the design doc.
+`functions/crossword/types.py` (`TypedDict` for documents): `CrosswordCategory`, `PscQuestion`, `CrosswordPuzzle`, `CrosswordWord`, `CrosswordProgress`, `CrosswordResult`, `RevisionItem`, `LeaderboardEntry`, `ContentReport`, `UserProfile`, plus enums as `Literal` / `StrEnum`. Field names (camelCase keys) exactly as the design doc.
 
 Done when:
 
-- [ ] `npm run build` passes; no `any`
+- [ ] `ruff check` passes; no `Any` in document types
 
 
 
 #### CW-013 · Grid validator
 
-`functions/src/crossword/validatePuzzle.ts` — pure function, throws `PuzzleValidationError` listing **all** problems. Same checks as `.claude/skills/crossword-content/scripts/validate_crossword.py`.
+`functions/crossword/validate_puzzle.py` — pure function, raises `PuzzleValidationError` listing **all** problems. Same checks as `.claude/skills/crossword-content/scripts/validate_crossword.py`.
 
 Done when:
 
 - [ ] Checks: layout length = rows×cols; every word fits and fills its whole run; crossing letters agree; every `.` cell is in ≥1 word; no 2+ letter run without a word; answers `^[A-Z]{2,}$`; ids = `{number}{A|D}`; numbering follows standard order
-- [ ] Jest tests for each failure + the example puzzle passes
+- [ ] pytest cases for each failure + the example puzzle passes
 
 
 
 #### CW-014 · Answer encoding
 
-One reversible encoding shared by TS and Dart: `answerEnc = base64(utf8(answer) XOR utf8(puzzleId + ":" + wordId))`, key repeated. **Obfuscation, not security.** Reference implementation: `.claude/skills/crossword-content/scripts/validate_crossword.py --encode`.
+One reversible encoding shared by Python and Dart: `answerEnc = base64(utf8(answer) XOR utf8(puzzleId + ":" + wordId))`, key repeated. **Obfuscation, not security.** Reference implementation: `.claude/skills/crossword-content/scripts/validate_crossword.py --encode`.
 
 Done when:
 
-- [ ] `encodeAnswer`/`decodeAnswer` in TS + Dart, both with tests using the same fixtures, including `VAIKOM` / `kerala-history-0012` / `2D` → `PSQ7KiMs`
+- [ ] `encode_answer`/`decode_answer` in Python + `encodeAnswer`/`decodeAnswer` in Dart, both with tests using the same fixtures, including `VAIKOM` / `kerala-history-0012` / `2D` → `PSQ7KiMs`
 
 
 
@@ -412,7 +413,7 @@ Player callable. Input `{puzzleId, letters, elapsedSec, hintsUsed}`. See design 
 
 Done when:
 
-- [ ] Jest tests: scoring, penalties, idempotency, streak continue/reset, rejection cases
+- [ ] pytest: scoring, penalties, idempotency, streak continue/reset, rejection cases
 - [ ] Emulator test: full submit writes all 4 places
 
 
@@ -449,7 +450,7 @@ Done when:
 
 #### CW-023 · Export, deploy, smoke test
 
-Export from `functions/src/index.ts`. Deploy rules, indexes, functions to `kerala-pcs-dev`.
+Import every function in `functions/main.py`. Deploy rules, indexes, functions to `kerala-pcs-dev`.
 
 Done when:
 
@@ -459,7 +460,7 @@ Done when:
 
 #### CW-024 · Admin claim script
 
-Port `functions/src/scripts/setAdminClaim.ts` from `development` (`npm run admin:claim -- you@example.com`), defaulting to project `kerala-pcs-dev`.
+Port `development`'s `functions/src/scripts/setAdminClaim.ts` to `functions/scripts/set_admin_claim.py` (`venv/bin/python -m scripts.set_admin_claim you@example.com`), defaulting to project `kerala-pcs-dev`.
 
 Done when:
 
@@ -662,7 +663,7 @@ A second person checks every published answer and fact; fixes logged in the audi
 
 #### CW-070 · CI
 
-GitHub Actions on PRs to `psc-dev`: `fvm flutter analyze`, `fvm flutter test`, `npm --prefix functions run lint`, `npm --prefix functions test`, rules tests on the emulator.
+GitHub Actions on PRs to `psc-dev`: `fvm flutter analyze`, `fvm flutter test`, `ruff check functions`, `pytest functions`, rules tests on the emulator.
 
 #### CW-071 · Manual test scenarios
 

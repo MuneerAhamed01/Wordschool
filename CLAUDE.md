@@ -37,14 +37,19 @@ fvm flutter analyze
 fvm flutter test
 fvm dart run build_runner build --delete-conflicting-outputs   # only for existing freezed files
 
-# after CW-007 (functions) / CW-029 (admin):
-cd functions && npm run lint && npm run build && npm test
-firebase emulators:start --only functions,firestore
+# after CW-007 (functions, Python) / CW-029 (admin):
+cd functions && python3.12 -m venv venv && venv/bin/pip install -r requirements-dev.txt   # first time
+# no admin rights for `apt install python3.12-venv`? create it without pip, then bootstrap pip:
+#   python3.12 -m venv --without-pip venv && curl -fsSL https://bootstrap.pypa.io/get-pip.py | venv/bin/python
+#   venv/bin/pip install -r requirements-dev.txt
+cd functions && venv/bin/ruff check . && venv/bin/ruff format --check . && venv/bin/pytest
+firebase emulators:start --only functions,firestore   # Firestore emulator needs Java 11+; Android Studio's works:
+                                                      # export JAVA_HOME=/opt/android-studio/jbr PATH=$JAVA_HOME/bin:$PATH
 fvm flutter run -t lib/main_admin.dart -d chrome
 firebase deploy --only firestore:rules,firestore:indexes,functions   # project kerala-pcs-dev
 ```
 
-Before saying a task is done: `fvm flutter analyze` and `fvm flutter test` pass; if `functions/` changed, `npm run lint && npm test` pass.
+Before saying a task is done: `fvm flutter analyze` and `fvm flutter test` pass; if `functions/` changed, `ruff check`, `ruff format --check` and `pytest` pass.
 
 ## Architecture (Flutter)
 
@@ -102,17 +107,18 @@ lib/
 
 ## Cloud Functions (`functions/`, from CW-007)
 
-- TypeScript, Node 20, `firebase-functions` v2 (`onCall`, `onSchedule`, `onDocument*`), modular Admin SDK.
-- ESLint google style: **double quotes, 2-space indent, max line 100**, JSDoc on exported functions.
-- Region `asia-south1` via `setGlobalOptions`; schedules use `timeZone: "Asia/Kolkata"`.
-- Admin callables: `const adminUid = assertAdmin(request);` first, `writeAuditLog(...)` last. Player callables: auth check, `users/{uid}.blockedAt` check, idempotent.
-- Pure logic (validation, scoring, encoding) in its own file with a `*.test.ts` beside it (Jest).
-- Crossword code in `src/crossword/`; every function exported from `src/index.ts`.
+- **Python 3.12** (DEC-010), `firebase-functions` Python SDK (`https_fn.on_call`, `scheduler_fn.on_schedule`, `firestore_fn.on_document_*`), `firebase-admin`. Dependencies in `requirements.txt` (deployed) and `requirements-dev.txt` (ruff, pytest); local venv in `functions/venv` (the Firebase CLI needs that path).
+- **ruff** lint + format (config in `pyproject.toml`): line length 100, type hints on every function, Google-style docstrings on public functions, `snake_case` names. Firestore field names stay camelCase.
+- Region `asia-south1` via `set_global_options` in `main.py`; schedules use `timezone="Asia/Kolkata"`.
+- Admin callables: `admin_uid = assert_admin(req)` first, `write_audit_log(...)` last. Player callables: auth check, `users/{uid}.blockedAt` check, idempotent.
+- Pure logic (validation, scoring, encoding) in its own module with a `<module>_test.py` beside it (pytest). No Firestore imports in pure modules.
+- Crossword code in `functions/crossword/`; every deployed function imported in `functions/main.py`.
+- Deployed names stay camelCase as in the design doc, because the apps call them by name: `def submitCrossword(req: https_fn.CallableRequest) -> dict:  # noqa: N802`. Everything else is snake_case.
 
 ## Tests
 
 - Flutter: `test/` mirrors `lib/`. Pure logic first (grid engine, scoring, model `fromJson`), then bloc and widget tests.
-- Functions: Jest for every validator and scoring rule; emulator rules tests for every collection.
+- Functions: pytest for every validator and scoring rule; emulator rules tests for every collection (CW-010 picks the harness).
 - Bug fix = a failing test first.
 
 ## Working on tasks

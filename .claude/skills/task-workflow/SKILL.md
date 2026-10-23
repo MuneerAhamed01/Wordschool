@@ -26,7 +26,7 @@ description: Run Kerala PSC app project tasks from TASKS.md — pick the next un
 
 1. Run checks:
    - `fvm flutter analyze` and `fvm flutter test`
-   - if `functions/` changed: `cd functions && npm run lint && npm run build && npm test`
+   - if `functions/` changed: `cd functions && venv/bin/ruff check . && venv/bin/ruff format --check . && venv/bin/pytest`
    - if rules changed: rules tests on the emulator
 2. Tick each "Done when" box on the card that is truly done. If one can't be done, leave it unticked and explain in Notes.
 3. Board: `review` (or `blocked` + reason in Notes).
@@ -43,7 +43,7 @@ description: Run Kerala PSC app project tasks from TASKS.md — pick the next un
 ### Solution
 <what changed, key decisions>
 
-**Files:** `path/a.dart`, `path/b.ts`
+**Files:** `path/a.dart`, `path/b.py`
 ```
 
 After merge, the user (or Claude when told) sets the row to `done`.
