@@ -49,7 +49,7 @@ This file is the single source of truth for project work. The **status board** b
 | CW-006 | App shell: bottom navigation + routes | app | 1d | — | todo | Needs DEC-007 |
 | CW-007 | Create `functions/` codebase + shared helpers | functions | 1d | CW-008 | todo | |
 | CW-008 | Blaze plan, budget alerts, confirm Firestore location | ops | 0.25d | — | todo | Functions need Blaze |
-| CW-009 | Test setup (Flutter `test/`) + first green run | app | 0.5d | — | todo | No tests on psc-dev yet |
+| CW-009 | Test setup (Flutter `test/`) + first green run | app | 0.5d | — | review | 7 model tests green. `analyze` has 6 pre-existing issues in `lib/` (unused `get` import, deprecations) — needs a cleanup task |
 
 ### M1 · Backend: rules, indexes, functions — target 2026-11-18
 
@@ -221,7 +221,7 @@ Done when:
 Create `test/` mirroring `lib/`; add `mocktail` (dev) if needed; first tests: `GameModel.fromJson`, `WordSchoolUserModel.fromJson`.
 
 Done when:
-- [ ] `fvm flutter test` runs green locally
+- [x] `fvm flutter test` runs green locally
 
 ### M1 · Backend
 
