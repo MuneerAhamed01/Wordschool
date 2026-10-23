@@ -2,6 +2,7 @@ from typing import Any
 
 from firebase_admin import firestore
 
+from crossword.collections import ADMIN_AUDIT_LOG
 from firestore_client import db
 
 
@@ -29,4 +30,4 @@ def write_audit_log(
         entry["targetId"] = target_id
     if payload is not None:
         entry["payload"] = payload
-    db().collection("adminAuditLog").add(entry)
+    db().collection(ADMIN_AUDIT_LOG).add(entry)
