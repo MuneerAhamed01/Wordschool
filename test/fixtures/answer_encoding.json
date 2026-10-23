@@ -1,0 +1,35 @@
+{
+  "_comment": "Shared by functions/crossword/answer_encoding_test.py and test/features/crossword/domain/utils/answer_encoding_test.dart (CW-014). Generated once; do not regenerate from the code under test.",
+  "cases": [
+    {
+      "answer": "VAIKOM",
+      "puzzleId": "kerala-history-0012",
+      "wordId": "2D",
+      "answerEnc": "PSQ7KiMs"
+    },
+    {
+      "answer": "MUZIRIS",
+      "puzzleId": "kerala-history-0012",
+      "wordId": "1A",
+      "answerEnc": "JjAoKD4ofg=="
+    },
+    {
+      "answer": "EMS",
+      "puzzleId": "kerala-history-0012",
+      "wordId": "6A",
+      "answerEnc": "Ligh"
+    },
+    {
+      "answer": "AB",
+      "puzzleId": "x",
+      "wordId": "1A",
+      "answerEnc": "OXg="
+    },
+    {
+      "answer": "THIRUVANANTHAPURAM",
+      "puzzleId": "kerala-geography-0001",
+      "wordId": "10A",
+      "answerEnc": "Py07Mzk3bCkkITM6ICA9K2x9"
+    }
+  ]
+}

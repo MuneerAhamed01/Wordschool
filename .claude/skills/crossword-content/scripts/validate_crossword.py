@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Validate (and optionally number / encode / render) a PSC crossword puzzle JSON.
 
-The checks mirror functions/src/crossword/validatePuzzle.ts (task CW-013), so a
-puzzle that passes here will pass on the server.
+The checks mirror functions/crossword/validate_puzzle.py (task CW-013), so a
+puzzle that passes here will pass on the server (which also checks each word's
+question is verified and has the same answer).
 
 Usage:
   python3 validate_crossword.py puzzle.json            # validate, exit 1 on problems
@@ -34,7 +35,7 @@ ANSWER_RE = re.compile(r"^[A-Z]{2,}$")
 def encode_answer(answer: str, puzzle_id: str, word_id: str) -> str:
     """answerEnc = base64(utf8(answer) XOR utf8(puzzleId + ':' + wordId), key repeated).
 
-    Obfuscation only — not security. Same algorithm in TS and Dart (CW-014).
+    Obfuscation only — not security. Same algorithm in Python and Dart (CW-014).
     """
     data = answer.encode("utf-8")
     key = f"{puzzle_id}:{word_id}".encode("utf-8")

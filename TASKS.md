@@ -66,23 +66,25 @@ This file is the single source of truth for project work. The **status board** b
 ### M1 · Backend: rules, indexes, functions — target 2026-11-18
 
 
-| ID     | Task                                                             | Area           | Est   | Depends                | Status | Notes                                        |
-| ------ | ---------------------------------------------------------------- | -------------- | ----- | ---------------------- | ------ | -------------------------------------------- |
-| CW-010 | Firestore rules (incl. lock down `users`, `games`) + rules tests | rules          | 2d    | CW-004, CW-007         | todo   | `users/{uid}` is fully client-writable today |
-| CW-011 | Indexes + field overrides                                        | rules          | 0.25d | —                      | todo   |                                              |
-| CW-012 | Shared Python types for crossword                                | functions      | 0.5d  | CW-004                 | todo   |                                              |
-| CW-013 | Grid validator + tests                                           | functions      | 1.5d  | CW-012                 | todo   |                                              |
-| CW-014 | Answer encoding (Python + Dart, same algorithm)                  | functions, app | 0.5d  | CW-007, CW-009         | todo   |                                              |
-| CW-015 | `adminSaveCategory`                                              | functions      | 0.5d  | CW-012                 | todo   |                                              |
-| CW-016 | `adminSaveQuestion` + `adminVerifyQuestion`                      | functions      | 1d    | CW-012                 | todo   |                                              |
-| CW-017 | `adminSaveCrosswordPuzzle`                                       | functions      | 1d    | CW-013, CW-014, CW-016 | todo   |                                              |
-| CW-018 | `adminSetPuzzleStatus` + `adminScheduleDaily`                    | functions      | 1d    | CW-017                 | todo   |                                              |
-| CW-019 | `submitCrossword` (scoring, XP, leaderboard, mistakes)           | functions      | 2d    | CW-013, CW-017         | todo   |                                              |
-| CW-020 | `crosswordDailyRollover` scheduled job                           | functions      | 0.5d  | CW-018                 | todo   |                                              |
-| CW-021 | `refreshLeaderboardTop` scheduled job                            | functions      | 0.5d  | CW-019                 | todo   |                                              |
-| CW-022 | `adminListReports` + `adminResolveReport`                        | functions      | 0.5d  | CW-012                 | todo   |                                              |
-| CW-023 | Export, deploy to `kerala-pcs-dev`, smoke test                   | functions      | 0.5d  | CW-015…CW-022          | todo   |                                              |
-| CW-024 | `setAdminClaim` script + first admin account                     | functions, ops | 0.25d | CW-007                 | todo   |                                              |
+| ID     | Task                                                             | Area           | Est   | Depends                | Status | Notes                                                        |
+| ------ | ---------------------------------------------------------------- | -------------- | ----- | ---------------------- | ------ | ------------------------------------------------------------ |
+| CW-010 | Firestore rules (incl. lock down `users`, `games`) + rules tests | rules          | 2d    | CW-004, CW-007         | done   | 24 rules tests green; deployed to dev                        |
+| CW-011 | Indexes + field overrides                                        | rules          | 0.25d | —                      | done   | + `contentReports` index (CW-022). Deployed to dev           |
+| CW-012 | Shared Python types for crossword                                | functions      | 0.5d  | CW-004                 | done   |                                                              |
+| CW-013 | Grid validator + tests                                           | functions      | 1.5d  | CW-012                 | done   |                                                              |
+| CW-014 | Answer encoding (Python + Dart, same algorithm)                  | functions, app | 0.5d  | CW-007, CW-009         | done   | Fixtures in `test/fixtures/`                                 |
+| CW-015 | `adminSaveCategory`                                              | functions      | 0.5d  | CW-012                 | done   |                                                              |
+| CW-016 | `adminSaveQuestion` + `adminVerifyQuestion`                      | functions      | 1d    | CW-012                 | done   |                                                              |
+| CW-017 | `adminSaveCrosswordPuzzle`                                       | functions      | 1d    | CW-013, CW-014, CW-016 | done   | Numbers from `lastPuzzleNumber`                              |
+| CW-018 | `adminSetPuzzleStatus` + `adminScheduleDaily`                    | functions      | 1d    | CW-017                 | done   |                                                              |
+| CW-019 | `submitCrossword` (scoring, XP, leaderboard, mistakes)           | functions      | 2d    | CW-013, CW-017         | done   | Scoring per DEC-011 (Accepted)                               |
+| CW-020 | `crosswordDailyRollover` scheduled job                           | functions      | 0.5d  | CW-018                 | review | Deployed; manual run on dev pending                          |
+| CW-021 | `refreshLeaderboardTop` scheduled job                            | functions      | 0.5d  | CW-019                 | review |                                                              |
+| CW-022 | `adminListReports` + `adminResolveReport`                        | functions      | 0.5d  | CW-012                 | done   |                                                              |
+| CW-023 | Export, deploy to `kerala-pcs-dev`, smoke test                   | functions      | 0.5d  | CW-015…CW-022          | done   | Emulator flow test green; 11 functions live on dev           |
+| CW-024 | `setAdminClaim` script + first admin account                     | functions, ops | 0.25d | CW-007                 | done   | muneerahamed.dev@gmail.com is admin on dev                   |
+| CW-025 | Admin read callables (list/get questions, puzzles + solution)    | functions      | 1d    | CW-017                 | done   | Callables (rules stay closed); deploy pending                |
+| CW-026 | Server hint penalties from Remote Config                         | functions      | 0.5d  | CW-019                 | done   | Reads client RC template; live check after deploy            |
 
 
 
@@ -90,16 +92,16 @@ This file is the single source of truth for project work. The **status board** b
 ### M2 · Admin panel (Flutter web) — target 2026-12-04
 
 
-| ID     | Task                                                                          | Area  | Est  | Depends        | Status | Notes                         |
-| ------ | ----------------------------------------------------------------------------- | ----- | ---- | -------------- | ------ | ----------------------------- |
-| CW-029 | Admin foundation: web target, `main_admin.dart`, claim login, shell, API base | admin | 1.5d | CW-024         | todo   | Port from `development`       |
-| CW-030 | `AdminApiService` crossword methods + models                                  | admin | 1d   | CW-029, CW-023 | todo   |                               |
-| CW-031 | Categories page                                                               | admin | 0.5d | CW-030         | todo   |                               |
-| CW-032 | Question bank page (list, add/edit, verify)                                   | admin | 1.5d | CW-030         | todo   |                               |
-| CW-033 | Puzzle builder (grid editor + live validation)                                | admin | 3d   | CW-030, CW-014 | todo   | Biggest admin task            |
-| CW-034 | Puzzle preview, status workflow, schedule calendar                            | admin | 1d   | CW-033         | todo   |                               |
-| CW-035 | Reports page                                                                  | admin | 0.5d | CW-030         | todo   |                               |
-| CW-036 | Import questions / puzzles from JSON                                          | admin | 1d   | CW-032, CW-033 | todo   | Saves typing for content team |
+| ID     | Task                                                                          | Area  | Est  | Depends                | Status | Notes                         |
+| ------ | ----------------------------------------------------------------------------- | ----- | ---- | ---------------------- | ------ | ----------------------------- |
+| CW-029 | Admin foundation: web target, `main_admin.dart`, claim login, shell, API base | admin | 1.5d | CW-024                 | todo   | Port from `development`       |
+| CW-030 | `AdminApiService` crossword methods + models                                  | admin | 1d   | CW-029, CW-023, CW-025 | todo   |                               |
+| CW-031 | Categories page                                                               | admin | 0.5d | CW-030                 | todo   |                               |
+| CW-032 | Question bank page (list, add/edit, verify)                                   | admin | 1.5d | CW-030                 | todo   |                               |
+| CW-033 | Puzzle builder (grid editor + live validation)                                | admin | 3d   | CW-030, CW-014         | todo   | Biggest admin task            |
+| CW-034 | Puzzle preview, status workflow, schedule calendar                            | admin | 1d   | CW-033                 | todo   |                               |
+| CW-035 | Reports page                                                                  | admin | 0.5d | CW-030                 | todo   |                               |
+| CW-036 | Import questions / puzzles from JSON                                          | admin | 1d   | CW-032, CW-033         | todo   | Saves typing for content team |
 
 
 
@@ -184,18 +186,19 @@ This file is the single source of truth for project work. The **status board** b
 ## Decisions
 
 
-| ID      | Decision                       | Status       | Choice / recommendation                                                                                                                                                                                                         |
-| ------- | ------------------------------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DEC-001 | Daily puzzle date key timezone | Accepted     | **IST (Asia/Kolkata)** for all daily keys on this app.                                                                                                                                                                          |
-| DEC-002 | Environments                   | **Accepted** | One Firebase project per environment. Dev = `kerala-pcs-dev` (`(default)` database). Prod = a new project in CW-076. Functions take **no** `databaseId` parameter.                                                              |
-| DEC-003 | Answers on the client          | Accepted     | Puzzle doc carries **encoded** answers for offline Check/Reveal; real key in private `crosswordSolutions`; server re-scores.                                                                                                    |
-| DEC-004 | Answer alphabet                | Accepted     | Phase 1 answers are English A–Z only; Malayalam crossword is NEXT-002.                                                                                                                                                          |
-| DEC-005 | Bloc style for new code        | Accepted     | `sealed class` events/states in one bloc file. Existing freezed blocs (`auth`, `game`) stay as they are.                                                                                                                        |
-| DEC-006 | Player root document           | Accepted     | `users/{uid}` (already in `FirebaseCollections`) replaces `userGameStates/{uid}` from the `development` design.                                                                                                                 |
-| DEC-007 | App home                       | **Accepted** | Recommended: Crossword Home becomes the start screen (bottom nav: Play · Revise · Ranks · Profile); today's daily word game moves to a card on Home. Today `/game` is the start route.                                          |
-| DEC-008 | Hints in phase 1               | Proposed     | No ads or purchases at launch: "Show a clue" is free; each puzzle allows 3 reveals (letter = 1, word = 3) with XP penalties. Monetization is NEXT-005/006.                                                                      |
-| DEC-009 | Firebase region                | Accepted     | `asia-south1` **(Mumbai)** for Firestore and Functions in every environment. Dev's `(default)` DB (first made in `nam5`) is recreated in CW-008.                                                                                |
-| DEC-010 | Cloud Functions language       | Accepted     | **Python 3.12** (`firebase-functions` Python SDK, ruff, pytest) instead of TypeScript. Code under `functions/` with `main.py` as the entry point. Rules tests are not covered by a Python library — CW-010 chooses the harness. |
+| ID      | Decision                       | Status       | Choice / recommendation                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------- | ------------------------------ | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DEC-001 | Daily puzzle date key timezone | Accepted     | **IST (Asia/Kolkata)** for all daily keys on this app.                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| DEC-002 | Environments                   | **Accepted** | One Firebase project per environment. Dev = `kerala-pcs-dev` (`(default)` database). Prod = a new project in CW-076. Functions take **no** `databaseId` parameter.                                                                                                                                                                                                                                                                                                            |
+| DEC-003 | Answers on the client          | Accepted     | Puzzle doc carries **encoded** answers for offline Check/Reveal; real key in private `crosswordSolutions`; server re-scores.                                                                                                                                                                                                                                                                                                                                                  |
+| DEC-004 | Answer alphabet                | Accepted     | Phase 1 answers are English A–Z only; Malayalam crossword is NEXT-002.                                                                                                                                                                                                                                                                                                                                                                                                        |
+| DEC-005 | Bloc style for new code        | Accepted     | `sealed class` events/states in one bloc file. Existing freezed blocs (`auth`, `game`) stay as they are.                                                                                                                                                                                                                                                                                                                                                                      |
+| DEC-006 | Player root document           | Accepted     | `users/{uid}` (already in `FirebaseCollections`) replaces `userGameStates/{uid}` from the `development` design.                                                                                                                                                                                                                                                                                                                                                               |
+| DEC-007 | App home                       | **Accepted** | Recommended: Crossword Home becomes the start screen (bottom nav: Play · Revise · Ranks · Profile); today's daily word game moves to a card on Home. Today `/game` is the start route.                                                                                                                                                                                                                                                                                        |
+| DEC-008 | Hints in phase 1               | Proposed     | No ads or purchases at launch: "Show a clue" is free; each puzzle allows 3 reveals (letter = 1, word = 3) with XP penalties. Monetization is NEXT-005/006.                                                                                                                                                                                                                                                                                                                    |
+| DEC-009 | Firebase region                | Accepted     | `asia-south1` **(Mumbai)** for Firestore and Functions in every environment. Dev's `(default)` DB (first made in `nam5`) is recreated in CW-008.                                                                                                                                                                                                                                                                                                                              |
+| DEC-011 | Crossword scoring rules        | Accepted     | `score` = % of words correct. XP = round(`xpReward` × correct ÷ total) − 5/letter reveal − 15/word reveal, min 0 (scaled so an empty grid earns nothing). Revealed words count as wrong. `played` = completed puzzles; `solved` = all words correct; streak = consecutive IST days with a completed puzzle (`lastSolvedDate` = last such day); `bestTimeSec` from solved puzzles only. Weekly `points` = sum of `xpEarned`; `puzzlesSolved` on the board = completed puzzles. |
+| DEC-010 | Cloud Functions language       | Accepted     | **Python 3.12** (`firebase-functions` Python SDK, ruff, pytest) instead of TypeScript. Code under `functions/` with `main.py` as the entry point. Rules tests are not covered by a Python library — CW-010 chooses the harness.                                                                                                                                                                                                                                               |
 
 
 ---
@@ -313,9 +316,11 @@ Replace the open rules on psc-dev with the rules in `docs/firebase/FIREBASE_DESI
 - All crossword collections as designed.
 Rules tests run on the emulator. Functions are Python (DEC-010), which has no rules-testing library: either a small Node package (`firestore-tests/`, `@firebase/rules-unit-testing` + Jest) or pytest calling the emulator REST API with mock auth tokens — pick one and note it here. The rules in the design doc were reviewed by hand but not yet run on the emulator — expect small fixes.
 
+**Harness (picked):** Node package `firestore-tests/` with `@firebase/rules-unit-testing` + Jest; `cd firestore-tests && npm install && npm test` (runs `firebase emulators:exec --only firestore`, needs Java). The design-doc rules passed unchanged. `games` keeps read + create for signed-in users (update/delete denied) until the daily word game moves server-side.
+
 Done when:
 
-- [ ] Tests prove: player **cannot** set own `xp`; **cannot** read `crosswordSolutions` / `pscQuestions` / a `draft` puzzle; **cannot** write content; **cannot** lower `elapsedSec`/hints; **cannot** edit a `completed` progress doc; **can** create a valid report but not read it
+- [x] Tests prove: player **cannot** set own `xp`; **cannot** read `crosswordSolutions` / `pscQuestions` / a `draft` puzzle; **cannot** write content; **cannot** lower `elapsedSec`/hints; **cannot** edit a `completed` progress doc; **can** create a valid report but not read it
 - [ ] Daily word game still works on a real device
 
 
@@ -323,6 +328,8 @@ Done when:
 #### CW-011 · Indexes + field overrides
 
 Merge the JSON in the design doc into `firestore.indexes.json` (currently empty).
+
+Added a fourth index, `contentReports` (status + `createdAt` desc), for `adminListReports` (CW-022); design doc updated.
 
 Done when:
 
@@ -336,7 +343,7 @@ Done when:
 
 Done when:
 
-- [ ] `ruff check` passes; no `Any` in document types
+- [x] `ruff check` passes; no `Any` in document types
 
 
 
@@ -346,8 +353,8 @@ Done when:
 
 Done when:
 
-- [ ] Checks: layout length = rows×cols; every word fits and fills its whole run; crossing letters agree; every `.` cell is in ≥1 word; no 2+ letter run without a word; answers `^[A-Z]{2,}$`; ids = `{number}{A|D}`; numbering follows standard order
-- [ ] pytest cases for each failure + the example puzzle passes
+- [x] Checks: layout length = rows×cols; every word fits and fills its whole run; crossing letters agree; every `.` cell is in ≥1 word; no 2+ letter run without a word; answers `^[A-Z]{2,}$`; ids = `{number}{A|D}`; numbering follows standard order
+- [x] pytest cases for each failure + the example puzzle passes
 
 
 
@@ -357,7 +364,7 @@ One reversible encoding shared by Python and Dart: `answerEnc = base64(utf8(answ
 
 Done when:
 
-- [ ] `encode_answer`/`decode_answer` in Python + `encodeAnswer`/`decodeAnswer` in Dart, both with tests using the same fixtures, including `VAIKOM` / `kerala-history-0012` / `2D` → `PSQ7KiMs`
+- [x] `encode_answer`/`decode_answer` in Python + `encodeAnswer`/`decodeAnswer` in Dart, both with tests using the same fixtures, including `VAIKOM` / `kerala-history-0012` / `2D` → `PSQ7KiMs`
 
 
 
@@ -367,7 +374,7 @@ Admin callable. Upsert by slug; validates slug `^[a-z0-9-]+$`, `name.en` require
 
 Done when:
 
-- [ ] `assertAdmin` + `writeAuditLog` used; unit test for validation
+- [x] `assertAdmin` + `writeAuditLog` used; unit test for validation
 
 
 
@@ -375,9 +382,11 @@ Done when:
 
 Create/edit `pscQuestions`; answer normalized (uppercase, strip spaces/hyphens/dots) and must match `^[A-Z]{2,}$`; `source` required. Verify sets `status: verified`, `verifiedBy`, `verifiedAt`. Editing a verified question sets it back to `draft`.
 
+Also: retired questions can't be edited or verified; verify refuses a `source.ref` that still starts with `TODO`.
+
 Done when:
 
-- [ ] Tests: normalization, missing source rejected, re-edit resets status
+- [x] Tests: normalization, missing source rejected, re-edit resets status
 
 
 
@@ -385,10 +394,12 @@ Done when:
 
 Input: puzzle with plain `answer` per word. Steps: load all `questionId`s (must be `verified`), run validator, encode answers, write puzzle (`status: draft`) + `crosswordSolutions/{id}` in **one batch**, add puzzle id to each question's `usedInPuzzles`. New puzzles get the next `number` in the category.
 
+Also: each word's answer must equal its question's answer; only `draft`/`in_review` puzzles can be re-saved (saving makes it `draft` again); one transaction (reads before writes) instead of a plain batch, because the number comes from `crosswordCategories.lastPuzzleNumber`.
+
 Done when:
 
-- [ ] Rejects unverified questions and invalid grids with readable errors
-- [ ] Re-saving a `published` puzzle is refused (archive → copy instead)
+- [x] Rejects unverified questions and invalid grids with readable errors
+- [x] Re-saving a `published` puzzle is refused (archive → copy instead)
 
 
 
@@ -396,9 +407,11 @@ Done when:
 
 State machine: `draft→in_review→scheduled→published→archived`, plus `in_review→draft` and `in_review→published` (publish now). Publishing sets `publishedAt` and increments `crosswordCategories.publishedPuzzleCount` (transaction); archiving decrements. `adminScheduleDaily({dateId, puzzleId})` writes `crosswordDaily/{dateId}`; puzzle must be `scheduled` or `published`.
 
+Also: `scheduled → scheduled` changes `publishAt` (the only way to move a scheduled date). Daily: date must be today or later (IST); a scheduled puzzle must have `publishAt` ≤ 00:00 IST of that day (the 00:05 rollover publishes it).
+
 Done when:
 
-- [ ] Tests for every allowed and refused transition
+- [x] Tests for every allowed and refused transition
 
 
 
@@ -411,10 +424,12 @@ Player callable. Input `{puzzleId, letters, elapsedSec, hintsUsed}`. See design 
 - Plausibility: refuse `elapsedSec < wordCount × 2`; rate limit 30/hour/user (`users/{uid}.rateLimit`).
 - One batch: progress result, `users/{uid}.xp` + `crossword` stats (streak by IST date), leaderboard entry `crossword-{isoWeek}`, `revisionItems` upserts.
 
+Scoring choices are DEC-011 (Accepted). Input also takes `revealedWordIds` so the Results screen can tag "Revealed" words. Penalties are constants mirroring Remote Config defaults (CW-026 reads them from Remote Config).
+
 Done when:
 
-- [ ] pytest: scoring, penalties, idempotency, streak continue/reset, rejection cases
-- [ ] Emulator test: full submit writes all 4 places
+- [x] pytest: scoring, penalties, idempotency, streak continue/reset, rejection cases
+- [x] Emulator test: full submit writes all 4 places
 
 
 
@@ -424,7 +439,7 @@ Done when:
 
 Done when:
 
-- [ ] Unit test for the selection logic; manual run on dev
+- [ ] Unit test for the selection logic; manual run on dev — unit + emulator tests done; manual run on dev after deploy
 
 
 
@@ -434,7 +449,7 @@ Done when:
 
 Done when:
 
-- [ ] Reads ≤ 50 docs per run (check logs)
+- [x] Reads ≤ 50 docs per run (check logs) — emulator test asserts it; the job logs `reads` on dev
 
 
 
@@ -444,7 +459,7 @@ Done when:
 
 Done when:
 
-- [ ] Audit log written on resolve
+- [x] Audit log written on resolve
 
 
 
@@ -454,7 +469,8 @@ Import every function in `functions/main.py`. Deploy rules, indexes, functions t
 
 Done when:
 
-- [ ] With the admin panel (or the emulator UI before M2): create category → question → puzzle → publish; a test account can submit and see the result
+- [x] With the admin panel (or the emulator UI before M2): create category → question → puzzle → publish; a test account can submit and see the result — automated on the emulator in `functions/crossword/flow_test.py` (real handlers)
+- [x] Rules, indexes and functions deployed to `kerala-pcs-dev` (2026-10-23) — same flow on dev to repeat with the admin panel (M2)
 
 
 
@@ -464,7 +480,31 @@ Port `development`'s `functions/src/scripts/setAdminClaim.ts` to `functions/scri
 
 Done when:
 
-- [ ] Your account has `admin: true` (check: `getIdTokenResult().claims.admin`)
+- [x] Your account has `admin: true` (check: `getIdTokenResult().claims.admin`) — set 2026-10-23 with a service-account key; confirmed via the Admin SDK
+
+
+
+#### CW-025 · Admin read callables
+
+The admin panel can't read content directly: rules deny `pscQuestions` and `crosswordSolutions` to everyone, and puzzles/categories only when published/active. Add `adminListQuestions({subject?, status?, startAfterId?})` (index `subject, status, updatedAt` exists), `adminListPuzzles({categoryId, status?})`, `adminGetPuzzle({puzzleId})` (puzzle + plain answers from `crosswordSolutions`, for editing), `adminListCategories()`. Alternative: allow reads in rules for `request.auth.token.admin == true` — decide before CW-030.
+
+**Decided:** callables (`crossword/admin_reads.py`); rules stay closed so no client token can read `pscQuestions` or `crosswordSolutions`. Lists page at 20 (`limit` ≤ 100, `startAfterId`); `adminListPuzzles` rows leave out `words`/`layout`. New indexes: `pscQuestions (subject, updatedAt)`, `(status, updatedAt)`, `crosswordPuzzles (categoryId, number)`.
+
+Done when:
+
+- [x] Admin can page questions and open a puzzle with its answers; players are refused — emulator tests in `admin_reads_test.py`; deploy (functions + indexes) still to do
+
+
+
+#### CW-026 · Server hint penalties from Remote Config
+
+`submitCrossword` uses constants (5/15) that mirror the Remote Config defaults (`crossword_hint_penalties`). Read the server template (`firebase_admin.remote_config`) with a cached fallback so a Remote Config change applies to both app and server.
+
+**Changed approach:** the Admin SDK's server template is a separate namespace (`firebase-server`), so the app's parameter would have to be kept in two places. `crossword/remote_config.py` reads the **client** template over REST instead (default value only; cached 5 min per instance; last good value, else 5/15, if the fetch fails). The functions' service account needs `cloudconfig.configs.get` (Editor has it).
+
+Done when:
+
+- [ ] Changing `crossword_hint_penalties` changes server XP; fallback tested — unit tests cover template → XP, cache refresh and fallback; live check on dev after deploy
 
 
 
