@@ -5,7 +5,7 @@ description: Scaffold a Kerala PSC app Cloud Function in functions/src — admin
 
 # Cloud Function generator
 
-> **⚠ Outdated — functions are Python now (DEC-010).** The steps and `scripts/scaffold_function.py` below still generate TypeScript. Until this skill is ported, write functions by hand following `CLAUDE.md` → "Cloud Functions" and `.cursor/rules/cloud-functions.mdc` (handler + `<name>_logic.py` + `<name>_logic_test.py`). Do **not** run the scaffold script.
+> **⚠ Outdated — functions are Python now (DEC-010).** The steps and `scripts/scaffold_function.py` below still generate TypeScript. Until this skill is ported, copy an existing Python function in `functions/crossword/` (e.g. `save_category.py` + `category_logic.py` + `category_logic_test.py` + `save_category_test.py` for the emulator) and follow `CLAUDE.md` → "Cloud Functions". Do **not** run the scaffold script.
 
 > **Prerequisite:** task CW-007 (the `functions/` codebase with `src/firestore.ts` → `db()`, `src/admin/assertAdmin.ts`, `src/admin/auditLog.ts`). Starter code: `references/cw-007-helpers.md`.
 

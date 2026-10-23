@@ -42,7 +42,9 @@ cd functions && python3.12 -m venv venv && venv/bin/pip install -r requirements-
 # no admin rights for `apt install python3.12-venv`? create it without pip, then bootstrap pip:
 #   python3.12 -m venv --without-pip venv && curl -fsSL https://bootstrap.pypa.io/get-pip.py | venv/bin/python
 #   venv/bin/pip install -r requirements-dev.txt
-cd functions && venv/bin/ruff check . && venv/bin/ruff format --check . && venv/bin/pytest
+cd functions && venv/bin/ruff check . && venv/bin/ruff format --check . && venv/bin/pytest   # emulator tests skip
+firebase emulators:exec --only firestore --project demo-kerala-pcs "cd functions && venv/bin/pytest"  # + emulator tests
+cd firestore-tests && npm install && npm test             # rules tests (CW-010): Jest on the Firestore emulator
 firebase emulators:start --only functions,firestore   # Firestore emulator needs Java 11+; Android Studio's works:
                                                       # export JAVA_HOME=/opt/android-studio/jbr PATH=$JAVA_HOME/bin:$PATH
 fvm flutter run -t lib/main_admin.dart -d chrome
@@ -112,13 +114,16 @@ lib/
 - Region `asia-south1` via `set_global_options` in `main.py`; schedules use `timezone="Asia/Kolkata"`.
 - Admin callables: `admin_uid = assert_admin(req)` first, `write_audit_log(...)` last. Player callables: auth check, `users/{uid}.blockedAt` check, idempotent.
 - Pure logic (validation, scoring, encoding) in its own module with a `<module>_test.py` beside it (pytest). No Firestore imports in pure modules.
+- Shape of a callable (see `functions/crossword/`): `<name>_logic.py` parses input with `InputReader` (collects every problem) and decides; `<name>.py` has a `do_thing(client, uid, data)` that reads/writes in one transaction (`run_transaction`) and the thin `@https_fn.on_call` handler wrapped in `with callable_errors():` (maps `InputError`/`NotFoundError`/`PreconditionError`/`PermissionDeniedError`/`RateLimitError` to `HttpsError`).
+- Emulator tests use the `emulator_db` fixture (`functions/conftest.py`), which points every module's `db()` at the emulator; call real handlers with `inspect.unwrap(handler)(callable_request(data))`.
 - Crossword code in `functions/crossword/`; every deployed function imported in `functions/main.py`.
 - Deployed names stay camelCase as in the design doc, because the apps call them by name: `def submitCrossword(req: https_fn.CallableRequest) -> dict:  # noqa: N802`. Everything else is snake_case.
 
 ## Tests
 
 - Flutter: `test/` mirrors `lib/`. Pure logic first (grid engine, scoring, model `fromJson`), then bloc and widget tests.
-- Functions: pytest for every validator and scoring rule; emulator rules tests for every collection (CW-010 picks the harness).
+- Functions: pytest for every validator and scoring rule.
+- Rules: `firestore-tests/firestore.rules.test.js` (Jest + `@firebase/rules-unit-testing`) — allow and deny cases for every collection.
 - Bug fix = a failing test first.
 
 ## Working on tasks

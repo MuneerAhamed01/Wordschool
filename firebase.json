@@ -43,6 +43,8 @@
         ".pytest_cache",
         ".ruff_cache",
         "*_test.py",
+        "scripts",
+        "conftest.py",
         "firebase-debug.log",
         "firebase-debug.*.log",
         "*.local"

@@ -34,3 +34,8 @@ def is_valid_date_id(value: str) -> bool:
     except ValueError:
         return False
     return True
+
+
+def add_days(date_id: str, days: int) -> str:
+    """`add_days("2026-10-31", 1)` → `"2026-11-01"`."""
+    return (date.fromisoformat(date_id) + timedelta(days=days)).isoformat()

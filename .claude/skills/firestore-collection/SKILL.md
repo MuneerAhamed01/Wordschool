@@ -58,9 +58,9 @@ match /myThings/{thingId} {
 }
 ```
 
-## 4. Rules tests (harness chosen in CW-010)
+## 4. Rules tests
 
-Run against the Firestore emulator (`firebase emulators:exec --only firestore "<rules test command>"`; see CW-010 for the harness). For each collection prove **both** sides:
+Add cases to `firestore-tests/firestore.rules.test.js` and run `cd firestore-tests && npm test` (Jest + `@firebase/rules-unit-testing` on the Firestore emulator; needs Java 11+). For each collection prove **both** sides:
 
 ```ts
 await assertSucceeds(getDoc(doc(alice, "crosswordPuzzles/published-1")));

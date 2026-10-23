@@ -1,4 +1,66 @@
 {
-  "indexes": [],
-  "fieldOverrides": []
+  "indexes": [
+    {
+      "collectionGroup": "crosswordPuzzles",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "categoryId", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "number", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "crosswordPuzzles",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "categoryId", "order": "ASCENDING" },
+        { "fieldPath": "number", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "revisionItems",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "mastered", "order": "ASCENDING" },
+        { "fieldPath": "lastWrongAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "pscQuestions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "subject", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "updatedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "pscQuestions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "subject", "order": "ASCENDING" },
+        { "fieldPath": "updatedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "pscQuestions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "updatedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "contentReports",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    { "collectionGroup": "crosswordPuzzles", "fieldPath": "words", "indexes": [] },
+    { "collectionGroup": "crosswordProgress", "fieldPath": "letters", "indexes": [] }
+  ]
 }

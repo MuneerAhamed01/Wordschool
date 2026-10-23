@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from utils.date_id import is_valid_date_id, today_ist_date_id
+from utils.date_id import add_days, is_valid_date_id, today_ist_date_id
 
 
 @pytest.mark.parametrize(
@@ -44,3 +44,17 @@ def test_accepts_real_dates(value):
 )
 def test_rejects_invalid_date_ids(value):
     assert not is_valid_date_id(value)
+
+
+@pytest.mark.parametrize(
+    ("date_id", "days", "expected"),
+    [
+        ("2026-10-23", 1, "2026-10-24"),
+        ("2026-10-31", 1, "2026-11-01"),
+        ("2026-12-31", 1, "2027-01-01"),
+        ("2028-02-28", 1, "2028-02-29"),
+        ("2026-10-01", -1, "2026-09-30"),
+    ],
+)
+def test_add_days(date_id, days, expected):
+    assert add_days(date_id, days) == expected

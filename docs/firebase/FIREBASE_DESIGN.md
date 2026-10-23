@@ -86,7 +86,8 @@ ID = slug (`kerala-history`).
 | `color` | string | Hex accent, e.g. `#6AAA64` |
 | `order` | number | Sort on Home (10, 20, 30…) |
 | `isActive` | bool | Hide without deleting |
-| `publishedPuzzleCount` | number | Maintained by `adminSetPuzzleStatus` |
+| `publishedPuzzleCount` | number | Maintained by `adminSetPuzzleStatus` and the daily rollover |
+| `lastPuzzleNumber` | number | Highest puzzle `number` used; `adminSaveCrosswordPuzzle` takes the next one in a transaction |
 
 ### 2. `pscQuestions/{questionId}` — Verified fact bank (private)
 
@@ -120,6 +121,7 @@ ID `{categoryId}-{0000}` (`kerala-history-0012`). Typical size 5–10 KB.
 | `rows`, `cols` | number | `8`, `8` (max 15) |
 | `layout` | string | `rows × cols` chars row by row; `.` letter, `#` block |
 | `words` | array<map> | Below |
+| `wordCount` | number | `7` — `words.length`, copied into `crosswordDaily` |
 | `xpReward` | number | `50` |
 | `estimatedMinutes` | number | `6` |
 | `status` | string | `draft` · `in_review` · `scheduled` · `published` · `archived` |
@@ -167,7 +169,7 @@ Obfuscation only. The server re-checks with `crosswordSolutions`. Fixture: `VAIK
 | `hintsUsed` | map | `{ "letter": 1, "word": 0, "clue": 2 }` — only goes up |
 | `checksUsed` | number | Only goes up |
 | `startedAt`, `updatedAt` | timestamp | |
-| `result` | map | Server: `{ score, correctWords, totalWords, xpEarned, timeSec, wrongWordIds[] }` |
+| `result` | map | Server: `{ score, correctWords, totalWords, xpEarned, timeSec, wrongWordIds[], revealedWordIds[] }` — `wrongWordIds` includes revealed words |
 | `completedAt` | timestamp | Server |
 
 ### 7. `users/{uid}/revisionItems/{questionId}` — "My mistakes"
@@ -180,11 +182,11 @@ Server upserts on every wrong or revealed word. Fields: `answer`, `answerDisplay
 
 ### 9. `contentReports/{reportId}` — "Report a wrong answer"
 
-`uid`, `puzzleId`, `wordId`, `questionId`, `reason` (`wrong_answer` · `typo` · `other`), `message` (≤ 500), `status` (`open` · `fixed` · `rejected`), `createdAt`.
+`uid`, `puzzleId`, `wordId`, `questionId`, `reason` (`wrong_answer` · `typo` · `other`), `message` (≤ 500), `status` (`open` · `fixed` · `rejected`), `createdAt`. Set by `adminResolveReport`: `resolvedBy`, `resolvedAt`, `resolutionNote`.
 
 ### `users/{uid}` — Player root (DEC-006)
 
-Already reserved in `FirebaseCollections.users` on psc-dev.
+Already reserved in `FirebaseCollections.users` on psc-dev. `submitCrossword` creates the doc (with only server fields) if the player has none yet, so the app's profile write (CW-055) must handle an existing doc: `update` the profile fields instead of `create`.
 
 | Field | Written by | Notes |
 | --- | --- | --- |
@@ -219,6 +221,7 @@ stateDiagram-v2
   in_review --> scheduled
   scheduled --> published
   in_review --> published
+  scheduled --> scheduled: change publishAt
   published --> archived
 ```
 
@@ -231,8 +234,8 @@ stateDiagram-v2
 
 ### Player: finish
 
-1. App calls `submitCrossword({ puzzleId, letters, elapsedSec })`.
-2. Function reads `crosswordSolutions` + progress; scores each word; XP = `xpReward` − 5 per revealed letter − 15 per revealed word (min 0).
+1. App calls `submitCrossword({ puzzleId, letters, elapsedSec, hintsUsed, revealedWordIds })`.
+2. Function reads `crosswordSolutions` + progress (time and hints never lower than saved progress); scores each word; a revealed word counts as wrong. `score` = % of words correct; XP = round(`xpReward` × correct ÷ total) − 5 per revealed letter − 15 per revealed word (min 0; penalties from Remote Config `crossword_hint_penalties`). Rules in DEC-011.
 3. One batch: progress `result` + `completed`; `users/{uid}.xp` + `crossword` stats; `leaderboards/crossword-{week}/entries/{uid}`; `revisionItems` for wrong/revealed words.
 4. Returns the result — the Results screen needs no extra reads.
 5. Calling again returns the stored result (idempotent).
@@ -241,7 +244,7 @@ stateDiagram-v2
 
 ## Security rules
 
-psc-dev's current `firestore.rules` is open for `users/{uid}` (any write by the owner, so a player could set their own `xp`). **Replace the whole file** with the version below (task CW-010). Cloud Functions use the Admin SDK and bypass rules.
+`firestore.rules` is exactly the block below (CW-010); keep the two in sync. Allow/deny tests for every collection are in `firestore-tests/` (`npm test`, Firestore emulator). Cloud Functions use the Admin SDK and bypass rules.
 
 | Collection | App can read | App can write |
 | --- | --- | --- |
@@ -427,6 +430,14 @@ Merge into `firestore.indexes.json`:
       ]
     },
     {
+      "collectionGroup": "crosswordPuzzles",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "categoryId", "order": "ASCENDING" },
+        { "fieldPath": "number", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "revisionItems",
       "queryScope": "COLLECTION",
       "fields": [
@@ -442,6 +453,30 @@ Merge into `firestore.indexes.json`:
         { "fieldPath": "status", "order": "ASCENDING" },
         { "fieldPath": "updatedAt", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "pscQuestions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "subject", "order": "ASCENDING" },
+        { "fieldPath": "updatedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "pscQuestions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "updatedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "contentReports",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": [
@@ -451,7 +486,7 @@ Merge into `firestore.indexes.json`:
 }
 ```
 
-Leaderboard `orderBy('points', 'desc')` and rank `where('points', '>', mine).count()` use automatic single-field indexes.
+`contentReports` (status + newest first) is for `adminListReports`. `pscQuestions` (subject and/or status + recently updated first) and `crosswordPuzzles` (category, any status, newest number first) are for the admin read callables. Leaderboard `orderBy('points', 'desc')`, rank `where('points', '>', mine).count()` and the rollover's `where('status', '==', 'scheduled')` use automatic single-field indexes. `firestore.indexes.json` is exactly this block.
 
 ---
 
@@ -468,9 +503,17 @@ In `functions/crossword/` (Python codebase created in CW-007, DEC-010), region `
 | `adminSetPuzzleStatus` | Callable | Admin | Status state machine; category count |
 | `adminScheduleDaily` | Callable | Admin | Set daily puzzle for a date |
 | `adminListReports` / `adminResolveReport` | Callable | Admin | Review player reports |
+| `adminListCategories` | Callable | Admin | All categories, active or not, by `order` |
+| `adminListQuestions` | Callable | Admin | Page questions (20), filter by `subject` / `status`, recently updated first |
+| `adminListPuzzles` | Callable | Admin | Page a category's puzzles in any status (no grid), newest number first |
+| `adminGetPuzzle` | Callable | Admin | One puzzle + plain answers from `crosswordSolutions`, for editing |
 | `submitCrossword` | Callable | Player | Score; one batch: result, XP, stats, leaderboard, revision |
-| `crosswordDailyRollover` | Scheduled 00:05 IST | System | Publish due puzzles; warn if tomorrow is empty |
-| `refreshLeaderboardTop` | Scheduled 15 min | System | Copy top 50 into parent doc |
+| `crosswordDailyRollover` | Scheduled 00:05 IST | System | Publish due puzzles; log an error if today or tomorrow has no daily doc |
+| `refreshLeaderboardTop` | Scheduled 15 min | System | Copy top 50 into parent doc (first run of a week finishes last week's board) |
+
+Admin reads go through callables, not rules: no client token can read `pscQuestions` or `crosswordSolutions`, admin or not (CW-025).
+
+`submitCrossword` takes hint penalties from the **client** Remote Config template's `crossword_hint_penalties` default value (cached 5 min per instance; last good value or 5/15 if the fetch fails), so one console change applies to the app and the server (CW-026). Conditional values are ignored.
 
 `submitCrossword` also rejects impossible results (`elapsedSec < wordCount × 2`) and allows 30 calls/hour/player (`users/{uid}.rateLimit`).
 

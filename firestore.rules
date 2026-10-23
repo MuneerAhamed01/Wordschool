@@ -1,14 +1,147 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Daily word: any signed-in user (incl. anonymous) can read and create
-    match /games/{gameId} {
-      allow read, create: if request.auth != null;
+
+    // ---------- Helpers ----------
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+    function isNotBlocked(uid) {
+      return !exists(/databases/$(database)/documents/users/$(uid))
+        || get(/databases/$(database)/documents/users/$(uid)).data.get('blockedAt', null) == null;
+    }
+    function isDateId(id) {
+      return id.matches('^\\d{4}-\\d{2}-\\d{2}$');
+    }
+    function isNonNegativeInt(n) {
+      return n is int && n >= 0;
+    }
+    function isHintCount(h) {
+      return h is map
+        && h.keys().hasAll(['letter', 'word', 'clue'])
+        && h.keys().hasOnly(['letter', 'word', 'clue'])
+        && isNonNegativeInt(h.letter)
+        && isNonNegativeInt(h.word)
+        && isNonNegativeInt(h.clue);
+    }
+    function isCrosswordProgress(d) {
+      return d.status == 'in_progress'
+        && d.letters is string && d.letters.size() <= 400
+        && isNonNegativeInt(d.elapsedSec)
+        && isNonNegativeInt(d.checksUsed)
+        && isHintCount(d.hintsUsed)
+        && d.updatedAt == request.time;
+    }
+    function isProfile(d) {
+      return d.displayName is string && d.displayName.size() <= 40
+        && (!('photoUrl' in d) || d.photoUrl == null || d.photoUrl is string)
+        && d.isAnonymous is bool
+        && d.lastSeenAt == request.time;
     }
 
-    // Per-user profile (reserved, not written by the app yet)
+    // ---------- Daily word game (existing; tighten when it moves server-side) ----------
+    match /games/{gameId} {
+      allow read, create: if isAuthenticated();
+    }
+
+    // ---------- Player root ----------
     match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read: if isOwner(uid);
+
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['displayName', 'photoUrl', 'isAnonymous',
+             'createdAt', 'lastSeenAt'])
+        && isProfile(request.resource.data)
+        && request.resource.data.createdAt == request.time;
+
+      allow update: if isOwner(uid) && isNotBlocked(uid)
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['displayName', 'photoUrl', 'isAnonymous', 'lastSeenAt'])
+        && isProfile(request.resource.data);
+
+      allow delete: if false;
+
+      match /crosswordProgress/{puzzleId} {
+        allow read: if isOwner(uid);
+
+        allow create: if isOwner(uid) && isNotBlocked(uid)
+          && request.resource.data.keys().hasOnly(['status', 'letters', 'elapsedSec',
+               'hintsUsed', 'checksUsed', 'startedAt', 'updatedAt'])
+          && isCrosswordProgress(request.resource.data)
+          && request.resource.data.startedAt == request.time
+          && get(/databases/$(database)/documents/crosswordPuzzles/$(puzzleId)).data.status == 'published';
+
+        // Only while in progress; time, hints and checks can only go up.
+        allow update: if isOwner(uid) && isNotBlocked(uid)
+          && resource.data.status == 'in_progress'
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['letters', 'elapsedSec', 'hintsUsed', 'checksUsed', 'updatedAt'])
+          && isCrosswordProgress(request.resource.data)
+          && request.resource.data.letters.size() == resource.data.letters.size()
+          && request.resource.data.elapsedSec >= resource.data.elapsedSec
+          && request.resource.data.checksUsed >= resource.data.checksUsed
+          && request.resource.data.hintsUsed.letter >= resource.data.hintsUsed.letter
+          && request.resource.data.hintsUsed.word >= resource.data.hintsUsed.word
+          && request.resource.data.hintsUsed.clue >= resource.data.hintsUsed.clue;
+
+        allow delete: if false;
+      }
+
+      match /revisionItems/{questionId} {
+        allow read: if isOwner(uid);
+        allow update: if isOwner(uid) && isNotBlocked(uid)
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['mastered', 'updatedAt'])
+          && request.resource.data.mastered is bool
+          && request.resource.data.updatedAt == request.time;
+        allow create, delete: if false;
+      }
+    }
+
+    // ---------- PSC Crossword content (written only by Cloud Functions) ----------
+    match /crosswordCategories/{categoryId} {
+      allow read: if isAuthenticated() && resource.data.isActive == true;
+      allow write: if false;
+    }
+    match /crosswordPuzzles/{puzzleId} {
+      allow read: if isAuthenticated() && resource.data.status == 'published';
+      allow write: if false;
+    }
+    match /crosswordDaily/{dateId} {
+      allow read: if isAuthenticated() && isDateId(dateId);
+      allow write: if false;
+    }
+
+    // ---------- Weekly leaderboards (server-written) ----------
+    match /leaderboards/{boardId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+      match /entries/{userId} {
+        allow read: if isAuthenticated();
+        allow write: if false;
+      }
+    }
+
+    // ---------- Player reports: create only ----------
+    match /contentReports/{reportId} {
+      allow create: if isAuthenticated() && isNotBlocked(request.auth.uid)
+        && request.resource.data.keys().hasOnly(['uid', 'puzzleId', 'wordId',
+             'questionId', 'reason', 'message', 'status', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.reason in ['wrong_answer', 'typo', 'other']
+        && request.resource.data.message is string
+        && request.resource.data.message.size() <= 500
+        && request.resource.data.status == 'open'
+        && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if false;
+    }
+
+    // ---------- Everything else (pscQuestions, crosswordSolutions, adminAuditLog, …) ----------
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

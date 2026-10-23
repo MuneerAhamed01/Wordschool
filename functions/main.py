@@ -13,4 +13,36 @@ except ValueError:
 
 set_global_options(region="asia-south1", max_instances=10)
 
-# Crossword functions are imported here from CW-015 onwards, kept together.
+# PSC Crossword (deployed names are what the apps call).
+from crossword.admin_reads import (  # noqa: E402
+    adminGetPuzzle,
+    adminListCategories,
+    adminListPuzzles,
+    adminListQuestions,
+)
+from crossword.daily_rollover import crosswordDailyRollover  # noqa: E402
+from crossword.leaderboard_top import refreshLeaderboardTop  # noqa: E402
+from crossword.puzzle_status import adminScheduleDaily, adminSetPuzzleStatus  # noqa: E402
+from crossword.questions import adminSaveQuestion, adminVerifyQuestion  # noqa: E402
+from crossword.reports import adminListReports, adminResolveReport  # noqa: E402
+from crossword.save_category import adminSaveCategory  # noqa: E402
+from crossword.save_puzzle import adminSaveCrosswordPuzzle  # noqa: E402
+from crossword.submit import submitCrossword  # noqa: E402
+
+__all__ = [
+    "adminGetPuzzle",
+    "adminListCategories",
+    "adminListPuzzles",
+    "adminListQuestions",
+    "adminListReports",
+    "adminResolveReport",
+    "adminSaveCategory",
+    "adminSaveCrosswordPuzzle",
+    "adminSaveQuestion",
+    "adminScheduleDaily",
+    "adminSetPuzzleStatus",
+    "adminVerifyQuestion",
+    "crosswordDailyRollover",
+    "refreshLeaderboardTop",
+    "submitCrossword",
+]

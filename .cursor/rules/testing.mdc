@@ -11,5 +11,5 @@ alwaysApply: false
 - Repositories/data sources: fake the data source interface; don't hit Firebase in unit tests.
 - Bloc tests: drive events, assert emitted state sequence.
 - Functions: pytest, `<module>_test.py` beside the source. Plain `test_*` functions, `pytest.mark.parametrize` for tables, cases for every rejection path.
-- Firestore rules: emulator tests (harness chosen in CW-010) — prove both what is allowed and what is denied.
+- Firestore rules: `firestore-tests/firestore.rules.test.js` (Jest + `@firebase/rules-unit-testing`, `cd firestore-tests && npm test`) — prove both what is allowed and what is denied.
 - A bug fix starts with a failing test.
