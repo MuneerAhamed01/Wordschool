@@ -7,9 +7,8 @@ import 'package:go_router/go_router.dart';
 import 'package:wordshool/config/themes/colors.dart';
 import 'package:wordshool/config/themes/fonts.dart';
 import 'package:wordshool/core/routes/app_router.dart';
+import 'package:wordshool/core/routes/router_refresh.dart';
 import 'package:wordshool/di.dart';
-import 'package:wordshool/features/auth/presentation/pages/auth_page.dart';
-import 'package:wordshool/features/game/presentation/pages/game_page.dart';
 import 'package:wordshool/firebase_options.dart';
 import 'package:wordshool/shared/data/data_source/session_handler.dart';
 
@@ -27,19 +26,26 @@ Future<void> main() async {
 
   await initializeDependency();
 
-  // Compute initial route and create a single GoRouter instance.
   // Firebase is the source of truth; the cached user must match it.
-  final firebaseUser = await FirebaseAuth.instance.authStateChanges().first;
+  final firebaseAuth = FirebaseAuth.instance;
   final sessionHandler = getIt<SessionHandler>();
-  final hasUser = firebaseUser != null &&
-      sessionHandler.currentUser?.id == firebaseUser.uid;
+  bool isSignedIn() {
+    final firebaseUser = firebaseAuth.currentUser;
+    return firebaseUser != null &&
+        sessionHandler.currentUser?.id == firebaseUser.uid;
+  }
 
-  if (!hasUser) {
+  // Wait for Firebase to restore the persisted user before the first redirect.
+  await firebaseAuth.authStateChanges().first;
+  if (!isSignedIn()) {
     await sessionHandler.clear();
   }
 
-  final initialRoute = hasUser ? GamePage.routeName : AuthPage.routeName;
-  final router = appRouter(initialRoute);
+  // Single GoRouter; its redirect re-runs on every auth change.
+  final router = appRouter(
+    isSignedIn: isSignedIn,
+    refreshListenable: GoRouterRefreshStream(firebaseAuth.authStateChanges()),
+  );
 
   runApp(MainApp(router: router));
 }

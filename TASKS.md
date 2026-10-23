@@ -55,7 +55,7 @@ This file is the single source of truth for project work. The **status board** b
 | CW-003 | Add AI kit to repo (incl. `.claude/`, `.cursor/`)      | ops            | 0.25d | —       | done   | `.claude/` + `.cursor/` added; `/` menu + Cursor rules checked                            |
 | CW-004 | Crossword collection constants (Dart + Python)         | app, functions | 0.25d | CW-007  | done   | Python–Dart drift test in `collections_test.py`; stacked on CW-007 (not in `psc-dev` yet) |
 | CW-005 | Remote Config (package + typed config class)           | app            | 0.5d  | —       | done   | Offline first launch checked on a device                                                  |
-| CW-006 | App shell: bottom navigation + routes                  | app            | 1d    | —       | todo   | Needs DEC-007                                                                             |
+| CW-006 | App shell: bottom navigation + routes                  | app            | 1d    | —       | review | Play = `/home` (daily word card). Back button needs a device check                        |
 | CW-007 | Create `functions/` codebase (Python) + shared helpers | functions      | 1d    | CW-008  | done   | Python (DEC-010); ruff + 32 pytest green; emulators boot (Java from Android Studio)       |
 | CW-008 | Blaze plan, budget alerts, confirm Firestore location  | ops            | 0.25d | —       | done   | `(default)` recreated in `asia-south1` (free tier). Rules + indexes redeployed            |
 | CW-009 | Test setup (Flutter `test/`) + first green run         | app            | 0.5d  | —       | done   | 7 model tests green. 6 pre-existing `analyze` issues in `lib/` accepted (no cleanup task) |
@@ -256,8 +256,8 @@ Done when:
 
 Done when:
 
-- [ ] Tabs keep their state when switching; back button behaves on Android
-- [ ] Auth redirect still works (signed-out → `/auth`)
+- [x] Tabs keep their state when switching; back button behaves on Android (widget tests; confirm on a device)
+- [x] Auth redirect still works (signed-out → `/auth`) — now a router `redirect` refreshed on auth changes
 
 
 
