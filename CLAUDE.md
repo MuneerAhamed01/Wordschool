@@ -39,8 +39,12 @@ fvm dart run build_runner build --delete-conflicting-outputs   # only for existi
 
 # after CW-007 (functions, Python) / CW-029 (admin):
 cd functions && python3.12 -m venv venv && venv/bin/pip install -r requirements-dev.txt   # first time
+# no admin rights for `apt install python3.12-venv`? create it without pip, then bootstrap pip:
+#   python3.12 -m venv --without-pip venv && curl -fsSL https://bootstrap.pypa.io/get-pip.py | venv/bin/python
+#   venv/bin/pip install -r requirements-dev.txt
 cd functions && venv/bin/ruff check . && venv/bin/ruff format --check . && venv/bin/pytest
-firebase emulators:start --only functions,firestore
+firebase emulators:start --only functions,firestore   # Firestore emulator needs Java 11+; Android Studio's works:
+                                                      # export JAVA_HOME=/opt/android-studio/jbr PATH=$JAVA_HOME/bin:$PATH
 fvm flutter run -t lib/main_admin.dart -d chrome
 firebase deploy --only firestore:rules,firestore:indexes,functions   # project kerala-pcs-dev
 ```

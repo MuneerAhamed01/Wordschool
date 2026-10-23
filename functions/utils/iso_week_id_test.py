@@ -2,7 +2,7 @@ from datetime import date, datetime
 
 import pytest
 
-from utils.iso_week_id import ist_iso_week_id, iso_week_id
+from utils.iso_week_id import iso_week_id, ist_iso_week_id
 
 
 @pytest.mark.parametrize(

@@ -56,8 +56,8 @@ This file is the single source of truth for project work. The **status board** b
 | CW-004 | Crossword collection constants (Dart + Python)        | app, functions | 0.25d | CW-007  | todo   |                                                                                                                               |
 | CW-005 | Remote Config (package + typed config class)          | app            | 0.5d  | —       | review | Offline first launch needs a manual device check                                                                              |
 | CW-006 | App shell: bottom navigation + routes                 | app            | 1d    | —       | todo   | Needs DEC-007                                                                                                                 |
-| CW-007 | Create `functions/` codebase (Python) + shared helpers | functions      | 1d    | CW-008  | doing | Switched to Python (DEC-010); waiting on `python3.12-venv` to run ruff/pytest. Firestore emulator needs Java |
-| CW-008 | Blaze plan, budget alerts, confirm Firestore location | ops            | 0.25d | —       | blocked | Blaze + budgets done. DB is in `nam5` → recreate `(default)` in `asia-south1` |
+| CW-007 | Create `functions/` codebase (Python) + shared helpers | functions      | 1d    | CW-008  | review | Python (DEC-010); ruff + 32 pytest green; emulators boot (Java from Android Studio) |
+| CW-008 | Blaze plan, budget alerts, confirm Firestore location | ops            | 0.25d | —       | review | `(default)` recreated in `asia-south1` (free tier). Rules + indexes redeploy pending (`firebase deploy` is user-only) |
 | CW-009 | Test setup (Flutter `test/`) + first green run        | app            | 0.5d  | —       | review | 7 model tests green. `analyze` has 6 pre-existing issues in `lib/` (unused `get` import, deprecations) — needs a cleanup task |
 
 
@@ -273,8 +273,8 @@ Create the Cloud Functions project in **Python 3.12** (DEC-010): `firebase-funct
 
 Done when:
 
-- [ ] `ruff check`, `ruff format --check` and `pytest` pass with tests for `assert_admin`, `date_id`, `iso_week_id`
-- [ ] `firebase emulators:start --only functions,firestore` boots
+- [x] `ruff check`, `ruff format --check` and `pytest` pass with tests for `assert_admin`, `date_id`, `iso_week_id`
+- [x] `firebase emulators:start --only functions,firestore` boots
 
 
 
@@ -286,7 +286,7 @@ Done when:
 
 - [x] Blaze enabled; budget alerts at $10 and $25 / month on the billing account
 - [x] Firestore location written in `docs/firebase/FIREBASE_DESIGN.md` (ideally `asia-south1`; it can't change later — if it's elsewhere, keep functions in the nearest region)
-- [ ] `firebase firestore:databases:list` shows `(default)` with `locationId: asia-south1`
+- [x] `firebase firestore:databases:list` shows `(default)` with `locationId: asia-south1`
 
 
 

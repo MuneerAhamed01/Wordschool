@@ -17,9 +17,7 @@ def assert_admin(request: https_fn.CallableRequest[Any]) -> str:
     """
     auth = request.auth
     if auth is None or not auth.uid:
-        raise https_fn.HttpsError(
-            https_fn.FunctionsErrorCode.UNAUTHENTICATED, "Sign in required"
-        )
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.UNAUTHENTICATED, "Sign in required")
     if auth.token.get("admin") is not True:
         raise https_fn.HttpsError(
             https_fn.FunctionsErrorCode.PERMISSION_DENIED, "Admin access required"
