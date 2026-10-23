@@ -10,6 +10,7 @@ import 'package:wordshool/features/admin/presentation/pages/admin_puzzle_builder
 import 'package:wordshool/features/admin/presentation/pages/admin_puzzle_detail_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_puzzles_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_questions_page.dart';
+import 'package:wordshool/features/admin/presentation/pages/admin_reports_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_schedule_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_shell_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_section_placeholder.dart';
@@ -29,7 +30,6 @@ String? adminRedirect({
 }
 
 const _unbuiltSections = [
-  AdminSection.reports,
   AdminSection.bulkUpload,
 ];
 
@@ -99,6 +99,10 @@ GoRouter adminRouter(AdminAuthService auth) {
           GoRoute(
             path: AdminSchedulePage.routeName,
             builder: (context, state) => const AdminSchedulePage(),
+          ),
+          GoRoute(
+            path: AdminReportsPage.routeName,
+            builder: (context, state) => const AdminReportsPage(),
           ),
           for (final section in _unbuiltSections)
             GoRoute(

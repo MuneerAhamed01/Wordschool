@@ -100,7 +100,7 @@ This file is the single source of truth for project work. The **status board** b
 | CW-032 | Question bank page (list, add/edit, verify)                                   | admin | 1.5d | CW-030                 | review | "Mark as checked" = verify     |
 | CW-033 | Puzzle builder (grid editor + live validation)                                | admin | 3d   | CW-030, CW-014         | review | Dart port of the validator    |
 | CW-034 | Puzzle preview, status workflow, schedule calendar                            | admin | 1d   | CW-033                 | review | 30-day calendar, IST times    |
-| CW-035 | Reports page                                                                  | admin | 0.5d | CW-030                 | todo   |                               |
+| CW-035 | Reports page                                                                  | admin | 0.5d | CW-030                 | review | + `adminGetQuestion`; deploy pending |
 | CW-036 | Import questions / puzzles from JSON                                          | admin | 1d   | CW-032, CW-033         | todo   | Saves typing for content team |
 
 
@@ -571,6 +571,8 @@ Preview renders the puzzle as the player sees it; buttons for each allowed statu
 #### CW-035 · Reports page
 
 Open reports with links to the puzzle/question; resolve with note.
+
+**Done:** Open / Fixed / Rejected tabs, paging. "Open puzzle" goes to the puzzle page with the reported word highlighted (`?word=2D`); "Open question" opens the question editor. There was no way to read one question, so a new admin callable **`adminGetQuestion({id})`** was added (`crossword/admin_reads.py`, emulator tests, design doc). "Mark fixed" / "Reject" ask for an optional note. **Deploy pending:** `firebase deploy --only functions:adminGetQuestion --project kerala-pcs-dev`.
 
 #### CW-036 · Import from JSON
 

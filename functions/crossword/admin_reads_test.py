@@ -9,10 +9,12 @@ from firebase_functions import https_fn
 from conftest import callable_request
 from crossword.admin_reads import (
     adminGetPuzzle,
+    adminGetQuestion,
     adminListCategories,
     adminListPuzzles,
     adminListQuestions,
     get_puzzle,
+    get_question,
     list_puzzles,
     list_questions,
 )
@@ -62,6 +64,16 @@ def test_unknown_cursor(emulator_db):
         list_questions(emulator_db, {"startAfterId": "missing"})
 
 
+def test_get_question(emulator_db):
+    _seed_questions(emulator_db, 2)
+    question = get_question(emulator_db, {"id": "q01"})["question"]
+    assert question["id"] == "q01"
+    assert question["subject"] == "geography"
+    assert question["updatedAt"].startswith("2026-10-23T00:01")
+    with pytest.raises(NotFoundError):
+        get_question(emulator_db, {"id": "missing"})
+
+
 def test_open_puzzle_with_answers(seeded_example, example_puzzle_input):
     saved = save_puzzle(seeded_example, "admin1", example_puzzle_input, now=NOW)
 
@@ -109,6 +121,7 @@ def test_lists_all_categories_in_order(emulator_db):
         (adminListQuestions, {}),
         (adminListPuzzles, {"categoryId": "kerala-history"}),
         (adminGetPuzzle, {"puzzleId": "kerala-history-0001"}),
+        (adminGetQuestion, {"id": "q00"}),
         (adminListCategories, None),
     ],
 )

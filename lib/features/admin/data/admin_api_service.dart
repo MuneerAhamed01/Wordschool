@@ -97,6 +97,14 @@ class AdminApiService {
     return _map(result, SaveResult.fromJson);
   }
 
+  Future<DataState<AdminQuestion>> getQuestion(String id) async {
+    final result = await _call('adminGetQuestion', {'id': id});
+    return _map(
+      result,
+      (json) => AdminQuestion.fromJson(readMap(json['question'])),
+    );
+  }
+
   Future<DataState<void>> verifyQuestion(String id) async {
     final result = await _call('adminVerifyQuestion', {'id': id});
     return _map(result, (_) {});
