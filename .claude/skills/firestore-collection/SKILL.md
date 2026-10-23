@@ -1,6 +1,6 @@
 ---
 name: firestore-collection
-description: Add or change a Firestore collection in the Kerala PSC app end to end — design doc entry, collection constants (Dart + TS), security rules with emulator tests, indexes and field overrides, model, and cost check. Use whenever a task introduces a new collection, subcollection or field, or changes who can read/write data.
+description: Add or change a Firestore collection in the Kerala PSC app end to end — design doc entry, collection constants (Dart + Python), security rules with emulator tests, indexes and field overrides, model, and cost check. Use whenever a task introduces a new collection, subcollection or field, or changes who can read/write data.
 ---
 
 # Firestore collection — end to end
@@ -21,7 +21,7 @@ Ask: can the screen load in 1–3 reads? If not, add a summary/pointer doc (like
 ## 2. Constants
 
 - Dart: `lib/core/firebase/collections.dart` → `static const String myThings = 'myThings';`
-- TS: `functions/src/crossword/collections.ts` (or the feature's folder) → `export const MY_THINGS = "myThings";` (needs CW-007)
+- Python: `functions/crossword/collections.py` (or the feature's folder) → `MY_THINGS = "myThings"` (needs CW-007)
 
 ## 3. Security rules — `firestore.rules`
 
@@ -58,9 +58,9 @@ match /myThings/{thingId} {
 }
 ```
 
-## 4. Rules tests — `functions/src/rules/*.test.ts`
+## 4. Rules tests (harness chosen in CW-010)
 
-Use `@firebase/rules-unit-testing` against the emulator (`firebase emulators:exec --only firestore "npm test"`). For each collection prove **both** sides:
+Run against the Firestore emulator (`firebase emulators:exec --only firestore "<rules test command>"`; see CW-010 for the harness). For each collection prove **both** sides:
 
 ```ts
 await assertSucceeds(getDoc(doc(alice, "crosswordPuzzles/published-1")));
@@ -79,7 +79,7 @@ await assertFails(updateDoc(doc(alice, "users/alice/crosswordProgress/p1"), {ela
 ## 6. Code
 
 - Model + entity via the `flutter-feature` skill (field names from step 1).
-- Functions types in `functions/src/<feature>/types.ts`.
+- Functions types in `functions/<feature>/types.py` (`TypedDict`).
 
 ## Cost check (write it in the PR)
 
@@ -89,7 +89,7 @@ await assertFails(updateDoc(doc(alice, "users/alice/crosswordProgress/p1"), {ela
 ## Checklist
 
 - [ ] Design doc updated (same PR)
-- [ ] Dart + TS constants
+- [ ] Dart + Python constants
 - [ ] Rules + allow/deny tests passing
 - [ ] Indexes / overrides added and deployed to dev
 - [ ] Queries match rule conditions

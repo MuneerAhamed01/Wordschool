@@ -1,0 +1,3 @@
+# Deployed with the functions. Keep versions pinned; bump deliberately.
+firebase-functions~=0.4
+firebase-admin~=6.5

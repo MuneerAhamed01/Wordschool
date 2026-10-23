@@ -1,6 +1,5 @@
-node_modules/
-lib/
+venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
 *.local
-.firebase/
-firebase-debug.log
-firebase-debug.*.log

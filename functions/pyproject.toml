@@ -1,0 +1,25 @@
+[project]
+name = "kerala-psc-functions"
+description = "Firebase Cloud Functions for the Kerala PSC app"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["venv"]
+
+[tool.ruff.lint]
+# pycodestyle, pyflakes, isort, bugbear, pyupgrade, naming, docstrings on public code.
+select = ["E", "W", "F", "I", "B", "UP", "N", "D"]
+ignore = ["D100", "D104"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"*_test.py" = ["D"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+python_files = ["*_test.py"]
+testpaths = ["admin", "utils"]

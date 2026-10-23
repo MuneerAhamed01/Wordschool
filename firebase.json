@@ -35,16 +35,21 @@
     {
       "source": "functions",
       "codebase": "default",
+      "runtime": "python312",
       "ignore": [
-        "node_modules",
+        "venv",
         ".git",
+        "__pycache__",
+        ".pytest_cache",
+        ".ruff_cache",
+        "*_test.py",
         "firebase-debug.log",
         "firebase-debug.*.log",
         "*.local"
       ],
       "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint",
-        "npm --prefix \"$RESOURCE_DIR\" run build"
+        "\"$RESOURCE_DIR/venv/bin/ruff\" check \"$RESOURCE_DIR\"",
+        "\"$RESOURCE_DIR/venv/bin/pytest\" -q --rootdir \"$RESOURCE_DIR\" \"$RESOURCE_DIR\""
       ]
     }
   ],
