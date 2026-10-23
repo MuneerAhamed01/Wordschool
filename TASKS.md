@@ -97,7 +97,7 @@ This file is the single source of truth for project work. The **status board** b
 | CW-029 | Admin foundation: web target, `main_admin.dart`, claim login, shell, API base | admin | 1.5d | CW-024                 | review | Web app on dev; Google popup + claim |
 | CW-030 | `AdminApiService` crossword methods + models                                  | admin | 1d   | CW-029, CW-023, CW-025 | review | Daily docs read via Firestore |
 | CW-031 | Categories page                                                               | admin | 0.5d | CW-030                 | review | Drag to reorder; ID from name |
-| CW-032 | Question bank page (list, add/edit, verify)                                   | admin | 1.5d | CW-030                 | todo   |                               |
+| CW-032 | Question bank page (list, add/edit, verify)                                   | admin | 1.5d | CW-030                 | review | "Mark as checked" = verify     |
 | CW-033 | Puzzle builder (grid editor + live validation)                                | admin | 3d   | CW-030, CW-014         | todo   | Biggest admin task            |
 | CW-034 | Puzzle preview, status workflow, schedule calendar                            | admin | 1d   | CW-033                 | todo   |                               |
 | CW-035 | Reports page                                                                  | admin | 0.5d | CW-030                 | todo   |                               |
@@ -546,6 +546,8 @@ List, add/edit, reorder (`order`), toggle `isActive`.
 #### CW-032 · Question bank page
 
 Filter by subject + status; add/edit form (answer, display EN/ML, clues, fact, examTags, difficulty, source); Verify button.
+
+**Done:** filters (subject from categories + loaded questions, status), search within loaded pages, "Load more" (20 per page). The form is numbered in 5 steps; the answer shows as letter tiles as you type (normalised like the server), subjects/topics/exam tags are converted to snake_case, and the source hint changes with its type. Verify is labelled **"Mark as checked"**, asks for confirmation showing the source, and opens the editor instead when the source still starts with TODO. Editing a checked question warns that it goes back to "Needs checking".
 
 #### CW-033 · Puzzle builder
 

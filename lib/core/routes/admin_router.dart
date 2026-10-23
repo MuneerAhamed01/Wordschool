@@ -5,6 +5,7 @@ import 'package:wordshool/features/admin/presentation/admin_sections.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_categories_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_home_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_login_page.dart';
+import 'package:wordshool/features/admin/presentation/pages/admin_questions_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_shell_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_section_placeholder.dart';
 
@@ -23,7 +24,6 @@ String? adminRedirect({
 }
 
 const _unbuiltSections = [
-  AdminSection.questions,
   AdminSection.puzzles,
   AdminSection.schedule,
   AdminSection.reports,
@@ -56,6 +56,10 @@ GoRouter adminRouter(AdminAuthService auth) {
           GoRoute(
             path: AdminCategoriesPage.routeName,
             builder: (context, state) => const AdminCategoriesPage(),
+          ),
+          GoRoute(
+            path: AdminQuestionsPage.routeName,
+            builder: (context, state) => const AdminQuestionsPage(),
           ),
           for (final section in _unbuiltSections)
             GoRoute(

@@ -133,7 +133,12 @@ class AdminQuestion extends Equatable {
         'source': source.toJson(),
       };
 
-  AdminQuestion copyWith({String? id}) => AdminQuestion(
+  AdminQuestion copyWith({
+    String? id,
+    QuestionStatus? status,
+    DateTime? updatedAt,
+  }) =>
+      AdminQuestion(
         id: id ?? this.id,
         answer: answer,
         answerDisplay: answerDisplay,
@@ -144,9 +149,9 @@ class AdminQuestion extends Equatable {
         examTags: examTags,
         difficulty: difficulty,
         source: source,
-        status: status,
+        status: status ?? this.status,
         usedInPuzzles: usedInPuzzles,
-        updatedAt: updatedAt,
+        updatedAt: updatedAt ?? this.updatedAt,
       );
 
   @override
