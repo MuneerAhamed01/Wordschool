@@ -1,0 +1,13 @@
+---
+description: Task sheet and documentation upkeep
+globs: TASKS.md, CLAUDE.md, docs/**, design/**, content/**
+alwaysApply: false
+---
+
+# Docs and tasks
+
+- `TASKS.md`: status lives only in the status board (`todo | doing | review | done | blocked`). Cards hold details and "Done when" checklists. New task = new ID (never reuse) + board row + card.
+- Decisions go in the Decisions table with an ID (`DEC-00X`).
+- Schema changes update `docs/firebase/FIREBASE_DESIGN.md`; screen changes update `design/screens/*.md`.
+- Daily log: `docs/daily/YYYY-MM-DD.md` — Problem / Solution / Files, short.
+- Write plainly: short sentences, tables for comparisons, code blocks for anything to paste.

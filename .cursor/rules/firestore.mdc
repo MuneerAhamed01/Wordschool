@@ -1,0 +1,15 @@
+---
+description: Firestore data access, rules and indexes
+globs: lib/**/data/**/*.dart, firestore.rules, firestore.indexes.json, docs/firebase/**
+alwaysApply: false
+---
+
+# Firestore
+
+- Schema source of truth: `docs/firebase/FIREBASE_DESIGN.md`. Field names must match it exactly.
+- Reads: one-time `get()` for lists (no `snapshots()` for lists); paginate at 20 with `startAfterDocument`; queries must include the same filters the rules check (`isActive == true`, `status == 'published'`).
+- Writes from the app only to the player's own `users/{uid}` profile fields, docs under `users/{uid}/...`, and `contentReports` (create). Use `FieldValue.serverTimestamp()` for `updatedAt`.
+- Progress saves are batched: on pause, on leave, every 30 s when dirty. Never per keystroke.
+- Rules: operation-scoped. Each `allow update` lists allowed keys with `diff(resource.data).affectedKeys().hasOnly([...])`; values that only go up are checked (`>=`). New matches go above the catch-all deny. Every rule change gets an emulator test.
+- Indexes: add composite indexes to `firestore.indexes.json`; add `fieldOverrides` with `"indexes": []` for large arrays/strings that are never queried.
+- One Firebase project per environment (dev = `kerala-pcs-dev`), always the `(default)` database. Never hard-code a project id in features.

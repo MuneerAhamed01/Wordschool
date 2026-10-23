@@ -18,7 +18,7 @@ Global rules: side gutter 16; touch targets ≥ 44 × 44; icons are 1.8–2 px s
 
 | Block | Spec | Data |
 | --- | --- | --- |
-| Top bar (48) | Logo mark 36 (2×2 tile grid) + "WordSchool **PSC**" · right: language toggle chip `EN / മല` (32 high) · streak chip (flame + number, `accent.streak` on `accent.streakBg`) | `userGameStates.crossword.currentStreak` |
+| Top bar (48) | Logo mark 36 (2×2 tile grid) + app name (final name TBD; prototype shows "WordSchool **PSC**") · right: language toggle chip `EN / മല` (32 high) · streak chip (flame + number, `accent.streak` on `accent.streakBg`) | `users/{uid}.crossword.currentStreak` |
 | Title | "PSC Crossword" `title` · subline "Revise Kerala PSC facts, one grid at a time." `body` muted | static |
 | Daily card | `bg.surface`, radius 20, padding 18. Overline "● DAILY · 22 OCT" (`accent.glow`) · puzzle title `heading` · "7 clues · 8×8 grid · about 6 min" caption · mini 4×4 tile preview (64) · **Start puzzle** button (48, `accent.button`) + "+50 XP on solve" | `crosswordDaily/{today IST}` |
 | Categories | Header "Categories" + "See all" link · 2-column grid, gap 10 · card min 104: icon well 36 (tinted icon), progress text "18 / 42", name `body` 600, 4 px progress bar in category colour | `crosswordCategories` + player's solved counts |
@@ -86,14 +86,14 @@ Scrim `bg.scrim`; sheet `bg.sheet`, top radius 24, drag handle 40 × 4.
 | Block | Spec |
 | --- | --- |
 | Header | Overline "2 DOWN · 6 LETTERS" · "Need a hint?" `heading` · current clue muted · close (44) |
-| Balance row | Bulb icon + "5 hints left" · "Get more" link (store) |
+| Balance row | Phase 1 (DEC-008): "3 reveals left in this puzzle". Later with monetization: "5 hints left" · "Get more" |
 | Show a clue | **Free.** Expands inline to show `extraClue` in a quote box |
 | Reveal a letter | "Fills the selected square · −5 XP" · cost chip "1 hint" |
 | Reveal the word | "Fills all 6 letters of 2 Down · −15 XP" · cost chip "3 hints" |
-| Rewarded ad | Outline button "Watch a short video for +1 hint" (existing `AdService`; hidden if ad-free / Pro) |
+| Rewarded ad | **Not in phase 1** (NEXT-006). Later: "Watch a short video for +1 hint" |
 | Footnote | "Revealed words go to My mistakes so you can revise them later." |
 
-Disabled option when balance is too low: cost chip turns to "Not enough hints", row is not tappable.
+Disabled option when not enough reveals are left: cost chip turns to "Not enough reveals", row is not tappable.
 
 ---
 

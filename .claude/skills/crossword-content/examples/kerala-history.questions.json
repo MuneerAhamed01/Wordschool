@@ -1,0 +1,34 @@
+{
+  "subject": "kerala_history",
+  "questions": [
+    {
+      "answer": "VAIKOM",
+      "answerDisplay": {"en": "Vaikom", "ml": "വൈക്കം"},
+      "clues": [
+        {"en": "1924–25 satyagraha for the right to use temple roads", "level": "medium"},
+        {"en": "Satyagraha town in Kottayam district visited by Gandhiji in 1925", "level": "easy"}
+      ],
+      "fact": {"en": "The Vaikom Satyagraha (1924–25) protested the ban on oppressed castes using the roads around the Vaikom temple."},
+      "subject": "kerala_history",
+      "topic": "renaissance",
+      "examTags": ["ldc", "lgs", "degree_level"],
+      "difficulty": "medium",
+      "source": {"type": "book", "ref": "TODO: book name, page"},
+      "draftNotes": "Check year range wording against the chosen reference."
+    },
+    {
+      "answer": "ASAN",
+      "answerDisplay": {"en": "Kumaran Asan", "ml": "കുമാരനാശാൻ"},
+      "clues": [
+        {"en": "Kumaran ___, poet of 'Veena Poovu'", "level": "easy"}
+      ],
+      "fact": {"en": "Kumaran Asan wrote 'Veena Poovu' (1907) and is one of the modern triumvirate of Malayalam poetry with Ulloor and Vallathol."},
+      "subject": "kerala_history",
+      "topic": "renaissance",
+      "examTags": ["ldc", "lgs"],
+      "difficulty": "easy",
+      "source": {"type": "pyq", "ref": "TODO: exam name + year + question no."},
+      "draftNotes": ""
+    }
+  ]
+}

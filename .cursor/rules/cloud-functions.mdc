@@ -1,0 +1,25 @@
+---
+description: Cloud Functions (TypeScript) conventions
+globs: functions/**/*.ts
+alwaysApply: false
+---
+
+# Cloud Functions
+
+- `firebase-functions` v2 APIs: `onCall`, `onSchedule`, `onDocumentUpdated`. Admin SDK modular imports (`firebase-admin/firestore`).
+- ESLint google style: double quotes, 2-space indent, max line length 100, JSDoc on exported functions.
+- Admin callables:
+  ```ts
+  const adminUid = assertAdmin(request);
+  const input = parseMyInput(request.data);   // pure, from <name>.logic.ts
+  const batch = db().batch();
+  // ... writes ...
+  await batch.commit();
+  await writeAuditLog({action: "crossword.saveQuestion", adminUid, targetId: input.id});
+  ```
+- Player callables: require `request.auth`; check the user is not blocked (`users/{uid}.blockedAt`); idempotent; validate every input; return plain JSON.
+- Throw `HttpsError(code, message)` with messages an admin can act on. Validators collect all problems before throwing.
+- Pure logic (validation, scoring, encoding) in separate files with `*.test.ts` beside them. No Firestore in pure files.
+- New crossword code in `functions/src/crossword/`; export from `functions/src/index.ts`. Region `asia-south1` (set once with `setGlobalOptions`). Scheduled jobs use `timeZone: "Asia/Kolkata"`.
+- One Firebase project per environment — never add a `databaseId` parameter.
+- Multi-doc writes use one `WriteBatch` or a transaction.
