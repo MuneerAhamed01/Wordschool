@@ -30,7 +30,7 @@ description: Run Kerala PSC app project tasks from TASKS.md — pick the next un
    - if rules changed: rules tests on the emulator
 2. Tick each "Done when" box on the card that is truly done. If one can't be done, leave it unticked and explain in Notes.
 3. Board: `review` (or `blocked` + reason in Notes).
-4. Commit: `CW-0XX: <imperative summary>`; PR into `psc-dev` titled `CW-0XX: <task title>`, body = the card's Done-when list.
+4. **Don't commit until the user asks.** Leave the changes in the working tree and report them. When asked: commit `CW-0XX: <imperative summary>` and push the branch (`git push -u origin <branch>`). No PR — the user reviews the pushed branch.
 5. If the schema or a screen changed, confirm `docs/firebase/FIREBASE_DESIGN.md` / `design/screens/*.md` were updated.
 6. Append to `docs/daily/YYYY-MM-DD.md` (create if missing):
 

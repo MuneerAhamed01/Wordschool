@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:wordshool/config/themes/colors.dart';
 import 'package:wordshool/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:wordshool/features/auth/utils/auth_type.dart';
-import 'package:wordshool/features/game/presentation/pages/game_page.dart';
+import 'package:wordshool/features/home/presentation/pages/home_page.dart';
 import 'package:wordshool/shared/presentations/widgets/app_button.dart';
 import 'package:wordshool/shared/presentations/widgets/fade_slide_in.dart';
 import 'package:wordshool/shared/presentations/widgets/game_scaffold.dart';
@@ -45,7 +45,7 @@ class AuthPage extends StatelessWidget {
         listener: (ctx, state) {
           state.whenOrNull(
             // Replace the auth route so back doesn't return to sign-in
-            authenticated: (_) => ctx.go(GamePage.routeName),
+            authenticated: (_) => ctx.go(HomePage.routeName),
             error: (message) => CustomSnackBar.show(
               ctx,
               message: message,

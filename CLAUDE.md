@@ -103,7 +103,7 @@ lib/
 - **Scores are server-side.** XP, streaks, leaderboards, results come from functions (`submitCrossword`).
 - **Rules are operation-scoped:** each client update lists exactly which keys may change (`diff(resource.data).affectedKeys().hasOnly([...])`); values that only go up are checked; everything not matched is denied.
 - **Cost habits:** one-time `get()` for lists (no list listeners); paginate at 20; batch progress saves (pause / leave / 30 s, never per keystroke); read summary docs (`top50`, `crosswordDaily`) instead of collections; `fieldOverrides` to turn off indexing on big fields.
-- Full schema: `docs/firebase/FIREBASE_DESIGN.md`. Schema change = update that doc in the same PR.
+- Full schema: `docs/firebase/FIREBASE_DESIGN.md`. Schema change = update that doc in the same change.
 
 ## Cloud Functions (`functions/`, from CW-007)
 
@@ -127,7 +127,7 @@ lib/
 2. Branch `feat/CW-0XX-short-name` from `psc-dev` (`chore/` for ops, `fix/` for bugs).
 3. Use the matching skill. Keep the change inside the card's scope; extra work becomes a new task.
 4. Tick the card's "Done when" boxes; run analyze/tests; set status `review`.
-5. Commit `CW-0XX: what changed`; one task per PR into `psc-dev`.
+5. **Don't commit until the user asks.** When asked: commit `CW-0XX: what changed`, then push the task branch (`git push -u origin <branch>`). No PRs — the user reviews the pushed branch.
 6. Add notable changes to `docs/daily/YYYY-MM-DD.md`.
 
 ## Skills (`.claude/skills/`)
@@ -152,4 +152,4 @@ lib/
 - Don't hard-delete content — set `status: archived`.
 - Don't commit `.env`, service-account keys or signing files.
 - Don't merge `development` into `psc-dev`; port only what a task names.
-- Don't add packages without saying why in the PR.
+- Don't add packages without saying why in the daily log.

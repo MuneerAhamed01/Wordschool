@@ -146,4 +146,7 @@ class MyColors {
   static const Color textMuted = Color(0xFF818384);
   static const Color accentGlow = Color(0xFF6AAA64);
   static const Color streakAccent = Color(0xFFF5793A);
+  static const Color gameBorderSubtle = Color(0xFF2E2E30);
+  static const Color navBarBackground = Color(0xFF161617);
+  static const Color navInactive = Color(0xFF9A9B9C);
 }

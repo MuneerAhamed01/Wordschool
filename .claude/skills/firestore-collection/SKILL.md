@@ -81,14 +81,14 @@ await assertFails(updateDoc(doc(alice, "users/alice/crosswordProgress/p1"), {ela
 - Model + entity via the `flutter-feature` skill (field names from step 1).
 - Functions types in `functions/<feature>/types.py` (`TypedDict`).
 
-## Cost check (write it in the PR)
+## Cost check (write it in the daily log entry)
 
 - Reads per screen open, writes per user action, and whether anything is a listener.
 - Use the table in the design doc's "Cost estimate" to see if the free tier still holds at 2,000 daily players.
 
 ## Checklist
 
-- [ ] Design doc updated (same PR)
+- [ ] Design doc updated (same change)
 - [ ] Dart + Python constants
 - [ ] Rules + allow/deny tests passing
 - [ ] Indexes / overrides added and deployed to dev

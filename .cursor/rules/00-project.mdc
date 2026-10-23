@@ -13,3 +13,4 @@ alwaysApply: true
 - Firestore schema lives in `docs/firebase/FIREBASE_DESIGN.md` — update it in the same change when the schema changes.
 - Never commit `.env*` (except `.env.example`), keys or service accounts.
 - Before finishing: analyze + tests pass; tick the task card's "Done when" boxes; set board status to `review`.
+- Don't commit until the user asks. When asked, commit `CW-0XX: ...` and push the task branch. No PRs.
