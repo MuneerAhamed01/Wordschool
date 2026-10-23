@@ -98,7 +98,7 @@ This file is the single source of truth for project work. The **status board** b
 | CW-030 | `AdminApiService` crossword methods + models                                  | admin | 1d   | CW-029, CW-023, CW-025 | review | Daily docs read via Firestore |
 | CW-031 | Categories page                                                               | admin | 0.5d | CW-030                 | review | Drag to reorder; ID from name |
 | CW-032 | Question bank page (list, add/edit, verify)                                   | admin | 1.5d | CW-030                 | review | "Mark as checked" = verify     |
-| CW-033 | Puzzle builder (grid editor + live validation)                                | admin | 3d   | CW-030, CW-014         | todo   | Biggest admin task            |
+| CW-033 | Puzzle builder (grid editor + live validation)                                | admin | 3d   | CW-030, CW-014         | review | Dart port of the validator    |
 | CW-034 | Puzzle preview, status workflow, schedule calendar                            | admin | 1d   | CW-033                 | todo   |                               |
 | CW-035 | Reports page                                                                  | admin | 0.5d | CW-030                 | todo   |                               |
 | CW-036 | Import questions / puzzles from JSON                                          | admin | 1d   | CW-032, CW-033         | todo   | Saves typing for content team |
@@ -553,10 +553,12 @@ Filter by subject + status; add/edit form (answer, display EN/ML, clues, fact, e
 
 Grid editor (up to 15×15), place a verified question across/down at a cell, auto-numbering, crossing conflicts highlighted, validator errors listed live (port of CW-013 in Dart, or a `dryRun` flag on `adminSaveCrosswordPuzzle`).
 
+**Done:** validator ported to Dart (`domain/utils/grid_validator.dart`, same checks as CW-013 and the same test cases; messages written for people, rows/columns from 1, with the cells to highlight). The admin never draws black squares: they place **checked** questions and `PuzzleDraft` works out the layout, numbering and word ids (unused squares become blocks). Picking a question shows suggested spots that cross existing words on a matching letter without touching others; tapping a square places it there instead. Selected word: edit the clue (or pick one of the question's clues), extra hint, remove. Grid size 3–15, "Fit to words", Clear, Undo. Problems are listed live and cells turn red; Save stays disabled ("Fix N to save") until the grid, details and question checks are clean. Also: the Puzzles list page (category chips, status filter, paging). `/puzzles/:id` opens the builder until CW-034 adds the preview page.
+
 Done when:
 
-- [ ] The example puzzle in `.claude/skills/crossword-content/examples/` can be rebuilt in the builder
-- [ ] Save works only when the validator is clean
+- [x] The example puzzle in `.claude/skills/crossword-content/examples/` can be rebuilt in the builder — `puzzle_draft_test.dart` rebuilds it from placements only: same layout, numbers and ids, no problems (in the panel it needs its 7 questions checked first)
+- [x] Save works only when the validator is clean
 
 
 
