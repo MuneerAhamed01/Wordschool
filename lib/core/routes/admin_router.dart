@@ -7,8 +7,10 @@ import 'package:wordshool/features/admin/presentation/pages/admin_categories_pag
 import 'package:wordshool/features/admin/presentation/pages/admin_home_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_login_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_puzzle_builder_page.dart';
+import 'package:wordshool/features/admin/presentation/pages/admin_puzzle_detail_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_puzzles_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_questions_page.dart';
+import 'package:wordshool/features/admin/presentation/pages/admin_schedule_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_shell_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_section_placeholder.dart';
 
@@ -27,7 +29,6 @@ String? adminRedirect({
 }
 
 const _unbuiltSections = [
-  AdminSection.schedule,
   AdminSection.reports,
   AdminSection.bulkUpload,
 ];
@@ -78,9 +79,10 @@ GoRouter adminRouter(AdminAuthService auth) {
               ),
               GoRoute(
                 path: ':puzzleId',
-                builder: (context, state) => AdminPuzzleBuilderPage(
-                  key: ValueKey(state.pathParameters['puzzleId']),
-                  puzzleId: state.pathParameters['puzzleId'],
+                builder: (context, state) => AdminPuzzleDetailPage(
+                  key: ValueKey(state.uri.toString()),
+                  puzzleId: state.pathParameters['puzzleId']!,
+                  highlightWordId: state.uri.queryParameters['word'],
                 ),
                 routes: [
                   GoRoute(
@@ -93,6 +95,10 @@ GoRouter adminRouter(AdminAuthService auth) {
                 ],
               ),
             ],
+          ),
+          GoRoute(
+            path: AdminSchedulePage.routeName,
+            builder: (context, state) => const AdminSchedulePage(),
           ),
           for (final section in _unbuiltSections)
             GoRoute(

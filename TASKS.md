@@ -99,7 +99,7 @@ This file is the single source of truth for project work. The **status board** b
 | CW-031 | Categories page                                                               | admin | 0.5d | CW-030                 | review | Drag to reorder; ID from name |
 | CW-032 | Question bank page (list, add/edit, verify)                                   | admin | 1.5d | CW-030                 | review | "Mark as checked" = verify     |
 | CW-033 | Puzzle builder (grid editor + live validation)                                | admin | 3d   | CW-030, CW-014         | review | Dart port of the validator    |
-| CW-034 | Puzzle preview, status workflow, schedule calendar                            | admin | 1d   | CW-033                 | todo   |                               |
+| CW-034 | Puzzle preview, status workflow, schedule calendar                            | admin | 1d   | CW-033                 | review | 30-day calendar, IST times    |
 | CW-035 | Reports page                                                                  | admin | 0.5d | CW-030                 | todo   |                               |
 | CW-036 | Import questions / puzzles from JSON                                          | admin | 1d   | CW-032, CW-033         | todo   | Saves typing for content team |
 
@@ -565,6 +565,8 @@ Done when:
 #### CW-034 · Preview, workflow, schedule
 
 Preview renders the puzzle as the player sees it; buttons for each allowed status move; calendar of `crosswordDaily` for the next 30 days with empty days flagged.
+
+**Done:** `/puzzles/:id` shows the grid with black squares and Across/Down clue lists ("Show answers" adds answers and facts; tapping a clue or square highlights the word). "What next?" lists one button per allowed move from `status_flow.dart` (mirrors `TRANSITIONS`, unit-tested) with a one-line explanation: Send for review, Back to draft, Schedule / Change date (date + time picker in IST, must be in the future), Publish now and Archive (both confirm). Live and scheduled puzzles also get "Make puzzle of the day". `/schedule` lists the next 30 IST days (one `get()` per day), "N of 30 days have a puzzle", empty days in yellow, and a picker that only offers Live puzzles or Scheduled ones going live by midnight of that day.
 
 #### CW-035 · Reports page
 
