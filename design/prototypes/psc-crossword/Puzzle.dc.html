@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Crossword puzzle</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#6AAA64}a:hover{color:#8BC285}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121213; color: #FFFFFF; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden; padding: 14px 0 14px 0">
+
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 12px; height: 48px">
+    <a href="Main.dc.html" aria-label="Back to home" style="width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
+    </a>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 2px">
+      <div style="font-size: 15px; font-weight: 700">Kerala History</div>
+      <div style="font-size: 12px; color: #9A9B9C">Puzzle 12 · Medium</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 6px">
+      <div style="height: 32px; padding: 0 10px; border-radius: 16px; background: #1A1A1B; border: 1px solid #3A3A3C; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9A9B9C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM12 9v4l2 2M9 2h6"></path></svg>
+        {{time}}
+      </div>
+      <a href="Hints.dc.html" aria-label="Hints, 5 left" style="position: relative; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9B458" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"></path></svg>
+        <span style="position: absolute; top: 4px; right: 3px; min-width: 16px; height: 16px; border-radius: 8px; background: #B59F3B; color: #121213; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center">5</span>
+      </a>
+    </div>
+  </div>
+
+  <div style="padding: 10px 20px 0 20px; display: flex; flex-direction: column; gap: 8px">
+    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #9A9B9C">
+      <span>{{filledText}}</span>
+      <span>{{statusText}}</span>
+    </div>
+    <div style="width: 350px; height: 350px; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-template-rows: repeat(8, minmax(0, 1fr)); gap: 2px" role="grid" aria-label="Crossword grid">
+      <sc-for list="{{cells}}" as="cell" hint-placeholder-count="64">
+        <sc-if value="{{cell.white}}" hint-placeholder-val="{{true}}">
+          <button onClick="{{cell.tap}}" aria-label="{{cell.label}}" style="position: relative; margin: 0; padding: 0; border-radius: 4px; box-sizing: border-box; font-family: Inter, sans-serif; font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; background: {{cell.bg}}; border: 2px solid {{cell.bd}}; color: {{cell.fg}}">
+            <sc-if value="{{cell.hasNum}}">
+              <span style="position: absolute; top: 1px; left: 3px; font-size: 9px; font-weight: 600; line-height: 11px; color: {{cell.nfg}}">{{cell.num}}</span>
+            </sc-if>
+            {{cell.letter}}
+          </button>
+        </sc-if>
+        <sc-if value="{{cell.black}}">
+          <div style="border-radius: 4px; background: #0A0A0B"></div>
+        </sc-if>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="padding: 12px 12px 0 12px">
+    <div style="min-height: 64px; border-radius: 14px; background: #2B2719; border: 1px solid #5C5224; display: flex; align-items: center; gap: 4px; padding: 0 4px">
+      <button onClick="{{prevWord}}" aria-label="Previous clue" style="width: 40px; height: 44px; flex-shrink: 0; border: 0; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E5D27A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
+      </button>
+      <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px; padding: 8px 0">
+        <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.08em; color: #E5D27A">{{curLabel}}</div>
+        <div style="font-size: 14px; line-height: 19px; font-weight: 500; color: #FFFFFF">{{curClue}}</div>
+      </div>
+      <button onClick="{{nextWord}}" aria-label="Next clue" style="width: 40px; height: 44px; flex-shrink: 0; border: 0; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E5D27A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <div style="padding: 10px 12px 0 12px; display: flex; align-items: center; gap: 6px; overflow: hidden">
+    <span style="font-size: 11px; font-weight: 700; color: #9A9B9C; letter-spacing: 0.06em; margin-right: 2px">CLUES</span>
+    <sc-for list="{{pills}}" as="p" hint-placeholder-count="7">
+      <button onClick="{{p.go}}" aria-label="{{p.aria}}" style="height: 30px; min-width: 38px; padding: 0 8px; border-radius: 15px; font-family: Inter, sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; background: {{p.bg}}; color: {{p.fg}}; border: 1px solid {{p.bd}}">{{p.id}}</button>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{solved}}">
+    <div style="padding: 10px 12px 0 12px">
+      <a href="Results.dc.html" style="height: 44px; border-radius: 12px; background: #538D4E; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center">Solved! View results</a>
+    </div>
+  </sc-if>
+
+  <div style="flex-grow: 1"></div>
+
+  <div style="padding: 0 6px; display: flex; flex-direction: column; gap: 7px">
+    <div style="display: flex; gap: 5px">
+      <sc-for list="{{row1}}" as="k" hint-placeholder-count="10">
+        <button onClick="{{k.press}}" style="flex: 1 1 0; height: 52px; border: 0; border-radius: 6px; background: #58585A; color: #FFFFFF; font-family: Inter, sans-serif; font-size: 16px; font-weight: 700; cursor: pointer">{{k.k}}</button>
+      </sc-for>
+    </div>
+    <div style="display: flex; gap: 5px; padding: 0 18px">
+      <sc-for list="{{row2}}" as="k" hint-placeholder-count="9">
+        <button onClick="{{k.press}}" style="flex: 1 1 0; height: 52px; border: 0; border-radius: 6px; background: #58585A; color: #FFFFFF; font-family: Inter, sans-serif; font-size: 16px; font-weight: 700; cursor: pointer">{{k.k}}</button>
+      </sc-for>
+    </div>
+    <div style="display: flex; gap: 5px">
+      <button onClick="{{check}}" style="flex: 1.6 1 0; height: 52px; border: 0; border-radius: 6px; background: #538D4E; color: #FFFFFF; font-family: Inter, sans-serif; font-size: 13px; font-weight: 800; cursor: pointer">CHECK</button>
+      <sc-for list="{{row3}}" as="k" hint-placeholder-count="7">
+        <button onClick="{{k.press}}" style="flex: 1 1 0; height: 52px; border: 0; border-radius: 6px; background: #58585A; color: #FFFFFF; font-family: Inter, sans-serif; font-size: 16px; font-weight: 700; cursor: pointer">{{k.k}}</button>
+      </sc-for>
+      <button onClick="{{back}}" aria-label="Delete letter" style="flex: 1.6 1 0; height: 52px; border: 0; border-radius: 6px; background: #58585A; display: flex; align-items: center; justify-content: center; cursor: pointer">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12V5zM17 9l-6 6M11 9l6 6"></path></svg>
+      </button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+var SOL = 'MUZIRIS#A#######L#V###G#ASAN##A#B#I###M#A#KAPPADR#O######EMS####';
+var START = 'MUZIRIS#A#######L#V###G#ASAN##A#B#.###M#A#KAPP..R#.######...####';
+var NUMS = { 0: 1, 18: 2, 22: 3, 24: 4, 42: 5, 57: 6 };
+var WORDS = [
+  { id: '1A', num: 1, dir: 'across', r: 0, c: 0, len: 7, clue: 'Ancient Chera port linked to the Pattanam excavations' },
+  { id: '4A', num: 4, dir: 'across', r: 3, c: 0, len: 4, clue: "Kumaran ___, poet of 'Veena Poovu'" },
+  { id: '5A', num: 5, dir: 'across', r: 5, c: 2, len: 6, clue: 'Beach near Kozhikode where Vasco da Gama landed in 1498' },
+  { id: '6A', num: 6, dir: 'across', r: 7, c: 1, len: 3, clue: "Initials of Kerala's first Chief Minister" },
+  { id: '1D', num: 1, dir: 'down', r: 0, c: 0, len: 7, clue: 'Northern Kerala region once part of the Madras Presidency' },
+  { id: '2D', num: 2, dir: 'down', r: 2, c: 2, len: 6, clue: '1924–25 satyagraha for the right to use temple roads' },
+  { id: '3D', num: 3, dir: 'down', r: 2, c: 6, len: 4, clue: 'Portuguese explorer Vasco da ___' }
+];
+function cellsOf(w) {
+  var a = [];
+  for (var i = 0; i < w.len; i++) a.push(w.dir === 'across' ? w.r * 8 + w.c + i : (w.r + i) * 8 + w.c);
+  return a;
+}
+function wordFor(idx, dir) {
+  for (var i = 0; i < WORDS.length; i++) if (WORDS[i].dir === dir && cellsOf(WORDS[i]).indexOf(idx) >= 0) return WORDS[i];
+  return null;
+}
+class Component extends DCLogic {
+  st() {
+    var s = this.state || {};
+    return {
+      entries: s.entries || START.split('').map(function (ch) { return ch === '.' || ch === '#' ? '' : ch; }),
+      active: s.active == null ? 34 : s.active,
+      dir: s.dir || 'down',
+      checked: !!s.checked,
+      t: s.t || 272
+    };
+  }
+  componentDidMount() {
+    var self = this;
+    this.timer = setInterval(function () { self.setState({ t: self.st().t + 1 }); }, 1000);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+  tap(idx) {
+    var s = this.st(); var dir = s.dir;
+    var other = dir === 'across' ? 'down' : 'across';
+    if (idx === s.active) { if (wordFor(idx, other)) dir = other; }
+    else if (!wordFor(idx, dir)) dir = other;
+    this.setState({ active: idx, dir: dir });
+  }
+  type(L) {
+    var s = this.st(); var e = s.entries.slice(); e[s.active] = L;
+    var w = wordFor(s.active, s.dir); var next = s.active;
+    if (w) { var cs = cellsOf(w); var i = cs.indexOf(s.active); if (i < cs.length - 1) next = cs[i + 1]; }
+    this.setState({ entries: e, active: next, checked: false });
+  }
+  back() {
+    var s = this.st(); var e = s.entries.slice(); var a = s.active;
+    if (e[a]) { e[a] = ''; }
+    else { var w = wordFor(a, s.dir); if (w) { var cs = cellsOf(w); var i = cs.indexOf(a); if (i > 0) { a = cs[i - 1]; e[a] = ''; } } }
+    this.setState({ entries: e, active: a, checked: false });
+  }
+  goWord(w) {
+    var s = this.st(); var cs = cellsOf(w); var first = cs[0];
+    for (var i = 0; i < cs.length; i++) if (!s.entries[cs[i]]) { first = cs[i]; break; }
+    this.setState({ active: first, dir: w.dir });
+  }
+  step(d) {
+    var s = this.st(); var w = wordFor(s.active, s.dir) || WORDS[0];
+    var i = WORDS.indexOf(w); this.goWord(WORDS[(i + d + WORDS.length) % WORDS.length]);
+  }
+  renderVals() {
+    var self = this; var s = this.st();
+    var cur = wordFor(s.active, s.dir) || wordFor(s.active, s.dir === 'across' ? 'down' : 'across') || WORDS[0];
+    var curCells = cellsOf(cur);
+    var whiteCount = 0, filled = 0, wrong = 0, allRight = true;
+    var cells = SOL.split('').map(function (sol, idx) {
+      if (sol === '#') return { white: false, black: true };
+      whiteCount++;
+      var letter = s.entries[idx];
+      if (letter) filled++;
+      if (letter !== sol) allRight = false;
+      var isActive = idx === s.active; var inWord = curCells.indexOf(idx) >= 0;
+      var bg = '#2A2A2C', bd = '#3A3A3C', fg = '#FFFFFF', nfg = '#A9A9AB';
+      if (s.checked && letter) {
+        if (letter === sol) { bg = '#538D4E'; bd = '#538D4E'; nfg = '#E6F2E4'; }
+        else { bg = '#7A2A22'; bd = '#B54A3C'; nfg = '#F2D6D2'; wrong++; }
+      }
+      if (inWord && !(s.checked && letter)) { bg = '#3A3524'; bd = '#7C6C2A'; nfg = '#D9CC8C'; }
+      if (isActive) { bg = '#C9B458'; bd = '#E5D27A'; fg = '#121213'; nfg = '#3A3016'; }
+      return {
+        white: true, black: false, letter: letter, bg: bg, bd: bd, fg: fg, nfg: nfg,
+        hasNum: NUMS[idx] != null, num: NUMS[idx] || '',
+        label: 'Row ' + (Math.floor(idx / 8) + 1) + ' column ' + (idx % 8 + 1) + (letter ? ', ' + letter : ', empty'),
+        tap: function () { self.tap(idx); }
+      };
+    });
+    var pills = WORDS.map(function (w) {
+      var done = cellsOf(w).every(function (c) { return !!s.entries[c]; });
+      var on = w === cur;
+      return {
+        id: w.id, aria: w.num + ' ' + w.dir + (done ? ', filled' : ''),
+        bg: on ? '#C9B458' : (done ? '#253323' : '#1A1A1B'),
+        fg: on ? '#121213' : (done ? '#9FD39A' : '#C8C8CA'),
+        bd: on ? '#C9B458' : (done ? '#3E5E3A' : '#3A3A3C'),
+        go: function () { self.goWord(w); }
+      };
+    });
+    function keys(str) { return str.split('').map(function (k) { return { k: k, press: function () { self.type(k); } }; }); }
+    var mm = Math.floor(s.t / 60), ss = s.t % 60;
+    return {
+      cells: cells, pills: pills,
+      curLabel: cur.num + ' ' + cur.dir.toUpperCase() + ' · ' + cur.len + ' LETTERS',
+      curClue: cur.clue,
+      filledText: filled + ' of ' + whiteCount + ' letters filled',
+      statusText: s.checked ? (wrong ? wrong + ' to fix' : 'All correct so far') : 'No mistakes checked',
+      solved: allRight,
+      time: (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss,
+      row1: keys('QWERTYUIOP'), row2: keys('ASDFGHJKL'), row3: keys('ZXCVBNM'),
+      check: function () { self.setState({ checked: true }); },
+      back: function () { self.back(); },
+      prevWord: function () { self.step(-1); },
+      nextWord: function () { self.step(1); }
+    };
+  }
+}
+</script>
+</body>
+</html>

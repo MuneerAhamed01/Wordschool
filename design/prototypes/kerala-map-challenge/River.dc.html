@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Draw the River</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1D6B3C}a:hover{color:#0F4D27}
+</style>
+</helmet>
+<div style="position: relative; width: 393px; height: 852px; box-sizing: border-box; background: #F3F6EF; color: #18231B; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden; padding: 12px 16px 16px 16px; gap: 10px">
+
+  <header style="display: flex; align-items: center; gap: 8px; height: 48px">
+    <a href="Main.dc.html" aria-label="Back to game home" style="width: 44px; height: 44px; border-radius: 22px; display: flex; align-items: center; justify-content: center; margin-left: -8px">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#18231B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>
+    </a>
+    <div style="flex-grow: 1; display: flex; flex-direction: column">
+      <span style="font-size: 18px; font-weight: 700">Draw the River</span>
+      <span style="font-size: 12px; color: #4F5E53">River 5 of 12 · Central Kerala</span>
+    </div>
+    <span style="height: 32px; padding: 0 12px; border-radius: 16px; background: #FFFFFF; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; box-shadow: 0 1px 2px rgba(24,35,27,0.08)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4F5E53" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM12 9v4l2 2M9 2h6"></path></svg>
+      {{time}}
+    </span>
+  </header>
+
+  <section aria-label="Mission" style="background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; gap: 12px; align-items: flex-start; box-shadow: 0 1px 2px rgba(24,35,27,0.08)">
+    <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 12px; background: #D6E7FA; display: flex; align-items: center; justify-content: center">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F5FB0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6c3 0 3 3 6 3s3-3 6-3 3 3 4 3M4 12c3 0 3 3 6 3s3-3 6-3 3 3 4 3M4 18c3 0 3 2 6 2"></path></svg>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 3px">
+      <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #1F5FB0">MISSION</span>
+      <span style="font-size: 15px; line-height: 20px; font-weight: 700">Trace the Periyar to the Arabian Sea</span>
+      <span style="font-size: 13px; line-height: 18px; color: #4F5E53">Start at the source pin and pass every checkpoint in order.</span>
+    </div>
+  </section>
+
+  <div style="position: relative; width: 361px; height: 441px; border-radius: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(24,35,27,0.14)">
+    <svg width="361" height="441" viewBox="235 455 280 342" role="img" aria-label="Map of central Kerala. Draw the Periyar from its source to the sea." onPointerDown="{{down}}" onPointerMove="{{move}}" onPointerUp="{{up}}" onPointerLeave="{{up}}" style="display: block; touch-action: none; cursor: crosshair; background: #CFE5F2">
+      <path d="M452 912l2-3l3-1l0-2l3-2l6 0l2 2l-2-4l1-4l-2 0l-2 0l1-2l-1-3l1-1l2 1l6-6l1-5l4-1l0-3l-2-2l-2-7l4-2l3 4l5-3l3-7l-2-7l-5-5l0-3l-7-9l-1-5l-2-4l-3-3l-1-3l4-1l1-2l0-3l3 1l1-1l-1-1l3-2l1-4l2-1l4-6l-1-7l-3-1l-1-3l-4-2l0-4l-2-1l-2 1l-1-6l-3-3l-4-7l-2-1l0-2l3-2l0-1l1-2l6 0l2-10l3-2l1-2l3-2l4-5l0-7l-2-1l0-2l2 0l3-4l-1-3l1-7l2 0l-2-6l4-2l0-5l5 0l0-2l2-5l0-3l1-3l-1-3l3-5l3-4l2 1l3-1l0-2l2-1l0-4l2-2l-1-2l-1 0l0-2l-3 1l-4-3l-1-4l-2-1l0-1l2-2l-1-4l2 0l-2-2l-3 6l-3-1l1-4l-3 0l-3 1l-7 4l-4-2l-2 0l-5-4l0-2l-2 0l-2 2l-4-2l1-3l1-5l3-3l2-5l0-6l3-1l0-3l2-5l-1-1l0-3l5-2l-2-3l-3-2l1-4l1-1l0-2l-2-1l-2-2l1-2l0-4l2-2l4-7l3 0l2-5l-2-1l-1-5l-1-1l1-4l-6-7l-4-4l-2-4l2-2l1 0l5-3l5 2l1-2l0-3l1-9l3-5l-2-4l-4 0l-1-4l2-2l-8-10l2-7l-12-1l-11 8l-11 4l-1 2l-2 1l1 2l0 3l-7 2l-7 5l-8-4l-5 1l-2-1l-2-5l-4-2l0-5l-5 2l-3-3l1-8l2-5l-4-5l1-3l-1 0l-2-3l2-4l1-11l2-7l-2-2l1-3l0-2l0-5l-4-1l-1-5l1-2l9 1l4-2l-1-6l-3-2l4-7l2 0l-1-4l4-9l-2-6l-6 0l-1-1l-3 0l0-2l1-2l-5-7l-7-2l-2-2l-8 0l-6-4l-5-1l-5-3l1-3l1-5l3-3l1-5l5-6l10 2l5-1l2-3l-1-2l-4 4l-3-3l-3 0l-1-3l3-3l-3-3l2-4l-1-2l-3 0l-3-4l-1 0l0 2l-1 0l-1-3l-1-3l7-4l-1-3l2-2l-6-5l-4 1l-2 3l-9 5l-6-2l-14 1l-3-2l-3 0l-5 1l0 2l-2 1l-3-2l2-8l13-6l1-4l4-2l-2-1l0-1l2-4l-1-6l-5 1l0-3l-12-4l-8-6l0-4l-4 1l-5-4l-6-2l-3 2l-4-2l-2 0l0-2l-2-1l-2 1l-2-1l-2 2l-1 0l1-6l-2-5l1-2l-3-7l9-6l1 2l2 1l2 3l6-5l1 2l7-3l2-6l9 0l2-2l-2-5l-3-1l-1-4l-1-4l2 0l2-3l-2-3l-1-1l1-2l0-1l-7 3l-4 0l-1 1l-3 0l-5-2l-2-7l-3-1l-2-4l-6 2l-5-1l-2-4l-1-7l-4-2l-6 1l-5 3l-2 0l-2-2l0-23l-3 1l-4 0l-8 6l-5 0l-2 2l-23-3l-5-4l-2-2l-3-2l0-5l-6-6l-1-3l2-4l-1-1l-9-1l-7 3l0-3l-3-1l0-3l-3-1l-3 3l-2-1l-2-2l-3-8l-4-1l-5 1l-3-1l-1-3l-2-1l-2-4l-3-1l1-3l-3-2l-3-7l-1-2l-2 0l-2-4l-3-2l-2 1l-6-1l0-1l-3-8l2-5l-9-4l-2-4l0-9l3 0l2 1l6-3l-2-7l-2 1l-1-2l-3 1l-3 2l1 3l-3 2l-4 1l0-7l-4 0l-2-2l0-3l-5-1l-2-7l1-2l2 0l1-2l5 1l2-1l0-2l-4 0l-1-3l-2 1l-1-2l-2-1l-5 7l-3 1l0 2l-2 0l-4-5l1-2l-2-2l0-4l-4 0l-2 2l-2 0l-3-4l3-6l-2-1l0-1l-3 1l-4-1l-2-3l-4-1l0 6l-3 2l-4-1l-1-5l3 0l-1-4l-1-2l-2-1l-4 1l-1 1l-2 0l2-2l-5-3l4-5l-1-5l-3-1L700 -60L700 1000L452 1000Z" fill="#ECE7DA"></path>
+      <path d="M12 18l7 13l16 41l1 1l2-1l2 8l8 13l9 19l14 35l8 18l0 4l1 1l6-5l2 2l6 8l4 4l1 0l-3-5l0-2l1 0l3 4l0 1l1-2l1 0l1 4l3 2l2 3l-1 1l-4-3l-3 0l3 6l-1 2l3 2l3 4l2 3l1 1l2-2l3 0l8 11l5 5l1 1l-1 2l3-1l2 4l6 4l3 5l2-1l1 1l0 1l-1 1l7 16l9 28l3 3l4 0l4 2l5 5l6 11l2 3l0 5l3 7l9 25l1 1l2-1l1 1l0 1l-2 0l0 1l3 6l5 14l10 50l4 8l2 7l15 32l4 13l1 0l1-1l1 2l0 1l-1 0l1 2l3 4l7 15l7 25l1 2l0 4l3 7l3 3l0 4l2 4l5 19l3 10l5 6l0 5l3 9l4 19l2 27l6 34l4 19l24 57l4 5l5 11l8 28l3 4l3-1l4 3l11 13l3 3l0 2l19 25l5 5l18 24l17 19l0 5l2 2l2 1l1-1l2 4l3 1l15 13l2-3l3-1l0-2l3-2l6 0l2 2l-2-4l1-3l0-1l-2 0l-1 1l-1-1l1-2l-1-3l1-1l2 1l6-6l0-4l1-1l4-1l0-3l-2-2l-2-7l2-1l2-1l3 4l5-3l3-8l-2-6l-5-5l0-3l-2-1l-5-8l-1-5l-2-4l-3-3l-1-3l0-1l4 0l1-2l0-3l3 1l1-1l-1-1l3-2l1-4l2-1l4-6l-1-7l-3-1l-1-3l-4-2l0-4l-2-1l-2 1l-1-6l-1-2l-2-1l-1-3l-2-2l-1-2l-2-1l0-2l3-2l0-1l1-2l6 0l-1-2l3-4l-1-2l1-2l3-2l1-2l3-2l2-3l2-2l0-7l-2-1l0-2l2 0l3-4l-1-3l1-7l2 0l-2-6l4-2l0-5l5 0l0-2l2-5l0-3l1-1l0-2l-1-3l3-4l0-1l3-4l2 1l3-1l0-2l2-1l0-4l2-2l-1-2l-1 0l0-2l-3 1l-4-3l-1-4l-2-1l0-1l2-2l-1-4l2 0l-2-2l-3 6l-3-1l1-4l-3 0l-3 1l-7 4l-4-2l-2 0l-3-3l-2-1l0-2l-2 0l-2 2l-4-2l0-2l1-1l1-5l3-3l2-5l0-6l3-1l0-3l2-5l-1-1l0-3l5-2l-2-3l-3-2l1-4l1-1l0-2l-2-1l-2-2l1-2l0-4l2-2l1-3l3-4l3 0l2-5l-2-1l0-2l-1-1l0-2l-1-1l1-4l-6-7l-4-4l-2-4l2-2l1 0l5-3l5 2l1-2l0-3l1-9l3-5l-2-4l-4 0l-1-4l2-2l-8-10l2-7l-12-1l-11 8l-3 0l-8 4l-1 2l-2 1l1 2l0 3l-7 2l-7 5l-8-4l-5 1l-2-1l-2-5l-4-2l0-5l-5 2l-3-3l1-8l2-2l0-3l-4-5l1-1l0-2l-1 0l-2-3l2-4l1-11l2-7l-2-2l1-3l0-2l0-5l-4-1l0-2l-1-3l1-2l9 1l4-2l-1-6l-3-2l4-7l2 0l-1-4l3-5l1-4l-2-6l-6 0l-1-1l-3 0l0-2l1-2l-5-7l-7-2l-2-2l-8 0l-6-4l-5-1l-5-3l1-3l1-5l3-3l1-5l2-3l3-3l10 2l5-1l2-3l-1-2l-3 4l-1 0l-3-1l0-2l-3 0l-1-3l3-3l0-1l-2-1l-1-1l2-4l-1-2l-1-1l-2 1l-3-4l-1 0l0 2l-1 0l-1-3l-1-2l0-1l4-3l1 0l2-1l-1-3l2-2l-6-5l-4 1l0 2l-2 1l-9 5l-6-2l-14 1l-3-2l-3 0l-5 1l0 2l-2 1l-3-2l2-8l13-6l1-4l4-2l-2-1l0-1l2-4l-1-6l-5 1l0-3l-12-4l-8-6l0-4l-4 1l-5-4l-6-2l-3 2l-4-2l-2 0l0-2l-2-1l-2 1l-2-1l-2 2l-1 0l1-6l-2-5l1-2l-3-7l9-6l1 2l2 1l1 3l1 0l6-5l1 2l7-3l2-6l9 0l2-2l0-2l-2-3l-3-1l-1-4l-1-4l2 0l2-3l-2-3l-1-1l1-2l0-1l-7 3l-4 0l-1 1l-3 0l-5-2l-2-7l-3-1l-2-4l-6 2l-5-1l-2-4l0-3l-1-4l-4-2l-6 1l-5 3l-2 0l-2-2l0-23l-3 1l-4 0l-8 6l-5 0l-2 2l-9-2l-4 1l-5-1l-7-2l-3-3l-2-2l-3-2l-1-3l1-2l-6-6l-1-3l1-4l-3-1l-6-1l-7 3l0-1l0-2l-3-1l0-3l-3-1l-2 2l-3 1l-2-3l-3-8l-4-1l-5 1l-3-1l-1-3l-2-1l-2-4l-3-1l1-3l-3-2l-3-7l-1-2l-2 0l-2-4l-3-2l-2 1l-6-1l0-1l-1-2l-2-6l1-2l1-3l-9-4l-2-4l1-5l-1-4l3 0l2 1l3-1l3-2l0-1l-2-6l-2 1l-1-2l-3 1l-3 2l1 3l-3 2l-3 1l-1-7l-4 0l-2-2l0-3l-5-1l-2-4l0-3l1-2l2 0l1-2l5 1l2-1l0-2l-4 0l-1-3l-2 1l-1-2l-2-1l-1 0l-4 7l-3 1l0 2l-2 0l-4-5l1-2l-2-2l0-4l-4 0l-2 2l-2 0l-3-4l3-6l-2-1l0-1l-3 1l-4-1l-2-3l-4-1l1 4l-1 2l-3 2l-4-1l-1-2l0-3l3 0l-1-2l0-2l-1-2l-2-1l-4 1l-1 1l-2 0l2-2l-5-3l4-5l-1-5l-2-1l-1 0l1 2l-2 1l-2 1l-4-2l-9 4l-4 2l-2-1z" fill="#E4EFCF" stroke="#7E9A84" stroke-width="1"></path>
+      <path d="M34 68l2 5l2-1l2 8l8 13l7 15l24 61l7-4l2 2l10 12l1 0l-3-7l4 4l2-1l1 4l5 5l-1 1l-7-3l2 8l6 6l2 3l6-1l13 16l0 3l4-1l1 4l27 23l21 12l20 5l6 39l11 22l10 12l17 13l3 12l9 18l13 14l17 12l4 12l6 13l10 12l8 8l3 20l-2 23l4 32l4 15l7 15l13 15l21 18l16 11l13 4l0 5l-8 29l-1 24l7 22l8 14l7 9l-2 4l-16 25l-7 22l0 24l7 23l-3 17l1 16l1 7l38 47l12-20l4-15l-7-16l-3-13l2-14l6-10l-3-8l-8-14l-2-17l5-13l16-20l5-16l2-12l8-16l-12-5l-9-6l-7-9l-3-9l0-16l10-30l-2-18l5-18l-7-14l-13 1l-20-4l-10-5l-16-13l-7-8l-5-9l-2-10l0-10l-3-14l3-24l-3-11l-1-10l4-14l19-2l12 4l9-2l5-3l3-7l1-4l-2-6l-10-1l1-4l-5-7l-9-4l-8 0l-8-4l-32 2l-9 3l-2-13l5-15l-8 1l-9-1l-10-3l-7-6l-9-11l-3-10l0-11l3-11l-17-4l-9-4l-8-7l-6-9l-5-33l2-11l6-11l-13-5l-13-11l-24-4l-11-4l-15-12l-7-9l-19-8l-11-10l-9-4l-15-16l-5-8l-10-5l-7-7l-8-16l-14-23l-27-21z" fill="#C6DFA6"></path>
+      <path d="M366 428l-4 17l4 18l-3 24l3 14l0 13l5 13l9 11l22 16l24 6l13-1l7 14l-5 18l2 18l-10 27l-1 16l4 12l7 9l6 4l15 7l-8 16l-2 12l-5 16l-16 20l-5 13l2 17l8 14l3 8l-6 10l-2 14l3 13l7 16l-4 15l-12 20l2 6l3 0l2 4l3 1l15 13l8-8l6 0l2 2l-2-4l1-4l-4 0l1-2l-1-3l1-1l2 1l6-6l1-5l4-1l-4-12l4-2l3 4l5-3l3-7l-2-7l-5-5l0-3l-7-9l-1-5l-5-7l-1-3l4-1l1-5l3 1l0-2l3-2l1-4l6-7l-1-7l-3-1l-1-3l-4-2l0-4l-2-1l-2 1l-1-6l-9-13l4-5l6 0l2-10l11-11l0-7l-2-1l5-6l-1-3l3-7l-2-6l4-2l0-5l5 0l3-13l-1-3l3-5l3-4l2 1l3-1l2-7l2-2l-2-4l-3 1l-4-3l-1-4l-2-2l2-2l-1-4l2 0l-2-2l-3 6l-3-1l1-4l-3 0l-10 5l-6-2l-5-6l-4 2l-4-2l2-8l5-8l0-6l3-1l0-3l2-5l-1-4l5-2l-2-3l-3-2l2-7l-4-3l1-6l6-9l3 0l2-5l-2-1l-2-6l1-4l-10-11l-2-4l2-2l1 0l5-3l5 2l1-2l1-12l3-5l-2-4l-4 0l1-6l-8-10l2-7l-7-1l-5 0l-11 8l-11 4l-1 2l-2 1l1 2l0 3l-7 2l-6 5l-9-4l-5 1l-4-6l-4-2l0-5l-5 2l-3-3l1-8l2-5l-4-5l1-3l-3-3l5-22l-2-2l1-10l-4-1l0-6l13-2l-1-6l-3-2l4-7l2 0l-1-2l-12 5l-7 0l-7-4z" fill="#A3C985"></path>
+      <path d="M440 902l12 10l8-8l6 0l2 2l-2-4l1-4l-4 0l1-2l-1-3l1-1l2 1l6-6l1-5l4-1l-4-12l4-2l3 4l5-3l3-7l-2-7l-5-5l0-3l-7-9l-1-5l-5-7l-1-3l4-1l1-5l3 1l0-2l3-2l1-4l6-7l-1-7l-3-1l-1-3l-4-2l0-4l-2-1l-2 1l-1-6l-9-13l4-5l6 0l2-10l11-11l0-7l-2-1l5-6l-1-3l3-7l-2-6l4-2l0-5l5 0l3-13l-1-3l3-5l3-4l2 1l3-1l2-7l2-2l-2-4l-3 1l-4-3l-1-4l-2-2l2-2l-1-4l2 0l-2-2l-3 6l-3-1l1-4l-3 0l-10 5l-6-2l-5-6l-4 2l-4-2l2-8l5-8l0-6l3-1l0-3l2-5l-1-4l5-2l-2-3l-3-2l2-7l-4-3l1-6l6-9l3 0l2-5l-2-1l-2-6l1-4l-10-11l-2-4l2-2l1 0l5-3l5 2l1-2l1-12l3-5l-2-4l-4 0l1-6l-8-10l2-7l-12-1l-11 8l-11 4l-1 2l-2 1l1 2l0 3l-7 2l-6 5l-9-4l-5 1l-4-6l-4-2l0-5l-5 2l-3-3l1-8l2-5l-4-5l1-3l-3-3l5-22l-2-2l1-10l-4-1l0-6l10-1l3-1l0-2l-13 2l-16-3l-1 8l5 12l0 5l-4 21l4 14l-1 12l2 7l5 5l9 6l3 4l7 5l19 4l7-1l15-9l5-4l2-5l8-3l2 2l2 9l-9 6l-5 10l2 11l9 11l0 4l-7 13l-1 10l2 7l0 12l-3 5l-1 7l-4 7l-3 15l3 8l6 5l22 9l9-1l-6 12l-1 8l-4 4l-5 10l-3 16l-4 8l0 7l-9 12l-6 5l-5 10l-1 7l2 7l7 9l3 9l7 7l-12 12l-2 10l2 8l6 13l7 10l-8 9l-1 14l-7 7l-3 9l-7 7z" fill="#7FAE66"></path>
+      <path d="M394 434l-6 4l-2 8l5 12l-4 28l4 12l-1 11l2 7l20 16l17 4l19-9l5-8l15-8l5 9l1 6l3 5l-1 4l-10 5l-4 10l3 9l8 8l1 7l-8 13l-1 9l2 6l0 14l-4 6l-1 8l-3 5l-3 14l2 4l4 4l8 2l4 3l9 3l10-2l5 8l-8 12l-1 10l-5 4l-5 9l-2 17l-4 8l1 6l-7 7l-4 7l-5 4l-6 9l1 8l8 11l2 7l10 10l-4 7l-10 8l-2 7l8 20l10 16l-5 1l-5 5l-2 6l2 6l-3 6l-7 4l-2 11l-8 6M381 431l-5 13l5 20l-4 22l4 14l-1 14l5 9l23 18l21 5l8-1l14-8l13-12l1 4l-8 7l-4 10l1 14l9 12l-7 13l-1 11l2 18l-10 26l-1 10l2 7l6 7l18 8l11 3l-4 13l-10 16l-1 14l-4 8l-1 8l-14 16l-7 13l2 13l7 11l3 8l5 6l-9 10l-3 12l3 11l11 20l-7 10l0 11l-8 7l-3 10l-5 5M369 432l-3 16l4 15l-3 24l3 14l0 10l1 9l10 13l23 17l22 6l17-3l2 11l6 9l-4 8l-2 10l2 20l-10 28l-1 15l4 8l6 8l24 12l-10 19l-2 12l-5 17l-17 20l-4 12l2 15l12 23l-7 11l-2 12l3 13l8 17l-4 8l-1 9l-13 21M354 433l-2 17l4 15l-3 23l3 13l0 15l6 17l11 12l20 16l14 5l26 4l2 4l-4 20l2 14l-10 29l-1 16l4 13l5 9l9 8l10 6l-11 35l-15 19l-5 17l1 21l9 17l-5 13l-1 18l9 24l-3 11l-8 14" fill="none" stroke="#2F5A22" stroke-width="0.7" opacity="0.45"></path>
+      <path d="M295 574l6 16l6 20l4 16l4 16l0 14l5 10l-2-16l2-16l-2-16l-3-16l-6-16l-8-14z" fill="#9CC8E8"></path>
+      <text x="252" y="700" transform="rotate(-90 252 700)" font-family="Roboto, sans-serif" font-size="10" font-weight="700" letter-spacing="3" fill="#2E6A93">ARABIAN SEA</text>
+      <text x="470" y="760" transform="rotate(-62 470 760)" font-family="Roboto, sans-serif" font-size="9" font-weight="700" letter-spacing="2" fill="#2F5A22">WESTERN GHATS</text>
+      <text x="306" y="625" font-family="Roboto, sans-serif" font-size="7.5" font-style="italic" fill="#2E6A93">Vembanad</text>
+      <circle cx="289" cy="584" r="2.6" fill="#18231B"></circle>
+      <text x="283" y="588" text-anchor="end" font-family="Roboto, sans-serif" font-size="8.5" font-weight="500" fill="#18231B" stroke="#E4EFCF" stroke-width="2.5" paint-order="stroke">Kochi</text>
+      <line x1="248" y1="782" x2="284" y2="782" stroke="#18231B" stroke-width="1.5"></line>
+      <text x="266" y="777" text-anchor="middle" font-family="Roboto, sans-serif" font-size="7.5" font-weight="500" fill="#18231B">20 km</text>
+
+      <sc-if value="{{showGuide}}">
+        <polyline points="480,676 466,668 461,664 450,654 442,638 434,618 428,601 419,586 409,574 397,564 390,560 377,550 366,543 350,536 338,532 322,536 311,544 305,548 295,542 285,536 273,534" fill="none" stroke="{{guideColor}}" stroke-width="3.5" stroke-dasharray="{{guideDash}}" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"></polyline>
+      </sc-if>
+
+      <sc-for list="{{segs}}" as="s" hint-placeholder-count="0">
+        <line x1="{{s.x1}}" y1="{{s.y1}}" x2="{{s.x2}}" y2="{{s.y2}}" stroke="{{s.c}}" stroke-width="4.2" stroke-linecap="round" stroke-dasharray="{{s.dash}}"></line>
+      </sc-for>
+
+      <sc-for list="{{cps}}" as="cp" hint-placeholder-count="5">
+        <circle cx="{{cp.x}}" cy="{{cp.y}}" r="7" fill="{{cp.fill}}" stroke="{{cp.stroke}}" stroke-width="2.2"></circle>
+        <text x="{{cp.x}}" y="{{cp.ny}}" text-anchor="middle" font-family="Roboto, sans-serif" font-size="8" font-weight="900" fill="{{cp.numFill}}">{{cp.n}}</text>
+        <text x="{{cp.lx}}" y="{{cp.ly}}" text-anchor="{{cp.anchor}}" font-family="Roboto, sans-serif" font-size="8.5" font-weight="700" fill="#18231B" stroke="#FFFFFF" stroke-width="2.8" paint-order="stroke">{{cp.name}}</text>
+      </sc-for>
+
+      <circle cx="480" cy="676" r="13" fill="#1F6FD1" opacity="0.18"></circle>
+      <circle cx="480" cy="676" r="6.5" fill="#FFFFFF" stroke="#1F6FD1" stroke-width="3"></circle>
+      <text x="480" y="697" text-anchor="middle" font-family="Roboto, sans-serif" font-size="8.5" font-weight="700" fill="#0B3A6E" stroke="#FFFFFF" stroke-width="2.8" paint-order="stroke">Source</text>
+    </svg>
+
+    <div role="status" style="position: absolute; left: 10px; top: 10px; right: 10px; display: flex">
+      <span style="max-width: 100%; box-sizing: border-box; min-height: 34px; padding: 7px 12px; border-radius: 17px; font-size: 13px; line-height: 18px; font-weight: 700; display: flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(24,35,27,0.18); background: {{fbBg}}; color: {{fbFg}}">
+        <sc-if value="{{fbOk}}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{fbFg}}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+        </sc-if>
+        <sc-if value="{{fbWarn}}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{fbFg}}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4l9 16H3L12 4zM12 10v4M12 17h.01"></path></svg>
+        </sc-if>
+        {{fbText}}
+      </span>
+    </div>
+  </div>
+
+  <ol aria-label="Checkpoints" style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px">
+    <sc-for list="{{steps}}" as="st" hint-placeholder-count="5">
+      <li style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center">
+        <span style="width: 26px; height: 26px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; background: {{st.bg}}; color: {{st.fg}}; border: 2px solid {{st.bd}}; box-sizing: border-box">{{st.mark}}</span>
+        <span style="font-size: 10.5px; line-height: 13px; font-weight: 500; color: {{st.label}}">{{st.name}}</span>
+      </li>
+    </sc-for>
+  </ol>
+
+  <div style="display: flex; gap: 8px">
+    <button onClick="{{undo}}" style="flex: 1 1 0; height: 48px; border-radius: 24px; border: 1px solid #A9B4A9; background: #FFFFFF; color: #18231B; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#18231B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"></path></svg>
+      Undo
+    </button>
+    <button onClick="{{reset}}" style="flex: 1 1 0; height: 48px; border-radius: 24px; border: 1px solid #A9B4A9; background: #FFFFFF; color: #18231B; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#18231B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"></path></svg>
+      Restart
+    </button>
+    <button onClick="{{hint}}" style="flex: 1.3 1 0; height: 48px; border-radius: 24px; border: 0; background: #FFF1C7; color: #5C3F00; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A5300" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"></path></svg>
+      {{hintLabel}}
+    </button>
+  </div>
+
+  <sc-if value="{{finished}}">
+    <div style="position: absolute; left: 0; top: 0; width: 393px; height: 852px; background: rgba(24,35,27,0.45)"></div>
+    <section aria-label="River complete" style="position: absolute; left: 0; bottom: 0; width: 393px; box-sizing: border-box; background: #FFFFFF; border-radius: 28px 28px 0 0; padding: 12px 20px 24px 20px; display: flex; flex-direction: column; gap: 14px">
+      <div style="width: 36px; height: 4px; border-radius: 2px; background: #C3CEC0; align-self: center"></div>
+      <div style="display: flex; align-items: center; gap: 12px">
+        <div style="width: 52px; height: 52px; border-radius: 16px; background: #1F7A44; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <h2 style="margin: 0; font-size: 22px; font-weight: 900">Periyar traced!</h2>
+          <span style="font-size: 13px; color: #4F5E53">All 5 checkpoints reached</span>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+        <div style="background: #F3F6EF; border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 2px; align-items: center"><span style="font-size: 20px; font-weight: 900">{{accText}}</span><span style="font-size: 11px; color: #4F5E53">Route accuracy</span></div>
+        <div style="background: #FFF1C7; border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 2px; align-items: center"><span style="font-size: 20px; font-weight: 900; color: #5C3F00">+{{xp}}</span><span style="font-size: 11px; color: #5C3F00">XP earned</span></div>
+        <div style="background: #F3F6EF; border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 2px; align-items: center"><span style="font-size: 20px; font-weight: 900; font-variant-numeric: tabular-nums">{{time}}</span><span style="font-size: 11px; color: #4F5E53">Time</span></div>
+      </div>
+      <div style="background: #D6E7FA; border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px">
+        <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #1F4F8F">PSC FACT</span>
+        <span style="font-size: 14px; line-height: 20px; color: #10233D">At 244 km, the Periyar is Kerala's longest river. Near Aluva it splits: one arm meets the sea at Munambam, the other flows into Vembanad Lake.</span>
+      </div>
+      <div style="display: flex; gap: 10px">
+        <button onClick="{{reset}}" style="flex: 1 1 0; height: 52px; border-radius: 26px; border: 1px solid #A9B4A9; background: #FFFFFF; color: #18231B; font-family: Roboto, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer">Play again</button>
+        <a href="Results.dc.html" style="flex: 1.4 1 0; height: 52px; border-radius: 26px; background: #1D6B3C; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center">See results</a>
+      </div>
+    </section>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":393,"height":852}}'>
+var ROUTE = [[480,676],[466,668],[461,664],[450,654],[442,638],[434,618],[428,601],[419,586],[409,574],[397,564],[390,560],[377,550],[366,543],[350,536],[338,532],[322,536],[311,544],[305,548],[295,542],[285,536],[273,534]];
+var SRC = [480, 676];
+var CPS = [
+  { name: 'Mullaperiyar Dam', short: 'Mullaperiyar', x: 461, y: 664, lx: 452, ly: 652, anchor: 'end' },
+  { name: 'Idukki Dam', short: 'Idukki', x: 428, y: 601, lx: 418, ly: 606, anchor: 'end' },
+  { name: 'Bhoothathankettu', short: 'Bhootha­thankettu', x: 366, y: 543, lx: 366, ly: 530, anchor: 'middle' },
+  { name: 'Aluva', short: 'Aluva', x: 305, y: 548, lx: 309, ly: 565, anchor: 'middle' },
+  { name: 'River mouth', short: 'Sea', x: 273, y: 534, lx: 268, ly: 521, anchor: 'middle' }
+];
+var TOL = 9, CP_R = 11;
+function segDist(p, a, b) {
+  var dx = b[0] - a[0], dy = b[1] - a[1];
+  var t = ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / (dx * dx + dy * dy);
+  t = Math.max(0, Math.min(1, t));
+  var x = a[0] + t * dx - p[0], y = a[1] + t * dy - p[1];
+  return Math.sqrt(x * x + y * y);
+}
+function routeDist(p) {
+  var m = 1e9;
+  for (var i = 0; i < ROUTE.length - 1; i++) m = Math.min(m, segDist(p, ROUTE[i], ROUTE[i + 1]));
+  return m;
+}
+function dist(a, b) { var x = a[0] - b[0], y = a[1] - b[1]; return Math.sqrt(x * x + y * y); }
+function compass(from, to) {
+  var dx = to[0] - from[0], dy = from[1] - to[1];
+  var a = Math.atan2(dy, dx) * 180 / Math.PI;
+  var names = ['east', 'north-east', 'north', 'north-west', 'west', 'south-west', 'south', 'south-east'];
+  var i = Math.round(((a + 360) % 360) / 45) % 8;
+  return names[i];
+}
+function demo() {
+  var pts = [], k = 0;
+  for (var i = 0; i < 7; i++) {
+    var a = ROUTE[i], b = ROUTE[i + 1];
+    var len = dist(a, b), n = Math.max(1, Math.ceil(len / 4));
+    var nx = -(b[1] - a[1]) / len, ny = (b[0] - a[0]) / len;
+    for (var j = 0; j < n; j++) {
+      var t = j / n, w = Math.sin(k * 0.6) * 2.4; k++;
+      pts.push([a[0] + (b[0] - a[0]) * t + nx * w, a[1] + (b[1] - a[1]) * t + ny * w]);
+    }
+  }
+  pts.push([419, 586], [424, 579], [429, 573], [434, 567], [438, 562]);
+  return pts;
+}
+function analyse(pts) {
+  var hits = 0, on = [], onCount = 0;
+  for (var i = 0; i < pts.length; i++) {
+    var ok = routeDist(pts[i]) <= TOL;
+    on.push(ok); if (ok) onCount++;
+    if (hits < CPS.length && dist(pts[i], [CPS[hits].x, CPS[hits].y]) <= CP_R) hits++;
+  }
+  return { hits: hits, on: on, acc: pts.length ? onCount / pts.length : 1 };
+}
+class Component extends DCLogic {
+  st() {
+    var s = this.state || {};
+    return {
+      pts: s.pts || demo(),
+      strokes: s.strokes || [0],
+      drawing: !!s.drawing,
+      guide: !!s.guide,
+      hinted: !!s.hinted,
+      msg: s.msg || '',
+      t: s.t || 84
+    };
+  }
+  componentDidMount() {
+    var self = this;
+    this.timer = setInterval(function () {
+      var s = self.st();
+      if (analyse(s.pts).hits < CPS.length) self.setState({ t: s.t + 1 });
+    }, 1000);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+  toMap(e) {
+    var r = e.currentTarget.getBoundingClientRect();
+    return [235 + (e.clientX - r.left) / r.width * 280, 455 + (e.clientY - r.top) / r.height * 342];
+  }
+  down(e) {
+    var s = this.st(); var p = this.toMap(e);
+    if (analyse(s.pts).hits >= CPS.length) return;
+    if (!s.pts.length) {
+      if (dist(p, SRC) > 16) { this.setState({ msg: 'Start at the source pin' }); return; }
+    } else if (dist(p, s.pts[s.pts.length - 1]) > 18) {
+      this.setState({ msg: 'Continue from the end of your line' }); return;
+    }
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
+    var strokes = s.strokes.concat([s.pts.length]);
+    this.setState({ drawing: true, strokes: strokes, msg: '', pts: s.pts.length ? s.pts : [SRC.slice(), p] });
+  }
+  move(e) {
+    var s = this.st(); if (!s.drawing) return;
+    var p = this.toMap(e); var last = s.pts[s.pts.length - 1];
+    if (dist(p, last) < 2.2) return;
+    this.setState({ pts: s.pts.concat([p]) });
+  }
+  up() { if (this.st().drawing) this.setState({ drawing: false }); }
+  undo() {
+    var s = this.st(); if (s.strokes.length <= 1 && s.strokes[0] === 0 && !s.pts.length) return;
+    var strokes = s.strokes.slice(); var from = strokes.pop();
+    if (from == null) from = 0;
+    this.setState({ pts: s.pts.slice(0, from), strokes: strokes.length ? strokes : [0], msg: '' });
+  }
+  reset() { this.setState({ pts: [], strokes: [0], drawing: false, msg: '', t: 0, guide: false, hinted: false }); }
+  hint() { var s = this.st(); this.setState({ guide: !s.guide, hinted: true }); }
+  renderVals() {
+    var self = this; var s = this.st(); var a = analyse(s.pts);
+    var finished = a.hits >= CPS.length;
+    var segs = [];
+    for (var i = 1; i < s.pts.length; i++) {
+      var ok = a.on[i];
+      segs.push({ x1: s.pts[i - 1][0], y1: s.pts[i - 1][1], x2: s.pts[i][0], y2: s.pts[i][1], c: ok ? '#1F6FD1' : '#E0620F', dash: ok ? 'none' : '5 3' });
+    }
+    var cps = CPS.map(function (c, i) {
+      var done = i < a.hits, next = i === a.hits;
+      return {
+        x: c.x, y: c.y, ny: c.y + 3, n: done ? '✓' : String(i + 1), lx: c.lx, ly: c.ly, anchor: c.anchor, name: c.name,
+        fill: done ? '#1F7A44' : '#FFFFFF', stroke: done ? '#FFFFFF' : (next ? '#1F6FD1' : '#4F5E53'), numFill: done ? '#FFFFFF' : '#18231B'
+      };
+    });
+    var steps = CPS.map(function (c, i) {
+      var done = i < a.hits, next = i === a.hits && !finished;
+      return {
+        name: c.short, mark: done ? '✓' : String(i + 1),
+        bg: done ? '#1F7A44' : '#FFFFFF', fg: done ? '#FFFFFF' : (next ? '#1F5FB0' : '#4F5E53'),
+        bd: done ? '#1F7A44' : (next ? '#1F6FD1' : '#C3CEC0'), label: done || next ? '#18231B' : '#4F5E53'
+      };
+    });
+    var last = s.pts[s.pts.length - 1];
+    var lastOn = s.pts.length ? a.on[a.on.length - 1] : true;
+    var fbText, fbBg = '#FFFFFF', fbFg = '#18231B', fbOk = false, fbWarn = false;
+    if (s.msg) { fbText = s.msg; fbBg = '#FFF1C7'; fbFg = '#5C3F00'; fbWarn = true; }
+    else if (finished) { fbText = 'River complete!'; fbBg = '#1F7A44'; fbFg = '#FFFFFF'; fbOk = true; }
+    else if (!s.pts.length) { fbText = 'Put your finger on the source pin and draw'; }
+    else if (!lastOn) {
+      var nx = CPS[Math.min(a.hits, CPS.length - 1)];
+      fbText = 'Off route — head ' + compass(last, [nx.x, nx.y]) + ' toward ' + nx.name; fbBg = '#FCE3D3'; fbFg = '#7A2E05'; fbWarn = true;
+    } else { fbText = 'On route · ' + Math.round(a.acc * 100) + '% accurate'; fbBg = '#DDF0E2'; fbFg = '#0B3A1D'; fbOk = true; }
+    var mm = Math.floor(s.t / 60), ss = s.t % 60;
+    var xp = Math.max(10, 30 + Math.round(a.acc * 30) - (s.hinted ? 5 : 0));
+    return {
+      segs: segs, cps: cps, steps: steps,
+      showGuide: s.guide || finished, guideColor: finished ? '#0B3A6E' : '#1F6FD1', guideDash: finished ? '2 4' : '6 5',
+      fbText: fbText, fbBg: fbBg, fbFg: fbFg, fbOk: fbOk, fbWarn: fbWarn,
+      finished: finished, accText: Math.round(a.acc * 100) + '%', xp: xp,
+      time: (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss,
+      hintLabel: s.guide ? 'Hide path' : 'Show path −5',
+      down: function (e) { self.down(e); }, move: function (e) { self.move(e); }, up: function () { self.up(); },
+      undo: function () { self.undo(); }, reset: function () { self.reset(); }, hint: function () { self.hint(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

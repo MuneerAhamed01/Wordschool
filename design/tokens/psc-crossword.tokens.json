@@ -1,0 +1,375 @@
+{
+  "crossword": {
+    "color": {
+      "bg": {
+        "canvas": {
+          "$type": "color",
+          "$value": "#121213",
+          "$description": "Screen background (MyColors.gameBackground)"
+        },
+        "surface": {
+          "$type": "color",
+          "$value": "#1A1A1B",
+          "$description": "Cards, sheets (MyColors.gameSurface)"
+        },
+        "surfaceRaised": {
+          "$type": "color",
+          "$value": "#252526",
+          "$description": "Raised tiles, icon wells (MyColors.gameSurfaceElevated)"
+        },
+        "sheet": {
+          "$type": "color",
+          "$value": "#1C1C1D",
+          "$description": "Bottom sheet"
+        },
+        "scrim": {
+          "$type": "color",
+          "$value": "#0000009E",
+          "$description": "Behind sheets (black 62%)"
+        }
+      },
+      "border": {
+        "default": {
+          "$type": "color",
+          "$value": "#3A3A3C",
+          "$description": "MyColors.gameBorder"
+        },
+        "subtle": {
+          "$type": "color",
+          "$value": "#2E2E30"
+        }
+      },
+      "text": {
+        "primary": {
+          "$type": "color",
+          "$value": "#FFFFFF"
+        },
+        "secondary": {
+          "$type": "color",
+          "$value": "#A9A9AB",
+          "$description": "Body text on dark"
+        },
+        "muted": {
+          "$type": "color",
+          "$value": "#9A9B9C",
+          "$description": "Captions; 6.4:1 on canvas"
+        }
+      },
+      "accent": {
+        "primary": {
+          "$type": "color",
+          "$value": "#538D4E",
+          "$description": "Primary buttons, correct (MyColors.tileCorrect)"
+        },
+        "glow": {
+          "$type": "color",
+          "$value": "#6AAA64",
+          "$description": "Links, live dot (MyColors.accentGlow)"
+        },
+        "hint": {
+          "$type": "color",
+          "$value": "#C9B458",
+          "$description": "Active cell, hint icon"
+        },
+        "hintStrong": {
+          "$type": "color",
+          "$value": "#B59F3B",
+          "$description": "Hint badge (MyColors.tilePresent)"
+        },
+        "streak": {
+          "$type": "color",
+          "$value": "#F5793A",
+          "$description": "Streak flame (MyColors.streakAccent)"
+        },
+        "streakBg": {
+          "$type": "color",
+          "$value": "#2A1E16"
+        },
+        "button": {
+          "$type": "color",
+          "$value": "#467A41",
+          "$description": "Filled buttons with white text (5.1:1). Tiles keep #538D4E: their 20px bold letters pass as large text."
+        }
+      },
+      "grid": {
+        "cell": {
+          "$type": "color",
+          "$value": "#2A2A2C",
+          "$description": "Empty/filled letter cell"
+        },
+        "cellBorder": {
+          "$type": "color",
+          "$value": "#3A3A3C"
+        },
+        "block": {
+          "$type": "color",
+          "$value": "#0A0A0B",
+          "$description": "Black square"
+        },
+        "wordBg": {
+          "$type": "color",
+          "$value": "#3A3524",
+          "$description": "Cells of the active word"
+        },
+        "wordBorder": {
+          "$type": "color",
+          "$value": "#7C6C2A"
+        },
+        "activeBg": {
+          "$type": "color",
+          "$value": "#C9B458",
+          "$description": "Cursor cell"
+        },
+        "activeBorder": {
+          "$type": "color",
+          "$value": "#E5D27A"
+        },
+        "activeText": {
+          "$type": "color",
+          "$value": "#121213"
+        },
+        "correctBg": {
+          "$type": "color",
+          "$value": "#538D4E"
+        },
+        "wrongBg": {
+          "$type": "color",
+          "$value": "#7A2A22"
+        },
+        "wrongBorder": {
+          "$type": "color",
+          "$value": "#B54A3C"
+        },
+        "revealedText": {
+          "$type": "color",
+          "$value": "#85C0F9",
+          "$description": "Letter filled by a hint"
+        },
+        "number": {
+          "$type": "color",
+          "$value": "#A9A9AB",
+          "$description": "Clue number in cell"
+        }
+      },
+      "clueBar": {
+        "bg": {
+          "$type": "color",
+          "$value": "#2B2719"
+        },
+        "border": {
+          "$type": "color",
+          "$value": "#5C5224"
+        },
+        "label": {
+          "$type": "color",
+          "$value": "#E5D27A"
+        }
+      },
+      "key": {
+        "bg": {
+          "$type": "color",
+          "$value": "#58585A"
+        },
+        "text": {
+          "$type": "color",
+          "$value": "#FFFFFF"
+        },
+        "action": {
+          "$type": "color",
+          "$value": "#538D4E"
+        }
+      },
+      "status": {
+        "successBg": {
+          "$type": "color",
+          "$value": "#253323"
+        },
+        "successText": {
+          "$type": "color",
+          "$value": "#9FD39A"
+        },
+        "errorBg": {
+          "$type": "color",
+          "$value": "#3A1F1B"
+        },
+        "errorText": {
+          "$type": "color",
+          "$value": "#F2B8AE"
+        },
+        "warnBg": {
+          "$type": "color",
+          "$value": "#3A3524"
+        },
+        "warnText": {
+          "$type": "color",
+          "$value": "#E5D27A"
+        }
+      }
+    },
+    "radius": {
+      "cell": {
+        "$type": "dimension",
+        "$value": "4px"
+      },
+      "chip": {
+        "$type": "dimension",
+        "$value": "16px"
+      },
+      "button": {
+        "$type": "dimension",
+        "$value": "12px"
+      },
+      "card": {
+        "$type": "dimension",
+        "$value": "20px"
+      },
+      "sheet": {
+        "$type": "dimension",
+        "$value": "24px"
+      }
+    },
+    "space": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "4px"
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "8px"
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "12px"
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "16px"
+      },
+      "xl": {
+        "$type": "dimension",
+        "$value": "20px"
+      },
+      "gutter": {
+        "$type": "dimension",
+        "$value": "16px",
+        "$description": "Screen side padding"
+      }
+    },
+    "size": {
+      "touchMin": {
+        "$type": "dimension",
+        "$value": "44px"
+      },
+      "key": {
+        "$type": "dimension",
+        "$value": "52px",
+        "$description": "Keyboard key height"
+      },
+      "header": {
+        "$type": "dimension",
+        "$value": "48px"
+      },
+      "gridGap": {
+        "$type": "dimension",
+        "$value": "2px"
+      },
+      "frameWidth": {
+        "$type": "dimension",
+        "$value": "390px"
+      },
+      "frameHeight": {
+        "$type": "dimension",
+        "$value": "844px"
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "$type": "fontFamily",
+        "$value": "Inter"
+      },
+      "title": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Inter",
+          "fontWeight": 800,
+          "fontSize": "28px",
+          "lineHeight": "34px",
+          "letterSpacing": "-0.02em"
+        }
+      },
+      "heading": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Inter",
+          "fontWeight": 700,
+          "fontSize": "20px",
+          "lineHeight": "26px"
+        }
+      },
+      "section": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Inter",
+          "fontWeight": 700,
+          "fontSize": "17px",
+          "lineHeight": "22px"
+        }
+      },
+      "body": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Inter",
+          "fontWeight": 500,
+          "fontSize": "14px",
+          "lineHeight": "20px"
+        }
+      },
+      "caption": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Inter",
+          "fontWeight": 500,
+          "fontSize": "12px",
+          "lineHeight": "16px"
+        }
+      },
+      "overline": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Inter",
+          "fontWeight": 800,
+          "fontSize": "11px",
+          "lineHeight": "14px",
+          "letterSpacing": "0.08em"
+        }
+      },
+      "cellLetter": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Inter",
+          "fontWeight": 700,
+          "fontSize": "20px",
+          "lineHeight": "20px"
+        }
+      },
+      "cellNumber": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Inter",
+          "fontWeight": 600,
+          "fontSize": "9px",
+          "lineHeight": "11px"
+        }
+      },
+      "key": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Inter",
+          "fontWeight": 700,
+          "fontSize": "16px",
+          "lineHeight": "20px"
+        }
+      }
+    }
+  }
+}

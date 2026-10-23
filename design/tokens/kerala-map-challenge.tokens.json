@@ -1,0 +1,287 @@
+{
+  "mapChallenge": {
+    "color": {
+      "bg": {
+        "canvas": {
+          "$type": "color",
+          "$value": "#F3F6EF"
+        },
+        "surface": {
+          "$type": "color",
+          "$value": "#FFFFFF"
+        },
+        "navBar": {
+          "$type": "color",
+          "$value": "#E9EFE5"
+        },
+        "scrim": {
+          "$type": "color",
+          "$value": "#18231B73",
+          "$description": "45%"
+        }
+      },
+      "text": {
+        "primary": {
+          "$type": "color",
+          "$value": "#18231B"
+        },
+        "secondary": {
+          "$type": "color",
+          "$value": "#4F5E53"
+        },
+        "body": {
+          "$type": "color",
+          "$value": "#2C3A30"
+        }
+      },
+      "primary": {
+        "base": {
+          "$type": "color",
+          "$value": "#1D6B3C",
+          "$description": "Kerala green — buttons, selected"
+        },
+        "container": {
+          "$type": "color",
+          "$value": "#CFEBD4"
+        },
+        "onContainer": {
+          "$type": "color",
+          "$value": "#0B3A1D"
+        }
+      },
+      "water": {
+        "river": {
+          "$type": "color",
+          "$value": "#1F6FD1"
+        },
+        "riverDeep": {
+          "$type": "color",
+          "$value": "#1F5FB0"
+        },
+        "container": {
+          "$type": "color",
+          "$value": "#D6E7FA"
+        },
+        "onContainer": {
+          "$type": "color",
+          "$value": "#10233D"
+        },
+        "sea": {
+          "$type": "color",
+          "$value": "#CFE5F2"
+        },
+        "lake": {
+          "$type": "color",
+          "$value": "#9CC8E8"
+        }
+      },
+      "terrain": {
+        "lowland": {
+          "$type": "color",
+          "$value": "#E4EFCF"
+        },
+        "midland": {
+          "$type": "color",
+          "$value": "#C6DFA6"
+        },
+        "highland": {
+          "$type": "color",
+          "$value": "#A3C985"
+        },
+        "peak": {
+          "$type": "color",
+          "$value": "#76A45E"
+        },
+        "contour": {
+          "$type": "color",
+          "$value": "#2F5A22"
+        },
+        "neighbourLand": {
+          "$type": "color",
+          "$value": "#ECE7DA"
+        },
+        "earth": {
+          "$type": "color",
+          "$value": "#8A5A2B"
+        },
+        "puzzleSlot": {
+          "$type": "color",
+          "$value": "#F6EFE2"
+        }
+      },
+      "district": {
+        "a": {
+          "$type": "color",
+          "$value": "#8DB772"
+        },
+        "b": {
+          "$type": "color",
+          "$value": "#B2D193"
+        },
+        "c": {
+          "$type": "color",
+          "$value": "#6F9E58"
+        }
+      },
+      "status": {
+        "success": {
+          "$type": "color",
+          "$value": "#1F7A44"
+        },
+        "successBg": {
+          "$type": "color",
+          "$value": "#DDF0E2"
+        },
+        "warnBg": {
+          "$type": "color",
+          "$value": "#FFF1C7"
+        },
+        "warnText": {
+          "$type": "color",
+          "$value": "#5C3F00"
+        },
+        "offRoute": {
+          "$type": "color",
+          "$value": "#E0620F"
+        },
+        "offRouteBg": {
+          "$type": "color",
+          "$value": "#FCE3D3"
+        },
+        "offRouteText": {
+          "$type": "color",
+          "$value": "#7A2E05"
+        },
+        "errorBg": {
+          "$type": "color",
+          "$value": "#FADAD6"
+        },
+        "errorText": {
+          "$type": "color",
+          "$value": "#8C1D18"
+        },
+        "errorBorder": {
+          "$type": "color",
+          "$value": "#B3261E"
+        }
+      },
+      "xp": {
+        "bg": {
+          "$type": "color",
+          "$value": "#FFF1C7"
+        },
+        "text": {
+          "$type": "color",
+          "$value": "#5C3F00"
+        }
+      },
+      "streak": {
+        "bg": {
+          "$type": "color",
+          "$value": "#FDE7D6"
+        },
+        "text": {
+          "$type": "color",
+          "$value": "#8A3A0C"
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "#C2560E"
+        }
+      }
+    },
+    "radius": {
+      "chip": {
+        "$type": "dimension",
+        "$value": "14px"
+      },
+      "button": {
+        "$type": "dimension",
+        "$value": "24px",
+        "$description": "Material pill buttons"
+      },
+      "card": {
+        "$type": "dimension",
+        "$value": "20px"
+      },
+      "map": {
+        "$type": "dimension",
+        "$value": "20px"
+      },
+      "sheet": {
+        "$type": "dimension",
+        "$value": "28px"
+      }
+    },
+    "size": {
+      "touchMin": {
+        "$type": "dimension",
+        "$value": "44px"
+      },
+      "frameWidth": {
+        "$type": "dimension",
+        "$value": "393px",
+        "$description": "iPhone 15"
+      },
+      "frameHeight": {
+        "$type": "dimension",
+        "$value": "852px"
+      },
+      "navBar": {
+        "$type": "dimension",
+        "$value": "80px"
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "$type": "fontFamily",
+        "$value": "Roboto"
+      },
+      "title": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Roboto",
+          "fontWeight": 900,
+          "fontSize": "24px",
+          "lineHeight": "30px"
+        }
+      },
+      "heading": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Roboto",
+          "fontWeight": 700,
+          "fontSize": "18px",
+          "lineHeight": "24px"
+        }
+      },
+      "body": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Roboto",
+          "fontWeight": 400,
+          "fontSize": "14px",
+          "lineHeight": "20px"
+        }
+      },
+      "caption": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Roboto",
+          "fontWeight": 500,
+          "fontSize": "12px",
+          "lineHeight": "16px"
+        }
+      },
+      "mapLabel": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Roboto",
+          "fontWeight": 700,
+          "fontSize": "11px",
+          "lineHeight": "14px"
+        }
+      }
+    }
+  }
+}

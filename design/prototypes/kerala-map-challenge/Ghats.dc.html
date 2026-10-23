@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Explore the Western Ghats</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1D6B3C}a:hover{color:#0F4D27}
+</style>
+</helmet>
+<div style="position: relative; width: 393px; height: 852px; box-sizing: border-box; background: #F3F6EF; color: #18231B; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden; padding: 12px 16px 16px 16px; gap: 10px">
+
+  <header style="display: flex; align-items: center; gap: 8px; height: 48px">
+    <a href="Main.dc.html" aria-label="Back to game home" style="width: 44px; height: 44px; border-radius: 22px; display: flex; align-items: center; justify-content: center; margin-left: -8px">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#18231B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>
+    </a>
+    <div style="flex-grow: 1; display: flex; flex-direction: column">
+      <span style="font-size: 18px; font-weight: 700">Explore the Western Ghats</span>
+      <span style="font-size: 12px; color: #4F5E53">{{stepText}}</span>
+    </div>
+    <span style="height: 32px; padding: 0 12px; border-radius: 16px; background: #FFF1C7; color: #5C3F00; font-size: 13px; font-weight: 700; display: flex; align-items: center; font-variant-numeric: tabular-nums">{{xpText}}</span>
+  </header>
+
+  <section aria-label="Current challenge" style="background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 1px 2px rgba(24,35,27,0.08)">
+    <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px" aria-hidden="true">
+      <sc-for list="{{bars}}" as="b" hint-placeholder-count="5">
+        <span style="height: 5px; border-radius: 3px; background: {{b.c}}"></span>
+      </sc-for>
+    </div>
+    <div style="display: flex; gap: 12px; align-items: center">
+      <div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 12px; background: #E6EFD9; display: flex; align-items: center; justify-content: center">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3F6B2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM12 12h.01"></path></svg>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #3F6B2A">{{taskLabel}}</span>
+        <span style="font-size: 15px; line-height: 20px; font-weight: 700">{{taskText}}</span>
+      </div>
+    </div>
+  </section>
+
+  <div style="position: relative; width: 361px; height: 447px; border-radius: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(24,35,27,0.14)">
+    <svg width="361" height="447" viewBox="300 380 226 280" role="img" aria-label="Terrain map of the Western Ghats from the Palakkad Gap to Idukki" style="display: block; background: #CFE5F2">
+      <defs>
+        <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+          <line x1="0" y1="0" x2="0" y2="6" stroke="#B8AE92" stroke-width="1"></line>
+        </pattern>
+      </defs>
+      <path d="M452 912l2-3l3-1l0-2l3-2l6 0l2 2l-2-4l1-4l-2 0l-2 0l1-2l-1-3l1-1l2 1l6-6l1-5l4-1l0-3l-2-2l-2-7l4-2l3 4l5-3l3-7l-2-7l-5-5l0-3l-7-9l-1-5l-2-4l-3-3l-1-3l4-1l1-2l0-3l3 1l1-1l-1-1l3-2l1-4l2-1l4-6l-1-7l-3-1l-1-3l-4-2l0-4l-2-1l-2 1l-1-6l-3-3l-4-7l-2-1l0-2l3-2l0-1l1-2l6 0l2-10l3-2l1-2l3-2l4-5l0-7l-2-1l0-2l2 0l3-4l-1-3l1-7l2 0l-2-6l4-2l0-5l5 0l0-2l2-5l0-3l1-3l-1-3l3-5l3-4l2 1l3-1l0-2l2-1l0-4l2-2l-1-2l-1 0l0-2l-3 1l-4-3l-1-4l-2-1l0-1l2-2l-1-4l2 0l-2-2l-3 6l-3-1l1-4l-3 0l-3 1l-7 4l-4-2l-2 0l-5-4l0-2l-2 0l-2 2l-4-2l1-3l1-5l3-3l2-5l0-6l3-1l0-3l2-5l-1-1l0-3l5-2l-2-3l-3-2l1-4l1-1l0-2l-2-1l-2-2l1-2l0-4l2-2l4-7l3 0l2-5l-2-1l-1-5l-1-1l1-4l-6-7l-4-4l-2-4l2-2l1 0l5-3l5 2l1-2l0-3l1-9l3-5l-2-4l-4 0l-1-4l2-2l-8-10l2-7l-12-1l-11 8l-11 4l-1 2l-2 1l1 2l0 3l-7 2l-7 5l-8-4l-5 1l-2-1l-2-5l-4-2l0-5l-5 2l-3-3l1-8l2-5l-4-5l1-3l-1 0l-2-3l2-4l1-11l2-7l-2-2l1-3l0-2l0-5l-4-1l-1-5l1-2l9 1l4-2l-1-6l-3-2l4-7l2 0l-1-4l4-9l-2-6l-6 0l-1-1l-3 0l0-2l1-2l-5-7l-7-2l-2-2l-8 0l-6-4l-5-1l-5-3l1-3l1-5l3-3l1-5l5-6l10 2l5-1l2-3l-1-2l-4 4l-3-3l-3 0l-1-3l3-3l-3-3l2-4l-1-2l-3 0l-3-4l-1 0l0 2l-1 0l-1-3l-1-3l7-4l-1-3l2-2l-6-5l-4 1l-2 3l-9 5l-6-2l-14 1l-3-2l-3 0l-5 1l0 2l-2 1l-3-2l2-8l13-6l1-4l4-2l-2-1l0-1l2-4l-1-6l-5 1l0-3l-12-4l-8-6l0-4l-4 1l-5-4l-6-2l-3 2l-4-2l-2 0l0-2l-2-1l-2 1l-2-1l-2 2l-1 0l1-6l-2-5l1-2l-3-7l9-6l1 2l2 1l2 3l6-5l1 2l7-3l2-6l9 0l2-2l-2-5l-3-1l-1-4l-1-4l2 0l2-3l-2-3l-1-1l1-2l0-1l-7 3l-4 0l-1 1l-3 0l-5-2l-2-7l-3-1l-2-4l-6 2l-5-1l-2-4l-1-7l-4-2l-6 1l-5 3l-2 0l-2-2l0-23l-3 1l-4 0l-8 6l-5 0l-2 2l-23-3l-5-4l-2-2l-3-2l0-5l-6-6l-1-3l2-4l-1-1l-9-1l-7 3l0-3l-3-1l0-3l-3-1l-3 3l-2-1l-2-2l-3-8l-4-1l-5 1l-3-1l-1-3l-2-1l-2-4l-3-1l1-3l-3-2l-3-7l-1-2l-2 0l-2-4l-3-2l-2 1l-6-1l0-1l-3-8l2-5l-9-4l-2-4l0-9l3 0l2 1l6-3l-2-7l-2 1l-1-2l-3 1l-3 2l1 3l-3 2l-4 1l0-7l-4 0l-2-2l0-3l-5-1l-2-7l1-2l2 0l1-2l5 1l2-1l0-2l-4 0l-1-3l-2 1l-1-2l-2-1l-5 7l-3 1l0 2l-2 0l-4-5l1-2l-2-2l0-4l-4 0l-2 2l-2 0l-3-4l3-6l-2-1l0-1l-3 1l-4-1l-2-3l-4-1l0 6l-3 2l-4-1l-1-5l3 0l-1-4l-1-2l-2-1l-4 1l-1 1l-2 0l2-2l-5-3l4-5l-1-5l-3-1L700 -60L700 1000L452 1000Z" fill="#EEE9DC"></path>
+      <path d="M452 912l2-3l3-1l0-2l3-2l6 0l2 2l-2-4l1-4l-2 0l-2 0l1-2l-1-3l1-1l2 1l6-6l1-5l4-1l0-3l-2-2l-2-7l4-2l3 4l5-3l3-7l-2-7l-5-5l0-3l-7-9l-1-5l-2-4l-3-3l-1-3l4-1l1-2l0-3l3 1l1-1l-1-1l3-2l1-4l2-1l4-6l-1-7l-3-1l-1-3l-4-2l0-4l-2-1l-2 1l-1-6l-3-3l-4-7l-2-1l0-2l3-2l0-1l1-2l6 0l2-10l3-2l1-2l3-2l4-5l0-7l-2-1l0-2l2 0l3-4l-1-3l1-7l2 0l-2-6l4-2l0-5l5 0l0-2l2-5l0-3l1-3l-1-3l3-5l3-4l2 1l3-1l0-2l2-1l0-4l2-2l-1-2l-1 0l0-2l-3 1l-4-3l-1-4l-2-1l0-1l2-2l-1-4l2 0l-2-2l-3 6l-3-1l1-4l-3 0l-3 1l-7 4l-4-2l-2 0l-5-4l0-2l-2 0l-2 2l-4-2l1-3l1-5l3-3l2-5l0-6l3-1l0-3l2-5l-1-1l0-3l5-2l-2-3l-3-2l1-4l1-1l0-2l-2-1l-2-2l1-2l0-4l2-2l4-7l3 0l2-5l-2-1l-1-5l-1-1l1-4l-6-7l-4-4l-2-4l2-2l1 0l5-3l5 2l1-2l0-3l1-9l3-5l-2-4l-4 0l-1-4l2-2l-8-10l2-7l-12-1l-11 8l-11 4l-1 2l-2 1l1 2l0 3l-7 2l-7 5l-8-4l-5 1l-2-1l-2-5l-4-2l0-5l-5 2l-3-3l1-8l2-5l-4-5l1-3l-1 0l-2-3l2-4l1-11l2-7l-2-2l1-3l0-2l0-5l-4-1l-1-5l1-2l9 1l4-2l-1-6l-3-2l4-7l2 0l-1-4l4-9l-2-6l-6 0l-1-1l-3 0l0-2l1-2l-5-7l-7-2l-2-2l-8 0l-6-4l-5-1l-5-3l1-3l1-5l3-3l1-5l5-6l10 2l5-1l2-3l-1-2l-4 4l-3-3l-3 0l-1-3l3-3l-3-3l2-4l-1-2l-3 0l-3-4l-1 0l0 2l-1 0l-1-3l-1-3l7-4l-1-3l2-2l-6-5l-4 1l-2 3l-9 5l-6-2l-14 1l-3-2l-3 0l-5 1l0 2l-2 1l-3-2l2-8l13-6l1-4l4-2l-2-1l0-1l2-4l-1-6l-5 1l0-3l-12-4l-8-6l0-4l-4 1l-5-4l-6-2l-3 2l-4-2l-2 0l0-2l-2-1l-2 1l-2-1l-2 2l-1 0l1-6l-2-5l1-2l-3-7l9-6l1 2l2 1l2 3l6-5l1 2l7-3l2-6l9 0l2-2l-2-5l-3-1l-1-4l-1-4l2 0l2-3l-2-3l-1-1l1-2l0-1l-7 3l-4 0l-1 1l-3 0l-5-2l-2-7l-3-1l-2-4l-6 2l-5-1l-2-4l-1-7l-4-2l-6 1l-5 3l-2 0l-2-2l0-23l-3 1l-4 0l-8 6l-5 0l-2 2l-23-3l-5-4l-2-2l-3-2l0-5l-6-6l-1-3l2-4l-1-1l-9-1l-7 3l0-3l-3-1l0-3l-3-1l-3 3l-2-1l-2-2l-3-8l-4-1l-5 1l-3-1l-1-3l-2-1l-2-4l-3-1l1-3l-3-2l-3-7l-1-2l-2 0l-2-4l-3-2l-2 1l-6-1l0-1l-3-8l2-5l-9-4l-2-4l0-9l3 0l2 1l6-3l-2-7l-2 1l-1-2l-3 1l-3 2l1 3l-3 2l-4 1l0-7l-4 0l-2-2l0-3l-5-1l-2-7l1-2l2 0l1-2l5 1l2-1l0-2l-4 0l-1-3l-2 1l-1-2l-2-1l-5 7l-3 1l0 2l-2 0l-4-5l1-2l-2-2l0-4l-4 0l-2 2l-2 0l-3-4l3-6l-2-1l0-1l-3 1l-4-1l-2-3l-4-1l0 6l-3 2l-4-1l-1-5l3 0l-1-4l-1-2l-2-1l-4 1l-1 1l-2 0l2-2l-5-3l4-5l-1-5l-3-1L700 -60L700 1000L452 1000Z" fill="url(#hatch)" opacity="0.5"></path>
+      <path d="M12 18l7 13l16 41l1 1l2-1l2 8l8 13l9 19l14 35l8 18l0 4l1 1l6-5l2 2l6 8l4 4l1 0l-3-5l0-2l1 0l3 4l0 1l1-2l1 0l1 4l3 2l2 3l-1 1l-4-3l-3 0l3 6l-1 2l3 2l3 4l2 3l1 1l2-2l3 0l8 11l5 5l1 1l-1 2l3-1l2 4l6 4l3 5l2-1l1 1l0 1l-1 1l7 16l9 28l3 3l4 0l4 2l5 5l6 11l2 3l0 5l3 7l9 25l1 1l2-1l1 1l0 1l-2 0l0 1l3 6l5 14l10 50l4 8l2 7l15 32l4 13l1 0l1-1l1 2l0 1l-1 0l1 2l3 4l7 15l7 25l1 2l0 4l3 7l3 3l0 4l2 4l5 19l3 10l5 6l0 5l3 9l4 19l2 27l6 34l4 19l24 57l4 5l5 11l8 28l3 4l3-1l4 3l11 13l3 3l0 2l19 25l5 5l18 24l17 19l0 5l2 2l2 1l1-1l2 4l3 1l15 13l2-3l3-1l0-2l3-2l6 0l2 2l-2-4l1-3l0-1l-2 0l-1 1l-1-1l1-2l-1-3l1-1l2 1l6-6l0-4l1-1l4-1l0-3l-2-2l-2-7l2-1l2-1l3 4l5-3l3-8l-2-6l-5-5l0-3l-2-1l-5-8l-1-5l-2-4l-3-3l-1-3l0-1l4 0l1-2l0-3l3 1l1-1l-1-1l3-2l1-4l2-1l4-6l-1-7l-3-1l-1-3l-4-2l0-4l-2-1l-2 1l-1-6l-1-2l-2-1l-1-3l-2-2l-1-2l-2-1l0-2l3-2l0-1l1-2l6 0l-1-2l3-4l-1-2l1-2l3-2l1-2l3-2l2-3l2-2l0-7l-2-1l0-2l2 0l3-4l-1-3l1-7l2 0l-2-6l4-2l0-5l5 0l0-2l2-5l0-3l1-1l0-2l-1-3l3-4l0-1l3-4l2 1l3-1l0-2l2-1l0-4l2-2l-1-2l-1 0l0-2l-3 1l-4-3l-1-4l-2-1l0-1l2-2l-1-4l2 0l-2-2l-3 6l-3-1l1-4l-3 0l-3 1l-7 4l-4-2l-2 0l-3-3l-2-1l0-2l-2 0l-2 2l-4-2l0-2l1-1l1-5l3-3l2-5l0-6l3-1l0-3l2-5l-1-1l0-3l5-2l-2-3l-3-2l1-4l1-1l0-2l-2-1l-2-2l1-2l0-4l2-2l1-3l3-4l3 0l2-5l-2-1l0-2l-1-1l0-2l-1-1l1-4l-6-7l-4-4l-2-4l2-2l1 0l5-3l5 2l1-2l0-3l1-9l3-5l-2-4l-4 0l-1-4l2-2l-8-10l2-7l-12-1l-11 8l-3 0l-8 4l-1 2l-2 1l1 2l0 3l-7 2l-7 5l-8-4l-5 1l-2-1l-2-5l-4-2l0-5l-5 2l-3-3l1-8l2-2l0-3l-4-5l1-1l0-2l-1 0l-2-3l2-4l1-11l2-7l-2-2l1-3l0-2l0-5l-4-1l0-2l-1-3l1-2l9 1l4-2l-1-6l-3-2l4-7l2 0l-1-4l3-5l1-4l-2-6l-6 0l-1-1l-3 0l0-2l1-2l-5-7l-7-2l-2-2l-8 0l-6-4l-5-1l-5-3l1-3l1-5l3-3l1-5l2-3l3-3l10 2l5-1l2-3l-1-2l-3 4l-1 0l-3-1l0-2l-3 0l-1-3l3-3l0-1l-2-1l-1-1l2-4l-1-2l-1-1l-2 1l-3-4l-1 0l0 2l-1 0l-1-3l-1-2l0-1l4-3l1 0l2-1l-1-3l2-2l-6-5l-4 1l0 2l-2 1l-9 5l-6-2l-14 1l-3-2l-3 0l-5 1l0 2l-2 1l-3-2l2-8l13-6l1-4l4-2l-2-1l0-1l2-4l-1-6l-5 1l0-3l-12-4l-8-6l0-4l-4 1l-5-4l-6-2l-3 2l-4-2l-2 0l0-2l-2-1l-2 1l-2-1l-2 2l-1 0l1-6l-2-5l1-2l-3-7l9-6l1 2l2 1l1 3l1 0l6-5l1 2l7-3l2-6l9 0l2-2l0-2l-2-3l-3-1l-1-4l-1-4l2 0l2-3l-2-3l-1-1l1-2l0-1l-7 3l-4 0l-1 1l-3 0l-5-2l-2-7l-3-1l-2-4l-6 2l-5-1l-2-4l0-3l-1-4l-4-2l-6 1l-5 3l-2 0l-2-2l0-23l-3 1l-4 0l-8 6l-5 0l-2 2l-9-2l-4 1l-5-1l-7-2l-3-3l-2-2l-3-2l-1-3l1-2l-6-6l-1-3l1-4l-3-1l-6-1l-7 3l0-1l0-2l-3-1l0-3l-3-1l-2 2l-3 1l-2-3l-3-8l-4-1l-5 1l-3-1l-1-3l-2-1l-2-4l-3-1l1-3l-3-2l-3-7l-1-2l-2 0l-2-4l-3-2l-2 1l-6-1l0-1l-1-2l-2-6l1-2l1-3l-9-4l-2-4l1-5l-1-4l3 0l2 1l3-1l3-2l0-1l-2-6l-2 1l-1-2l-3 1l-3 2l1 3l-3 2l-3 1l-1-7l-4 0l-2-2l0-3l-5-1l-2-4l0-3l1-2l2 0l1-2l5 1l2-1l0-2l-4 0l-1-3l-2 1l-1-2l-2-1l-1 0l-4 7l-3 1l0 2l-2 0l-4-5l1-2l-2-2l0-4l-4 0l-2 2l-2 0l-3-4l3-6l-2-1l0-1l-3 1l-4-1l-2-3l-4-1l1 4l-1 2l-3 2l-4-1l-1-2l0-3l3 0l-1-2l0-2l-1-2l-2-1l-4 1l-1 1l-2 0l2-2l-5-3l4-5l-1-5l-2-1l-1 0l1 2l-2 1l-2 1l-4-2l-9 4l-4 2l-2-1z" fill="#E4EFCF" stroke="#5E7B63" stroke-width="1"></path>
+      <path d="M34 68l2 5l2-1l2 8l8 13l7 15l24 61l7-4l2 2l10 12l1 0l-3-7l4 4l2-1l1 4l5 5l-1 1l-7-3l2 8l6 6l2 3l6-1l13 16l0 3l4-1l1 4l27 23l21 12l20 5l6 39l11 22l10 12l17 13l3 12l9 18l13 14l17 12l4 12l6 13l10 12l8 8l3 20l-2 23l4 32l4 15l7 15l13 15l21 18l16 11l13 4l0 5l-8 29l-1 24l7 22l8 14l7 9l-2 4l-16 25l-7 22l0 24l7 23l-3 17l1 16l1 7l38 47l12-20l4-15l-7-16l-3-13l2-14l6-10l-3-8l-8-14l-2-17l5-13l16-20l5-16l2-12l8-16l-12-5l-9-6l-7-9l-3-9l0-16l10-30l-2-18l5-18l-7-14l-13 1l-20-4l-10-5l-16-13l-7-8l-5-9l-2-10l0-10l-3-14l3-24l-3-11l-1-10l4-14l19-2l12 4l9-2l5-3l3-7l1-4l-2-6l-10-1l1-4l-5-7l-9-4l-8 0l-8-4l-32 2l-9 3l-2-13l5-15l-8 1l-9-1l-10-3l-7-6l-9-11l-3-10l0-11l3-11l-17-4l-9-4l-8-7l-6-9l-5-33l2-11l6-11l-13-5l-13-11l-24-4l-11-4l-15-12l-7-9l-19-8l-11-10l-9-4l-15-16l-5-8l-10-5l-7-7l-8-16l-14-23l-27-21z" fill="#C6DFA6"></path>
+      <path d="M13 19l21 49l14 3l29 24l12 20l8 16l7 7l10 5l5 8l12 13l12 7l11 10l19 8l7 9l15 12l11 4l24 4l13 11l13 5l-6 11l-2 11l5 33l6 9l8 7l9 4l17 4l-3 11l0 11l3 10l9 11l7 6l10 3l9 1l8-1l-5 15l2 13l7-3l31-3l-6-4l9-18l4-3l9 2l5-1l2-4l-5 3l-3-3l-3 0l-1-3l3-3l-3-3l1-6l-3 0l-3-4l-2 2l-1-3l-1-3l7-4l-1-3l2-2l-6-5l-4 1l-2 3l-9 5l-6-2l-14 1l-3-2l-3 0l-5 1l0 2l-2 1l-3-2l2-8l13-6l1-4l4-2l-2-2l2-4l-1-6l-5 1l0-3l-12-4l-8-6l0-4l-4 1l-11-6l-3 2l-6-2l-2-3l-7 2l1-6l-2-5l1-2l-3-7l9-6l3 3l2 3l6-5l1 2l7-3l2-6l9 0l2-2l-6-10l-1-4l4-3l-3-4l1-3l-7 3l-4 0l-4 1l-5-2l-2-7l-3-1l-2-4l-6 2l-5-1l-2-4l-1-7l-4-2l-6 1l-7 3l-2-2l0-23l-7 1l-8 6l-5 0l-2 2l-25-4l-5-5l-3-2l0-5l-6-6l0-7l-9-2l-7 3l0-3l-3-1l0-3l-3-1l-2 2l-3 1l-2-3l-3-8l-4-1l-5 1l-6-5l-2-4l-3-1l1-3l-11-15l-3-2l-2 1l-6-1l0-1l-3-8l2-5l-9-4l-2-4l0-9l5 1l6-3l-2-7l-2 1l-1-2l-3 1l-3 2l1 3l-6 3l-1-7l-6-2l0-3l-5-1l-2-4l1-5l3-2l5 1l2-1l0-2l-4 0l-1-3l-2 1l-3-3l-8 10l-2 0l-5-9l0-4l-4 0l-4 2l-3-4l3-6l-2-2l-3 1l-4-1l-2-3l-4-1l0 6l-3 2l-4-1l-1-5l3 0l-1-4l-3-3l-7 2l2-2l-5-3l4-5l-1-5l-2-1l-2 3l-6-1l-13 6l-2-1zM366 428l-4 17l4 18l-3 24l3 14l0 13l5 13l9 11l22 16l24 6l13-1l7 14l-5 18l2 18l-10 27l-1 16l4 12l7 9l6 4l15 7l-8 16l-2 12l-5 16l-16 20l-5 13l2 17l8 14l3 8l-6 10l-2 14l3 13l7 16l-4 15l-12 20l2 6l3 0l2 4l3 1l15 13l8-8l6 0l2 2l-2-4l1-4l-4 0l1-2l-1-3l1-1l2 1l6-6l1-5l4-1l-4-12l4-2l3 4l5-3l3-7l-2-7l-5-5l0-3l-7-9l-1-5l-5-7l-1-3l4-1l1-5l3 1l0-2l3-2l1-4l6-7l-1-7l-3-1l-1-3l-4-2l0-4l-2-1l-2 1l-1-6l-9-13l4-5l6 0l2-10l11-11l0-7l-2-1l5-6l-1-3l3-7l-2-6l4-2l0-5l5 0l3-13l-1-3l3-5l3-4l2 1l3-1l2-7l2-2l-2-4l-3 1l-4-3l-1-4l-2-2l2-2l-1-4l2 0l-2-2l-3 6l-3-1l1-4l-3 0l-10 5l-6-2l-5-6l-4 2l-4-2l2-8l5-8l0-6l3-1l0-3l2-5l-1-4l5-2l-2-3l-3-2l2-7l-4-3l1-6l6-9l3 0l2-5l-2-1l-2-6l1-4l-10-11l-2-4l2-2l1 0l5-3l5 2l1-2l1-12l3-5l-2-4l-4 0l1-6l-8-10l2-7l-7-1l-5 0l-11 8l-11 4l-1 2l-2 1l1 2l0 3l-7 2l-6 5l-9-4l-5 1l-4-6l-4-2l0-5l-5 2l-3-3l1-8l2-5l-4-5l1-3l-3-3l5-22l-2-2l1-10l-4-1l0-6l13-2l-1-6l-3-2l4-7l2 0l-1-2l-12 5l-7 0l-7-4z" fill="#A3C985"></path>
+      <path d="M440 902l12 10l8-8l6 0l2 2l-2-4l1-4l-4 0l1-2l-1-3l1-1l2 1l6-6l1-5l4-1l-4-12l4-2l3 4l5-3l3-7l-2-7l-5-5l0-3l-7-9l-1-5l-5-7l-1-3l4-1l1-5l3 1l0-2l3-2l1-4l6-7l-1-7l-3-1l-1-3l-4-2l0-4l-2-1l-2 1l-1-6l-9-13l4-5l6 0l2-10l11-11l0-7l-2-1l5-6l-1-3l3-7l-2-6l4-2l0-5l5 0l3-13l-1-3l3-5l3-4l2 1l3-1l2-7l2-2l-2-4l-3 1l-4-3l-1-4l-2-2l2-2l-1-4l2 0l-2-2l-3 6l-3-1l1-4l-3 0l-10 5l-6-2l-5-6l-4 2l-4-2l2-8l5-8l0-6l3-1l0-3l2-5l-1-4l5-2l-2-3l-3-2l2-7l-4-3l1-6l6-9l3 0l2-5l-2-1l-2-6l1-4l-10-11l-2-4l2-2l1 0l5-3l5 2l1-2l1-12l3-5l-2-4l-4 0l1-6l-8-10l2-7l-12-1l-11 8l-11 4l-1 2l-2 1l1 2l0 3l-7 2l-6 5l-9-4l-5 1l-4-6l-4-2l0-5l-5 2l-3-3l1-8l2-5l-4-5l1-3l-3-3l5-22l-2-2l1-10l-4-1l0-6l10-1l3-1l0-2l-13 2l-16-3l-1 8l5 12l0 5l-4 21l4 14l-1 12l2 7l5 5l9 6l3 4l7 5l19 4l7-1l15-9l5-4l2-5l8-3l2 2l2 9l-9 6l-5 10l2 11l9 11l0 4l-7 13l-1 10l2 7l0 12l-3 5l-1 7l-4 7l-3 15l3 8l6 5l22 9l9-1l-6 12l-1 8l-4 4l-5 10l-3 16l-4 8l0 7l-9 12l-6 5l-5 10l-1 7l2 7l7 9l3 9l7 7l-12 12l-2 10l2 8l6 13l7 10l-8 9l-1 14l-7 7l-3 9l-7 7zM371 373l1-5l5-6l10 2l5-1l2-3l-1-2l-4 4l-3-3l-3 0l-1-3l3-3l-3-3l1-6l-3 0l-3-4l-2 2l-1-3l-1-3l7-4l-1-3l2-2l-6-5l-4 1l-2 3l-9 5l-6-2l-14 1l-3-2l-3 0l-5 1l0 2l-2 1l-3-2l2-8l13-6l1-4l4-2l-2-2l2-4l-1-6l-5 1l0-3l-12-4l-8-6l0-4l-4 1l-11-6l-3 2l-6-2l-2-3l-7 2l1-6l-2-5l1-2l-3-7l9-6l3 3l2 3l6-5l1 2l7-3l2-6l9 0l2-2l-6-10l-1-4l4-3l-3-4l1-3l-7 3l-4 0l-4 1l-5-2l-2-7l-3-1l-2-4l-6 2l-5-1l-2-4l-1-7l-4-2l-6 1l-7 3l-2-2l0-23l-7 1l-8 6l-5 0l-2 2l-25-4l-5-5l-3-2l0-5l-6-6l0-7l-9-2l-7 3l0-3l-3-1l0-3l-3-1l-2 2l-3 1l-2-3l-3-8l-4-1l-5 1l-6-5l-2-4l-3-1l1-3l-11-15l-3-2l-2 1l-6-1l0-1l-3-8l2-5l-9-4l-2-4l0-9l5 1l6-3l-2-7l-2 1l-1-2l-3 1l-3 2l1 3l-6 3l-1-7l-6-2l0-3l-5-1l-2-4l1-5l3-2l5 1l2-1l0-2l-4 0l-1-3l-2 1l-3-3l-8 10l-3 0l-4-9l0-4l-4 0l-4 2l-3-4l3-6l-2-2l-3 1l-4-1l-2-3l-4-1l0 6l-3 2l-4-1l-1-5l3 0l-2-6l-2-1l-6 2l1-2l-4-3l3-5l-1-5l-3-1l1 2l-2 1l-6-1l-8 3l1 13l14 19l8 5l11 0l5 6l6 2l7 8l7 3l15 18l3 8l6 7l6 15l5 4l11 5l5 9l11 13l11 5l7 7l8 4l5 4l11 1l5 11l13 11l10 3l17 3l12-1l3 8l6 6l7 3l7-1l7 8l11 3l4 5l4 3l-8 2l-11 7l-3 3l-3 6l0 7l5 25l8 7l9 1l9 3l7 0l16 12l-8 7l-4 15l2 9l7 7l9 3l10-2l8 1l8-2l8 2l3 6l-6 8l-7 16l18-1z" fill="#76A45E"></path>
+      <path d="M394 434l-6 4l-2 8l5 12l-4 28l4 12l-1 11l2 7l20 16l17 4l19-9l5-8l15-8l5 9l1 6l3 5l-1 4l-10 5l-4 10l3 9l8 8l1 7l-8 13l-1 9l2 6l0 14l-4 6l-1 8l-3 5l-3 14l2 4l4 4l8 2l4 3l9 3l10-2l5 8l-8 12l-1 10l-5 4l-5 9l-2 17l-4 8l1 6l-7 7l-4 7l-5 4l-6 9l1 8l8 11l2 7l10 10l-4 7l-10 8l-2 7l8 20l10 16l-5 1l-5 5l-2 6l2 6l-3 6l-7 4l-2 11l-8 6M381 431l-5 13l5 20l-4 22l4 14l-1 14l5 9l23 18l21 5l8-1l14-8l13-12l1 4l-8 7l-4 10l1 14l9 12l-7 13l-1 11l2 18l-10 26l-1 10l2 7l6 7l18 8l11 3l-4 13l-10 16l-1 14l-4 8l-1 8l-14 16l-7 13l2 13l7 11l3 8l5 6l-9 10l-3 12l3 11l11 20l-7 10l0 11l-8 7l-3 10l-5 5M369 432l-3 16l4 15l-3 24l3 14l0 10l1 9l10 13l23 17l22 6l17-3l2 11l6 9l-4 8l-2 10l2 20l-10 28l-1 15l4 8l6 8l24 12l-10 19l-2 12l-5 17l-17 20l-4 12l2 15l12 23l-7 11l-2 12l3 13l8 17l-4 8l-1 9l-13 21M354 433l-2 17l4 15l-3 23l3 13l0 15l6 17l11 12l20 16l14 5l26 4l2 4l-4 20l2 14l-10 29l-1 16l4 13l5 9l9 8l10 6l-11 35l-15 19l-5 17l1 21l9 17l-5 13l-1 18l9 24l-3 11l-8 14M65 125l8 17l7 9l15 12l24 25l18 12l19 11l13 12l14 10l15 6l19 3l6 5l-1 15l4 26l6 17l15 18l17 9l4 19l7 13l16 17l15 7l3 16l6 12l8 10l14 11l-1 14l4 15l-3 23l3 29l3 12l6 11l14 16l21 17l13 6l19 5l0 22l-9 28l-1 20l8 22l7 10l9 9l-6 22l-13 17l-8 22l0 23l8 19l-4 14l1 18l7 23l-5 10" fill="none" stroke="#2F5A22" stroke-width="0.6" opacity="0.5"></path>
+      <path d="M432 500l5-8l5 8zM438 497l4-6l4 6z" fill="#4C7D3A"></path>
+      <path d="M450 612l5-8l5 8zM456 609l4-6l4 6z" fill="#4C7D3A"></path>
+      <path d="M352 392l5-8l5 8zM358 389l4-6l4 6z" fill="#4C7D3A"></path>
+      <text x="484" y="430" text-anchor="middle" font-family="Roboto, sans-serif" font-size="8" font-weight="700" letter-spacing="2" fill="#6E6553">TAMIL NADU</text>
+      <text x="402" y="602" text-anchor="middle" font-family="Roboto, sans-serif" font-size="9" font-weight="900" letter-spacing="2" fill="#2F5A22" opacity="0.85" transform="rotate(-66 402 602)">WESTERN GHATS</text>
+      <circle cx="428" cy="601" r="2.2" fill="#18231B"></circle>
+      <text x="422" y="604" text-anchor="end" font-family="Roboto, sans-serif" font-size="7.5" font-weight="500" fill="#18231B" stroke="#E4EFCF" stroke-width="2" paint-order="stroke">Idukki Dam</text>
+      <circle cx="364" cy="414" r="2.2" fill="#18231B"></circle>
+      <text x="358" y="417" text-anchor="end" font-family="Roboto, sans-serif" font-size="7.5" font-weight="500" fill="#18231B" stroke="#E4EFCF" stroke-width="2" paint-order="stroke">Palakkad</text>
+    </svg>
+
+    <sc-for list="{{marks}}" as="m" hint-placeholder-count="5">
+      <button onClick="{{m.tap}}" aria-label="{{m.aria}}" style="position: absolute; width: 44px; height: 44px; margin: 0; padding: 0; border: 0; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; left: {{m.left}}; top: {{m.top}}">
+        <span style="width: 28px; height: 28px; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.25); box-sizing: border-box; background: {{m.bg}}; border: 2.5px solid {{m.bd}}">
+          <sc-if value="{{m.peak}}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="{{m.fg}}" aria-hidden="true"><path d="M2 20L10 6l4 6 2-3 6 11z"></path></svg>
+          </sc-if>
+          <sc-if value="{{m.pass}}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{m.fg}}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19l5-12 4 6 4-6 5 12M10 19h4"></path></svg>
+          </sc-if>
+        </span>
+      </button>
+      <sc-if value="{{m.showName}}">
+        <span style="position: absolute; transform: translateX(-50%); padding: 2px 8px; border-radius: 10px; background: #FFFFFF; font-size: 11px; font-weight: 700; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.2); left: {{m.nameLeft}}; top: {{m.nameTop}}; color: {{m.nameFg}}">{{m.name}}</span>
+      </sc-if>
+    </sc-for>
+
+    <div style="position: absolute; left: 10px; bottom: 10px; background: rgba(255,255,255,0.94); border-radius: 12px; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-weight: 500">
+      <span style="font-size: 10px; font-weight: 700; letter-spacing: 0.06em; color: #4F5E53">RELIEF</span>
+      <span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #76A45E"></span>Highland</span>
+      <span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #C6DFA6"></span>Midland</span>
+      <span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #E4EFCF; border: 1px solid #A9B4A9; box-sizing: border-box"></span>Lowland</span>
+    </div>
+  </div>
+
+  <section aria-live="polite" style="flex-grow: 1; background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 2px rgba(24,35,27,0.08); min-height: 0">
+    <sc-if value="{{noSel}}">
+      <div style="display: flex; align-items: center; gap: 12px; height: 100%">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4F5E53" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11V5a2 2 0 0 1 4 0v6M13 10a2 2 0 0 1 4 0v2M17 11a2 2 0 0 1 4 0v4a6 6 0 0 1-6 6h-2a6 6 0 0 1-5-3l-3-5a2 2 0 0 1 3-2l1 1"></path></svg>
+        <span style="font-size: 14px; line-height: 20px; color: #4F5E53">Tap a landmark on the map. Its name, height and PSC facts appear here.</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{hasSel}}">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+        <span style="height: 24px; padding: 0 10px; border-radius: 12px; font-size: 12px; font-weight: 700; display: flex; align-items: center; background: {{verdictBg}}; color: {{verdictFg}}">{{verdict}}</span>
+        <span style="font-size: 12px; color: #4F5E53">{{selKind}}</span>
+      </div>
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
+        <span style="font-size: 20px; font-weight: 900">{{selName}}</span>
+        <span style="font-size: 15px; font-weight: 700; color: #3F6B2A; white-space: nowrap">{{selElev}}</span>
+      </div>
+      <span style="font-size: 13px; line-height: 19px; color: #2C3A30">{{selFact}}</span>
+      <sc-if value="{{allDone}}">
+        <a href="Results.dc.html" style="height: 44px; border-radius: 22px; background: #1D6B3C; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center">All 5 challenges done · See results</a>
+      </sc-if>
+    </sc-if>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":393,"height":852}}'>
+var S = 361 / 226;
+var MARKS = [
+  { id: 'anamudi', name: 'Anamudi', kind: 'Peak · Idukki district', elev: '2,695 m', peak: true, x: 444.6, y: 536,
+    fact: 'Highest peak in South India, inside Eravikulam National Park near Munnar.' },
+  { id: 'meesa', name: 'Meesapulimala', kind: 'Peak · Idukki district', elev: '2,640 m', peak: true, x: 463.4, y: 550,
+    fact: 'Second-highest peak in the Western Ghats, a short distance east of Anamudi near Munnar.' },
+  { id: 'gap', name: 'Palakkad Gap', kind: 'Mountain gap · Palakkad', elev: '30–40 km wide', peak: false, x: 397, y: 406,
+    fact: 'The largest break in the Western Ghats, between the Nilgiri and Anamalai hills. It links Kerala with Coimbatore.' },
+  { id: 'bodi', name: 'Bodinayakkanur Pass', kind: 'Mountain pass · Idukki', elev: 'Munnar ↔ Theni', peak: false, x: 485.6, y: 566,
+    fact: 'A Ghat pass linking the Munnar hills with Bodinayakkanur in Tamil Nadu.' },
+  { id: 'nelli', name: 'Nelliampathy Hills', kind: 'Hill range · Palakkad', elev: 'Hill station', peak: true, x: 372, y: 464,
+    fact: 'Hill range south of the Palakkad Gap, known for tea, coffee and orange estates.' }
+];
+var TASKS = [
+  { label: 'CHALLENGE 1 · DONE', text: 'Trace the Western Ghats along Kerala’s eastern edge', target: null },
+  { label: 'CHALLENGE 2', text: 'Locate Anamudi, the highest peak in South India', target: 'anamudi' },
+  { label: 'CHALLENGE 3', text: 'Find the widest gap in the Western Ghats', target: 'gap' },
+  { label: 'CHALLENGE 4', text: 'Find the pass that links Munnar with Tamil Nadu', target: 'bodi' },
+  { label: 'CHALLENGE 5', text: 'Locate the second-highest peak of the Western Ghats', target: 'meesa' }
+];
+class Component extends DCLogic {
+  st() {
+    var s = this.state || {};
+    return { step: s.step == null ? 1 : s.step, found: s.found || [], sel: s.sel || null, last: s.last || null, xp: s.xp == null ? 25 : s.xp };
+  }
+  tap(id) {
+    var s = this.st();
+    var task = TASKS[s.step];
+    if (task && task.target === id) {
+      var found = s.found.concat([id]);
+      this.setState({ found: found, sel: id, last: 'right', step: s.step + 1, xp: s.xp + 20 });
+    } else {
+      this.setState({ sel: id, last: s.found.indexOf(id) >= 0 ? 'known' : 'wrong' });
+    }
+  }
+  renderVals() {
+    var self = this; var s = this.st();
+    var done = s.step >= TASKS.length;
+    var task = TASKS[Math.min(s.step, TASKS.length - 1)];
+    var marks = MARKS.map(function (m, i) {
+      var isFound = s.found.indexOf(m.id) >= 0, isSel = s.sel === m.id;
+      var px = (m.x - 300) * S, py = (m.y - 380) * S;
+      return {
+        tap: function () { self.tap(m.id); },
+        aria: isFound || isSel ? m.name : 'Unknown landmark ' + (i + 1),
+        left: (px - 22) + 'px', top: (py - 22) + 'px',
+        bg: isFound ? '#1F7A44' : (isSel ? '#FFF1C7' : '#FFFFFF'),
+        bd: isFound ? '#FFFFFF' : (isSel ? '#B07A00' : (m.peak ? '#4C7D3A' : '#8A5A2B')),
+        fg: isFound ? '#FFFFFF' : (m.peak ? '#3F6B2A' : '#8A5A2B'),
+        peak: m.peak, pass: !m.peak,
+        showName: isFound || isSel, name: m.name,
+        nameLeft: px + 'px', nameTop: (py + 16) + 'px', nameFg: isFound ? '#0B3A1D' : '#5C3F00'
+      };
+    });
+    var sel = null;
+    for (var i = 0; i < MARKS.length; i++) if (MARKS[i].id === s.sel) sel = MARKS[i];
+    var verdict = '', vb = '#E3EADF', vf = '#18231B';
+    if (s.last === 'right') { verdict = 'Correct! +20 XP'; vb = '#1F7A44'; vf = '#FFFFFF'; }
+    else if (s.last === 'wrong') { verdict = 'Not this one — explore it, then try again'; vb = '#FCE3D3'; vf = '#7A2E05'; }
+    else if (s.last === 'known') { verdict = 'Already found'; vb = '#DDF0E2'; vf = '#0B3A1D'; }
+    var bars = TASKS.map(function (t, i) { return { c: i < s.step ? '#1F7A44' : (i === s.step ? '#B07A00' : '#E3EADF') }; });
+    return {
+      marks: marks, bars: bars,
+      stepText: done ? 'All 5 challenges complete' : 'Challenge ' + (s.step + 1) + ' of 5',
+      xpText: '+' + s.xp + ' XP',
+      taskLabel: done ? 'COMPLETE' : task.label, taskText: done ? 'You explored every landmark on this map' : task.text,
+      noSel: !sel, hasSel: !!sel, allDone: done,
+      verdict: verdict, verdictBg: vb, verdictFg: vf,
+      selName: sel ? sel.name : '', selKind: sel ? sel.kind : '', selElev: sel ? sel.elev : '', selFact: sel ? sel.fact : ''
+    };
+  }
+}
+</script>
+</body>
+</html>
