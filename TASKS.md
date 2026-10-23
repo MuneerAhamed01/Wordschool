@@ -48,17 +48,17 @@ This file is the single source of truth for project work. The **status board** b
 ### M0 · Foundations — target 2026-11-04
 
 
-| ID     | Task                                                  | Area           | Est   | Depends | Status | Notes                                                                                                                         |
-| ------ | ----------------------------------------------------- | -------------- | ----- | ------- | ------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| CW-001 | Untrack `.env*` files from git                        | ops            | 0.25d | —       | done   | b0e1aa3                                                                                                                       |
-| CW-002 | Decide environment setup (DEC-002)                    | ops            | 0.25d | —       | done   | Separate projects; dev = `kerala-pcs-dev`                                                                                     |
-| CW-003 | Add AI kit to repo (incl. `.claude/`, `.cursor/`)     | ops            | 0.25d | —       | review | `.claude/` + `.cursor/` added; check `/` menu + Cursor rules manually                                                         |
-| CW-004 | Crossword collection constants (Dart + Python)        | app, functions | 0.25d | CW-007  | todo   |                                                                                                                               |
-| CW-005 | Remote Config (package + typed config class)          | app            | 0.5d  | —       | review | Offline first launch needs a manual device check                                                                              |
-| CW-006 | App shell: bottom navigation + routes                 | app            | 1d    | —       | todo   | Needs DEC-007                                                                                                                 |
-| CW-007 | Create `functions/` codebase (Python) + shared helpers | functions      | 1d    | CW-008  | review | Python (DEC-010); ruff + 32 pytest green; emulators boot (Java from Android Studio) |
-| CW-008 | Blaze plan, budget alerts, confirm Firestore location | ops            | 0.25d | —       | review | `(default)` recreated in `asia-south1` (free tier). Rules + indexes redeploy pending (`firebase deploy` is user-only) |
-| CW-009 | Test setup (Flutter `test/`) + first green run        | app            | 0.5d  | —       | review | 7 model tests green. `analyze` has 6 pre-existing issues in `lib/` (unused `get` import, deprecations) — needs a cleanup task |
+| ID     | Task                                                   | Area           | Est   | Depends | Status | Notes                                                                                                                         |
+| ------ | ------------------------------------------------------ | -------------- | ----- | ------- | ------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| CW-001 | Untrack `.env*` files from git                         | ops            | 0.25d | —       | done   | b0e1aa3                                                                                                                       |
+| CW-002 | Decide environment setup (DEC-002)                     | ops            | 0.25d | —       | done   | Separate projects; dev = `kerala-pcs-dev`                                                                                     |
+| CW-003 | Add AI kit to repo (incl. `.claude/`, `.cursor/`)      | ops            | 0.25d | —       | done   | `.claude/` + `.cursor/` added; check `/` menu + Cursor rules manually                                                         |
+| CW-004 | Crossword collection constants (Dart + Python)         | app, functions | 0.25d | CW-007  | review | Python–Dart drift test in `collections_test.py`; stacked on CW-007 (not in `psc-dev` yet)                                    |
+| CW-005 | Remote Config (package + typed config class)           | app            | 0.5d  | —       | done   | Offline first launch needs a manual device check                                                                              |
+| CW-006 | App shell: bottom navigation + routes                  | app            | 1d    | —       | todo   | Needs DEC-007                                                                                                                 |
+| CW-007 | Create `functions/` codebase (Python) + shared helpers | functions      | 1d    | CW-008  | done   | Python (DEC-010); ruff + 32 pytest green; emulators boot (Java from Android Studio)                                           |
+| CW-008 | Blaze plan, budget alerts, confirm Firestore location  | ops            | 0.25d | —       | done   | `(default)` recreated in `asia-south1` (free tier). Rules + indexes redeploy pending (`firebase deploy` is user-only)         |
+| CW-009 | Test setup (Flutter `test/`) + first green run         | app            | 0.5d  | —       | done   | 7 model tests green. `analyze` has 6 pre-existing issues in `lib/` (unused `get` import, deprecations) — needs a cleanup task |
 
 
 
@@ -184,18 +184,18 @@ This file is the single source of truth for project work. The **status board** b
 ## Decisions
 
 
-| ID      | Decision                       | Status       | Choice / recommendation                                                                                                                                                                |
-| ------- | ------------------------------ | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DEC-001 | Daily puzzle date key timezone | Accepted     | **IST (Asia/Kolkata)** for all daily keys on this app.                                                                                                                                 |
-| DEC-002 | Environments                   | **Accepted** | One Firebase project per environment. Dev = `kerala-pcs-dev` (`(default)` database). Prod = a new project in CW-076. Functions take **no** `databaseId` parameter.                     |
-| DEC-003 | Answers on the client          | Accepted     | Puzzle doc carries **encoded** answers for offline Check/Reveal; real key in private `crosswordSolutions`; server re-scores.                                                           |
-| DEC-004 | Answer alphabet                | Accepted     | Phase 1 answers are English A–Z only; Malayalam crossword is NEXT-002.                                                                                                                 |
-| DEC-005 | Bloc style for new code        | Accepted     | `sealed class` events/states in one bloc file. Existing freezed blocs (`auth`, `game`) stay as they are.                                                                               |
-| DEC-006 | Player root document           | Accepted     | `users/{uid}` (already in `FirebaseCollections`) replaces `userGameStates/{uid}` from the `development` design.                                                                        |
-| DEC-007 | App home                       | **Open**     | Recommended: Crossword Home becomes the start screen (bottom nav: Play · Revise · Ranks · Profile); today's daily word game moves to a card on Home. Today `/game` is the start route. |
-| DEC-008 | Hints in phase 1               | Proposed     | No ads or purchases at launch: "Show a clue" is free; each puzzle allows 3 reveals (letter = 1, word = 3) with XP penalties. Monetization is NEXT-005/006.                             |
-| DEC-009 | Firebase region | Accepted | **`asia-south1` (Mumbai)** for Firestore and Functions in every environment. Dev's `(default)` DB (first made in `nam5`) is recreated in CW-008. |
-| DEC-010 | Cloud Functions language | Accepted | **Python 3.12** (`firebase-functions` Python SDK, ruff, pytest) instead of TypeScript. Code under `functions/` with `main.py` as the entry point. Rules tests are not covered by a Python library — CW-010 chooses the harness. |
+| ID      | Decision                       | Status       | Choice / recommendation                                                                                                                                                                                                         |
+| ------- | ------------------------------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DEC-001 | Daily puzzle date key timezone | Accepted     | **IST (Asia/Kolkata)** for all daily keys on this app.                                                                                                                                                                          |
+| DEC-002 | Environments                   | **Accepted** | One Firebase project per environment. Dev = `kerala-pcs-dev` (`(default)` database). Prod = a new project in CW-076. Functions take **no** `databaseId` parameter.                                                              |
+| DEC-003 | Answers on the client          | Accepted     | Puzzle doc carries **encoded** answers for offline Check/Reveal; real key in private `crosswordSolutions`; server re-scores.                                                                                                    |
+| DEC-004 | Answer alphabet                | Accepted     | Phase 1 answers are English A–Z only; Malayalam crossword is NEXT-002.                                                                                                                                                          |
+| DEC-005 | Bloc style for new code        | Accepted     | `sealed class` events/states in one bloc file. Existing freezed blocs (`auth`, `game`) stay as they are.                                                                                                                        |
+| DEC-006 | Player root document           | Accepted     | `users/{uid}` (already in `FirebaseCollections`) replaces `userGameStates/{uid}` from the `development` design.                                                                                                                 |
+| DEC-007 | App home                       | **Open**     | Recommended: Crossword Home becomes the start screen (bottom nav: Play · Revise · Ranks · Profile); today's daily word game moves to a card on Home. Today `/game` is the start route.                                          |
+| DEC-008 | Hints in phase 1               | Proposed     | No ads or purchases at launch: "Show a clue" is free; each puzzle allows 3 reveals (letter = 1, word = 3) with XP penalties. Monetization is NEXT-005/006.                                                                      |
+| DEC-009 | Firebase region                | Accepted     | **`asia-south1` (Mumbai)** for Firestore and Functions in every environment. Dev's `(default)` DB (first made in `nam5`) is recreated in CW-008.                                                                                |
+| DEC-010 | Cloud Functions language       | Accepted     | **Python 3.12** (`firebase-functions` Python SDK, ruff, pytest) instead of TypeScript. Code under `functions/` with `main.py` as the entry point. Rules tests are not covered by a Python library — CW-010 chooses the harness. |
 
 
 ---
@@ -235,7 +235,7 @@ Add to `lib/core/firebase/collections.dart` (keep `games`, `users`) and to `func
 
 Done when:
 
-- [ ] Constants: `crosswordCategories`, `crosswordPuzzles`, `crosswordSolutions`, `crosswordDaily`, `pscQuestions`, `crosswordProgress`, `revisionItems`, `leaderboards`, `leaderboardEntries` (`entries`), `contentReports`, `adminAuditLog`
+- [x] Constants: `crosswordCategories`, `crosswordPuzzles`, `crosswordSolutions`, `crosswordDaily`, `pscQuestions`, `crosswordProgress`, `revisionItems`, `leaderboards`, `leaderboardEntries` (`entries`), `contentReports`, `adminAuditLog`
 
 
 
