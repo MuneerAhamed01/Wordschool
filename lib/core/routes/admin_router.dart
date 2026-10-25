@@ -8,6 +8,7 @@ import 'package:wordshool/features/admin/categories/presentation/pages/categorie
 import 'package:wordshool/features/admin/home/presentation/pages/home_page.dart';
 import 'package:wordshool/features/admin/auth/presentation/pages/login_page.dart';
 import 'package:wordshool/features/admin/puzzles/builder/presentation/pages/puzzle_builder_page.dart';
+import 'package:wordshool/features/admin/puzzles/domain/utils/auto_puzzle.dart';
 import 'package:wordshool/features/admin/puzzles/detail/presentation/pages/puzzle_detail_page.dart';
 import 'package:wordshool/features/admin/puzzles/presentation/pages/puzzles_page.dart';
 import 'package:wordshool/features/admin/questions/presentation/pages/questions_page.dart';
@@ -58,40 +59,12 @@ GoRouter adminRouter(AdminAuthService auth) {
           ),
           GoRoute(
             path: AdminRoutes.questions,
-            builder: (context, state) => const AdminQuestionsPage(),
-          ),
-          GoRoute(
-            path: AdminRoutes.puzzles,
-            builder: (context, state) => AdminPuzzlesPage(
-              key: ValueKey(state.uri.queryParameters['category']),
-              initialCategoryId: state.uri.queryParameters['category'],
+            builder: (context, state) => AdminQuestionsPage(
+              key: ValueKey(state.uri.queryParameters['subject']),
+              initialSubject: state.uri.queryParameters['subject'],
             ),
-            routes: [
-              GoRoute(
-                path: 'new',
-                builder: (context, state) => AdminPuzzleBuilderPage(
-                  initialCategoryId: state.uri.queryParameters['category'],
-                ),
-              ),
-              GoRoute(
-                path: ':puzzleId',
-                builder: (context, state) => AdminPuzzleDetailPage(
-                  key: ValueKey(state.uri.toString()),
-                  puzzleId: state.pathParameters['puzzleId']!,
-                  highlightWordId: state.uri.queryParameters['word'],
-                ),
-                routes: [
-                  GoRoute(
-                    path: 'edit',
-                    builder: (context, state) => AdminPuzzleBuilderPage(
-                      key: ValueKey('edit-${state.pathParameters['puzzleId']}'),
-                      puzzleId: state.pathParameters['puzzleId'],
-                    ),
-                  ),
-                ],
-              ),
-            ],
           ),
+          adminPuzzlesRoute(),
           GoRoute(
             path: AdminRoutes.schedule,
             builder: (context, state) => const AdminSchedulePage(),
@@ -103,6 +76,51 @@ GoRouter adminRouter(AdminAuthService auth) {
           GoRoute(
             path: AdminRoutes.bulkUpload,
             builder: (context, state) => const AdminBulkUploadPage(),
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
+/// `/puzzles` and everything under it: list, new (or auto-created with
+/// `?auto=1`, CW-038), detail and edit.
+@visibleForTesting
+GoRoute adminPuzzlesRoute() {
+  return GoRoute(
+    path: AdminRoutes.puzzles,
+    builder: (context, state) => AdminPuzzlesPage(
+      key: ValueKey(state.uri.queryParameters['category']),
+      initialCategoryId: state.uri.queryParameters['category'],
+    ),
+    routes: [
+      GoRoute(
+        path: 'new',
+        builder: (context, state) {
+          final query = state.uri.queryParameters;
+          return AdminPuzzleBuilderPage(
+            key: ValueKey(state.uri.toString()),
+            initialCategoryId: query['category'],
+            autoOptions: query['auto'] == '1'
+                ? AutoPuzzleOptions.fromQuery(query)
+                : null,
+          );
+        },
+      ),
+      GoRoute(
+        path: ':puzzleId',
+        builder: (context, state) => AdminPuzzleDetailPage(
+          key: ValueKey(state.uri.toString()),
+          puzzleId: state.pathParameters['puzzleId']!,
+          highlightWordId: state.uri.queryParameters['word'],
+        ),
+        routes: [
+          GoRoute(
+            path: 'edit',
+            builder: (context, state) => AdminPuzzleBuilderPage(
+              key: ValueKey('edit-${state.pathParameters['puzzleId']}'),
+              puzzleId: state.pathParameters['puzzleId'],
+            ),
           ),
         ],
       ),

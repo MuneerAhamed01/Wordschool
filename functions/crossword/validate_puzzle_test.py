@@ -15,6 +15,9 @@ EXAMPLE = (
     Path(__file__).parents[2]
     / ".claude/skills/crossword-content/examples/kerala-history-0012.puzzle.json"
 )
+# Made by the admin panel's auto-create generator (CW-038); the Dart test
+# test/features/admin/puzzles/domain/utils/auto_puzzle_test.dart keeps it current.
+GENERATED = Path(__file__).parents[2] / "test/fixtures/admin/auto_puzzle.puzzle.json"
 
 
 def _word(wid, number, direction, row, col, answer):
@@ -61,6 +64,10 @@ def _problems(grid):
 
 def test_example_puzzle_passes():
     validate_puzzle(json.loads(EXAMPLE.read_text()))
+
+
+def test_generated_puzzle_passes() -> None:
+    validate_puzzle(json.loads(GENERATED.read_text()))
 
 
 def test_small_grid_passes():

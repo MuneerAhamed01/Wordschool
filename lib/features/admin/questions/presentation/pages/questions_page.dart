@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:wordshool/features/admin/shared/presentation/widgets/empty_state.dart';
 import 'package:wordshool/features/admin/shared/presentation/widgets/loading_block.dart';
 import 'package:wordshool/core/routes/admin_routes.dart';
@@ -7,6 +8,7 @@ import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/di_admin.dart';
 import 'package:wordshool/features/admin/shared/data/data_source/categories_service.dart';
 import 'package:wordshool/features/admin/shared/data/data_source/questions_service.dart';
+import 'package:wordshool/features/admin/shared/domain/models/category.dart';
 import 'package:wordshool/features/admin/shared/domain/models/enums.dart';
 import 'package:wordshool/features/admin/shared/domain/models/question.dart';
 import 'package:wordshool/features/admin/shared/domain/utils/question_text.dart';
@@ -15,9 +17,13 @@ import 'package:wordshool/features/admin/shared/presentation/widgets/page.dart';
 import 'package:wordshool/features/admin/shared/presentation/widgets/filter_chips.dart';
 import 'package:wordshool/features/admin/shared/presentation/widgets/question_editor_dialog.dart';
 import 'package:wordshool/features/admin/shared/presentation/widgets/status_chip.dart';
+import 'package:wordshool/features/admin/questions/presentation/widgets/auto_puzzle_dialog.dart';
 
 class AdminQuestionsPage extends StatefulWidget {
-  const AdminQuestionsPage({super.key});
+  const AdminQuestionsPage({super.key, this.initialSubject});
+
+  /// Subject filter to start with (`/questions?subject=`).
+  final String? initialSubject;
 
   static const routeName = AdminRoutes.questions;
 
@@ -30,8 +36,11 @@ class _AdminQuestionsPageState extends State<AdminQuestionsPage> {
   final _questionService = adminGetIt<AdminQuestionsService>();
   final _search = TextEditingController();
 
-  List<String> _subjects = const [];
-  String? _subject;
+  List<AdminCategory> _categories = const [];
+  late List<String> _subjects = [
+    if (widget.initialSubject != null) widget.initialSubject!,
+  ];
+  late String? _subject = widget.initialSubject;
   QuestionStatus? _status;
 
   List<AdminQuestion> _questions = [];
@@ -58,6 +67,7 @@ class _AdminQuestionsPageState extends State<AdminQuestionsPage> {
     final result = await _categoryService.listCategories();
     if (!mounted || result is! DataSuccess) return;
     setState(() {
+      _categories = result.data!;
       _subjects = {for (final c in result.data!) c.subject, ..._subjects}
           .toList()
         ..sort();
@@ -173,6 +183,30 @@ class _AdminQuestionsPageState extends State<AdminQuestionsPage> {
     }
   }
 
+  /// Checked questions in [category] — only when every question that could
+  /// count is loaded (no more pages, and filters that don't hide any).
+  int? _checkedIn(AdminCategory category) {
+    final complete = _cursor == null &&
+        !_loading &&
+        _loadError == null &&
+        (_status == null || _status == QuestionStatus.verified) &&
+        (_subject == null || _subject == category.subject);
+    if (!complete) return null;
+    return _questions
+        .where((q) => q.isVerified && q.subject == category.subject)
+        .length;
+  }
+
+  Future<void> _autoCreate() async {
+    final path = await AutoPuzzleDialog.show(
+      context,
+      categories: _categories,
+      initialSubject: _subject,
+      checkedCount: _checkedIn,
+    );
+    if (path != null && mounted) context.go(path);
+  }
+
   List<AdminQuestion> get _visible {
     final query = _search.text.trim().toLowerCase();
     if (query.isEmpty) return _questions;
@@ -193,6 +227,11 @@ class _AdminQuestionsPageState extends State<AdminQuestionsPage> {
           'a fact against its source, press "Mark as checked". Only checked '
           'questions can be used in puzzles.',
       actions: [
+        OutlinedButton.icon(
+          onPressed: _categories.isEmpty ? null : _autoCreate,
+          icon: const Icon(Icons.auto_awesome),
+          label: const Text('Auto-create puzzle'),
+        ),
         FilledButton.icon(
           onPressed: () => _edit(),
           icon: const Icon(Icons.add),

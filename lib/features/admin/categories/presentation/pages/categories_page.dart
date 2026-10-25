@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:wordshool/features/admin/shared/presentation/widgets/empty_state.dart';
 import 'package:wordshool/features/admin/shared/presentation/widgets/loading_block.dart';
 import 'package:wordshool/core/routes/admin_routes.dart';
@@ -194,6 +195,8 @@ class _AdminCategoriesPageState extends State<AdminCategoriesPage> {
             index: index,
             category: category,
             onEdit: () => _openEditor(category),
+            onAutoPuzzle: () =>
+                context.go(AdminRoutes.autoPuzzle(category.id)),
             onToggle:
                 _saving ? null : (value) => _toggleActive(category, value),
           ),
@@ -208,12 +211,14 @@ class _CategoryRow extends StatelessWidget {
     required this.index,
     required this.category,
     required this.onEdit,
+    required this.onAutoPuzzle,
     required this.onToggle,
   });
 
   final int index;
   final AdminCategory category;
   final VoidCallback onEdit;
+  final VoidCallback onAutoPuzzle;
   final ValueChanged<bool>? onToggle;
 
   @override
@@ -273,6 +278,11 @@ class _CategoryRow extends StatelessWidget {
               message:
                   category.isActive ? 'Hide from players' : 'Show to players',
               child: Switch(value: category.isActive, onChanged: onToggle),
+            ),
+            IconButton(
+              tooltip: 'Auto-create puzzle',
+              onPressed: onAutoPuzzle,
+              icon: const Icon(Icons.auto_awesome),
             ),
             IconButton(
               tooltip: 'Edit',

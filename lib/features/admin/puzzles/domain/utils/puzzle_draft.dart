@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:equatable/equatable.dart';
 import 'package:wordshool/features/admin/shared/domain/models/enums.dart';
 import 'package:wordshool/features/admin/shared/domain/models/puzzle.dart';
+import 'package:wordshool/features/admin/shared/domain/models/question.dart';
 import 'package:wordshool/features/admin/shared/domain/utils/grid_validator.dart';
 import 'package:wordshool/shared/domains/entities/localized_text.dart';
 
@@ -52,6 +53,24 @@ class Placement extends Equatable {
   @override
   List<Object?> get props =>
       [questionId, answer, row, col, direction, clue, extraClue, fact];
+}
+
+/// [question] placed at ([row], [col]): its easiest clue as the clue, the next
+/// clue as the extra hint and its fact, word for word.
+Placement placementFor(
+    AdminQuestion question, int row, int col, WordDirection direction) {
+  final first = question.firstClue;
+  final extra = question.clues.where((c) => c != first).firstOrNull;
+  return Placement(
+    questionId: question.id!,
+    answer: question.answer,
+    row: row,
+    col: col,
+    direction: direction,
+    clue: LocalizedText(en: first?.en ?? '', ml: first?.ml),
+    extraClue: extra == null ? null : LocalizedText(en: extra.en, ml: extra.ml),
+    fact: question.fact,
+  );
 }
 
 /// A spot where a word fits, crossing [crossings] existing letters.
@@ -298,14 +317,12 @@ class PuzzleDraft extends Equatable {
     final current = letters;
     final hasWords = placements.isNotEmpty;
     for (final direction in WordDirection.values) {
-      for (var r = 0; r < rows; r++) {
-        for (var c = 0; c < cols; c++) {
-          final crossings =
-              crossingsAt(answer, r, c, direction, currentLetters: current);
-          if (crossings == null) continue;
-          if (hasWords && crossings == 0) continue;
-          spots.add(PlacementSpot(r, c, direction, crossings));
-        }
+      for (final (r, c) in _starts(answer, direction, current, hasWords)) {
+        final crossings =
+            crossingsAt(answer, r, c, direction, currentLetters: current);
+        if (crossings == null) continue;
+        if (hasWords && crossings == 0) continue;
+        spots.add(PlacementSpot(r, c, direction, crossings));
       }
     }
     double distance(PlacementSpot s) {
@@ -324,6 +341,27 @@ class PuzzleDraft extends Equatable {
       return (a.row * cols + a.col).compareTo(b.row * cols + b.col);
     });
     return spots.take(limit).toList();
+  }
+
+  /// Start squares worth trying for [answer]: every square on an empty grid,
+  /// otherwise only those that put one of its letters on a matching letter
+  /// (a spot that crosses nothing isn't suggested once there are words).
+  Iterable<Cell> _starts(String answer, WordDirection direction,
+      Map<Cell, String> current, bool hasWords) {
+    if (!hasWords) {
+      return [
+        for (var r = 0; r < rows; r++)
+          for (var c = 0; c < cols; c++) (r, c)
+      ];
+    }
+    final starts = <Cell>{};
+    for (final MapEntry(key: cell, value: letter) in current.entries) {
+      for (var i = 0; i < answer.length; i++) {
+        if (answer[i] != letter) continue;
+        starts.add((cell.$1 - i * direction.dRow, cell.$2 - i * direction.dCol));
+      }
+    }
+    return starts;
   }
 
   @override
