@@ -55,7 +55,7 @@ After merge, the user (or Claude when told) sets the row to `done`.
 
 ## "Close M<n>" (user says review is complete)
 
-1. Board: every row of the milestone → `done`; add `· **closed YYYY-MM-DD**` to the milestone heading. Tick the remaining "Done when" boxes that the review covered and say so on the card ("checked in review YYYY-MM-DD").
+1. Board: every row of the milestone → `done` (or `not-needed` with the reason on the card and when to revisit); add `· **closed YYYY-MM-DD**` to the milestone heading. Tick the remaining "Done when" boxes that the review covered and say so on the card ("checked in review YYYY-MM-DD").
 2. Run the "Finish" checks once more and the leftover scan (4a).
 3. Daily log entry for the close (what was closed, packages added and why, anything pending).
 4. Update `docs/STATUS.md` (milestone row, next up, deployed).
@@ -71,7 +71,7 @@ After merge, the user (or Claude when told) sets the row to `done`.
 
 ## Status report ("where are we?", "status of M3")
 
-Answer from `docs/STATUS.md`. Only if it's stale, count the board rows for that milestone in `TASKS.md` (and `git status` / `git log -5` for uncommitted or unmerged work), then fix `docs/STATUS.md`. List anything `blocked` or `doing` for more than 3 days. Keep it to a small table.
+Answer from `docs/STATUS.md`. Only if it's stale, count the board rows for that milestone in `TASKS.md` (and `git status` / `git log -5` for uncommitted or unmerged work), then fix `docs/STATUS.md`. List anything `blocked` or `doing` for more than 3 days. `not-needed` rows count as closed, not open work. Keep it to a small table.
 
 ## Decisions
 

@@ -24,6 +24,7 @@ This file is the single source of truth for project work. The **status board** b
 | `review`  | Code done, waiting for review / manual test                |
 | `done`    | Merged to `psc-dev` and checked                            |
 | `blocked` | Waiting on a decision or another task — say why in Notes   |
+| `not-needed` | Decided not to build (for now) — Notes say why and when to revisit |
 
 
 **Working with Claude Code / Cursor**
@@ -45,7 +46,7 @@ This file is the single source of truth for project work. The **status board** b
 
 
 
-### M0 · Foundations — target 2026-11-04
+### M0 · Foundations — target 2026-11-04 · **closed 2026-10-23**
 
 
 | ID     | Task                                                   | Area           | Est   | Depends | Status | Notes                                                                                     |
@@ -63,7 +64,7 @@ This file is the single source of truth for project work. The **status board** b
 
 
 
-### M1 · Backend: rules, indexes, functions — target 2026-11-18
+### M1 · Backend: rules, indexes, functions — target 2026-11-18 · **closed 2026-10-23**
 
 
 | ID     | Task                                                             | Area           | Est   | Depends                | Status | Notes                                                                           |
@@ -81,10 +82,10 @@ This file is the single source of truth for project work. The **status board** b
 | CW-020 | `crosswordDailyRollover` scheduled job                           | functions      | 0.5d  | CW-018                 | done   | Force-run on dev checked 2026-10-23                                             |
 | CW-021 | `refreshLeaderboardTop` scheduled job                            | functions      | 0.5d  | CW-019                 | done   |                                                                                 |
 | CW-022 | `adminListReports` + `adminResolveReport`                        | functions      | 0.5d  | CW-012                 | done   |                                                                                 |
-| CW-023 | Export, deploy to `kerala-pcs-dev`, smoke test                   | functions      | 0.5d  | CW-015…CW-022          | done   | Emulator flow test green; 11 functions live on dev                              |
+| CW-023 | Export, deploy to `kerala-pcs-dev`, smoke test                   | functions      | 0.5d  | CW-015…CW-022          | done   | Emulator flow test green; 11 functions live then (16 on 2026-10-25) |
 | CW-024 | `setAdminClaim` script + first admin account                     | functions, ops | 0.25d | CW-007                 | done   | [muneerahamed.dev@gmail.com](mailto:muneerahamed.dev@gmail.com) is admin on dev |
-| CW-025 | Admin read callables (list/get questions, puzzles + solution)    | functions      | 1d    | CW-017                 | done   | Callables (rules stay closed); deploy pending                                   |
-| CW-026 | Server hint penalties from Remote Config                         | functions      | 0.5d  | CW-019                 | done   | Reads client RC template; live check after deploy                               |
+| CW-025 | Admin read callables (list/get questions, puzzles + solution)    | functions      | 1d    | CW-017                 | done   | Callables (rules stay closed); deployed with indexes |
+| CW-026 | Server hint penalties from Remote Config                         | functions      | 0.5d  | CW-019                 | done   | Deployed; unit-tested. Live RC → XP check moved to CW-071 |
 
 
 
@@ -95,12 +96,12 @@ This file is the single source of truth for project work. The **status board** b
 | ID     | Task                                                                          | Area  | Est  | Depends                | Status | Notes                                |
 | ------ | ----------------------------------------------------------------------------- | ----- | ---- | ---------------------- | ------ | ------------------------------------ |
 | CW-029 | Admin foundation: web target, `main_admin.dart`, claim login, shell, API base | admin | 1.5d | CW-024                 | done   | Web app on dev; Google popup + claim |
-| CW-030 | `AdminApiService` crossword methods + models                                  | admin | 1d   | CW-029, CW-023, CW-025 | done   | Daily docs read via Firestore        |
+| CW-030 | `AdminApiService` crossword methods + models                                  | admin | 1d   | CW-029, CW-023, CW-025 | done   | Daily docs read via Firestore; services now in `admin/shared/data/data_source/` (CW-058) |
 | CW-031 | Categories page                                                               | admin | 0.5d | CW-030                 | done   | Drag to reorder; ID from name        |
 | CW-032 | Question bank page (list, add/edit, verify)                                   | admin | 1.5d | CW-030                 | done   | "Mark as checked" = verify           |
 | CW-033 | Puzzle builder (grid editor + live validation)                                | admin | 3d   | CW-030, CW-014         | done   | Dart port of the validator           |
 | CW-034 | Puzzle preview, status workflow, schedule calendar                            | admin | 1d   | CW-033                 | done   | 30-day calendar, IST times           |
-| CW-035 | Reports page                                                                  | admin | 0.5d | CW-030                 | done   | + `adminGetQuestion`; deploy pending |
+| CW-035 | Reports page                                                                  | admin | 0.5d | CW-030                 | done   | + `adminGetQuestion`; deployed 2026-10-25 |
 | CW-036 | Import questions / puzzles from JSON                                          | admin | 1d   | CW-032, CW-033         | done   | + CSV for questions                  |
 
 
@@ -112,23 +113,23 @@ This file is the single source of truth for project work. The **status board** b
 | ID     | Task                                                   | Area       | Est  | Depends        | Status  | Notes                           |
 | ------ | ------------------------------------------------------ | ---------- | ---- | -------------- | ------- | ------------------------------- |
 | CW-040 | Domain entities                                        | app        | 1d   | CW-009         | done    | + `Paged`, `PuzzleSession`, `ContentReport` |
-| CW-041 | Models, data sources, `CrosswordRepository`            | app        | 1.5d | CW-040, CW-004 | done    | Progress cached per session; JSON fixtures |
-| CW-042 | Use cases + DI registration                            | app        | 0.5d | CW-041         | done    | + category, leaderboard, change-stream use cases |
+| CW-041 | Models, data sources, `CrosswordRepository`            | app        | 1.5d | CW-040, CW-004 | done    | One data source per module + shared progress cache (CW-058); JSON fixtures |
+| CW-042 | Use cases + DI registration                            | app        | 0.5d | CW-041         | done    | + category, leaderboard, change-stream use cases; `initCrossword(getIt)` |
 | CW-043 | Grid engine (pure Dart) + unit tests                   | app        | 2d   | CW-040, CW-014 | done    | 98.8% line coverage |
 | CW-044 | Crossword Home page                                    | app        | 1.5d | CW-042, CW-006 | done    | Daily word game is a card under it |
-| CW-045 | Category puzzle list (paged)                           | app        | 1d   | CW-042         | done    | Marks from cached progress (no reads) |
+| CW-045 | Category puzzle list (paged)                           | app        | 1d   | CW-042         | done    | Marks: one `whereIn` read per page, then session cache |
 | CW-046 | Puzzle screen (grid, clue bar, chips, keyboard, timer) | app        | 3d   | CW-043         | done    | Hardware keys too; 360 px widget test |
-| CW-047 | Progress autosave (pause / leave / 30 s)               | app        | 0.5d | CW-046         | done    | ≤ 1 write / 30 s (bloc test) |
+| CW-047 | Progress autosave (pause / leave / 30 s)               | app        | 0.5d | CW-046         | done    | ≤ 1 write / 30 s (bloc test); leave doesn't wait for the write |
 | CW-048 | Hints sheet (free clue + per-puzzle reveals)           | app        | 1d   | CW-046         | done    | Reveals kept on device for submit |
 | CW-049 | Submit + Results page                                  | app        | 1.5d | CW-046, CW-019 | done    | Share = copy text (no new package) |
 | CW-050 | My mistakes / Revise list                              | app        | 1d   | CW-049         | done    | Revise tab; refreshes after submit |
 | CW-051 | Crossword weekly leaderboard page                      | app        | 1d   | CW-021         | done    | Ranks tab; own rank via `count()` |
 | CW-052 | "Report a wrong answer" flow                           | app        | 0.5d | CW-046         | done    | Clue bar ⋯ / long press + header menu |
-| CW-053 | Analytics (package + service + events)                 | app        | 1d   | CW-046         | blocked | not planned                     |
+| CW-053 | Analytics (package + service + events)                 | app        | 1d   | CW-046         | not-needed | No analytics in phase 1; revisit before launch (M5) if usage data is wanted |
 | CW-054 | Routing + entry points                                 | app        | 0.5d | CW-006, CW-044 | done    | Play tab stays `/home` |
-| CW-055 | Player profile doc `users/{uid}` on sign-in            | app, rules | 0.5d | CW-010         | done    | After sign-in + every app start |
-| CW-056 | Home: offline banner + Remote Config feature gate      | app        | 0.5d | CW-044         | todo    | In the spec, not built in M3 |
-| CW-057 | Server-kept `crossword.solvedByCategory` summary       | functions, app | 0.5d | CW-019, CW-044 | todo    | Replaces Home's progress scan |
+| CW-055 | Player profile doc `users/{uid}` on sign-in            | app, rules | 0.5d | CW-010         | done    | Transaction create/update, not awaited; after sign-in + every app start |
+| CW-056 | Home: offline banner + Remote Config feature gate      | app        | 0.5d | CW-044         | todo    | In the Home spec; not built in M3 — next up |
+| CW-057 | Server-kept `crossword.solvedByCategory` summary       | functions, app | 0.5d | CW-019, CW-044 | not-needed | Home already uses 1 `count()` per category, cached per session (~5 reads); revisit at ~20+ categories |
 | CW-058 | Module restructure + code-review fixes                 | app, admin | 1d   | CW-040…CW-055  | done    | One folder per module; `check_structure.py` |
 
 
@@ -197,8 +198,8 @@ This file is the single source of truth for project work. The **status board** b
 | DEC-004 | Answer alphabet                | Accepted     | Phase 1 answers are English A–Z only; Malayalam crossword is NEXT-002.                                                                                                                                                                                                                                                                                                                                                                                                        |
 | DEC-005 | Bloc style for new code        | Accepted     | `sealed class` events/states in one bloc file. Existing freezed blocs (`auth`, `game`) stay as they are.                                                                                                                                                                                                                                                                                                                                                                      |
 | DEC-006 | Player root document           | Accepted     | `users/{uid}` (already in `FirebaseCollections`) replaces `userGameStates/{uid}` from the `development` design.                                                                                                                                                                                                                                                                                                                                                               |
-| DEC-007 | App home                       | **Accepted** | Recommended: Crossword Home becomes the start screen (bottom nav: Play · Revise · Ranks · Profile); today's daily word game moves to a card on Home. Today `/game` is the start route.                                                                                                                                                                                                                                                                                        |
-| DEC-008 | Hints in phase 1               | Proposed     | No ads or purchases at launch: "Show a clue" is free; each puzzle allows 3 reveals (letter = 1, word = 3) with XP penalties. Monetization is NEXT-005/006.                                                                                                                                                                                                                                                                                                                    |
+| DEC-007 | App home                       | **Accepted** | Crossword Home is the start screen: the Play tab (`/home`) of the bottom nav Play · Revise · Ranks · Profile; the daily word game is a card on Home (`/game`). Built in CW-044 / CW-054.                                                                                                                                                                                                                                                                                        |
+| DEC-008 | Hints in phase 1               | Accepted     | Built in CW-048. No ads or purchases at launch: "Show a clue" is free; each puzzle allows 3 reveals (letter = 1, word = 3) with XP penalties. Monetization is NEXT-005/006.                                                                                                                                                                                                                                                                                                                    |
 | DEC-009 | Firebase region                | Accepted     | `asia-south1` **(Mumbai)** for Firestore and Functions in every environment. Dev's `(default)` DB (first made in `nam5`) is recreated in CW-008.                                                                                                                                                                                                                                                                                                                              |
 | DEC-011 | Crossword scoring rules        | Accepted     | `score` = % of words correct. XP = round(`xpReward` × correct ÷ total) − 5/letter reveal − 15/word reveal, min 0 (scaled so an empty grid earns nothing). Revealed words count as wrong. `played` = completed puzzles; `solved` = all words correct; streak = consecutive IST days with a completed puzzle (`lastSolvedDate` = last such day); `bestTimeSec` from solved puzzles only. Weekly `points` = sum of `xpEarned`; `puzzlesSolved` on the board = completed puzzles. |
 | DEC-010 | Cloud Functions language       | Accepted     | **Python 3.12** (`firebase-functions` Python SDK, ruff, pytest) instead of TypeScript. Code under `functions/` with `main.py` as the entry point. Rules tests are not covered by a Python library — CW-010 chooses the harness.                                                                                                                                                                                                                                               |
@@ -495,7 +496,7 @@ The admin panel can't read content directly: rules deny `pscQuestions` and `cros
 
 Done when:
 
-- [x] Admin can page questions and open a puzzle with its answers; players are refused — emulator tests in `admin_reads_test.py`; deploy (functions + indexes) still to do
+- [x] Admin can page questions and open a puzzle with its answers; players are refused — emulator tests in `admin_reads_test.py`; functions + indexes deployed (all 16 functions live, checked 2026-10-25)
 
 
 
@@ -507,7 +508,7 @@ Done when:
 
 Done when:
 
-- [ ] Changing `crossword_hint_penalties` changes server XP; fallback tested — unit tests cover template → XP, cache refresh and fallback; live check on dev after deploy
+- [ ] Changing `crossword_hint_penalties` changes server XP; fallback tested — unit tests cover template → XP, cache refresh and fallback; function deployed. The live check on dev (change the RC value, submit, compare XP) was never run → added to CW-071
 
 
 
@@ -519,18 +520,18 @@ Done when:
 
 psc-dev has no web target. Add it (`fvm flutter create --platforms web .`, then `flutterfire configure` for a web app in `kerala-pcs-dev`). Port from `development`: `lib/main_admin.dart` (entry), `lib/app/bootstrap_admin.dart`, `lib/di_admin.dart`, `lib/core/routes/admin_router.dart`, `features/admin/data/admin_auth_service.dart` (Google sign-in + `admin` claim check), `admin_shell_page.dart`, `admin_login_page.dart`, and an `AdminApiService` with a `_call(name, data)` helper using `FirebaseFunctions.instanceFor(region: 'asia-south1')`. Drop the database switcher (DEC-002); show the project id as an environment badge.
 
-**Done (branch** `module/m2`**):** web target added; Firebase web app `wordshool (web)` created in `kerala-pcs-dev` with the Firebase CLI (no FlutterFire CLI here) and added to `firebase_options.dart`. Sign-in is a Google popup (`signInWithPopup`, no `google_sign_in` on web); `AdminAuthService` is a `ChangeNotifier` the router listens to, so a non-admin is signed out and stays on `/login`. Sections: Home, Categories, Questions, Puzzles, Daily schedule, Reports, Bulk upload. Env badge shows `TEST · kerala-pcs-dev` (any non `-dev` project shows `LIVE` in red). Pages are `StatefulWidget`s that call `AdminApiService` directly (as on `development`); pure logic lives in `features/admin/domain/utils/` with tests.
+**Done (branch** `module/m2`**):** web target added; Firebase web app `wordshool (web)` created in `kerala-pcs-dev` with the Firebase CLI (no FlutterFire CLI here) and added to `firebase_options.dart`. Sign-in is a Google popup (`signInWithPopup`, no `google_sign_in` on web); `AdminAuthService` is a `ChangeNotifier` the router listens to, so a non-admin is signed out and stays on `/login`. Sections: Home, Categories, Questions, Puzzles, Daily schedule, Reports, Bulk upload. Env badge shows `TEST · kerala-pcs-dev` (any non `-dev` project shows `LIVE` in red). Pages are `StatefulWidget`s that call `AdminApiService` directly (as on `development`); pure logic lives in `features/admin/domain/utils/` with tests. *(CW-058 split this into modules: `AdminApiService` became `admin/shared/data/data_source/*_service.dart` + `callable.dart`; pages live in `admin/<section>/presentation/pages/`.)*
 
 Done when:
 
 - [x] `fvm flutter run -t lib/main_admin.dart -d chrome` → non-admin is refused, admin reaches the shell — redirect logic unit-tested; signed in during review (2026-10-25)
-- [x] The mobile app build is unaffected — web-only code sits behind conditional imports (`presentation/utils/text_file.dart`)
+- [x] The mobile app build is unaffected — web-only code sits behind conditional imports (now `admin/bulk_upload/presentation/utils/text_file.dart`)
 
 
 
 #### CW-030 · `AdminApiService` crossword methods
 
-Typed methods for every crossword callable; models in `lib/features/admin/domain/models/`.
+Typed methods for every crossword callable; models in `lib/features/admin/domain/models/` (now `admin/shared/domain/models/`, CW-058).
 
 **Done:** every method returns `DataState<T>`; `listAllQuestions` pages at 100 for import matching and the builder. `crosswordDaily` docs are read straight from Firestore (players may read them; one `get()` per day) instead of a new callable. `LocalizedText` added in `lib/shared/domains/entities/` (CW-040 reuses it); `toJson` leaves out empty optional text because the server rejects e.g. an empty `topic`. Errors: `showAdminError` shows the server message in a snackbar, with "See all" when the server lists several problems.
 
@@ -556,7 +557,7 @@ Filter by subject + status; add/edit form (answer, display EN/ML, clues, fact, e
 
 Grid editor (up to 15×15), place a verified question across/down at a cell, auto-numbering, crossing conflicts highlighted, validator errors listed live (port of CW-013 in Dart, or a `dryRun` flag on `adminSaveCrosswordPuzzle`).
 
-**Done:** validator ported to Dart (`domain/utils/grid_validator.dart`, same checks as CW-013 and the same test cases; messages written for people, rows/columns from 1, with the cells to highlight). The admin never draws black squares: they place **checked** questions and `PuzzleDraft` works out the layout, numbering and word ids (unused squares become blocks). Picking a question shows suggested spots that cross existing words on a matching letter without touching others; tapping a square places it there instead. Selected word: edit the clue (or pick one of the question's clues), extra hint, remove. Grid size 3–15, "Fit to words", Clear, Undo. Problems are listed live and cells turn red; Save stays disabled ("Fix N to save") until the grid, details and question checks are clean. Also: the Puzzles list page (category chips, status filter, paging). `/puzzles/:id` opens the builder until CW-034 adds the preview page.
+**Done:** validator ported to Dart (`admin/shared/domain/utils/grid_validator.dart` since CW-058, same checks as CW-013 and the same test cases; messages written for people, rows/columns from 1, with the cells to highlight). The admin never draws black squares: they place **checked** questions and `PuzzleDraft` works out the layout, numbering and word ids (unused squares become blocks). Picking a question shows suggested spots that cross existing words on a matching letter without touching others; tapping a square places it there instead. Selected word: edit the clue (or pick one of the question's clues), extra hint, remove. Grid size 3–15, "Fit to words", Clear, Undo. Problems are listed live and cells turn red; Save stays disabled ("Fix N to save") until the grid, details and question checks are clean. Also: the Puzzles list page (category chips, status filter, paging). `/puzzles/:id` opens the builder until CW-034 adds the preview page.
 
 Done when:
 
@@ -575,13 +576,13 @@ Preview renders the puzzle as the player sees it; buttons for each allowed statu
 
 Open reports with links to the puzzle/question; resolve with note.
 
-**Done:** Open / Fixed / Rejected tabs, paging. "Open puzzle" goes to the puzzle page with the reported word highlighted (`?word=2D`); "Open question" opens the question editor. There was no way to read one question, so a new admin callable `adminGetQuestion({id})` was added (`crossword/admin_reads.py`, emulator tests, design doc). "Mark fixed" / "Reject" ask for an optional note. **Deploy:** `firebase deploy --only functions:adminGetQuestion --project kerala-pcs-dev` (run by the user at M2 close, 2026-10-25).
+**Done:** Open / Fixed / Rejected tabs, paging. "Open puzzle" goes to the puzzle page with the reported word highlighted (`?word=2D`); "Open question" opens the question editor. There was no way to read one question, so a new admin callable `adminGetQuestion({id})` was added (`crossword/admin_reads.py`, emulator tests, design doc). "Mark fixed" / "Reject" ask for an optional note. **Deployed** 2026-10-25 (`firebase functions:list` shows it live).
 
 #### CW-036 · Import from JSON
 
 Upload a `content/questions/*.json` or `content/puzzles/*.json` file (shapes in `.claude/skills/crossword-content/examples/`). Show a preview with validation errors, then call `adminSaveQuestion` / `adminSaveCrosswordPuzzle` per item. `draftNotes` is dropped; imported questions stay `draft`.
 
-**Done:** "Bulk upload" page (`/bulk-upload`). Questions come from a CSV spreadsheet (downloadable template, UTF-8 with BOM so Excel shows Malayalam; cells pasted from Google Sheets also work) or JSON; puzzles from JSON. Every row is checked like the server does and shown as New / Update / No change / Error before anything is saved; rows with errors are skipped. Questions match on `subject` + `answer` (an identical one is left alone, so checked questions stay checked). Puzzle words with a `TODO` question id are linked to a checked question by answer; puzzles match on `id`, then on title in the category, and only drafts are overwritten. Pure logic in `domain/utils/{bulk_import,csv}.dart` with tests; browser file open/save in `presentation/utils/text_file*.dart` (package `web`). Status filters on Questions, Puzzles and Reports now use a shared `FilterChips` widget.
+**Done:** "Bulk upload" page (`/bulk-upload`). Questions come from a CSV spreadsheet (downloadable template, UTF-8 with BOM so Excel shows Malayalam; cells pasted from Google Sheets also work) or JSON; puzzles from JSON. Every row is checked like the server does and shown as New / Update / No change / Error before anything is saved; rows with errors are skipped. Questions match on `subject` + `answer` (an identical one is left alone, so checked questions stay checked). Puzzle words with a `TODO` question id are linked to a checked question by answer; puzzles match on `id`, then on title in the category, and only drafts are overwritten. Pure logic in `admin/bulk_upload/domain/utils/{bulk_import,csv}.dart` with tests; browser file open/save in `admin/bulk_upload/presentation/utils/text_file*.dart` (package `web`) — paths since CW-058. Status filters on Questions, Puzzles and Reports now use a shared `FilterChips` widget.
 
 Done when:
 
@@ -600,7 +601,7 @@ Done when:
 
 Done when:
 
-**Done:** 10 entities in `lib/features/crossword/domain/entities/` (+ `Paged<T>`, `PuzzleSessionEntity`, `ContentReportEntity`, `CrosswordHomeEntity`); enums carry their wire value (`CrosswordDirection`, `CrosswordDifficulty`, `CrosswordProgressStatus`, `ReportReason`). `LocalizedText` was already shared (CW-030). Written by hand to the skill's conventions (the scaffold script can't express nested fields).
+**Done:** 10 entities (+ `Paged<T>` in `lib/shared/domains/entities/`, `PuzzleSessionEntity`, `ContentReportEntity`, `CrosswordHomeEntity`). Since CW-058 they live in each module's `domain/entities/`; the ones 2+ modules use (category, puzzle, word, progress, result, `ResultArgs`, change) in `crossword/shared/domain/entities/`; enums carry their wire value (`CrosswordDirection`, `CrosswordDifficulty`, `CrosswordProgressStatus`, `ReportReason`). `LocalizedText` was already shared (CW-030). Written by hand to the skill's conventions (the scaffold script can't express nested fields).
 
 - [x] Same layering as the `flutter-feature` skill; no Firebase imports in domain
 
@@ -612,10 +613,10 @@ Models (`fromJson/toJson`, `documentId` param), `CrosswordContentDataSource` (da
 
 Done when:
 
-**Done:** three data sources (`CrosswordContentDataSource`, `CrosswordProgressDataSource`, `CrosswordPlayerDataSource` for profile/revision/leaderboard/reports) + `CrosswordLocalDataSource` (SharedPreferences: revealed squares, which the rules keep off the progress doc). Every method goes through `guardData()` (`lib/core/resorces/data_guard.dart`): catches, logs, returns `DataError` with a player-readable message. The repository reads progress once per session and keeps it up to date (Home, category marks), and fires `changes` after a submit so Home/Revise/Ranks refresh without listeners. Fixtures in `test/fixtures/crossword/` (puzzle encoded with the server's encoder).
+**Done:** one data source per module since CW-058 — `HomeDataSource`, `CategoryDataSource`, `PuzzleDataSource` (load + `submitCrossword`), `RevealsDataSource` (SharedPreferences: revealed squares, which the rules keep off the progress doc), `ReportDataSource`, `ReviseDataSource`, `LeaderboardDataSource`, and the shared `ProgressDataSource` with `CrosswordProgressRepository` (session cache) and `CrosswordChangesRepository`. Every method goes through `guardData()` (`lib/core/resorces/data_guard.dart`): catches, logs, returns `DataError` with a player-readable message. The progress repository reads progress once per session and keeps it up to date (Home, category marks); the changes repository fires after a submit so Home/Revise/Ranks refresh without listeners. Writes the player waits on use `awaitServerAck()` (5 s). Fixtures in `test/fixtures/crossword/` (puzzle encoded with the server's encoder).
 
 - [x] Queries include `isActive == true` / `status == 'published'` (rules require it)
-- [x] Model tests with real-shaped JSON fixtures — `crossword_models_test.dart`, `crossword_repository_impl_test.dart`
+- [x] Model tests with real-shaped JSON fixtures — `test/features/crossword/*/data/models/*_test.dart` and `*/data/repositories/*_test.dart`
 
 
 
@@ -623,11 +624,11 @@ Done when:
 
 `LoadCrosswordHomeUseCase`, `LoadCategoryPuzzlesUseCase`, `LoadPuzzleUseCase`, `SaveCrosswordProgressUseCase`, `SubmitCrosswordUseCase`, `LoadRevisionItemsUseCase`, `SetRevisionMasteredUseCase`, `ReportContentUseCase`. Register in `di.dart` → `_initializeCrossword()`.
 
-**Done:** the eight above + `LoadCrosswordCategoryUseCase` (deep links), `LoadCrosswordProgressUseCase`, `LoadLeaderboardUseCase`, `WatchCrosswordChangesUseCase`; params in `usecases/utils/crossword_params.dart`. `di.dart` now registers `FirebaseFirestore` and `FirebaseFunctions` (asia-south1) once in `_initializeFirebase()`.
+**Done:** the eight above + `LoadCrosswordCategoryUseCase` (deep links), `LoadPuzzleMarksUseCase` / `CountCompletedUseCase` (category), `LoadHomeProgressUseCase` / `CountRevisionItemsUseCase` (home), `LoadLeaderboardUseCase`, `WatchCrosswordChangesUseCase`; one param class per file in each module's `usecases/utils/`. Each module has `di.dart` (`init<Module>`), called from `crossword/di.dart` → `initCrossword(getIt)`. `lib/di.dart` registers `FirebaseFirestore` and `FirebaseFunctions` (asia-south1) once in `_initializeFirebase()`.
 
 #### CW-043 · Grid engine
 
-Pure Dart in `lib/features/crossword/domain/utils/crossword_grid.dart`: parse layout, cell→word lookup, next/prev cell, tap-twice direction toggle, backspace behaviour, check (per-cell correct/wrong), reveal letter/word, `isSolved`. Uses decoded answers.
+Pure Dart in `lib/features/crossword/domain/utils/crossword_grid.dart` (now `crossword/puzzle/domain/utils/grid.dart`): parse layout, cell→word lookup, next/prev cell, tap-twice direction toggle, backspace behaviour, check (per-cell correct/wrong), reveal letter/word, `isSolved`. Uses decoded answers.
 
 Done when:
 
@@ -641,13 +642,13 @@ Done when:
 
 Matches `design/screens/psc-crossword.md#1-home`: daily card, categories grid with progress, streak chip, EN/ML toggle (EN only in phase 1). Reuse `GameScaffold`, `AppButton`, `FadeSlideIn`.
 
-**Done:** `CrosswordHomeView` inside the Play tab's `HomePage` (the daily word game stays as a "More games" card below). Daily card states: new / continue (`4 / 31`) / view result (`· 71%`) / "on its way"; categories in a 2-column grid with `played / published` and a bar; 6th tile "My mistakes" (count). Skeletons while loading, pull to refresh, error + retry. Offline banner and feature gate → CW-056.
+**Done:** Crossword Home is the Play tab's page (`crossword/home/presentation/pages/home_page.dart`; the old placeholder `features/home` was removed in CW-054). The daily word game stays as a "More games" card below. Daily card states: new / continue (`4 / 31`) / view result (`· 71%`) / "on its way"; categories in a 2-column grid with `played / published` and a bar; 6th tile "My mistakes" (count). Skeletons while loading, pull to refresh, error + retry. Offline banner and feature gate → CW-056.
 
 #### CW-045 · Category list
 
 Paged list (20), puzzle number, title, difficulty, solved state from progress.
 
-**Done:** `/crossword/category/:id` (category passed from Home, loaded on deep link); loads the next page near the end of the list; marks New / In progress / Done · score; marks refresh from the cached progress when returning from a puzzle.
+**Done:** `/crossword/category/:id` (category passed from Home, loaded on deep link); loads the next page near the end of the list; marks New / In progress / Done · score; marks come from one `whereIn` progress read per page and refresh from the session cache when returning from a puzzle.
 
 #### CW-046 · Puzzle screen
 
@@ -657,8 +658,8 @@ Done when:
 
 **Done:** header (back, title, `Puzzle 12 · Medium`, timer, hints badge, menu: Report / Finish), letters-filled row + check status, `CrosswordBoard`, `ClueBar` (prev/next, ⋯), `ClueChips`, solved/complete banner, `CrosswordKeyboard` (CHECK + letters + delete, 52 high). A hardware keyboard works too (letters, Backspace, Enter = Check, Tab = next word). Cells have screen-reader labels (position, letter, right/not right, revealed).
 
-- [x] Works on 360 px wide screens; touch targets ≥ 44 px — `crossword_screens_test.dart` runs every screen at 360 × 740 (the test font is wider than real fonts, so it also covers large text)
-- [x] Widget test for the active-word highlight — `crossword_widgets_test.dart`
+- [x] Works on 360 px wide screens; touch targets ≥ 44 px — `test/features/crossword/screens_test.dart` runs every screen at 360 × 740 (the test font is wider than real fonts, so it also covers large text)
+- [x] Widget test for the active-word highlight — `puzzle/presentation/widgets/puzzle_widgets_test.dart`
 
 
 
@@ -668,7 +669,7 @@ Save on `AppLifecycleState.paused`, on route pop, and every `crossword_autosave_
 
 Done when:
 
-**Done:** in `PuzzleBloc`: saves when changed every `crossword_autosave_seconds`, on pause (also stops the timer), and before leaving (the page awaits `saveNow()` before it pops). A puzzle that was only looked at gets no progress doc. Each write logs `progress saved … (create|update)` under `CROSSWORD_AUTOSAVE`.
+**Done:** in `PuzzleBloc`: saves when changed every `crossword_autosave_seconds`, on pause (also stops the timer), and on leaving (`saveNow()` is started, not awaited: the route pops at once and the bloc's save queue finishes the write; Firestore keeps it offline). A puzzle that was only looked at gets no progress doc. Each write logs `progress saved … (create|update)` under `CROSSWORD_AUTOSAVE`.
 
 - [x] Log shows ≤ 1 write per 30 s during continuous typing — `puzzle_bloc_test.dart`: 65 s of typing → 2 writes; also check the log on a device (QA doc)
 
@@ -690,13 +691,13 @@ Matches `#4-results`. Calls `submitCrossword`, shows score, time, correct/total,
 
 List `revisionItems` where `mastered == false` newest first; button to mark as learned. Lives in the Revise tab (CW-006).
 
-**Done:** `ReviseView` in the Revise tab: answer tiles, clue, fact, subject chip, "Missed N times", "Mark as learned"; pages of 20; empty state; reloads after a submit.
+**Done:** `RevisePage` (`crossword/revise/`) is the Revise tab: answer tiles, clue, fact, subject chip, "Missed N times", "Mark as learned"; pages of 20; empty state; reloads after a submit.
 
 #### CW-051 · Crossword leaderboard page
 
 Ranks tab: read `leaderboards/crossword-{isoWeek}` `top50`; own rank via `count()` query; own row pinned at the bottom.
 
-**Done:** `LeaderboardView` in the Ranks tab; board id from the IST ISO week (`istIsoWeekId`, twin of `functions/utils/iso_week_id.py`); empty state; reloads after a submit.
+**Done:** `LeaderboardPage` (`crossword/leaderboard/`) is the Ranks tab; board id from the IST ISO week (`istIsoWeekId`, twin of `functions/utils/iso_week_id.py`); empty state; reloads after a submit.
 
 #### CW-052 · Report a wrong answer
 
@@ -707,6 +708,8 @@ From the clue bar menu: reason + optional message → `contentReports`.
 #### CW-053 · Analytics
 
 Add `firebase_analytics`; create `lib/core/analytics/analytics_service.dart` + `analytics_events.dart` (pattern from `development`). Events: `crossword_open`, `crossword_start`, `crossword_hint` (type), `crossword_check`, `crossword_submit` (score, time), `crossword_report`.
+
+**Not needed (2026-10-25):** started in M3, then taken out again — phase 1 ships without analytics (no package, no events). Revisit before launch (M5) if usage data is wanted; it would be a new task.
 
 #### CW-054 · Routing + entry points
 
@@ -720,7 +723,7 @@ After sign-in (Google or guest), create/merge `users/{uid}` with `displayName` (
 
 Done when:
 
-**Done:** `SavePlayerProfileUseCase` (auth feature): `AuthBloc` calls it after sign-in and `main.dart` on every start of a signed-in app. Gets the doc first, then `update`s (doc made by `submitCrossword`) or `set`s with `createdAt`. Guest name `Guest 1234` from the uid (stable).
+**Done:** `SavePlayerProfileUseCase` (auth feature): `AuthBloc` calls it after sign-in and `main.dart` on every start of a signed-in app, both `unawaited` so sign-in never waits on it. A transaction reads the doc, then `update`s (doc made by `submitCrossword`) or `set`s with `createdAt`, so a doc created in between retries as an update instead of a create the rules reject. Guest name `Guest 1234` from the uid (stable).
 
 - [x] New and returning users get a valid doc — only the rules' keys are written; a write including `xp` is rejected by rules (`firestore.rules.test.js` → "player cannot set own xp"). Check once on a device (QA doc)
 
@@ -737,6 +740,8 @@ Done when:
 #### CW-057 · Solved-by-category summary
 
 Home reads every progress doc once per session to count solved puzzles per category. Keep `users/{uid}.crossword.solvedByCategory` in `submitCrossword` instead, and read it from the profile doc.
+
+**Not needed (2026-10-25):** the premise is wrong — Home doesn't read the progress docs. It runs one `count()` per category (1 read each per 1,000 matches), cached per session and bumped locally after a submit: about 5 reads per session with 5 categories. A server-kept summary would add a schema change, `submitCrossword` work, a backfill and a deploy to save those few reads. Revisit at ~20+ categories or if the Firebase bill shows these counts.
 
 Done when:
 
@@ -784,7 +789,7 @@ GitHub Actions on PRs to `psc-dev`: `fvm flutter analyze`, `fvm flutter test`, `
 
 #### CW-071 · Manual test scenarios
 
-`docs/qa/crossword-manual-tests.md`: sign-in paths, offline play, autosave/resume, submit twice, hints, report, leaderboard week rollover.
+`docs/qa/crossword-manual-tests.md`: sign-in paths, offline play, autosave/resume, submit twice, hints, report, leaderboard week rollover, and the CW-026 live check (change `crossword_hint_penalties` in Remote Config, submit with a reveal, XP uses the new penalty).
 
 #### CW-072 · App Check
 

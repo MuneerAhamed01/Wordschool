@@ -11,26 +11,25 @@
 
 | Milestone | Target | State | Done / total |
 | --- | --- | --- | --- |
-| M0 Foundations | 2026-11-04 | **closed** | 9 / 9 |
-| M1 Backend: rules, indexes, functions | 2026-11-18 | **closed** | 17 / 17 (CW-010 … CW-026) |
+| M0 Foundations | 2026-11-04 | **closed 2026-10-23** | 9 / 9 |
+| M1 Backend: rules, indexes, functions | 2026-11-18 | **closed 2026-10-23** | 17 / 17 (CW-010 … CW-026; CW-026 live check → CW-071) |
 | M2 Admin panel (Flutter web) | 2026-12-04 | **closed 2026-10-25** | 8 / 8 (CW-029 … CW-036) |
-| M3 Player app | 2026-12-24 | **closed 2026-10-25** | 16 / 19 done (CW-040 … CW-052, CW-054, CW-055, CW-058) · CW-053 `blocked` (not planned) · CW-056/057 `todo` follow-ups |
+| M3 Player app | 2026-12-24 | **closed 2026-10-25** | 16 / 19 done (CW-040 … CW-052, CW-054, CW-055, CW-058) · CW-053, CW-057 `not-needed` · CW-056 `todo` (follow-up) |
 | M4 Content | 2026-12-31 | not started (runs in parallel) | 0 / 4 (CW-060 … CW-063) |
 | M5 QA & launch | 2027-01-15 | not started | 1 / 7 (CW-073 dropped into CW-008) |
 
-**In review:** nothing. M3 merged into `psc-dev` and pushed 2026-10-25 (QA: `docs/qa/M3-manual-test.md`). **Blocked:** CW-053 analytics (not planned).
+**In review:** nothing. M3 merged into `psc-dev` and pushed 2026-10-25 (QA: `docs/qa/M3-manual-test.md`). **Blocked:** nothing. **Not needed:** CW-053 analytics, CW-057 solved-by-category summary (reasons on the cards).
 
 ## Next up (unblocked `todo`, lowest milestone first)
 
 | ID | Task | Est | Why it's unblocked |
 | --- | --- | --- | --- |
 | CW-056 | Home: offline banner + Remote Config feature gate | 0.5d | Needs CW-044 (done) |
-| CW-057 | Server-kept `crossword.solvedByCategory` summary | 0.5d | Needs CW-019, CW-044 (done) |
 | CW-060 | Seed 5 categories (content) | 0.25d | Needs CW-031 (done) — use the admin panel |
 | CW-061 | 150 verified questions | ongoing | Needs CW-032 (done) — CSV bulk upload is ready (CW-036) |
 | CW-070 | CI: analyze, tests, lint, rules tests | 1d | Needs CW-009, CW-010 (done) |
 
-CW-056 / CW-057 are M3 follow-ups left `todo` when M3 closed; CW-057 changes `submitCrossword` (needs a functions deploy).
+CW-056 is the one M3 follow-up left `todo` when M3 closed.
 
 ## Deployed on `kerala-pcs-dev`
 
