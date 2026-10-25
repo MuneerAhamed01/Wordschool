@@ -104,6 +104,7 @@ This file is the single source of truth for project work. The **status board** b
 | CW-035 | Reports page                                                                  | admin | 0.5d | CW-030                 | done   | + `adminGetQuestion`; deployed 2026-10-25 |
 | CW-036 | Import questions / puzzles from JSON                                          | admin | 1d   | CW-032, CW-033         | done   | + CSV for questions                  |
 | CW-037 | Admin login with email + password (replaces Google popup)                     | admin, ops | 0.5d | CW-029, CW-024     | review | Enable Email/Password in Firebase Auth; set password with `set_admin_claim.py --password` |
+| CW-038 | Auto-create puzzle from checked questions                                     | admin | 1.5d | CW-033, CW-036         | review | Pure client generator; opens unsaved in the builder; no deploy |
 
 
 
@@ -608,6 +609,26 @@ Done when:
 - [x] Login page signs in with email + password; non-admin refused; reset link request shows a notice — helpers unit-tested (`test/features/admin/shared/domain/utils/sign_in_errors_test.dart`); `scripts/check.sh` green (221 tests)
 - [x] `set_admin_claim.py --password` creates / updates the account — `password_problem` tested; ruff + pytest green
 - [ ] Ops (user): enable **Email/Password** in Firebase Console → Authentication → Sign-in method for `kerala-pcs-dev`, run `venv/bin/python -m scripts.set_admin_claim muneerahamed.dev@gmail.com --password`, then sign in at `fvm flutter run -t lib/main_admin.dart -d chrome`
+
+
+#### CW-038 · Auto-create puzzle from checked questions
+
+An **"Auto-create puzzle"** button on the Questions page and on each Categories row builds a crossword from the category's **checked** (`verified`) questions and opens it in the puzzle builder, pre-filled and **unsaved**; the admin reviews, edits and saves as usual. Nothing is saved, verified or published automatically, and no clue, fact or answer is changed. Pure client logic (`admin/puzzles/domain/utils/auto_puzzle.dart`) that places words only through `PuzzleDraft.suggestions` and keeps a result only when `draft.problems` is empty; the server re-checks on save. No function, rules, index or schema change, no deploy.
+
+- Route `AdminRoutes.autoPuzzle(categoryId)` → `/puzzles/new?category=<id>&auto=1` (+ `size`, `words`, `difficulty`).
+- Builder card: "Auto-created: N words, M crossings from K checked questions…" + "Try another" (next seed, undoable) + "Options" (size, words, difficulty, prefer unused). Not enough questions → message + link to Questions for that subject.
+- Categories: ✨ row action. Questions: "Auto-create puzzle" header button → dialog (category, size, words, difficulty). Neither imports the puzzles module.
+
+Done when:
+
+- [x] `auto_puzzle_test.dart`: the 7 answers of the example puzzle → grid with no problems, ≥ 5 words, connected; same seed → same grid; different seed can differ; only verified; no question twice; nothing longer than `size`; difficulty filter; `preferUnused`; < 2 crossable answers → `null`; 60 random sets × 3 sizes never produce a grid with problems
+- [x] Dart `grid_validator` and Python `validate_puzzle` agree on a generated grid — `test/fixtures/admin/auto_puzzle.puzzle.json` is checked by `auto_puzzle_test.dart` (must equal the generator's output for seed 1; `UPDATE_FIXTURES=1` rewrites it) and by `test_generated_puzzle_passes` in `validate_puzzle_test.py`
+- [x] Router test (`test/core/routes/admin_router_test.dart`, via `adminPuzzlesRoute()`): `/puzzles/new?category=x&auto=1` opens the builder with a filled grid and the auto card; Save enabled, and disabled again when the title is cleared; too few questions → message + link to `/questions?subject=`
+- [x] Widget tests: Categories row button (`categories_page_test.dart`) and Questions dialog (`questions_page_test.dart`) navigate to the right path — fake `AdminCallable` in `test/features/admin/admin_fakes.dart`
+- [ ] Manual (user): in dev, Categories → ✨ on a category with ≥ 8 checked questions → grid → "Try another" changes it → Save → draft puzzle in Puzzles; nothing published or verified
+- [x] `scripts/check.sh` green (240 tests); no file > 700 lines (builder page 453)
+
+**Done:** `autoPuzzle()` places words only through `PuzzleDraft.suggestions` and keeps an attempt only if `problems` is empty after `trimmed()`. With "prefer unused", an unused question that fits always goes in before a used one (stronger than a tie-break, so used questions only fill gaps). Each attempt samples at most 60 candidates, and `suggestions` now only tries starts that put a letter on a matching letter (same results, much faster), so a grid takes ~20 ms. The question → placement mapping moved to `placementFor()` in `puzzle_draft.dart`; the builder's `_place()` calls it. Questions page also takes `?subject=` (for the "Go to Questions" link). No packages, functions, rules, indexes or schema changed — nothing to deploy.
 
 
 

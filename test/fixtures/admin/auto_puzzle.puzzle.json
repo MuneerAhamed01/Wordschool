@@ -1,0 +1,94 @@
+{
+  "id": "kerala-history-auto",
+  "categoryId": "kerala-history",
+  "number": 1,
+  "title": {
+    "en": "Kerala History mix"
+  },
+  "difficulty": "medium",
+  "rows": 7,
+  "cols": 8,
+  "layout": "##......#####.#######.##.##.#.##.......#.##.#.###....###",
+  "xpReward": 50,
+  "estimatedMinutes": 6,
+  "words": [
+    {
+      "id": "1A",
+      "number": 1,
+      "direction": "across",
+      "row": 0,
+      "col": 2,
+      "length": 6,
+      "answer": "VAIKOM",
+      "clue": {
+        "en": "Easy clue for VAIKOM"
+      },
+      "questionId": "q-VAIKOM"
+    },
+    {
+      "id": "2D",
+      "number": 2,
+      "direction": "down",
+      "row": 0,
+      "col": 5,
+      "length": 6,
+      "answer": "KAPPAD",
+      "clue": {
+        "en": "Easy clue for KAPPAD"
+      },
+      "questionId": "q-KAPPAD"
+    },
+    {
+      "id": "3D",
+      "number": 3,
+      "direction": "down",
+      "row": 3,
+      "col": 0,
+      "length": 3,
+      "answer": "EMS",
+      "clue": {
+        "en": "Easy clue for EMS"
+      },
+      "questionId": "q-EMS"
+    },
+    {
+      "id": "4D",
+      "number": 4,
+      "direction": "down",
+      "row": 3,
+      "col": 3,
+      "length": 4,
+      "answer": "GAMA",
+      "clue": {
+        "en": "Easy clue for GAMA"
+      },
+      "questionId": "q-GAMA"
+    },
+    {
+      "id": "5A",
+      "number": 5,
+      "direction": "across",
+      "row": 4,
+      "col": 0,
+      "length": 7,
+      "answer": "MALABAR",
+      "clue": {
+        "en": "Easy clue for MALABAR"
+      },
+      "questionId": "q-MALABAR"
+    },
+    {
+      "id": "6A",
+      "number": 6,
+      "direction": "across",
+      "row": 6,
+      "col": 1,
+      "length": 4,
+      "answer": "ASAN",
+      "clue": {
+        "en": "Easy clue for ASAN"
+      },
+      "questionId": "q-ASAN"
+    }
+  ]
+}

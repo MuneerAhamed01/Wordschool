@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wordshool/features/admin/shared/presentation/widgets/empty_state.dart';
@@ -14,6 +16,7 @@ import 'package:wordshool/features/admin/shared/domain/models/enums.dart';
 import 'package:wordshool/features/admin/shared/domain/models/puzzle.dart';
 import 'package:wordshool/features/admin/shared/domain/models/question.dart';
 import 'package:wordshool/features/admin/shared/domain/utils/grid_validator.dart';
+import 'package:wordshool/features/admin/puzzles/domain/utils/auto_puzzle.dart';
 import 'package:wordshool/features/admin/puzzles/domain/utils/puzzle_draft.dart';
 import 'package:wordshool/features/admin/shared/domain/utils/question_text.dart';
 import 'package:wordshool/features/admin/shared/presentation/widgets/feedback.dart';
@@ -26,19 +29,27 @@ import 'package:wordshool/features/admin/puzzles/builder/presentation/widgets/pr
 import 'package:wordshool/features/admin/puzzles/builder/presentation/widgets/builder_panel.dart';
 import 'package:wordshool/features/admin/puzzles/builder/presentation/widgets/size_dropdown.dart';
 import 'package:wordshool/features/admin/puzzles/builder/presentation/widgets/grid_legend.dart';
+import 'package:wordshool/features/admin/puzzles/builder/presentation/widgets/auto_puzzle_card.dart';
+import 'package:wordshool/features/admin/puzzles/builder/presentation/widgets/auto_puzzle_options_dialog.dart';
 
+part 'puzzle_builder_auto.dart';
 part 'puzzle_builder_cards.dart';
 
 /// Builds or edits a crossword: pick checked questions, place them on the
 /// grid (suggested spots cross existing words), fix anything shown in red,
 /// then save. Black squares, numbers and word ids are worked out automatically.
+/// With [autoOptions] a new puzzle starts pre-filled (unsaved) from the
+/// category's checked questions.
 class AdminPuzzleBuilderPage extends StatefulWidget {
   const AdminPuzzleBuilderPage(
-      {super.key, this.puzzleId, this.initialCategoryId});
+      {super.key, this.puzzleId, this.initialCategoryId, this.autoOptions});
 
   /// Null for a new puzzle.
   final String? puzzleId;
   final String? initialCategoryId;
+
+  /// Set for `/puzzles/new?auto=1` (CW-038).
+  final AutoPuzzleOptions? autoOptions;
 
   @override
   State<AdminPuzzleBuilderPage> createState() => _AdminPuzzleBuilderPageState();
@@ -77,6 +88,12 @@ class _AdminPuzzleBuilderPageState extends State<AdminPuzzleBuilderPage> {
 
   bool _saving = false;
   bool _dirty = false;
+
+  // Auto-create (puzzle_builder_auto.dart); null options = not used.
+  AutoPuzzleOptions? _autoOptions;
+  AutoPuzzleResult? _autoResult;
+  int _autoChecked = 0;
+  int _autoFits = 0;
 
   bool get _isNew => widget.puzzleId == null;
 
@@ -143,6 +160,8 @@ class _AdminPuzzleBuilderPageState extends State<AdminPuzzleBuilderPage> {
             : (categories.isEmpty ? null : categories.first.id);
       }
     });
+    final auto = widget.autoOptions;
+    if (_isNew && auto != null) _autoFill(auto);
   }
 
   // ---------- Editing ----------
@@ -177,20 +196,7 @@ class _AdminPuzzleBuilderPageState extends State<AdminPuzzleBuilderPage> {
   void _place(int row, int col, WordDirection direction) {
     final question = _placing;
     if (question == null) return;
-    final clues = question.clues;
-    final first = question.firstClue;
-    final extra = clues.where((c) => c != first).firstOrNull;
-    final placement = Placement(
-      questionId: question.id!,
-      answer: question.answer,
-      row: row,
-      col: col,
-      direction: direction,
-      clue: LocalizedText(en: first?.en ?? '', ml: first?.ml),
-      extraClue:
-          extra == null ? null : LocalizedText(en: extra.en, ml: extra.ml),
-      fact: question.fact,
-    );
+    final placement = placementFor(question, row, col, direction);
     _placing = null;
     _change(_draft.add(placement), select: _draft.placements.length);
   }
@@ -362,6 +368,10 @@ class _AdminPuzzleBuilderPageState extends State<AdminPuzzleBuilderPage> {
     final left = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (_autoOptions != null) ...[
+          _buildAutoCard(),
+          const SizedBox(height: 16),
+        ],
         _buildGridCard(gridProblems),
         const SizedBox(height: 16),
         ProblemsCard(problems: allProblems),
