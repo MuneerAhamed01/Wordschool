@@ -1,0 +1,14 @@
+{
+  "id": "crossword-2026-W43",
+  "data": {
+    "top50": [
+      {"uid": "bob", "displayName": "Bob", "photoUrl": null, "points": 320, "puzzlesSolved": 8},
+      {"uid": "alice", "displayName": "Alice", "photoUrl": "https://example.com/a.png", "points": 210, "puzzlesSolved": 5}
+    ],
+    "updatedAt": "2026-10-22T03:15:00Z"
+  },
+  "entry": {
+    "id": "alice",
+    "data": {"displayName": "Alice", "photoUrl": "https://example.com/a.png", "points": 210, "puzzlesSolved": 5, "updatedAt": "2026-10-22T03:05:12Z"}
+  }
+}

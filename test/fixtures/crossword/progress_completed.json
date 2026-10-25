@@ -1,0 +1,29 @@
+{
+  "id": "kerala-history-0012",
+  "data": {
+    "status": "completed",
+    "letters": "MUZIRIS#A#######L#V###G#ASAN##A#B#I###M#A#KAPPADR#A######EMS####",
+    "elapsedSec": 312,
+    "hintsUsed": {
+      "letter": 0,
+      "word": 1,
+      "clue": 1
+    },
+    "checksUsed": 2,
+    "result": {
+      "score": 71,
+      "correctWords": 5,
+      "totalWords": 7,
+      "xpEarned": 21,
+      "timeSec": 312,
+      "wrongWordIds": [
+        "2D",
+        "3D"
+      ],
+      "revealedWordIds": [
+        "3D"
+      ]
+    },
+    "completedAt": "2026-10-22T03:05:12Z"
+  }
+}

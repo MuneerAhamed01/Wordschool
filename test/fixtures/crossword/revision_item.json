@@ -1,0 +1,15 @@
+{
+  "id": "q-vaikom",
+  "data": {
+    "answer": "VAIKOM",
+    "answerDisplay": {"en": "Vaikom", "ml": "വൈക്കം"},
+    "clue": {"en": "1924–25 satyagraha for the right to use temple roads"},
+    "fact": {"en": "The Vaikom Satyagraha (1924–25) protested the ban on oppressed castes using the roads around the Vaikom temple."},
+    "subject": "kerala_history",
+    "source": {"game": "crossword", "puzzleId": "kerala-history-0012"},
+    "wrongCount": 2,
+    "lastWrongAt": "2026-10-22T03:05:12Z",
+    "mastered": false,
+    "updatedAt": "2026-10-22T03:05:12Z"
+  }
+}
