@@ -6,13 +6,14 @@ Guidance for Claude Code (and Cursor) working in this repository.
 1. This file.
 2. `docs/STATUS.md` — milestones, what's next, what's deployed, a map of the code. **Answer status / "what's next" / "what's deployed" questions from this file alone**; don't scan code or git for them.
 3. `TASKS.md` — only the board row and card of the task you're on (search for `CW-0XX`; don't read the whole file).
-4. Code — only the files the card names, plus the closest existing example of the same kind.
+4. Module file map — `docs/plans/M<n>-*.md` (e.g. `M3-player-app.md` lists every crossword file and what to copy).
+5. Code — only the files the card names, plus the closest existing example of the same kind.
 
 ## What this project is
 
 A Flutter app of **Kerala PSC exam-prep games**, built on the `psc-dev` branch (a fresh, slim start from the WordSchool codebase).
 
-- **Phase 1 (now):** **PSC Crossword** — topic crosswords built from a verified PSC fact bank. Backend (M1) and admin panel (M2) are done; the player app (M3) and content (M4) are next. Live state: `docs/STATUS.md`.
+- **Phase 1 (now):** **PSC Crossword** — topic crosswords built from a verified PSC fact bank. Backend (M1) and admin panel (M2) are done, the player app (M3) is in review, content (M4) is next. Live state: `docs/STATUS.md`.
 - **Phase 2 (later):** Kerala Map Challenge (designs ready in `design/`).
 
 The older full WordSchool app lives on `development`. Port code from there when a task says so (admin panel, functions tooling, flavors, analytics) — don't merge the branches.
@@ -25,6 +26,7 @@ Package name is `wordshool` (sic). **Do not rename** it, or the misspelled folde
 | --- | --- |
 | Where we are, what's next, what's deployed, code map | `docs/STATUS.md` (read first) |
 | Task scope and "Done when" | `TASKS.md` (status board + task cards + decisions) |
+| Module plans / file maps, QA checklists | `docs/plans/`, `docs/qa/` |
 | Firestore schema, rules, indexes, costs | `docs/firebase/FIREBASE_DESIGN.md` |
 | Screen specs, tokens, prototypes | `design/` |
 | PSC content drafts | `content/` |
@@ -39,6 +41,8 @@ Flutter **3.32.0** pinned with **FVM** (`.fvmrc`) — always prefix with `fvm`.
 cp .env.example .env                      # first time
 fvm flutter pub get
 fvm flutter run                           # player app → Firebase project kerala-pcs-dev
+scripts/check.sh                          # analyze + structure rules + all tests, prints only problems (+ --fn, or test paths)
+python3 scripts/check_structure.py        # just the structure rules (modules, _build, 700 lines, names)
 fvm flutter analyze
 fvm flutter test
 fvm dart run build_runner build --delete-conflicting-outputs   # only for existing freezed files
@@ -57,7 +61,7 @@ fvm flutter run -t lib/main_admin.dart -d chrome
 firebase deploy --only firestore:rules,firestore:indexes,functions   # project kerala-pcs-dev
 ```
 
-Before saying a task is done: `fvm flutter analyze` and `fvm flutter test` pass; if `functions/` changed, `ruff check`, `ruff format --check` and `pytest` pass.
+Before saying a task is done: `scripts/check.sh` passes (= `fvm flutter analyze` with only the 6 accepted old issues, `scripts/check_structure.py` with 0 problems, and `fvm flutter test`); if `functions/` changed, `ruff check`, `ruff format --check` and `pytest` pass.
 
 ## Architecture (Flutter)
 
@@ -67,38 +71,71 @@ Clean architecture per feature, `get_it` for DI, `flutter_bloc` for state, `go_r
 lib/
   config/themes/  colors.dart (MyColors, MyColorScheme.dark), fonts.dart (Nunito)
   core/           constants, enums, firebase (collections, dt_converter), resorces (DataState, UseCase),
-                  routes (app_router.dart), utils
-  shared/         session (SessionHandler, user entity/model), shared widgets
-  features/<feature>/
-    domain/
-      entities/       <name>.dart                → class <Name>Entity extends Equatable
-      repositories/   <feature>_repository.dart  → abstract class <Feature>Repository
-      usecases/       <verb>_<noun>.dart         → class <Verb><Noun>UseCase extends UseCase<R, P>
-      usecases/utils/ <verb>_<noun>_param.dart   → class <Verb><Noun>Param
-      utils/          pure logic (engines, calculators) — fully unit tested
-    data/
-      models/         <name>.dart                → class <Name>Model extends <Name>Entity (fromJson/toJson)
-      data_source/    <name>_service.dart        → abstract class <Name>DataSource
-      data_source/remote/ <name>_service.dart    → class <Name>DataSourceImpl extends <Name>DataSource
-      repositories/   <feature>_repository_impl.dart
-    presentation/
-      bloc/<name>_bloc/<name>_bloc.dart          (new code: sealed events + states in this file)
-      pages/          <name>_page.dart           (static const routeName)
-      widgets/
-  di.dart         _initialize<Feature>() per feature, called from initializeDependency()
+                  routes (app_routes.dart / admin_routes.dart paths, app_router.dart, admin_router.dart), utils
+  shared/         used by 2+ features: session, Paged, LocalizedText, shared widgets
+  features/<feature>/                  e.g. crossword, admin
+    shared/                            used by 2+ modules of this feature (same layers as a module)
+    <module>/                          one screen area, e.g. crossword/home, crossword/revise, admin/reports
+      <sub_module>/                    a sub-screen, sheet or dialog with its own logic, e.g. puzzle/report
+        data/ domain/ presentation/
+      domain/
+        entities/       <name>.dart                → class <Name>Entity extends Equatable
+        repositories/   <module>_repository.dart   → abstract class <Module>Repository
+        usecases/       <verb>_<noun>.dart         → class <Verb><Noun>UseCase extends UseCase<R, P>
+        usecases/utils/ <verb>_<noun>_param.dart   → class <Verb><Noun>Param
+        utils/          pure logic (engines, calculators) — fully unit tested
+      data/
+        models/         <name>.dart                → class <Name>Model extends <Name>Entity (fromJson/toJson)
+        data_source/    <name>_service.dart        → abstract class <Name>DataSource
+        data_source/remote/ <name>_service.dart    → class <Name>DataSourceImpl extends <Name>DataSource
+        repositories/   <module>_repository_impl.dart
+      presentation/
+        bloc/<name>_bloc.dart                      (sealed events + states in this file)
+        pages/          <name>_page.dart           (static const routeName = AppRoutes.x)
+        widgets/        one widget per file
+      di.dart           init<Feature><Module>(GetIt) — called from features/<feature>/di.dart
+  di.dart         _initialize<Feature>() per one-module feature; initCrossword(getIt) for crossword
   main.dart       Firebase init → dotenv → DI → initial route from FirebaseAuth state
 ```
 
+A feature with a single screen (`auth`, `game`, `profile`) is its own module: `data/ domain/ presentation/`
+sit directly in the feature folder. Admin modules are thin over callables: data sources (no repository /
+use case) + pages; their shared services live in `admin/shared/data/data_source/`.
+
+### Code structure rules (checked in review and by `scripts/check_structure.py`)
+
+- **Modules are independent.** A file may import only its own module (and its sub-modules), its feature's
+  `shared/`, and `lib/{core,config,shared}`. Anything a second module needs moves to `<feature>/shared/`;
+  anything a second feature needs moves to `lib/shared` or `lib/core`. Only composition roots
+  (`lib/di*.dart`, `lib/main*.dart`, `core/routes/*_router.dart`, `<feature>/di.dart`) import across modules.
+- **Navigate by path, not by page.** Use `AppRoutes` / `AdminRoutes`; never import another module's page
+  for its `routeName`. Pass data between modules as shared entities (e.g. `ResultArgs` via `extra`).
+- **Talk between modules through shared state**, e.g. `CrosswordProgressRepository` (session cache) and
+  `CrosswordChangesRepository` (`CrosswordChange.puzzleSubmitted` / `.revisionChanged`), not by importing
+  each other's blocs or repositories.
+- **One job per function and per file.** Split long `build` methods into `_build…` helpers or widgets;
+  one public widget per file in `widgets/`.
+- **Every function that returns a widget** (`Widget`, `Widget?`, `List<Widget>`) is `build` or starts with
+  `_build` — including former local helpers (make them private methods).
+- **No file over 700 lines** (generated `*.freezed.dart` / `*.g.dart` excepted). Split with widgets,
+  `part` files + private extensions/mixins, or helpers in `utils/`.
+- **Names don't repeat their folder.** Inside a module, file names don't carry the feature prefix or the
+  folder kind: `crossword/shared/data/models/puzzle.dart`, not `…/models/crossword_puzzle_model.dart`.
+  Class names keep their prefix (`CrosswordPuzzleModel`) so imports never clash.
+
 ### Rules that keep the code consistent
 
-- **Results:** data sources and repositories return `Future<DataState<T>>` — `DataSuccess(data:)` or `DataError(error: AppError(...))`. Never throw across layers. Catch in the data source and include the error code and context.
+- **Results:** data sources and repositories return `Future<DataState<T>>` — `DataSuccess(data:)` or `DataError(error: AppError(...))`. Never throw across layers. Wrap each data-source method in `guardData('Source.method', () async {...})` (`core/resorces/data_guard.dart`): it catches, logs, keeps the Firebase code and sets a player-readable `message`. Read JSON with `core/utils/json_read.dart` (`asInt`, `asString`, …).
 - **Use cases:** `extends UseCase<ReturnType, ParamType>`, single `call({required param})`; params are small immutable classes in `usecases/utils/`.
 - **Firebase access:** data sources receive `FirebaseFirestore` / `FirebaseFunctions` / `FirebaseAuth` through their constructor; only `di.dart` touches `.instance`. Collection names come from `lib/core/firebase/collections.dart`.
-- **DI:** `getIt.registerSingleton<Abstract>(Impl(...))` inside `_initialize<Feature>()`; blocs are created in `app_router.dart` / `BlocProvider`, not registered.
+- **DI:** `getIt.registerSingleton<Abstract>(Impl(...))` inside the module's `di.dart` (or `_initialize<Feature>()` for a one-module feature); blocs are created in `app_router.dart` / `BlocProvider`, not registered.
+- **Firestore writes the player waits on** (leaving a screen, sign-in) are not awaited on the server ack — Firestore queues them offline. Use a bounded wait (`awaitServerAck`, `core/firebase/server_ack.dart`) or `unawaited`, never a bare `await` that hangs offline.
+- **Lists:** never read a whole collection; page at 20 with a cursor that can't skip ties (order field + doc id), or use a count / summary doc.
+- **After an `await` in a bloc handler**, re-read `state` and check its type before using it; never `state as X`.
 - **Bloc (new code):** `sealed class XEvent` / `sealed class XState` with `final class` subclasses in the bloc file (DEC-005). The existing freezed blocs in `auth` and `game` stay as they are.
 - **Domain is pure:** no Flutter, Firebase or `get_it` imports in `domain/`.
 - **Models:** `factory X.fromJson(Map<String, dynamic> json, {String? documentId})` + `toJson()`. Timestamps via `FirebaseDTConverter`. Localized text as `LocalizedText` (`{en, ml}`, added in CW-040).
-- **UI:** build on the shared widgets — `GameScaffold`, `AppButton` (variants), `PressableScale`, `FadeSlideIn`, `ShimmerGridItem`, `snackbar.dart`. Colours from `MyColors` / tokens in `design/tokens/`; no hex in widgets.
+- **UI:** build on the shared widgets — `GameScaffold`, `AppButton` (variants), `PressableScale`, `FadeSlideIn`, `SkeletonBox` (loading), `StateMessage` (empty / error + retry), `AppProgressBar`, `showAppSheet` + `AppSheetHeader` (bottom sheets), `category_visuals.dart`, `snackbar.dart`. Colours from `MyColors` / tokens in `design/tokens/`; no hex in widgets.
 - **Config:** tunables in Remote Config (CW-005); secrets/keys in `.env` (never committed).
 - **Dates:** daily keys are IST `YYYY-MM-DD` (DEC-001).
 - **No `print`** in new code (add a small logger if needed; `development` has `AppLogger` to port).
@@ -130,6 +167,8 @@ lib/
 - Flutter: `test/` mirrors `lib/`. Pure logic first (grid engine, scoring, model `fromJson`), then bloc and widget tests.
 - Functions: pytest for every validator and scoring rule.
 - Rules: `firestore-tests/firestore.rules.test.js` (Jest + `@firebase/rules-unit-testing`) — allow and deny cases for every collection.
+- Crossword test kit: `test/features/crossword/crossword_fakes.dart` (fake repository + real use cases, `registerCrosswordFakes` for router tests) and `crossword_fixtures.dart` (JSON in `test/fixtures/crossword/`). Screens are tested at 360 × 740 (`tester.view.physicalSize`).
+- In `testWidgets`, don't `await bloc.close()` at the end (it never completes in fake async); `scripts/check.sh` runs with a 60 s per-test timeout.
 - Bug fix = a failing test first.
 
 ## Working on tasks
@@ -152,6 +191,7 @@ lib/
 | `cloud-function` | Add a Python admin callable, player callable, scheduled job or trigger, with pytest |
 | `firestore-collection` | Add a collection end to end: constants, rules + tests, indexes, design doc |
 | `crossword-content` | Draft PSC questions and crossword puzzles as JSON; validate grids |
+| `cavemen` | Terse chat replies to save tokens (`/cavemen [lite\|full\|ultra\|off]`); files and code stay normal |
 
 ## Design
 
