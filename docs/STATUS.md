@@ -18,7 +18,7 @@
 | M4 Content | 2026-12-31 | not started (runs in parallel) | 0 / 4 (CW-060 … CW-063) |
 | M5 QA & launch | 2027-01-15 | not started | 1 / 7 (CW-073 dropped into CW-008) |
 
-**In review:** nothing. M3 committed on `module/m3` 2026-10-25 (one commit per task); push + merge into `psc-dev` pending (QA: `docs/qa/M3-manual-test.md`). **Blocked:** CW-053 analytics (not planned).
+**In review:** nothing. M3 merged into `psc-dev` and pushed 2026-10-25 (QA: `docs/qa/M3-manual-test.md`). **Blocked:** CW-053 analytics (not planned).
 
 ## Next up (unblocked `todo`, lowest milestone first)
 
