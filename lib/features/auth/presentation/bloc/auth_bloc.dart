@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:wordshool/core/resorces/data_state.dart';
 import 'package:wordshool/features/auth/domain/usecases/sign_anonymosly.dart';
 import 'package:wordshool/features/auth/domain/usecases/sign_with_google.dart';
+import 'package:wordshool/features/auth/domain/usecases/save_player_profile.dart';
 import 'package:wordshool/features/auth/domain/usecases/save_user_session_usecase.dart';
 import 'package:wordshool/features/auth/utils/auth_type.dart';
 import 'package:wordshool/shared/domains/entities/user_entity.dart';
@@ -15,14 +18,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignInAnonymouslyUseCase _signInAnonymouslyUseCase;
   final SignInWithGoogleUseCase _signInWithGoogleUseCase;
   final SaveUserSessionUseCase _saveUserSessionUseCase;
+  final SavePlayerProfileUseCase _savePlayerProfileUseCase;
 
   AuthBloc({
     required SignInAnonymouslyUseCase signInAnonymouslyUseCase,
     required SignInWithGoogleUseCase signInWithGoogleUseCase,
     required SaveUserSessionUseCase saveUserSessionUseCase,
+    required SavePlayerProfileUseCase savePlayerProfileUseCase,
   })  : _signInAnonymouslyUseCase = signInAnonymouslyUseCase,
         _signInWithGoogleUseCase = signInWithGoogleUseCase,
         _saveUserSessionUseCase = saveUserSessionUseCase,
+        _savePlayerProfileUseCase = savePlayerProfileUseCase,
         super(const AuthState.initial()) {
     on<SignInAnonymously>(_onSignInAnonymously);
     on<SignInWithGoogle>(_onSignInWithGoogle);
@@ -88,6 +94,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<DataState<bool>> _saveUserSession(WordSchoolUserEntity user) async {
     final result = await _saveUserSessionUseCase(param: user);
+    if (result is DataSuccess) {
+      // users/{uid} for the leaderboard name (CW-055). Not awaited, so it
+      // never blocks sign-in; a failure is logged by the data source and
+      // retried on the next app start.
+      unawaited(_savePlayerProfileUseCase());
+    }
     return result;
   }
 }

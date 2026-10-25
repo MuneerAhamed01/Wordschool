@@ -18,4 +18,9 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<DataState<WordSchoolUserModel?>> signInWithGoogle() {
     return _authDataSource.signInWithGoogle();
   }
+
+  @override
+  Future<DataState<void>> savePlayerProfile() {
+    return _authDataSource.savePlayerProfile();
+  }
 }
