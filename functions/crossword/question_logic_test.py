@@ -2,8 +2,12 @@ from datetime import UTC, datetime
 
 import pytest
 
+from crossword.category_logic import COLOR_RE, ICON_RE, SLUG_RE, category_doc
 from crossword.errors import InputError, PreconditionError
 from crossword.question_logic import (
+    auto_category,
+    category_id_for_subject,
+    category_name_for_subject,
     normalize_answer,
     parse_question,
     question_doc,
@@ -131,3 +135,33 @@ def test_verify_refuses_retired_and_placeholder_sources():
         verify_updates(_doc("retired"), admin_uid="a", now=NOW)
     with pytest.raises(InputError):
         verify_updates(_doc(source={"type": "book", "ref": "TODO: page"}), admin_uid="a", now=NOW)
+
+
+def test_subject_maps_to_category_id_and_name():
+    assert category_id_for_subject("kerala_history") == "kerala-history"
+    assert category_id_for_subject("science") == "science"
+    assert category_name_for_subject("general_knowledge") == "General Knowledge"
+    assert category_name_for_subject("kerala_history_2") == "Kerala History 2"
+    assert category_name_for_subject("_odd__subject_") == "Odd Subject"
+
+
+def test_auto_category_is_hidden_at_the_end():
+    category = auto_category("general_knowledge")
+    assert SLUG_RE.fullmatch(category["id"])
+    assert ICON_RE.fullmatch(category["icon"])
+    assert COLOR_RE.fullmatch(category["color"])
+    doc = category_doc(category, admin_uid="a0", existing=None, now=NOW)
+    assert doc == {
+        "name": {"en": "General Knowledge", "ml": ""},
+        "icon": "folder",
+        "color": "#538D4E",
+        "order": 1000,
+        "isActive": False,
+        "publishedPuzzleCount": 0,
+        "lastPuzzleNumber": 0,
+        "schemaVersion": 1,
+        "createdAt": NOW,
+        "createdBy": "a0",
+        "updatedAt": NOW,
+        "updatedBy": "a0",
+    }

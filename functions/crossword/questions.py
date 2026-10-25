@@ -6,9 +6,12 @@ from google.cloud.firestore import Client, Transaction
 
 from admin.assert_admin import assert_admin
 from admin.audit_log import write_audit_log
-from crossword.collections import PSC_QUESTIONS
+from crossword.category_logic import category_doc
+from crossword.collections import CROSSWORD_CATEGORIES, PSC_QUESTIONS
 from crossword.errors import NotFoundError
 from crossword.question_logic import (
+    auto_category,
+    category_id_for_subject,
     parse_question,
     parse_question_id,
     question_doc,
@@ -24,8 +27,12 @@ def save_question(
 ) -> dict[str, object]:
     """Create a question (no `id`) or replace an existing one; the result is a draft.
 
+    In the same transaction, creates the question's category (hidden) when no category
+    matches its subject (CW-064). An existing category is never changed.
+
     Returns:
-        `{"id", "created", "status"}`.
+        `{"id", "created", "status", "createdCategoryId"}` (`createdCategoryId` is `None`
+        unless a category was created).
 
     Raises:
         InputError: Invalid data.
@@ -35,20 +42,34 @@ def save_question(
     question = parse_question(data)
     questions = client.collection(PSC_QUESTIONS)
     ref = questions.document(question["id"]) if "id" in question else questions.document()
+    category_ref = client.collection(CROSSWORD_CATEGORIES).document(
+        category_id_for_subject(question["subject"])
+    )
 
-    def body(transaction: Transaction) -> bool:
+    def body(transaction: Transaction) -> tuple[bool, bool]:
         existing: PscQuestion | None = None
         if "id" in question:
             snapshot = ref.get(transaction=transaction)
             if not snapshot.exists:
                 raise NotFoundError(f"Question {ref.id} not found")
             existing = cast(PscQuestion, snapshot.to_dict())
+        category_missing = not category_ref.get(transaction=transaction).exists
         doc = question_doc(question, admin_uid=admin_uid, existing=existing, now=now)
         transaction.set(ref, doc)
-        return existing is None
+        if category_missing:
+            category = auto_category(question["subject"])
+            transaction.set(
+                category_ref, category_doc(category, admin_uid=admin_uid, existing=None, now=now)
+            )
+        return existing is None, category_missing
 
-    created = run_transaction(client, body)
-    return {"id": ref.id, "created": created, "status": "draft"}
+    created, category_created = run_transaction(client, body)
+    return {
+        "id": ref.id,
+        "created": created,
+        "status": "draft",
+        "createdCategoryId": category_ref.id if category_created else None,
+    }
 
 
 def verify_question(
@@ -94,6 +115,15 @@ def adminSaveQuestion(req: https_fn.CallableRequest[Any]) -> dict[str, object]: 
         target_id=str(result["id"]),
         payload={"created": result["created"]},
     )
+    category_id = result["createdCategoryId"]
+    if category_id is not None:
+        write_audit_log(
+            action="crossword.autoCreateCategory",
+            admin_uid=admin_uid,
+            target_id=str(category_id),
+            # Subjects are snake_case without hyphens, so this is exact.
+            payload={"subject": str(category_id).replace("-", "_"), "questionId": result["id"]},
+        )
     return result
 
 

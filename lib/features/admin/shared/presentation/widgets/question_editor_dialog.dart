@@ -141,9 +141,20 @@ class _QuestionEditorDialogState extends State<QuestionEditorDialog> {
     if (!mounted) return;
     setState(() => _saving = false);
     if (result is DataSuccess) {
+      final saved = result.data!;
+      if (saved.createdCategoryId != null) {
+        showSuccess(
+          context,
+          savedQuestionMessage(
+            saved.id,
+            updated: q != null,
+            createdCategoryId: saved.createdCategoryId,
+          ),
+        );
+      }
       Navigator.of(context).pop(
         question.copyWith(
-          id: result.data!.id,
+          id: saved.id,
           status: QuestionStatus.draft,
           updatedAt: DateTime.now(),
         ),

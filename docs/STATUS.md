@@ -15,10 +15,10 @@
 | M1 Backend: rules, indexes, functions | 2026-11-18 | **closed 2026-10-23** | 17 / 17 (CW-010 … CW-026; CW-026 live check → CW-071) |
 | M2 Admin panel (Flutter web) | 2026-12-04 | **closed 2026-10-25** · CW-037 follow-up in review | 8 / 9 (CW-029 … CW-036 done; CW-037 `review`) |
 | M3 Player app | 2026-12-24 | **closed 2026-10-25** | 16 / 19 done (CW-040 … CW-052, CW-054, CW-055, CW-058) · CW-053, CW-057 `not-needed` · CW-056 `todo` (follow-up) |
-| M4 Content | 2026-12-31 | not started (runs in parallel) | 0 / 4 (CW-060 … CW-063) |
+| M4 Content | 2026-12-31 | started (runs in parallel) | 0 / 5 (CW-060 … CW-064; CW-064 `review`) |
 | M5 QA & launch | 2027-01-15 | not started | 1 / 7 (CW-073 dropped into CW-008) |
 
-**In review:** CW-037 admin email + password login (needs the Email/Password provider enabled on dev — see Ops). M3 merged into `psc-dev` and pushed 2026-10-25 (QA: `docs/qa/M3-manual-test.md`). **Blocked:** nothing. **Not needed:** CW-053 analytics, CW-057 solved-by-category summary (reasons on the cards).
+**In review:** CW-037 admin email + password login (needs the Email/Password provider enabled on dev — see Ops); CW-064 `adminSaveQuestion` creates a missing category (hidden) — **needs `adminSaveQuestion` redeployed**. M3 merged into `psc-dev` and pushed 2026-10-25 (QA: `docs/qa/M3-manual-test.md`). **Blocked:** nothing. **Not needed:** CW-053 analytics, CW-057 solved-by-category summary (reasons on the cards).
 
 ## Next up (unblocked `todo`, lowest milestone first)
 
@@ -41,6 +41,7 @@ CW-056 is the one M3 follow-up left `todo` when M3 closed.
   - Player callable: `submitCrossword`
   - Scheduled (IST): `crosswordDailyRollover` (00:05), `refreshLeaderboardTop`
   - All 16 live (checked with `firebase functions:list` on 2026-10-25, M3 close).
+  - **Not yet deployed:** CW-064 change to `adminSaveQuestion` (auto-creates a missing category).
 - **Admin claim:** muneerahamed.dev@gmail.com (CW-024, `functions/scripts/set_admin_claim.py`).
 - **Auth providers:** Google + Anonymous (player app). **Email/Password** (admin panel, CW-037) — to enable in the console; then set the admin password with `set_admin_claim.py --password`.
 - **Admin panel hosting:** none yet — run locally (`fvm flutter run -t lib/main_admin.dart -d chrome`).
@@ -59,7 +60,7 @@ CW-056 is the one M3 follow-up left `todo` when M3 closed.
 | Remote Config | `lib/core/remote_config/app_remote_config.dart` (CW-005) | Server reads hint penalties from the same template (CW-026) |
 | Functions | `functions/crossword/` | `<name>_logic.py` pure + `<name>.py` handler, `_test.py` beside each; helpers in `functions/{admin,utils}/`, `firestore_client.py` |
 | Rules tests | `firestore-tests/` | Jest on the emulator |
-| Tests | `test/` mirrors `lib/` (per module) | 214 green on 2026-10-25. Crossword fakes/fixtures: `test/features/crossword/crossword_{fakes,fixtures}.dart`, `fixtures_entities.dart`, `test/fixtures/crossword/` |
+| Tests | `test/` mirrors `lib/` (per module) | 223 green on 2026-10-25 (CW-064). Crossword fakes/fixtures: `test/features/crossword/crossword_{fakes,fixtures}.dart`, `fixtures_entities.dart`, `test/fixtures/crossword/` |
 | Checks | `scripts/check.sh [paths] [--fn]` | analyze + `scripts/check_structure.py` (modules, `_build`, ≤ 700 lines, names) + tests, prints only problems + one summary line each |
 
 ## Known, accepted

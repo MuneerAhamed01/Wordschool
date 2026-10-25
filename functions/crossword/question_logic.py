@@ -3,6 +3,7 @@
 import re
 from typing import NotRequired, TypedDict
 
+from crossword.category_logic import CategoryInput
 from crossword.errors import InputError, PreconditionError
 from crossword.input_reader import InputReader
 from crossword.types import (
@@ -22,6 +23,11 @@ from crossword.validate_puzzle import ANSWER_RE
 DOC_ID_RE = re.compile(r"[A-Za-z0-9_-]{1,100}")
 SNAKE_RE = re.compile(r"[a-z0-9_]+")
 _STRIPPED_FROM_ANSWERS = re.compile(r"[\s.\-]")
+
+# A category made by saving a question with a new subject (CW-064): hidden, at the end.
+AUTO_CATEGORY_ICON = "folder"
+AUTO_CATEGORY_COLOR = "#538D4E"
+AUTO_CATEGORY_ORDER = 1000
 
 
 class QuestionInput(TypedDict):
@@ -134,6 +140,29 @@ def question_doc(
     if "topic" in question:
         doc["topic"] = question["topic"]
     return doc
+
+
+def category_id_for_subject(subject: str) -> str:
+    """The category a subject belongs to: `kerala_history` → `kerala-history`."""
+    return subject.replace("_", "-")
+
+
+def category_name_for_subject(subject: str) -> str:
+    """Title Case name for a subject: `general_knowledge` → `General Knowledge`."""
+    words = [word.capitalize() for word in subject.split("_") if word]
+    return " ".join(words) or subject
+
+
+def auto_category(subject: str) -> CategoryInput:
+    """The hidden category created when a question uses a subject with no category (CW-064)."""
+    return {
+        "id": category_id_for_subject(subject),
+        "name": {"en": category_name_for_subject(subject), "ml": ""},
+        "icon": AUTO_CATEGORY_ICON,
+        "color": AUTO_CATEGORY_COLOR,
+        "order": AUTO_CATEGORY_ORDER,
+        "isActive": False,
+    }
 
 
 def parse_question_id(data: object) -> str:

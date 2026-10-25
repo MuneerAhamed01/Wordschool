@@ -131,6 +131,14 @@ void main() {
         {'id': 'kerala-history-0001', 'number': 1, 'created': true});
     expect(result.number, 1);
     expect(result.created, isTrue);
+    expect(result.createdCategoryId, isNull);
+
+    final question = SaveResult.fromJson({
+      'id': 'q1',
+      'created': true,
+      'createdCategoryId': 'general-knowledge'
+    });
+    expect(question.createdCategoryId, 'general-knowledge');
   });
 
   test('enum wire values match functions/crossword/types.py', () {

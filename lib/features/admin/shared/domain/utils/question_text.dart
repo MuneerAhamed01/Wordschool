@@ -46,3 +46,23 @@ String humanize(String snake) {
   final words = snake.replaceAll(RegExp(r'[_-]+'), ' ').trim();
   return words.isEmpty ? words : words[0].toUpperCase() + words.substring(1);
 }
+
+/// `general-knowledge` → `General Knowledge`, as the server names a category
+/// it creates for a new subject.
+String titleCase(String slug) => slug
+    .split(RegExp(r'[_-]+'))
+    .where((w) => w.isNotEmpty)
+    .map((w) => w[0].toUpperCase() + w.substring(1))
+    .join(' ');
+
+/// What a question save did: `Added as q1 · new category General Knowledge
+/// (hidden)`. [updated] rows say `Updated` instead of the id.
+String savedQuestionMessage(
+  String id, {
+  bool updated = false,
+  String? createdCategoryId,
+}) {
+  final saved = updated ? 'Updated' : 'Added as $id';
+  if (createdCategoryId == null) return saved;
+  return '$saved · new category ${titleCase(createdCategoryId)} (hidden)';
+}

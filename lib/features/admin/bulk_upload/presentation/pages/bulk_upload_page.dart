@@ -13,6 +13,7 @@ import 'package:wordshool/features/admin/shared/domain/models/enums.dart';
 import 'package:wordshool/features/admin/shared/domain/models/puzzle.dart';
 import 'package:wordshool/features/admin/shared/domain/models/question.dart';
 import 'package:wordshool/features/admin/shared/domain/models/results.dart';
+import 'package:wordshool/features/admin/shared/domain/utils/question_text.dart';
 import 'package:wordshool/features/admin/bulk_upload/domain/utils/bulk_import.dart';
 import 'package:wordshool/features/admin/bulk_upload/presentation/utils/text_file.dart';
 import 'package:wordshool/features/admin/shared/presentation/widgets/feedback.dart';
@@ -196,9 +197,11 @@ class _AdminBulkUploadPageState extends State<AdminBulkUploadPage> {
           final saved = result.data as SaveResult;
           _results[row] = _UploadResult(
             true,
-            row.action == ImportAction.update
-                ? 'Updated'
-                : 'Added as ${saved.id}',
+            savedQuestionMessage(
+              saved.id,
+              updated: row.action == ImportAction.update,
+              createdCategoryId: saved.createdCategoryId,
+            ),
           );
         } else {
           _results[row] =

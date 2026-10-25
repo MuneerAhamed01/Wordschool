@@ -76,7 +76,7 @@ Every content document also has `schemaVersion`, `createdAt`, `updatedAt`, `crea
 
 ### 1. `crosswordCategories/{categoryId}` — Home categories
 
-ID = slug (`kerala-history`).
+ID = slug (`kerala-history`). A question's `subject` is its category: `kerala_history` ↔ `kerala-history` (`_` → `-`).
 
 | Field | Type | Example / notes |
 | --- | --- | --- |
@@ -206,7 +206,7 @@ Already reserved in `FirebaseCollections.users` on psc-dev. `submitCrossword` cr
 
 ### Admin: fact → live puzzle
 
-1. **Add facts** → `adminSaveQuestion` (`status: draft`).
+1. **Add facts** → `adminSaveQuestion` (`status: draft`). A subject with no category creates that category, hidden (CW-064).
 2. **Verify** → `adminVerifyQuestion` (`verified`, `verifiedBy`). Only verified facts go into puzzles.
 3. **Build** → `adminSaveCrosswordPuzzle` validates the grid, saves the puzzle (`draft`) and `crosswordSolutions` in one batch.
 4. **Review** → `adminSetPuzzleStatus`: `in_review` → `scheduled` (+ `publishAt`), or publish now.
@@ -500,7 +500,7 @@ In `functions/crossword/` (Python codebase created in CW-007, DEC-010), region `
 | Function | Type | Caller | Does |
 | --- | --- | --- | --- |
 | `adminSaveCategory` | Callable | Admin | Create/edit category |
-| `adminSaveQuestion` | Callable | Admin | Create/edit fact; answer A–Z; edit of verified → draft |
+| `adminSaveQuestion` | Callable | Admin | Create/edit fact; answer A–Z; edit of verified → draft. Same transaction: if `crosswordCategories/{subject, _ → -}` is missing, creates it (CW-064) with the `adminSaveCategory` fields — `name.en` Title Case of the subject, `name.ml` `""`, icon `folder`, color `#538D4E`, order 1000, **`isActive: false`**, counters 0 — and audits `crossword.autoCreateCategory` (`payload {subject, questionId}`). An existing category is never touched. Returns `{id, created, status, createdCategoryId}` (`null` unless created) |
 | `adminVerifyQuestion` | Callable | Admin | `draft → verified` |
 | `adminSaveCrosswordPuzzle` | Callable | Admin | Validate grid; save puzzle + solution in one batch; encode answers |
 | `adminSetPuzzleStatus` | Callable | Admin | Status state machine; category count |

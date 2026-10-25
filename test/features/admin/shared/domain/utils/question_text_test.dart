@@ -28,4 +28,17 @@ void main() {
     expect(humanize('kerala_history'), 'Kerala history');
     expect(humanize(''), '');
   });
+
+  test('titleCase names a category like the server', () {
+    expect(titleCase('general-knowledge'), 'General Knowledge');
+    expect(titleCase('kerala_history_2'), 'Kerala History 2');
+  });
+  test('savedQuestionMessage mentions a created category', () {
+    expect(savedQuestionMessage('q1'), 'Added as q1');
+    expect(savedQuestionMessage('q1', updated: true), 'Updated');
+    expect(
+      savedQuestionMessage('q1', createdCategoryId: 'general-knowledge'),
+      'Added as q1 · new category General Knowledge (hidden)',
+    );
+  });
 }

@@ -145,6 +145,7 @@ This file is the single source of truth for project work. The **status board** b
 | CW-061 | 150 verified questions (30 × 5 categories) | content | ongoing | CW-032         | todo   | Drafting can start now in `content/` |
 | CW-062 | 14 daily puzzles + 10 per category         | content | ongoing | CW-033, CW-061 | todo   |                                      |
 | CW-063 | Second-person fact-check pass              | content | 1d      | CW-062         | todo   |                                      |
+| CW-064 | Saving a question creates its category if missing (subject = category) | functions | 0.5d | CW-016, CW-015 | review | For CW-061 bulk upload; new category is hidden |
 
 
 
@@ -798,6 +799,18 @@ Done when:
 #### CW-063 · Fact-check pass
 
 A second person checks every published answer and fact; fixes logged in the audit log.
+
+#### CW-064 · Saving a question creates its category if missing
+
+We bulk-upload past PSC questions (CW-061) and the subject in each row is the category. A question's `subject` is its category: `kerala_history` ↔ `kerala-history` (as `AdminCategory.subject`). `adminSaveQuestion` reads `crosswordCategories/{subject, _ → -}` in the transaction that writes the question and, if it is missing, creates it with `category_doc` (all `adminSaveCategory` fields): `name.en` Title Case of the subject, `name.ml` `""`, icon `folder`, color `#538D4E`, order 1000, `isActive: false` (Home lists every active category), counters 0. Extra audit entry `crossword.autoCreateCategory` (`targetId` = category id, `payload {subject, questionId}`). The response gains `createdCategoryId` (string or null); Bulk upload's results and the question form's snackbar say "Added as <id> · new category <Name> (hidden)".
+
+Code: `functions/crossword/{question_logic,questions}.py` (+ tests), `lib/features/admin/shared/domain/{models/results,utils/question_text}.dart`, `bulk_upload_page.dart`, `question_editor_dialog.dart`.
+
+Done when:
+
+- [x] Uploading a CSV whose rows use a subject with no category creates that category once, hidden, and every question saves.
+- [x] Existing categories are never modified by a question save.
+- [x] ruff check, ruff format --check, pytest (incl. emulator tests) and scripts/check.sh pass.
 
 ### M5 · QA & launch
 
