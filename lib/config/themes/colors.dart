@@ -166,6 +166,21 @@ class MyColors {
   static const Color errorText = Color(0xFFF2B8AE);
   static const Color warnBg = Color(0xFF3A3524);
   static const Color warnText = Color(0xFFE5D27A);
+  static const Color sheetBackground = Color(0xFF1C1C1D);
+  static const Color scrim = Color(0x9E000000);
+  static const Color streakBg = Color(0xFF2A1E16);
+  static const Color gridCellBorder = gameBorder;
+  static const Color gridActiveBg = hint;
+  static const Color gridActiveBorder = warnText;
+  static const Color gridActiveText = gameBackground;
+  static const Color gridCorrectBg = tileCorrect;
+  static const Color gridRevealedText = Color(0xFF85C0F9);
+  static const Color gridNumber = textSecondary;
+  static const Color clueBarBg = Color(0xFF2B2719);
+  static const Color clueBarBorder = Color(0xFF5C5224);
+  static const Color clueBarLabel = warnText;
+  static const Color crosswordKey = Color(0xFF58585A);
+  static const Color crosswordKeyAction = tileCorrect;
 
   // Admin panel
   static const Color infoBg = Color(0xFF1B2A3A);
