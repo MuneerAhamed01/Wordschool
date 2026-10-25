@@ -8,21 +8,20 @@ alwaysApply: false
 
 - Python 3.12, `firebase-functions` Python SDK: `https_fn.on_call`, `scheduler_fn.on_schedule`, `firestore_fn.on_document_updated`. Admin SDK via `firebase_admin`; Firestore through `db()` from `firestore_client.py`.
 - ruff lint + format (`pyproject.toml`): line length 100, type hints everywhere, Google-style docstrings on public functions, snake_case. Deployed function names stay camelCase (`# noqa: N802`) because the apps call them by name; Firestore field names stay camelCase.
-- Admin callables:
+- Admin callables (copy `functions/crossword/save_category.py`):
   ```python
   @https_fn.on_call()
-  def adminSaveQuestion(req: https_fn.CallableRequest) -> dict:  # noqa: N802
+  def adminSaveCategory(req: https_fn.CallableRequest[Any]) -> dict[str, object]:  # noqa: N802
       admin_uid = assert_admin(req)
-      data = parse_save_question(req.data)   # pure, from save_question_logic.py
-      batch = db().batch()
-      # ... writes ...
-      batch.commit()
-      write_audit_log(action="crossword.saveQuestion", admin_uid=admin_uid, target_id=data.id)
-      return {"id": data.id}
+      with callable_errors():                  # domain errors → HttpsError
+          result = save_category(db(), admin_uid, req.data)   # one run_transaction inside
+      write_audit_log(action="crossword.saveCategory", admin_uid=admin_uid, target_id=str(result["id"]))
+      return result
   ```
 - Player callables: require `req.auth`; check the user is not blocked (`users/{uid}.blockedAt`); idempotent; validate every input; return plain JSON-able dicts.
-- Raise `https_fn.HttpsError(https_fn.FunctionsErrorCode.X, message)` with messages an admin can act on. Validators collect all problems before raising.
+- Raise the errors in `crossword/errors.py` (`InputError` with `problems`, `NotFoundError`, `PreconditionError`, `PermissionDeniedError`, `RateLimitError`); `callable_errors()` maps them to `HttpsError`. Messages an admin can act on; validators (`InputReader`) collect all problems before raising.
 - Pure logic (validation, scoring, encoding) in separate modules with `<module>_test.py` beside them. No Firestore imports in pure modules.
 - New crossword code in `functions/crossword/`; import every deployed function in `functions/main.py`. Region `asia-south1` (set once with `set_global_options`). Scheduled jobs use `timezone="Asia/Kolkata"`.
 - One Firebase project per environment — never add a `databaseId` parameter.
-- Multi-doc writes use one `WriteBatch` or a transaction.
+- Multi-doc writes use one transaction (`run_transaction`) or a `WriteBatch`.
+- Full steps: `.claude/skills/cloud-function/SKILL.md`.

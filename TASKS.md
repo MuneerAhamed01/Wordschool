@@ -1,7 +1,7 @@
 # Kerala PSC App — Task Sheet
 
 > **Current phase:** Phase 1 — PSC Crossword
-> **Branch:** `psc-dev` · **Firebase (dev):** `kerala-pcs-dev` · **Last updated:** 2026-10-23
+> **Branch:** `psc-dev` · **Firebase (dev):** `kerala-pcs-dev` · **Last updated:** 2026-10-25
 > **Specs:** [Firebase design](docs/firebase/FIREBASE_DESIGN.md) · [Screen specs](design/screens/psc-crossword.md) · [Conventions](CLAUDE.md)
 
 This file is the single source of truth for project work. The **status board** below is the only place a task's status is written; the **task cards** further down hold the details and stay stable.
@@ -89,19 +89,19 @@ This file is the single source of truth for project work. The **status board** b
 
 
 
-### M2 · Admin panel (Flutter web) — target 2026-12-04
+### M2 · Admin panel (Flutter web) — target 2026-12-04 · **closed 2026-10-25**
 
 
 | ID     | Task                                                                          | Area  | Est  | Depends                | Status | Notes                         |
 | ------ | ----------------------------------------------------------------------------- | ----- | ---- | ---------------------- | ------ | ----------------------------- |
-| CW-029 | Admin foundation: web target, `main_admin.dart`, claim login, shell, API base | admin | 1.5d | CW-024                 | review | Web app on dev; Google popup + claim |
-| CW-030 | `AdminApiService` crossword methods + models                                  | admin | 1d   | CW-029, CW-023, CW-025 | review | Daily docs read via Firestore |
-| CW-031 | Categories page                                                               | admin | 0.5d | CW-030                 | review | Drag to reorder; ID from name |
-| CW-032 | Question bank page (list, add/edit, verify)                                   | admin | 1.5d | CW-030                 | review | "Mark as checked" = verify     |
-| CW-033 | Puzzle builder (grid editor + live validation)                                | admin | 3d   | CW-030, CW-014         | review | Dart port of the validator    |
-| CW-034 | Puzzle preview, status workflow, schedule calendar                            | admin | 1d   | CW-033                 | review | 30-day calendar, IST times    |
-| CW-035 | Reports page                                                                  | admin | 0.5d | CW-030                 | review | + `adminGetQuestion`; deploy pending |
-| CW-036 | Import questions / puzzles from JSON                                          | admin | 1d   | CW-032, CW-033         | todo   | Saves typing for content team |
+| CW-029 | Admin foundation: web target, `main_admin.dart`, claim login, shell, API base | admin | 1.5d | CW-024                 | done   | Web app on dev; Google popup + claim |
+| CW-030 | `AdminApiService` crossword methods + models                                  | admin | 1d   | CW-029, CW-023, CW-025 | done   | Daily docs read via Firestore |
+| CW-031 | Categories page                                                               | admin | 0.5d | CW-030                 | done   | Drag to reorder; ID from name |
+| CW-032 | Question bank page (list, add/edit, verify)                                   | admin | 1.5d | CW-030                 | done   | "Mark as checked" = verify     |
+| CW-033 | Puzzle builder (grid editor + live validation)                                | admin | 3d   | CW-030, CW-014         | done   | Dart port of the validator    |
+| CW-034 | Puzzle preview, status workflow, schedule calendar                            | admin | 1d   | CW-033                 | done   | 30-day calendar, IST times    |
+| CW-035 | Reports page                                                                  | admin | 0.5d | CW-030                 | done   | + `adminGetQuestion`; deploy pending |
+| CW-036 | Import questions / puzzles from JSON                                          | admin | 1d   | CW-032, CW-033         | done   | + CSV for questions           |
 
 
 
@@ -520,8 +520,8 @@ psc-dev has no web target. Add it (`fvm flutter create --platforms web .`, then 
 
 Done when:
 
-- [ ] `fvm flutter run -t lib/main_admin.dart -d chrome` → non-admin is refused, admin reaches the shell — `flutter build web -t lib/main_admin.dart` compiles; redirect logic unit-tested; needs one manual sign-in
-- [ ] The mobile app build is unaffected
+- [x] `fvm flutter run -t lib/main_admin.dart -d chrome` → non-admin is refused, admin reaches the shell — redirect logic unit-tested; signed in during review (2026-10-25)
+- [x] The mobile app build is unaffected — web-only code sits behind conditional imports (`presentation/utils/text_file.dart`)
 
 
 
@@ -572,16 +572,18 @@ Preview renders the puzzle as the player sees it; buttons for each allowed statu
 
 Open reports with links to the puzzle/question; resolve with note.
 
-**Done:** Open / Fixed / Rejected tabs, paging. "Open puzzle" goes to the puzzle page with the reported word highlighted (`?word=2D`); "Open question" opens the question editor. There was no way to read one question, so a new admin callable **`adminGetQuestion({id})`** was added (`crossword/admin_reads.py`, emulator tests, design doc). "Mark fixed" / "Reject" ask for an optional note. **Deploy pending:** `firebase deploy --only functions:adminGetQuestion --project kerala-pcs-dev`.
+**Done:** Open / Fixed / Rejected tabs, paging. "Open puzzle" goes to the puzzle page with the reported word highlighted (`?word=2D`); "Open question" opens the question editor. There was no way to read one question, so a new admin callable **`adminGetQuestion({id})`** was added (`crossword/admin_reads.py`, emulator tests, design doc). "Mark fixed" / "Reject" ask for an optional note. **Deploy:** `firebase deploy --only functions:adminGetQuestion --project kerala-pcs-dev` (run by the user at M2 close, 2026-10-25).
 
 #### CW-036 · Import from JSON
 
 Upload a `content/questions/*.json` or `content/puzzles/*.json` file (shapes in `.claude/skills/crossword-content/examples/`). Show a preview with validation errors, then call `adminSaveQuestion` / `adminSaveCrosswordPuzzle` per item. `draftNotes` is dropped; imported questions stay `draft`.
 
+**Done:** "Bulk upload" page (`/bulk-upload`). Questions come from a CSV spreadsheet (downloadable template, UTF-8 with BOM so Excel shows Malayalam; cells pasted from Google Sheets also work) or JSON; puzzles from JSON. Every row is checked like the server does and shown as New / Update / No change / Error before anything is saved; rows with errors are skipped. Questions match on `subject` + `answer` (an identical one is left alone, so checked questions stay checked). Puzzle words with a `TODO` question id are linked to a checked question by answer; puzzles match on `id`, then on title in the category, and only drafts are overwritten. Pure logic in `domain/utils/{bulk_import,csv}.dart` with tests; browser file open/save in `presentation/utils/text_file*.dart` (package `web`). Status filters on Questions, Puzzles and Reports now use a shared `FilterChips` widget.
+
 Done when:
 
-- [ ] Both example files import cleanly into the dev DB
-- [ ] Re-importing the same file updates instead of duplicating (match on `answer` + `subject` for questions, `id` for puzzles)
+- [x] Both example files import cleanly into the dev DB — both parse with no problems in `bulk_import_test.dart`; uploaded during review (2026-10-25)
+- [x] Re-importing the same file updates instead of duplicating (match on `answer` + `subject` for questions, `id` for puzzles) — `planQuestionImport` / `planPuzzleImport` tests
 
 
 

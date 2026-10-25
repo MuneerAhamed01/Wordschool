@@ -1,72 +1,69 @@
 ---
 name: cloud-function
-description: Scaffold a Kerala PSC app Cloud Function in functions/src — admin callable (assertAdmin, audit log), player callable, scheduled job (Asia/Kolkata) or Firestore trigger — with a pure-logic file and Jest tests, then export it. Use for any new or changed backend function, e.g. adminSaveQuestion, submitCrossword, crosswordDailyRollover.
+description: Add or change a Kerala PSC app Cloud Function in Python (functions/crossword/) — admin callable (assert_admin, audit log), player callable (auth, blocked check, idempotent), scheduled job (Asia/Kolkata) or Firestore trigger — with a pure logic module, pytest tests and emulator tests, then import it in functions/main.py. Use for any new or changed backend function, e.g. adminSaveQuestion, submitCrossword, crosswordDailyRollover.
 ---
 
-# Cloud Function generator
+# Cloud Function (Python 3.12, DEC-010)
 
-> **⚠ Outdated — functions are Python now (DEC-010).** The steps and `scripts/scaffold_function.py` below still generate TypeScript. Until this skill is ported, copy an existing Python function in `functions/crossword/` (e.g. `save_category.py` + `category_logic.py` + `category_logic_test.py` + `save_category_test.py` for the emulator) and follow `CLAUDE.md` → "Cloud Functions". Do **not** run the scaffold script.
+There is no generator: **copy the closest existing function** and rename. Every function is split so the important part is testable without Firestore.
 
-> **Prerequisite:** task CW-007 (the `functions/` codebase with `src/firestore.ts` → `db()`, `src/admin/assertAdmin.ts`, `src/admin/auditLog.ts`). Starter code: `references/cw-007-helpers.md`.
-
-Every function is split in two so the important part is testable:
-
-- `<name>.ts` — thin handler: auth → parse → read → call pure logic → one batch write → audit log.
-- `<name>.logic.ts` — pure functions (validation, scoring, planning). No Firestore, no `firebase-functions`.
-- `<name>.logic.test.ts` — Jest tests for every rule and every rejection.
-
-## Step 1 — Generate
-
-From the repo root:
-
-```bash
-python3 .claude/skills/cloud-function/scripts/scaffold_function.py \
-  --name adminSaveQuestion --kind admin-callable --dir crossword
-```
-
-| `--kind` | Use for | Generated shape |
+| File | Holds | Example to copy |
 | --- | --- | --- |
-| `admin-callable` | Anything the admin panel changes | `assertAdmin` → parse/validate → `db().batch()` → `writeAuditLog` |
-| `player-callable` | Player actions the server must own (`submitCrossword`) | auth check → blocked check → parse → (TODO) |
-| `scheduled` | Daily rollover, leaderboard refresh | `onSchedule` with `timeZone: "Asia/Kolkata"`; `--schedule "every 15 minutes"` |
-| `trigger` | Reacting to a document write | `onDocumentWritten`; `--doc "path/{id}"` |
+| `functions/crossword/<name>_logic.py` | Pure decisions: parse input with `InputReader` (collects every problem), build docs, score. No Firestore / `firebase_functions` imports. | `category_logic.py` |
+| `functions/crossword/<name>_logic_test.py` | pytest: happy path + every rejection | `category_logic_test.py` |
+| `functions/crossword/<name>.py` | `do_thing(client, uid, data)` that reads/writes in **one** `run_transaction`, and the thin `@https_fn.on_call` handler | `save_category.py` |
+| `functions/crossword/<name>_test.py` | Emulator tests with the `emulator_db` fixture (skipped without the emulator) | `save_category_test.py` |
 
-Names: admin callables **must** start with `admin`. Region is `asia-south1`.
+Pick the example by kind:
 
-Paste the printed export line into `functions/src/index.ts` (keep crossword exports together).
+| Kind | Copy | Must have |
+| --- | --- | --- |
+| Admin callable | `save_category.py` (write), `admin_reads.py` (read) | Name starts with `admin`; `admin_uid = assert_admin(req)` first, `write_audit_log(...)` last (writes only) |
+| Player callable | `submit.py` | `req.auth` check; `users/{uid}.blockedAt` → `PermissionDeniedError`; idempotent (return the stored result if already done) |
+| Scheduled job | `daily_rollover.py`, `leaderboard_top.py` | `scheduler_fn.on_schedule(..., timezone=scheduler_fn.Timezone("Asia/Kolkata"))`; bounded reads (`limit`); log what changed |
+| Trigger | — (none yet) | `firestore_fn.on_document_*`; idempotent (triggers can fire twice) |
 
-## Step 2 — Fill it in
+## Handler shape
 
-1. Collection names from `functions/src/crossword/collections.ts` (CW-004) — never string literals.
-2. Types from `functions/src/crossword/types.ts` (CW-012); field names exactly as `docs/firebase/FIREBASE_DESIGN.md`.
-3. Put **all** decisions in the `.logic.ts` file. Validators collect every problem, then throw one error with a `problems` list.
-4. Writes: one `WriteBatch` (or `runTransaction` when you read-then-write a counter). Set `updatedAt: FieldValue.serverTimestamp()` and `updatedBy`.
-5. Errors to clients: `HttpsError("invalid-argument" | "not-found" | "failed-precondition" | "permission-denied", message)`. Messages are what an admin will read.
-6. Player callables are **idempotent**: if the work is already done (e.g. progress `completed`), return the stored result.
-
-## Step 3 — Verify
-
-```bash
-cd functions
-npm run lint      # google style: double quotes, 2 spaces, max-len 100, JSDoc on exports
-npm run build
-npm test
-firebase emulators:start --only functions,firestore   # then call from the admin panel / app
+```python
+@https_fn.on_call()
+def adminSaveCategory(req: https_fn.CallableRequest[Any]) -> dict[str, object]:  # noqa: N802
+    """Admin: create or edit a crossword category (CW-015)."""
+    admin_uid = assert_admin(req)
+    with callable_errors():                      # InputError/NotFoundError/... → HttpsError
+        result = save_category(db(), admin_uid, req.data)
+    write_audit_log(action="crossword.saveCategory", admin_uid=admin_uid,
+                    target_id=str(result["id"]), payload={"created": result["created"]})
+    return result
 ```
 
-## Reference: what each crossword function must do
+## Rules
 
-See `docs/firebase/FIREBASE_DESIGN.md` → "Flows" and the task cards CW-015 – CW-022 in `TASKS.md`. Key rules:
+1. Collection names from `crossword/collections.py`; types from `crossword/types.py`; field names exactly as `docs/firebase/FIREBASE_DESIGN.md` (camelCase).
+2. Raise the domain errors from `crossword/errors.py` (`InputError` with a `problems` list, `NotFoundError`, `PreconditionError`, `PermissionDeniedError`, `RateLimitError`); `callable_errors()` maps them. Messages are what an admin or player will read.
+3. Writes: one transaction (`run_transaction` from `firestore_client.py`); set `updatedAt`/`updatedBy`. Pass `now=` in so tests control time.
+4. Deployed name camelCase with `# noqa: N802`; everything else snake_case; type hints everywhere; Google-style docstrings on public functions. Region comes from `set_global_options` in `main.py`.
+5. No `databaseId` parameter (DEC-002).
+6. New function → import it in `functions/main.py`; new callable or schema change → add it to `docs/firebase/FIREBASE_DESIGN.md` in the same change.
+7. Emulator tests call real handlers with `inspect.unwrap(handler)(callable_request(data))` (`callable_request` in `conftest.py`).
 
-- **adminSaveCrosswordPuzzle** writes the puzzle (`draft`) and `crosswordSolutions/{id}` in the same batch; refuses unverified questions; runs the grid validator.
-- **adminSetPuzzleStatus** only allows `draft→in_review→scheduled→published→archived`, `in_review→draft` and `in_review→published`; publish/archive update `publishedPuzzleCount` in a transaction.
-- **submitCrossword** reads `crosswordSolutions` + progress, scores with pure functions, then one batch: progress result, `users/{uid}.xp` + `crossword` stats, `leaderboards/crossword-{isoWeek}/entries/{uid}`, `revisionItems`.
-- Scheduled jobs keep reads bounded (`limit`) and log what they changed.
+## Verify
+
+```bash
+cd functions && venv/bin/ruff check . && venv/bin/ruff format --check . && venv/bin/pytest
+firebase emulators:exec --only firestore --project demo-kerala-pcs "cd functions && venv/bin/pytest"   # + emulator tests
+```
+
+Then give the user the deploy command (don't deploy unless asked) and note it in `docs/STATUS.md` → "Deployed":
+
+```bash
+firebase deploy --only functions:<name> --project kerala-pcs-dev
+```
 
 ## Checklist
 
-- [ ] Handler is thin; logic is pure and tested (happy path + every rejection)
-- [ ] Admin: `assertAdmin` and `writeAuditLog` present; no `databaseId` parameter (DEC-002)
-- [ ] Player: auth + blocked check + idempotent
-- [ ] Exported from `src/index.ts`
-- [ ] `npm run lint && npm run build && npm test` green
+- [ ] Logic module is pure and tested (happy path + every rejection)
+- [ ] Admin: `assert_admin` + `write_audit_log`; player: auth + blocked check + idempotent
+- [ ] Imported in `functions/main.py`; design doc updated
+- [ ] ruff + pytest green (and emulator tests if it touches Firestore)
+- [ ] `docs/STATUS.md` lists it as pending deploy (or deployed)
