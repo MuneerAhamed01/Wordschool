@@ -507,6 +507,7 @@ In `functions/crossword/` (Python codebase created in CW-007, DEC-010), region `
 | `adminListQuestions` | Callable | Admin | Page questions (20), filter by `subject` / `status`, recently updated first |
 | `adminListPuzzles` | Callable | Admin | Page a category's puzzles in any status (no grid), newest number first |
 | `adminGetPuzzle` | Callable | Admin | One puzzle + plain answers from `crosswordSolutions`, for editing |
+| `adminGetQuestion` | Callable | Admin | One question by id (reports page, CW-035) |
 | `submitCrossword` | Callable | Player | Score; one batch: result, XP, stats, leaderboard, revision |
 | `crosswordDailyRollover` | Scheduled 00:05 IST | System | Publish due puzzles; log an error if today or tomorrow has no daily doc |
 | `refreshLeaderboardTop` | Scheduled 15 min | System | Copy top 50 into parent doc (first run of a week finishes last week's board) |

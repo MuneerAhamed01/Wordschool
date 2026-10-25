@@ -1,7 +1,7 @@
 # Kerala PSC App — Task Sheet
 
 > **Current phase:** Phase 1 — PSC Crossword
-> **Branch:** `psc-dev` · **Firebase (dev):** `kerala-pcs-dev` · **Last updated:** 2026-10-23
+> **Branch:** `psc-dev` · **Firebase (dev):** `kerala-pcs-dev` · **Last updated:** 2026-10-25
 > **Specs:** [Firebase design](docs/firebase/FIREBASE_DESIGN.md) · [Screen specs](design/screens/psc-crossword.md) · [Conventions](CLAUDE.md)
 
 This file is the single source of truth for project work. The **status board** below is the only place a task's status is written; the **task cards** further down hold the details and stay stable.
@@ -89,19 +89,19 @@ This file is the single source of truth for project work. The **status board** b
 
 
 
-### M2 · Admin panel (Flutter web) — target 2026-12-04
+### M2 · Admin panel (Flutter web) — target 2026-12-04 · **closed 2026-10-25**
 
 
 | ID     | Task                                                                          | Area  | Est  | Depends                | Status | Notes                         |
 | ------ | ----------------------------------------------------------------------------- | ----- | ---- | ---------------------- | ------ | ----------------------------- |
-| CW-029 | Admin foundation: web target, `main_admin.dart`, claim login, shell, API base | admin | 1.5d | CW-024                 | todo   | Port from `development`       |
-| CW-030 | `AdminApiService` crossword methods + models                                  | admin | 1d   | CW-029, CW-023, CW-025 | todo   |                               |
-| CW-031 | Categories page                                                               | admin | 0.5d | CW-030                 | todo   |                               |
-| CW-032 | Question bank page (list, add/edit, verify)                                   | admin | 1.5d | CW-030                 | todo   |                               |
-| CW-033 | Puzzle builder (grid editor + live validation)                                | admin | 3d   | CW-030, CW-014         | todo   | Biggest admin task            |
-| CW-034 | Puzzle preview, status workflow, schedule calendar                            | admin | 1d   | CW-033                 | todo   |                               |
-| CW-035 | Reports page                                                                  | admin | 0.5d | CW-030                 | todo   |                               |
-| CW-036 | Import questions / puzzles from JSON                                          | admin | 1d   | CW-032, CW-033         | todo   | Saves typing for content team |
+| CW-029 | Admin foundation: web target, `main_admin.dart`, claim login, shell, API base | admin | 1.5d | CW-024                 | done   | Web app on dev; Google popup + claim |
+| CW-030 | `AdminApiService` crossword methods + models                                  | admin | 1d   | CW-029, CW-023, CW-025 | done   | Daily docs read via Firestore |
+| CW-031 | Categories page                                                               | admin | 0.5d | CW-030                 | done   | Drag to reorder; ID from name |
+| CW-032 | Question bank page (list, add/edit, verify)                                   | admin | 1.5d | CW-030                 | done   | "Mark as checked" = verify     |
+| CW-033 | Puzzle builder (grid editor + live validation)                                | admin | 3d   | CW-030, CW-014         | done   | Dart port of the validator    |
+| CW-034 | Puzzle preview, status workflow, schedule calendar                            | admin | 1d   | CW-033                 | done   | 30-day calendar, IST times    |
+| CW-035 | Reports page                                                                  | admin | 0.5d | CW-030                 | done   | + `adminGetQuestion`; deploy pending |
+| CW-036 | Import questions / puzzles from JSON                                          | admin | 1d   | CW-032, CW-033         | done   | + CSV for questions           |
 
 
 
@@ -516,10 +516,12 @@ Done when:
 
 psc-dev has no web target. Add it (`fvm flutter create --platforms web .`, then `flutterfire configure` for a web app in `kerala-pcs-dev`). Port from `development`: `lib/main_admin.dart` (entry), `lib/app/bootstrap_admin.dart`, `lib/di_admin.dart`, `lib/core/routes/admin_router.dart`, `features/admin/data/admin_auth_service.dart` (Google sign-in + `admin` claim check), `admin_shell_page.dart`, `admin_login_page.dart`, and an `AdminApiService` with a `_call(name, data)` helper using `FirebaseFunctions.instanceFor(region: 'asia-south1')`. Drop the database switcher (DEC-002); show the project id as an environment badge.
 
+**Done (branch `module/m2`):** web target added; Firebase web app `wordshool (web)` created in `kerala-pcs-dev` with the Firebase CLI (no FlutterFire CLI here) and added to `firebase_options.dart`. Sign-in is a Google popup (`signInWithPopup`, no `google_sign_in` on web); `AdminAuthService` is a `ChangeNotifier` the router listens to, so a non-admin is signed out and stays on `/login`. Sections: Home, Categories, Questions, Puzzles, Daily schedule, Reports, Bulk upload. Env badge shows `TEST · kerala-pcs-dev` (any non `-dev` project shows `LIVE` in red). Pages are `StatefulWidget`s that call `AdminApiService` directly (as on `development`); pure logic lives in `features/admin/domain/utils/` with tests.
+
 Done when:
 
-- [ ] `fvm flutter run -t lib/main_admin.dart -d chrome` → non-admin is refused, admin reaches the shell
-- [ ] The mobile app build is unaffected
+- [x] `fvm flutter run -t lib/main_admin.dart -d chrome` → non-admin is refused, admin reaches the shell — redirect logic unit-tested; signed in during review (2026-10-25)
+- [x] The mobile app build is unaffected — web-only code sits behind conditional imports (`presentation/utils/text_file.dart`)
 
 
 
@@ -527,9 +529,11 @@ Done when:
 
 Typed methods for every crossword callable; models in `lib/features/admin/domain/models/`.
 
+**Done:** every method returns `DataState<T>`; `listAllQuestions` pages at 100 for import matching and the builder. `crosswordDaily` docs are read straight from Firestore (players may read them; one `get()` per day) instead of a new callable. `LocalizedText` added in `lib/shared/domains/entities/` (CW-040 reuses it); `toJson` leaves out empty optional text because the server rejects e.g. an empty `topic`. Errors: `showAdminError` shows the server message in a snackbar, with "See all" when the server lists several problems.
+
 Done when:
 
-- [ ] Each method has a `fromJson` model; errors surface as snackbars with the server message
+- [x] Each method has a `fromJson` model; errors surface as snackbars with the server message
 
 
 
@@ -537,18 +541,24 @@ Done when:
 
 List, add/edit, reorder (`order`), toggle `isActive`.
 
+**Done:** list with drag handles (orders become 10, 20, 30… and only changed categories are re-saved), a "Visible to players" switch, and an add/edit dialog. The ID is made from the English name (editable only when adding), the icon and colour are picked from 12 icons and 8 colours.
+
 #### CW-032 · Question bank page
 
 Filter by subject + status; add/edit form (answer, display EN/ML, clues, fact, examTags, difficulty, source); Verify button.
+
+**Done:** filters (subject from categories + loaded questions, status), search within loaded pages, "Load more" (20 per page). The form is numbered in 5 steps; the answer shows as letter tiles as you type (normalised like the server), subjects/topics/exam tags are converted to snake_case, and the source hint changes with its type. Verify is labelled **"Mark as checked"**, asks for confirmation showing the source, and opens the editor instead when the source still starts with TODO. Editing a checked question warns that it goes back to "Needs checking".
 
 #### CW-033 · Puzzle builder
 
 Grid editor (up to 15×15), place a verified question across/down at a cell, auto-numbering, crossing conflicts highlighted, validator errors listed live (port of CW-013 in Dart, or a `dryRun` flag on `adminSaveCrosswordPuzzle`).
 
+**Done:** validator ported to Dart (`domain/utils/grid_validator.dart`, same checks as CW-013 and the same test cases; messages written for people, rows/columns from 1, with the cells to highlight). The admin never draws black squares: they place **checked** questions and `PuzzleDraft` works out the layout, numbering and word ids (unused squares become blocks). Picking a question shows suggested spots that cross existing words on a matching letter without touching others; tapping a square places it there instead. Selected word: edit the clue (or pick one of the question's clues), extra hint, remove. Grid size 3–15, "Fit to words", Clear, Undo. Problems are listed live and cells turn red; Save stays disabled ("Fix N to save") until the grid, details and question checks are clean. Also: the Puzzles list page (category chips, status filter, paging). `/puzzles/:id` opens the builder until CW-034 adds the preview page.
+
 Done when:
 
-- [ ] The example puzzle in `.claude/skills/crossword-content/examples/` can be rebuilt in the builder
-- [ ] Save works only when the validator is clean
+- [x] The example puzzle in `.claude/skills/crossword-content/examples/` can be rebuilt in the builder — `puzzle_draft_test.dart` rebuilds it from placements only: same layout, numbers and ids, no problems (in the panel it needs its 7 questions checked first)
+- [x] Save works only when the validator is clean
 
 
 
@@ -556,18 +566,24 @@ Done when:
 
 Preview renders the puzzle as the player sees it; buttons for each allowed status move; calendar of `crosswordDaily` for the next 30 days with empty days flagged.
 
+**Done:** `/puzzles/:id` shows the grid with black squares and Across/Down clue lists ("Show answers" adds answers and facts; tapping a clue or square highlights the word). "What next?" lists one button per allowed move from `status_flow.dart` (mirrors `TRANSITIONS`, unit-tested) with a one-line explanation: Send for review, Back to draft, Schedule / Change date (date + time picker in IST, must be in the future), Publish now and Archive (both confirm). Live and scheduled puzzles also get "Make puzzle of the day". `/schedule` lists the next 30 IST days (one `get()` per day), "N of 30 days have a puzzle", empty days in yellow, and a picker that only offers Live puzzles or Scheduled ones going live by midnight of that day.
+
 #### CW-035 · Reports page
 
 Open reports with links to the puzzle/question; resolve with note.
+
+**Done:** Open / Fixed / Rejected tabs, paging. "Open puzzle" goes to the puzzle page with the reported word highlighted (`?word=2D`); "Open question" opens the question editor. There was no way to read one question, so a new admin callable **`adminGetQuestion({id})`** was added (`crossword/admin_reads.py`, emulator tests, design doc). "Mark fixed" / "Reject" ask for an optional note. **Deploy:** `firebase deploy --only functions:adminGetQuestion --project kerala-pcs-dev` (run by the user at M2 close, 2026-10-25).
 
 #### CW-036 · Import from JSON
 
 Upload a `content/questions/*.json` or `content/puzzles/*.json` file (shapes in `.claude/skills/crossword-content/examples/`). Show a preview with validation errors, then call `adminSaveQuestion` / `adminSaveCrosswordPuzzle` per item. `draftNotes` is dropped; imported questions stay `draft`.
 
+**Done:** "Bulk upload" page (`/bulk-upload`). Questions come from a CSV spreadsheet (downloadable template, UTF-8 with BOM so Excel shows Malayalam; cells pasted from Google Sheets also work) or JSON; puzzles from JSON. Every row is checked like the server does and shown as New / Update / No change / Error before anything is saved; rows with errors are skipped. Questions match on `subject` + `answer` (an identical one is left alone, so checked questions stay checked). Puzzle words with a `TODO` question id are linked to a checked question by answer; puzzles match on `id`, then on title in the category, and only drafts are overwritten. Pure logic in `domain/utils/{bulk_import,csv}.dart` with tests; browser file open/save in `presentation/utils/text_file*.dart` (package `web`). Status filters on Questions, Puzzles and Reports now use a shared `FilterChips` widget.
+
 Done when:
 
-- [ ] Both example files import cleanly into the dev DB
-- [ ] Re-importing the same file updates instead of duplicating (match on `answer` + `subject` for questions, `id` for puzzles)
+- [x] Both example files import cleanly into the dev DB — both parse with no problems in `bulk_import_test.dart`; uploaded during review (2026-10-25)
+- [x] Re-importing the same file updates instead of duplicating (match on `answer` + `subject` for questions, `id` for puzzles) — `planQuestionImport` / `planPuzzleImport` tests
 
 
 

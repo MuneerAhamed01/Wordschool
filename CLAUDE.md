@@ -1,13 +1,18 @@
 # CLAUDE.md — Kerala PSC App
 
-Guidance for Claude Code (and Cursor) working in this repository. Read this first, then `TASKS.md`.
+Guidance for Claude Code (and Cursor) working in this repository.
+
+**Reading order (keeps token use low):**
+1. This file.
+2. `docs/STATUS.md` — milestones, what's next, what's deployed, a map of the code. **Answer status / "what's next" / "what's deployed" questions from this file alone**; don't scan code or git for them.
+3. `TASKS.md` — only the board row and card of the task you're on (search for `CW-0XX`; don't read the whole file).
+4. Code — only the files the card names, plus the closest existing example of the same kind.
 
 ## What this project is
 
 A Flutter app of **Kerala PSC exam-prep games**, built on the `psc-dev` branch (a fresh, slim start from the WordSchool codebase).
 
-- **On the branch today:** Google + guest sign-in, a daily word game (`features/game`), shared UI widgets.
-- **Phase 1 (now):** **PSC Crossword** — topic crosswords built from a verified PSC fact bank, with an admin panel and Cloud Functions.
+- **Phase 1 (now):** **PSC Crossword** — topic crosswords built from a verified PSC fact bank. Backend (M1) and admin panel (M2) are done; the player app (M3) and content (M4) are next. Live state: `docs/STATUS.md`.
 - **Phase 2 (later):** Kerala Map Challenge (designs ready in `design/`).
 
 The older full WordSchool app lives on `development`. Port code from there when a task says so (admin panel, functions tooling, flavors, analytics) — don't merge the branches.
@@ -18,7 +23,8 @@ Package name is `wordshool` (sic). **Do not rename** it, or the misspelled folde
 
 | Need | Look in |
 | --- | --- |
-| What to work on | `TASKS.md` (status board + task cards + decisions) |
+| Where we are, what's next, what's deployed, code map | `docs/STATUS.md` (read first) |
+| Task scope and "Done when" | `TASKS.md` (status board + task cards + decisions) |
 | Firestore schema, rules, indexes, costs | `docs/firebase/FIREBASE_DESIGN.md` |
 | Screen specs, tokens, prototypes | `design/` |
 | PSC content drafts | `content/` |
@@ -129,19 +135,21 @@ lib/
 ## Working on tasks
 
 1. Find the task in `TASKS.md`; set its board status to `doing`.
-2. Branch `feat/CW-0XX-short-name` from `psc-dev` (`chore/` for ops, `fix/` for bugs).
+2. Branch from `psc-dev`: one branch per milestone or group of tasks (e.g. `module/m2`), or `feat/CW-0XX-short-name` for a lone task (`chore/` for ops, `fix/` for bugs).
 3. Use the matching skill. Keep the change inside the card's scope; extra work becomes a new task.
 4. Tick the card's "Done when" boxes; run analyze/tests; set status `review`.
-5. **Don't commit until the user asks.** When asked: commit `CW-0XX: what changed`, then push the task branch (`git push -u origin <branch>`). No PRs — the user reviews the pushed branch.
+5. **Don't commit, push or merge until the user asks.** When asked: **one commit per task** (`CW-0XX: what changed`) on the current branch, push it (`git push -u origin <branch>`), merge into `psc-dev` and push that. No PRs — the user reviews the pushed branch. Docs-only changes go in a final `docs:` commit.
 6. Add notable changes to `docs/daily/YYYY-MM-DD.md`.
+7. **Update `docs/STATUS.md`** in the same change whenever a board status, a deploy or a milestone changes.
+8. When a deploy is needed, give the user the exact `firebase deploy …` command to run; don't deploy yourself unless asked.
 
 ## Skills (`.claude/skills/`)
 
 | Skill | Use it to |
 | --- | --- |
-| `task-workflow` | Pick the next task, start one, finish one, add/split tasks |
+| `task-workflow` | Pick the next task, start one, finish one, close a milestone, add/split tasks |
 | `flutter-feature` | Scaffold entity → model → data source → repo → use case → bloc → page, and wire DI/routes |
-| `cloud-function` | Scaffold an admin callable, player callable, scheduled job or trigger, with tests |
+| `cloud-function` | Add a Python admin callable, player callable, scheduled job or trigger, with pytest |
 | `firestore-collection` | Add a collection end to end: constants, rules + tests, indexes, design doc |
 | `crossword-content` | Draft PSC questions and crossword puzzles as JSON; validate grids |
 
@@ -158,3 +166,4 @@ lib/
 - Don't commit `.env`, service-account keys or signing files.
 - Don't merge `development` into `psc-dev`; port only what a task names.
 - Don't add packages without saying why in the daily log.
+- Don't hardcode credentials, even for a local test harness; `tool/` is local-only and never committed.

@@ -64,3 +64,6 @@ firestore-debug.log*
 
 # Test coverage
 coverage/
+
+# Local-only harnesses (never committed)
+/tool/

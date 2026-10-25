@@ -19,6 +19,7 @@ from crossword.collections import (
     PSC_QUESTIONS,
 )
 from crossword.errors import NotFoundError
+from crossword.question_logic import parse_question_id
 from crossword.types import CrosswordPuzzle, CrosswordSolution
 from firestore_client import db
 from utils.callable_errors import callable_errors
@@ -114,6 +115,23 @@ def get_puzzle(client: Client, data: object) -> dict[str, object]:
     return {"puzzle": puzzle_with_answers_json(puzzle_id, puzzle, answers)}
 
 
+def get_question(client: Client, data: object) -> dict[str, object]:
+    """One question, e.g. to fix it from a player report.
+
+    Returns:
+        `{"question": {...}}`.
+
+    Raises:
+        InputError: Invalid data.
+        NotFoundError: No such question.
+    """
+    question_id = parse_question_id(data)
+    snapshot = client.collection(PSC_QUESTIONS).document(question_id).get()
+    if not snapshot.exists:
+        raise NotFoundError(f"Question {question_id} not found")
+    return {"question": doc_json(snapshot.id, snapshot.to_dict())}
+
+
 def list_categories(client: Client) -> dict[str, object]:
     """Every category, active or not, in display order (a few dozen docs at most).
 
@@ -146,6 +164,14 @@ def adminGetPuzzle(req: https_fn.CallableRequest[Any]) -> dict[str, object]:  # 
     assert_admin(req)
     with callable_errors():
         return get_puzzle(db(), req.data)
+
+
+@https_fn.on_call()
+def adminGetQuestion(req: https_fn.CallableRequest[Any]) -> dict[str, object]:  # noqa: N802
+    """Admin: one question, for the reports page (CW-035)."""
+    assert_admin(req)
+    with callable_errors():
+        return get_question(db(), req.data)
 
 
 @https_fn.on_call()

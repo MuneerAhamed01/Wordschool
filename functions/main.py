@@ -16,6 +16,7 @@ set_global_options(region="asia-south1", max_instances=10)
 # PSC Crossword (deployed names are what the apps call).
 from crossword.admin_reads import (  # noqa: E402
     adminGetPuzzle,
+    adminGetQuestion,
     adminListCategories,
     adminListPuzzles,
     adminListQuestions,
@@ -31,6 +32,7 @@ from crossword.submit import submitCrossword  # noqa: E402
 
 __all__ = [
     "adminGetPuzzle",
+    "adminGetQuestion",
     "adminListCategories",
     "adminListPuzzles",
     "adminListQuestions",
