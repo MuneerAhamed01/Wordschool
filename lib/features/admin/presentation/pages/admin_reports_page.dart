@@ -10,6 +10,7 @@ import 'package:wordshool/features/admin/domain/utils/ist_date.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_puzzles_page.dart';
 import 'package:wordshool/features/admin/presentation/widgets/admin_feedback.dart';
 import 'package:wordshool/features/admin/presentation/widgets/admin_page.dart';
+import 'package:wordshool/features/admin/presentation/widgets/filter_chips.dart';
 import 'package:wordshool/features/admin/presentation/widgets/question_editor_dialog.dart';
 import 'package:wordshool/features/admin/presentation/widgets/status_chip.dart';
 
@@ -141,20 +142,14 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: SegmentedButton<ReportStatus>(
-              showSelectedIcon: false,
-              segments: [
-                for (final s in ReportStatus.values)
-                  ButtonSegment(value: s, label: Text(s.label))
-              ],
-              selected: {_status},
-              onSelectionChanged: (s) {
-                setState(() => _status = s.first);
-                _load();
-              },
-            ),
+          FilterChips<ReportStatus>(
+            options: ReportStatus.values,
+            selected: _status,
+            label: (s) => s.label,
+            onSelected: (s) {
+              setState(() => _status = s);
+              _load();
+            },
           ),
           const SizedBox(height: 16),
           _buildList(),

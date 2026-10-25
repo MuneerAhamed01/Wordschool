@@ -49,6 +49,19 @@ class AdminPuzzleWord extends Equatable {
     );
   }
 
+  AdminPuzzleWord withQuestionId(String questionId) => AdminPuzzleWord(
+        id: id,
+        number: number,
+        direction: direction,
+        row: row,
+        col: col,
+        answer: answer,
+        clue: clue,
+        extraClue: extraClue,
+        fact: fact,
+        questionId: questionId,
+      );
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'number': number,
@@ -208,6 +221,30 @@ class AdminPuzzle extends Equatable {
       publishedAt: readDate(json['publishedAt']),
     );
   }
+
+  AdminPuzzle copyWithWords(List<AdminPuzzleWord> words) => _copy(words: words);
+
+  /// The same puzzle saved under [id] (null = save as a new puzzle).
+  AdminPuzzle withId(String? id) => _copy(id: id, clearId: id == null);
+
+  AdminPuzzle _copy(
+          {String? id, bool clearId = false, List<AdminPuzzleWord>? words}) =>
+      AdminPuzzle(
+        id: clearId ? null : (id ?? this.id),
+        categoryId: categoryId,
+        number: number,
+        title: title,
+        difficulty: difficulty,
+        rows: rows,
+        cols: cols,
+        layout: layout,
+        words: words ?? this.words,
+        xpReward: xpReward,
+        estimatedMinutes: estimatedMinutes,
+        status: status,
+        publishAt: publishAt,
+        publishedAt: publishedAt,
+      );
 
   /// The `adminSaveCrosswordPuzzle` payload.
   Map<String, dynamic> toJson() => {

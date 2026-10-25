@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wordshool/features/admin/data/admin_auth_service.dart';
-import 'package:wordshool/features/admin/presentation/admin_sections.dart';
+import 'package:wordshool/features/admin/presentation/pages/admin_bulk_upload_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_categories_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_home_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_login_page.dart';
@@ -13,7 +13,6 @@ import 'package:wordshool/features/admin/presentation/pages/admin_questions_page
 import 'package:wordshool/features/admin/presentation/pages/admin_reports_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_schedule_page.dart';
 import 'package:wordshool/features/admin/presentation/pages/admin_shell_page.dart';
-import 'package:wordshool/features/admin/presentation/pages/admin_section_placeholder.dart';
 
 /// Only admins get past `/login`; admins never see it.
 @visibleForTesting
@@ -28,10 +27,6 @@ String? adminRedirect({
   }
   return atLogin ? AdminHomePage.routeName : null;
 }
-
-const _unbuiltSections = [
-  AdminSection.bulkUpload,
-];
 
 GoRouter adminRouter(AdminAuthService auth) {
   return GoRouter(
@@ -104,12 +99,10 @@ GoRouter adminRouter(AdminAuthService auth) {
             path: AdminReportsPage.routeName,
             builder: (context, state) => const AdminReportsPage(),
           ),
-          for (final section in _unbuiltSections)
-            GoRoute(
-              path: section.path,
-              builder: (context, state) =>
-                  AdminSectionPlaceholder(section: section),
-            ),
+          GoRoute(
+            path: AdminBulkUploadPage.routeName,
+            builder: (context, state) => const AdminBulkUploadPage(),
+          ),
         ],
       ),
     ],

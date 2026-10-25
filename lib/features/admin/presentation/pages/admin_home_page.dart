@@ -7,7 +7,6 @@ import 'package:wordshool/features/admin/data/admin_api_service.dart';
 import 'package:wordshool/features/admin/data/admin_auth_service.dart';
 import 'package:wordshool/features/admin/presentation/admin_sections.dart';
 import 'package:wordshool/features/admin/presentation/widgets/admin_page.dart';
-import 'package:wordshool/shared/presentations/widgets/fade_slide_in.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -169,10 +168,7 @@ class _Steps extends StatelessWidget {
             for (var i = 0; i < _steps.length; i++)
               SizedBox(
                 width: width,
-                child: FadeSlideIn(
-                  delay: Duration(milliseconds: 60 * i),
-                  child: _StepCard(number: i + 1, step: _steps[i]),
-                ),
+                child: _StepCard(number: i + 1, step: _steps[i]),
               ),
           ],
         );
@@ -194,7 +190,8 @@ class _StepCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => context.go(step.section.path),
-        child: Padding(
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 168),
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

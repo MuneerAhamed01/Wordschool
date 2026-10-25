@@ -11,6 +11,7 @@ import 'package:wordshool/features/admin/domain/utils/ist_date.dart';
 import 'package:wordshool/features/admin/presentation/widgets/admin_feedback.dart';
 import 'package:wordshool/features/admin/presentation/widgets/admin_page.dart';
 import 'package:wordshool/features/admin/presentation/widgets/category_visuals.dart';
+import 'package:wordshool/features/admin/presentation/widgets/filter_chips.dart';
 import 'package:wordshool/features/admin/presentation/widgets/status_chip.dart';
 
 class AdminPuzzlesPage extends StatefulWidget {
@@ -186,24 +187,14 @@ class _AdminPuzzlesPageState extends State<AdminPuzzlesPage> {
           ],
         ),
         const SizedBox(height: 12),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: SegmentedButton<PuzzleStatus?>(
-              showSelectedIcon: false,
-              segments: [
-                const ButtonSegment(value: null, label: Text('All')),
-                for (final s in PuzzleStatus.values)
-                  ButtonSegment(value: s, label: Text(s.label)),
-              ],
-              selected: {_status},
-              onSelectionChanged: (s) {
-                setState(() => _status = s.first);
-                _load();
-              },
-            ),
-          ),
+        FilterChips<PuzzleStatus?>(
+          options: const [null, ...PuzzleStatus.values],
+          selected: _status,
+          label: (s) => s?.label ?? 'All statuses',
+          onSelected: (s) {
+            setState(() => _status = s);
+            _load();
+          },
         ),
         const SizedBox(height: 16),
         _buildList(),

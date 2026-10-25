@@ -9,6 +9,9 @@ ThemeData adminTheme() {
     onPrimary: MyColors.white,
     secondary: MyColors.hint,
     onSecondary: MyColors.gameBackground,
+    // Selected chips and segments.
+    secondaryContainer: MyColors.successBg,
+    onSecondaryContainer: MyColors.successText,
     tertiary: MyColors.infoText,
     error: MyColors.errorText,
     onError: MyColors.gameBackground,
@@ -86,6 +89,9 @@ ThemeData adminTheme() {
     chipTheme: base.chipTheme.copyWith(
       backgroundColor: MyColors.gameSurfaceElevated,
       selectedColor: MyColors.successBg,
+      checkmarkColor: MyColors.successText,
+      labelStyle:
+          const TextStyle(color: MyColors.white, fontWeight: FontWeight.w600),
       side: const BorderSide(color: MyColors.gameBorder),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),

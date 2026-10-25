@@ -8,6 +8,7 @@ import 'package:wordshool/features/admin/domain/models/admin_question.dart';
 import 'package:wordshool/features/admin/domain/utils/question_text.dart';
 import 'package:wordshool/features/admin/presentation/widgets/admin_feedback.dart';
 import 'package:wordshool/features/admin/presentation/widgets/admin_page.dart';
+import 'package:wordshool/features/admin/presentation/widgets/filter_chips.dart';
 import 'package:wordshool/features/admin/presentation/widgets/question_editor_dialog.dart';
 import 'package:wordshool/features/admin/presentation/widgets/status_chip.dart';
 
@@ -226,16 +227,11 @@ class _AdminQuestionsPageState extends State<AdminQuestionsPage> {
             onChanged: (s) => _setFilter(subject: s, clearSubject: s == null),
           ),
         ),
-        SegmentedButton<QuestionStatus?>(
-          showSelectedIcon: false,
-          segments: [
-            const ButtonSegment(value: null, label: Text('All')),
-            for (final s in QuestionStatus.values)
-              ButtonSegment(value: s, label: Text(s.label)),
-          ],
-          selected: {_status},
-          onSelectionChanged: (s) =>
-              _setFilter(status: s.first, clearStatus: s.first == null),
+        FilterChips<QuestionStatus?>(
+          options: const [null, ...QuestionStatus.values],
+          selected: _status,
+          label: (s) => s?.label ?? 'All',
+          onSelected: (s) => _setFilter(status: s, clearStatus: s == null),
         ),
         SizedBox(
           width: 260,
