@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wordshool/features/crossword/domain/utils/answer_encoding.dart';
+import 'package:wordshool/features/crossword/puzzle/domain/utils/answer_encoding.dart';
 
 void main() {
   // Same fixtures as functions/crossword/answer_encoding_test.py.
