@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:wordshool/config/themes/admin_theme.dart';
 import 'package:wordshool/core/routes/admin_router.dart';
 import 'package:wordshool/di_admin.dart';
-import 'package:wordshool/features/admin/data/admin_auth_service.dart';
+import 'package:wordshool/features/admin/shared/data/data_source/auth_service.dart';
 import 'package:wordshool/firebase_options.dart';
 
 /// Admin panel (Flutter web):

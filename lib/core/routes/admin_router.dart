@@ -1,18 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:wordshool/features/admin/data/admin_auth_service.dart';
-import 'package:wordshool/features/admin/presentation/pages/admin_bulk_upload_page.dart';
-import 'package:wordshool/features/admin/presentation/pages/admin_categories_page.dart';
-import 'package:wordshool/features/admin/presentation/pages/admin_home_page.dart';
-import 'package:wordshool/features/admin/presentation/pages/admin_login_page.dart';
-import 'package:wordshool/features/admin/presentation/pages/admin_puzzle_builder_page.dart';
-import 'package:wordshool/features/admin/presentation/pages/admin_puzzle_detail_page.dart';
-import 'package:wordshool/features/admin/presentation/pages/admin_puzzles_page.dart';
-import 'package:wordshool/features/admin/presentation/pages/admin_questions_page.dart';
-import 'package:wordshool/features/admin/presentation/pages/admin_reports_page.dart';
-import 'package:wordshool/features/admin/presentation/pages/admin_schedule_page.dart';
-import 'package:wordshool/features/admin/presentation/pages/admin_shell_page.dart';
+import 'package:wordshool/core/routes/admin_routes.dart';
+import 'package:wordshool/features/admin/shared/data/data_source/auth_service.dart';
+import 'package:wordshool/features/admin/bulk_upload/presentation/pages/bulk_upload_page.dart';
+import 'package:wordshool/features/admin/categories/presentation/pages/categories_page.dart';
+import 'package:wordshool/features/admin/home/presentation/pages/home_page.dart';
+import 'package:wordshool/features/admin/auth/presentation/pages/login_page.dart';
+import 'package:wordshool/features/admin/puzzles/builder/presentation/pages/puzzle_builder_page.dart';
+import 'package:wordshool/features/admin/puzzles/detail/presentation/pages/puzzle_detail_page.dart';
+import 'package:wordshool/features/admin/puzzles/presentation/pages/puzzles_page.dart';
+import 'package:wordshool/features/admin/questions/presentation/pages/questions_page.dart';
+import 'package:wordshool/features/admin/reports/presentation/pages/reports_page.dart';
+import 'package:wordshool/features/admin/schedule/presentation/pages/schedule_page.dart';
+import 'package:wordshool/features/admin/shell/presentation/pages/shell_page.dart';
 
 /// Only admins get past `/login`; admins never see it.
 @visibleForTesting
@@ -20,17 +21,17 @@ String? adminRedirect({
   required String location,
   required AdminAuthStatus status,
 }) {
-  final atLogin = location == AdminLoginPage.routeName;
+  final atLogin = location == AdminRoutes.login;
   if (status == AdminAuthStatus.unknown) return null;
   if (status != AdminAuthStatus.admin) {
-    return atLogin ? null : AdminLoginPage.routeName;
+    return atLogin ? null : AdminRoutes.login;
   }
-  return atLogin ? AdminHomePage.routeName : null;
+  return atLogin ? AdminRoutes.home : null;
 }
 
 GoRouter adminRouter(AdminAuthService auth) {
   return GoRouter(
-    initialLocation: AdminHomePage.routeName,
+    initialLocation: AdminRoutes.home,
     refreshListenable: auth,
     redirect: (context, state) => adminRedirect(
       location: state.matchedLocation,
@@ -38,7 +39,7 @@ GoRouter adminRouter(AdminAuthService auth) {
     ),
     routes: [
       GoRoute(
-        path: AdminLoginPage.routeName,
+        path: AdminRoutes.login,
         builder: (context, state) => const AdminLoginPage(),
       ),
       ShellRoute(
@@ -48,19 +49,19 @@ GoRouter adminRouter(AdminAuthService auth) {
         ),
         routes: [
           GoRoute(
-            path: AdminHomePage.routeName,
+            path: AdminRoutes.home,
             builder: (context, state) => const AdminHomePage(),
           ),
           GoRoute(
-            path: AdminCategoriesPage.routeName,
+            path: AdminRoutes.categories,
             builder: (context, state) => const AdminCategoriesPage(),
           ),
           GoRoute(
-            path: AdminQuestionsPage.routeName,
+            path: AdminRoutes.questions,
             builder: (context, state) => const AdminQuestionsPage(),
           ),
           GoRoute(
-            path: AdminPuzzlesPage.routeName,
+            path: AdminRoutes.puzzles,
             builder: (context, state) => AdminPuzzlesPage(
               key: ValueKey(state.uri.queryParameters['category']),
               initialCategoryId: state.uri.queryParameters['category'],
@@ -92,15 +93,15 @@ GoRouter adminRouter(AdminAuthService auth) {
             ],
           ),
           GoRoute(
-            path: AdminSchedulePage.routeName,
+            path: AdminRoutes.schedule,
             builder: (context, state) => const AdminSchedulePage(),
           ),
           GoRoute(
-            path: AdminReportsPage.routeName,
+            path: AdminRoutes.reports,
             builder: (context, state) => const AdminReportsPage(),
           ),
           GoRoute(
-            path: AdminBulkUploadPage.routeName,
+            path: AdminRoutes.bulkUpload,
             builder: (context, state) => const AdminBulkUploadPage(),
           ),
         ],

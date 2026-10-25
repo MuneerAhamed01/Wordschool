@@ -12,25 +12,45 @@ Generates code that matches the existing `auth` / `game` features' layering (plu
 - A task card asks for entities, models, data sources, repositories, use cases, blocs or pages (e.g. CW-040 – CW-054).
 - You are adding a screen backed by a Firestore document or query.
 
+## Before you write anything — reuse
+
+The crossword feature (M3) is the reference implementation; its file map is `docs/plans/M3-player-app.md`. Copy from it:
+
+| Need | Copy / use |
+| --- | --- |
+| Where a file goes | `lib/features/<feature>/<module>/[<sub_module>/]{data,domain,presentation}`; used by 2+ modules → `<feature>/shared/`; by 2+ features → `lib/shared` / `lib/core` (CLAUDE.md "Code structure rules") |
+| Data-source method | `guardData('Source.method', () async {...})` from `lib/core/resorces/data_guard.dart` — e.g. `crossword/category/data/data_source/remote/category_service.dart` |
+| Reading JSON | `lib/core/utils/json_read.dart` (`asInt`, `asString`, `asStringList`, `asMap`, `asMapList`, `asDate`), Firestore timestamps `FirebaseDTConverter.tryParse` |
+| Paged list | `Paged<T>` (`lib/shared/domains/entities/paged.dart`); cursor = last item, with the doc id as tiebreaker when the order field can repeat (`crossword/revise/data/data_source/remote/revise_service.dart`) |
+| State two modules need | A shared repository (`crossword/shared/domain/repositories/progress_repository.dart`) or the change signal (`changes_repository.dart` + `CrosswordChange`) — never import the other module |
+| Navigating to another module | `AppRoutes` / `AdminRoutes` in `lib/core/routes/` — never import another module's page |
+| Sealed bloc | `crossword/revise/presentation/bloc/revise_bloc.dart` (small) or `crossword/puzzle/presentation/bloc/puzzle_bloc.dart` (timer, save queue) |
+| Loading / empty / error UI | `SkeletonBox`, `StateMessage` / `StateMessage.error`, `showAppSheet` |
+| Module DI | `crossword/<module>/di.dart` → `initCrossword<Module>(GetIt)`, called from `crossword/di.dart` |
+| Bloc + widget tests | `test/features/crossword/crossword_fakes.dart` (one fake implementing every module repository + real use cases), screens at 360 px in `test/features/crossword/screens_test.dart` |
+| Run checks | `scripts/check.sh test/features/<feature>` (analyze + `scripts/check_structure.py` + tests) |
+
+The scaffold script below is fine for flat entities; for nested fields (lists of maps, `LocalizedText`) writing by hand from the crossword files is faster.
+
 ## Step 1 — Generate the slice
 
 Run from the repo root. It never overwrites files (use `--force` only on purpose).
 
 ```bash
 python3 .claude/skills/flutter-feature/scripts/scaffold_feature.py \
-  --feature crossword \
-  --entity crossword_puzzle \
-  --source crossword_content \
-  --collection crosswordPuzzles \
-  --fields "id:String,categoryId:String,number:int,difficulty:String,rows:int,cols:int,layout:String,xpReward:int,publishedAt:DateTime?" \
-  --usecase load_crossword_puzzle \
-  --bloc crossword_puzzle \
-  --page crossword_puzzle
+  --feature crossword --module notes \
+  --entity note \
+  --collection notes \
+  --fields "id:String,questionId:String,text:String,createdAt:DateTime?" \
+  --usecase load_note \
+  --bloc notes \
+  --page notes
 ```
 
 | Flag | Meaning |
 | --- | --- |
 | `--feature` | Folder under `lib/features/` (snake_case) |
+| `--module` | Module folder inside the feature (`lib/features/<feature>/<module>/`); names come from it, so no feature prefix |
 | `--entity` | Entity file/class name (snake_case → `CrosswordPuzzleEntity`, `CrosswordPuzzleModel`) |
 | `--fields` | `name:Type`, `?` = nullable. Types: `String int double bool DateTime List<T> Map<K,V>` or any class (gets a TODO) |
 | `--source` | Data source name → `<source>_service.dart`, `<Source>DataSource(Impl)` |
@@ -44,7 +64,7 @@ Field names must match `docs/firebase/FIREBASE_DESIGN.md` exactly.
 
 ## Step 2 — Finish what the script can't know
 
-1. **Paste the printed snippets.** The DI snippet goes into `lib/di.dart` inside `_initialize<Feature>()` (create it, call it from `initializeDependency`). The route snippet goes into `lib/core/routes/app_router.dart`. The collection constant goes into `lib/core/firebase/collections.dart`.
+1. **Paste the printed snippets.** The DI snippet goes into the module's `di.dart` (`init<Feature><Module>(GetIt getIt)`, called from the feature's `di.dart`; a one-module feature uses `_initialize<Feature>()` in `lib/di.dart`). The route path goes into `lib/core/routes/app_routes.dart` and the route into `app_router.dart`. The collection constant goes into `lib/core/firebase/collections.dart`.
 2. **Shared files that already existed** (repository, data source, repo impl) — the script lists them. Add the new method to the interface, the impl and the repository by hand, using the generated method body as the pattern.
 3. **Fill the TODOs**: custom field parsing (e.g. `LocalizedText.fromJson`, list of nested models), field assertions in the model test, the page body from `design/screens/*.md`.
 4. Run `fvm dart format lib test`, then `fvm flutter analyze && fvm flutter test`.
@@ -94,7 +114,7 @@ return DataSuccess(data: CrosswordResultModel.fromJson(
 ));
 ```
 
-Add `cloud_functions` to `pubspec.yaml` (not on psc-dev yet) and register `FirebaseFunctions.instanceFor(region: 'asia-south1')` once in DI.
+`FirebaseFunctions.instanceFor(region: 'asia-south1')` and `FirebaseFirestore` are registered once in `di.dart` → `_initializeFirebase()`; take them with `getIt<FirebaseFunctions>()`.
 
 **Player-owned write** (only fields the rules allow; server timestamp):
 
@@ -114,8 +134,11 @@ await _firestore
 ## Checklist before you finish
 
 - [ ] `domain/` has no Flutter/Firebase/get_it imports
-- [ ] Every data source method catches, logs (`dart:developer` `log`) and returns `DataError(error: AppError(...))`
+- [ ] Every data source method goes through `guardData` (catches, logs, `DataError` with a player message)
 - [ ] Queries carry the filters the rules check
 - [ ] New use cases registered in DI; blocs created in router/page
 - [ ] Model test passes with a real-shaped JSON fixture
-- [ ] Analyze + tests pass
+- [ ] Files in the right module; nothing imports another module (only its own, `<feature>/shared/`, `lib/{core,config,shared}`)
+- [ ] No file over 700 lines; widget-returning functions are `build` / `_build…`; one job per function
+- [ ] File names don't repeat the feature or folder (`models/puzzle.dart`, not `models/crossword_puzzle_model.dart`)
+- [ ] `scripts/check.sh` passes; screens tested at 360 px
