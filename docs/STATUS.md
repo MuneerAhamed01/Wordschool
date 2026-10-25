@@ -13,12 +13,12 @@
 | --- | --- | --- | --- |
 | M0 Foundations | 2026-11-04 | **closed 2026-10-23** | 9 / 9 |
 | M1 Backend: rules, indexes, functions | 2026-11-18 | **closed 2026-10-23** | 17 / 17 (CW-010 … CW-026; CW-026 live check → CW-071) |
-| M2 Admin panel (Flutter web) | 2026-12-04 | **closed 2026-10-25** · CW-037 follow-up in review | 8 / 9 (CW-029 … CW-036 done; CW-037 `review`) |
+| M2 Admin panel (Flutter web) | 2026-12-04 | **closed 2026-10-25** · follow-ups CW-037, CW-038 in review | 8 / 10 (CW-029 … CW-036 done; CW-037, CW-038 `review`) |
 | M3 Player app | 2026-12-24 | **closed 2026-10-25** | 16 / 19 done (CW-040 … CW-052, CW-054, CW-055, CW-058) · CW-053, CW-057 `not-needed` · CW-056 `todo` (follow-up) |
 | M4 Content | 2026-12-31 | not started (runs in parallel) | 0 / 4 (CW-060 … CW-063) |
 | M5 QA & launch | 2027-01-15 | not started | 1 / 7 (CW-073 dropped into CW-008) |
 
-**In review:** CW-037 admin email + password login (needs the Email/Password provider enabled on dev — see Ops). M3 merged into `psc-dev` and pushed 2026-10-25 (QA: `docs/qa/M3-manual-test.md`). **Blocked:** nothing. **Not needed:** CW-053 analytics, CW-057 solved-by-category summary (reasons on the cards).
+**In review:** CW-037 admin email + password login (needs the Email/Password provider enabled on dev — see Ops); CW-038 auto-create puzzle from checked questions (branch `feat/CW-038-auto-create-puzzle`, client only — no deploy; manual check in dev left). M3 merged into `psc-dev` and pushed 2026-10-25 (QA: `docs/qa/M3-manual-test.md`). **Blocked:** nothing. **Not needed:** CW-053 analytics, CW-057 solved-by-category summary (reasons on the cards).
 
 ## Next up (unblocked `todo`, lowest milestone first)
 
@@ -54,12 +54,12 @@ CW-056 is the one M3 follow-up left `todo` when M3 closed.
 | Crossword (player) | `lib/features/crossword/{shared,home,category,puzzle(+hints,report),result,revise,leaderboard}/` | **File map: `docs/plans/M3-player-app.md`** — one folder per module with its own data/domain/presentation + `di.dart`; `shared/` = entities, progress cache, change signal. Modules don't import each other |
 | Other player features | `lib/features/{auth,game,profile}` | One-module features; `profile` is a placeholder; auth writes `users/{uid}` in a transaction, not awaited (CW-055). Tab pages for Play/Revise/Ranks are the crossword module pages |
 | Admin panel entry | `lib/main_admin.dart`, `lib/di_admin.dart`, `lib/core/routes/admin_router.dart` | Email + password (`AdminAuthService`) + `admin` claim; no sign-up — accounts via `set_admin_claim.py --password`; theme `lib/config/themes/admin_theme.dart` |
-| Admin code | `lib/features/admin/{shared,auth,shell,home,categories,questions,puzzles(+detail,builder),schedule,reports,bulk_upload}/` | `shared/data/data_source/` = `AdminCallable` + services used by 2+ sections (categories, questions, puzzles, schedule) and `AdminAuthService`; `shared/domain/` models + pure utils (grid validator, status flow, question text); each section keeps only its own code. Routes in `core/routes/admin_routes.dart` |
+| Admin code | `lib/features/admin/{shared,auth,shell,home,categories,questions,puzzles(+detail,builder),schedule,reports,bulk_upload}/` | `shared/data/data_source/` = `AdminCallable` + services used by 2+ sections (categories, questions, puzzles, schedule) and `AdminAuthService`; `shared/domain/` models + pure utils (grid validator, status flow, question text); each section keeps only its own code. Routes in `core/routes/admin_routes.dart`. Auto-create puzzle (CW-038): `puzzles/domain/utils/auto_puzzle.dart` + builder `?auto=1` |
 | Shared | `lib/shared/`, `lib/core/` | Widgets: `GameScaffold`, `AppButton`, `AppProgressBar`, `StateMessage`, `SkeletonBox`, `showAppSheet`, `category_visuals`; `Paged`. Core: `guardData()` (`core/resorces/data_guard.dart`), `json_read.dart` (one copy for app + admin), `ist_date.dart` (+ `istIsoWeekId`), `routes/app_routes.dart` |
 | Remote Config | `lib/core/remote_config/app_remote_config.dart` (CW-005) | Server reads hint penalties from the same template (CW-026) |
 | Functions | `functions/crossword/` | `<name>_logic.py` pure + `<name>.py` handler, `_test.py` beside each; helpers in `functions/{admin,utils}/`, `firestore_client.py` |
 | Rules tests | `firestore-tests/` | Jest on the emulator |
-| Tests | `test/` mirrors `lib/` (per module) | 214 green on 2026-10-25. Crossword fakes/fixtures: `test/features/crossword/crossword_{fakes,fixtures}.dart`, `fixtures_entities.dart`, `test/fixtures/crossword/` |
+| Tests | `test/` mirrors `lib/` (per module) | 240 green on 2026-10-25 (CW-038). Admin page tests: fake `AdminCallable` in `test/features/admin/admin_fakes.dart`. Crossword fakes/fixtures: `test/features/crossword/crossword_{fakes,fixtures}.dart`, `fixtures_entities.dart`, `test/fixtures/crossword/` |
 | Checks | `scripts/check.sh [paths] [--fn]` | analyze + `scripts/check_structure.py` (modules, `_build`, ≤ 700 lines, names) + tests, prints only problems + one summary line each |
 
 ## Known, accepted
