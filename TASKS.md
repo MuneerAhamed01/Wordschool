@@ -95,7 +95,7 @@ This file is the single source of truth for project work. The **status board** b
 
 | ID     | Task                                                                          | Area  | Est  | Depends                | Status | Notes                                |
 | ------ | ----------------------------------------------------------------------------- | ----- | ---- | ---------------------- | ------ | ------------------------------------ |
-| CW-029 | Admin foundation: web target, `main_admin.dart`, claim login, shell, API base | admin | 1.5d | CW-024                 | done   | Web app on dev; Google popup + claim |
+| CW-029 | Admin foundation: web target, `main_admin.dart`, claim login, shell, API base | admin | 1.5d | CW-024                 | done   | Web app on dev; Google popup + claim (email + password since CW-037) |
 | CW-030 | `AdminApiService` crossword methods + models                                  | admin | 1d   | CW-029, CW-023, CW-025 | done   | Daily docs read via Firestore; services now in `admin/shared/data/data_source/` (CW-058) |
 | CW-031 | Categories page                                                               | admin | 0.5d | CW-030                 | done   | Drag to reorder; ID from name        |
 | CW-032 | Question bank page (list, add/edit, verify)                                   | admin | 1.5d | CW-030                 | done   | "Mark as checked" = verify           |
@@ -103,6 +103,7 @@ This file is the single source of truth for project work. The **status board** b
 | CW-034 | Puzzle preview, status workflow, schedule calendar                            | admin | 1d   | CW-033                 | done   | 30-day calendar, IST times           |
 | CW-035 | Reports page                                                                  | admin | 0.5d | CW-030                 | done   | + `adminGetQuestion`; deployed 2026-10-25 |
 | CW-036 | Import questions / puzzles from JSON                                          | admin | 1d   | CW-032, CW-033         | done   | + CSV for questions                  |
+| CW-037 | Admin login with email + password (replaces Google popup)                     | admin, ops | 0.5d | CW-029, CW-024     | review | Enable Email/Password in Firebase Auth; set password with `set_admin_claim.py --password` |
 
 
 
@@ -486,6 +487,8 @@ Done when:
 
 - [x] Your account has `admin: true` (check: `getIdTokenResult().claims.admin`) — set 2026-10-23 with a service-account key; confirmed via the Admin SDK
 
+*(CW-037 added `--password`: asks for a password twice, creates the email/password account if missing or sets the password on an existing one, then grants the claim.)*
+
 
 
 #### CW-025 · Admin read callables
@@ -520,7 +523,7 @@ Done when:
 
 psc-dev has no web target. Add it (`fvm flutter create --platforms web .`, then `flutterfire configure` for a web app in `kerala-pcs-dev`). Port from `development`: `lib/main_admin.dart` (entry), `lib/app/bootstrap_admin.dart`, `lib/di_admin.dart`, `lib/core/routes/admin_router.dart`, `features/admin/data/admin_auth_service.dart` (Google sign-in + `admin` claim check), `admin_shell_page.dart`, `admin_login_page.dart`, and an `AdminApiService` with a `_call(name, data)` helper using `FirebaseFunctions.instanceFor(region: 'asia-south1')`. Drop the database switcher (DEC-002); show the project id as an environment badge.
 
-**Done (branch** `module/m2`**):** web target added; Firebase web app `wordshool (web)` created in `kerala-pcs-dev` with the Firebase CLI (no FlutterFire CLI here) and added to `firebase_options.dart`. Sign-in is a Google popup (`signInWithPopup`, no `google_sign_in` on web); `AdminAuthService` is a `ChangeNotifier` the router listens to, so a non-admin is signed out and stays on `/login`. Sections: Home, Categories, Questions, Puzzles, Daily schedule, Reports, Bulk upload. Env badge shows `TEST · kerala-pcs-dev` (any non `-dev` project shows `LIVE` in red). Pages are `StatefulWidget`s that call `AdminApiService` directly (as on `development`); pure logic lives in `features/admin/domain/utils/` with tests. *(CW-058 split this into modules: `AdminApiService` became `admin/shared/data/data_source/*_service.dart` + `callable.dart`; pages live in `admin/<section>/presentation/pages/`.)*
+**Done (branch** `module/m2`**):** web target added; Firebase web app `wordshool (web)` created in `kerala-pcs-dev` with the Firebase CLI (no FlutterFire CLI here) and added to `firebase_options.dart`. Sign-in was a Google popup (`signInWithPopup`, no `google_sign_in` on web) — email + password since CW-037; `AdminAuthService` is a `ChangeNotifier` the router listens to, so a non-admin is signed out and stays on `/login`. Sections: Home, Categories, Questions, Puzzles, Daily schedule, Reports, Bulk upload. Env badge shows `TEST · kerala-pcs-dev` (any non `-dev` project shows `LIVE` in red). Pages are `StatefulWidget`s that call `AdminApiService` directly (as on `development`); pure logic lives in `features/admin/domain/utils/` with tests. *(CW-058 split this into modules: `AdminApiService` became `admin/shared/data/data_source/*_service.dart` + `callable.dart`; pages live in `admin/<section>/presentation/pages/`.)*
 
 Done when:
 
@@ -588,6 +591,23 @@ Done when:
 
 - [x] Both example files import cleanly into the dev DB — both parse with no problems in `bulk_import_test.dart`; uploaded during review (2026-10-25)
 - [x] Re-importing the same file updates instead of duplicating (match on `answer` + `subject` for questions, `id` for puzzles) — `planQuestionImport` / `planPuzzleImport` tests
+
+
+
+#### CW-037 · Admin login with email + password
+
+The admin panel signed in with a Google popup. Admins sign in with **email + password** instead (Firebase Auth Email/Password provider). There is no sign-up page: accounts and passwords are set with `functions/scripts/set_admin_claim.py --password`. The `admin` custom claim check is unchanged (non-admins are signed out and stay on `/login`).
+
+- `AdminAuthService.signInWithEmail({email, password})` replaces `signInWithGoogle()`; `sendPasswordReset(email)` for "Forgot password?". Error text from `admin/shared/domain/utils/sign_in_errors.dart` (`signInErrorMessage`, `emailProblem`, `passwordProblem`; `invalid-credential` = "Wrong email or password." because of email enumeration protection).
+- `admin/auth/presentation/pages/login_page.dart`: email + password form (autofill, show/hide password, Enter submits), "Forgot password?", error / notice boxes.
+- `set_admin_claim.py --password`: password asked twice with `getpass` (≥ 8 chars, never on the command line); creates the user if the email has none, else `update_user(password=…)` (adds a password to an account first made by Google sign-in), then grants the claim.
+- Player app sign-in (Google / guest) is unchanged.
+
+Done when:
+
+- [x] Login page signs in with email + password; non-admin refused; reset link request shows a notice — helpers unit-tested (`test/features/admin/shared/domain/utils/sign_in_errors_test.dart`); `scripts/check.sh` green (221 tests)
+- [x] `set_admin_claim.py --password` creates / updates the account — `password_problem` tested; ruff + pytest green
+- [ ] Ops (user): enable **Email/Password** in Firebase Console → Authentication → Sign-in method for `kerala-pcs-dev`, run `venv/bin/python -m scripts.set_admin_claim muneerahamed.dev@gmail.com --password`, then sign in at `fvm flutter run -t lib/main_admin.dart -d chrome`
 
 
 

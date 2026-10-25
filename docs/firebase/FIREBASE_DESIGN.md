@@ -11,7 +11,7 @@ PSC Crossword adds **9 Firestore collections** to the Kerala PSC Firebase projec
 
 ## Decisions
 
-1. **Content is written only by Cloud Functions.** The admin panel calls admin callables (`admin` custom claim → `assertAdmin`); every change goes to `adminAuditLog`. Rules say `allow write: if false` on content.
+1. **Content is written only by Cloud Functions.** The admin panel calls admin callables (`admin` custom claim → `assertAdmin`); every change goes to `adminAuditLog`. Rules say `allow write: if false` on content. Admins sign in to the panel with **email + password** (Auth Email/Password provider, CW-037); there is no sign-up — accounts, passwords and the claim come from `functions/scripts/set_admin_claim.py --password`. Players sign in with Google or as a guest (anonymous).
 2. **A question bank sits under puzzles.** Each PSC fact lives once in `pscQuestions`, is verified, then copied into puzzles. Later games reuse it.
 3. **One puzzle = one document.** Opening a puzzle costs 1 read. Answers ship **encoded** for offline Check/Reveal; the real key is in private `crosswordSolutions`.
 4. **Scores are server-side.** The app saves in-progress letters; finishing goes through `submitCrossword`, which scores, gives XP, updates the leaderboard and saves mistakes in one batch.
