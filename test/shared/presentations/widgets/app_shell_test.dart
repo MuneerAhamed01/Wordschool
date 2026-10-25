@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wordshool/core/routes/app_router.dart';
-import 'package:wordshool/features/home/presentation/pages/home_page.dart';
+import 'package:wordshool/di.dart';
+import 'package:wordshool/features/crossword/home/presentation/pages/home_page.dart';
+import 'package:wordshool/features/crossword/leaderboard/presentation/pages/leaderboard_page.dart';
+import 'package:wordshool/features/crossword/revise/presentation/pages/revise_page.dart';
 import 'package:wordshool/features/profile/presentation/pages/profile_page.dart';
-import 'package:wordshool/features/ranks/presentation/pages/ranks_page.dart';
-import 'package:wordshool/features/revise/presentation/pages/revise_page.dart';
+
+import '../../../features/crossword/crossword_fakes.dart';
 
 void main() {
   late GoRouter router;
@@ -23,7 +26,12 @@ void main() {
 
   String location() => router.routerDelegate.currentConfiguration.uri.path;
 
-  tearDown(() => router.dispose());
+  setUp(() => registerCrosswordFakes(getIt, FakeCrosswordRepository()));
+
+  tearDown(() async {
+    router.dispose();
+    await getIt.reset();
+  });
 
   testWidgets('starts on Play with four tabs', (tester) async {
     await pumpShell(tester);
@@ -43,8 +51,8 @@ void main() {
     expect(find.byType(RevisePage), findsOneWidget);
 
     await tapTab(tester, 'Ranks');
-    expect(location(), RanksPage.routeName);
-    expect(find.byType(RanksPage), findsOneWidget);
+    expect(location(), LeaderboardPage.routeName);
+    expect(find.byType(LeaderboardPage), findsOneWidget);
 
     await tapTab(tester, 'Profile');
     expect(location(), ProfilePage.routeName);
