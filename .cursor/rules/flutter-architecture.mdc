@@ -13,6 +13,7 @@ Layout per feature: `lib/features/<feature>/{domain,data,presentation}` — see 
 - Models: `class <Name>Model extends <Name>Entity` with `factory fromJson(Map<String, dynamic> json, {String? documentId})` and `toJson()`. Timestamps via `FirebaseDTConverter`.
 - Data source interface: `data/data_source/<name>_service.dart` → `abstract class <Name>DataSource`. Implementation: `data/data_source/remote/<name>_service.dart` → `<Name>DataSourceImpl`.
 - Return `Future<DataState<T>>` (`DataSuccess` / `DataError(error: AppError(error:, code:, message:))`) from data sources and repositories. Catch exceptions in the data source, `log(...)` them with the stack trace (`dart:developer`), and return `AppError(error: e, code: '500')`; use `code: '404'` for missing docs and `'400'` for bad input.
+- Wrap every data-source method in `guardData('Source.method', () async {...})` (`lib/core/resorces/data_guard.dart`); read JSON with `lib/core/utils/json_read.dart`.
 - Use cases: one class per action, `extends UseCase<R, P>`, `call({required P param})`; params in `usecases/utils/<name>_param.dart`.
 - Inject `FirebaseFirestore` / `FirebaseFunctions` / `FirebaseAuth` through constructors; only `lib/di.dart` uses `.instance`. Collection names from `FirebaseCollections`.
 - Register in `lib/di.dart` inside `_initialize<Feature>()`; call it from `initializeDependency`.

@@ -44,7 +44,7 @@ class GameDataSourceImpl extends GameDataSource {
         return DataSuccess<GameModel>(
           data: GameModel.fromJson(gameData),
         );
-      } else {  
+      } else {
         // Create new game for today
         final gameModel = await _createWordIfNotExist();
         return DataSuccess<GameModel>(data: gameModel);

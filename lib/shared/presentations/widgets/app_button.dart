@@ -86,8 +86,9 @@ class AppButton extends StatelessWidget {
   _ButtonColors _resolveColors() {
     switch (variant) {
       case ButtonVariant.primary:
+        // #467A41: white text passes contrast (design/tokens accent.button).
         return const _ButtonColors(
-          background: MyColors.tileCorrect,
+          background: MyColors.buttonFill,
           foreground: MyColors.white,
         );
       case ButtonVariant.secondary:

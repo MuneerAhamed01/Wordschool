@@ -3,17 +3,17 @@
 
 Generates, following the repo's existing conventions (see CLAUDE.md):
 
-  lib/features/<feature>/domain/entities/<entity>.dart
-  lib/features/<feature>/domain/repositories/<feature>_repository.dart      (if missing)
-  lib/features/<feature>/domain/usecases/<usecase>.dart
-  lib/features/<feature>/domain/usecases/utils/<usecase>_param.dart
-  lib/features/<feature>/data/models/<entity>.dart
-  lib/features/<feature>/data/data_source/<source>_service.dart             (if missing)
-  lib/features/<feature>/data/data_source/remote/<source>_service.dart      (if missing)
-  lib/features/<feature>/data/repositories/<feature>_repository_impl.dart   (if missing)
-  lib/features/<feature>/presentation/bloc/<bloc>_bloc/<bloc>_bloc.dart     (optional)
-  lib/features/<feature>/presentation/pages/<page>_page.dart                (optional)
-  test/features/<feature>/data/models/<entity>_test.dart
+  lib/features/<feature>[/<module>]/domain/entities/<entity>.dart
+  lib/features/<feature>[/<module>]/domain/repositories/<feature>_repository.dart      (if missing)
+  lib/features/<feature>[/<module>]/domain/usecases/<usecase>.dart
+  lib/features/<feature>[/<module>]/domain/usecases/utils/<usecase>_param.dart
+  lib/features/<feature>[/<module>]/data/models/<entity>.dart
+  lib/features/<feature>[/<module>]/data/data_source/<source>_service.dart             (if missing)
+  lib/features/<feature>[/<module>]/data/data_source/remote/<source>_service.dart      (if missing)
+  lib/features/<feature>[/<module>]/data/repositories/<feature>_repository_impl.dart   (if missing)
+  lib/features/<feature>[/<module>]/presentation/bloc/<bloc>_bloc.dart                 (optional)
+  lib/features/<feature>[/<module>]/presentation/pages/<page>_page.dart                (optional)
+  test/features/<feature>[/<module>]/data/models/<entity>_test.dart
 
 It never overwrites an existing file (unless --force) and prints the DI and
 router snippets to paste. Existing repository/data-source files are left
@@ -172,7 +172,7 @@ def model_file(feature: str, entity: str, fields: list[Field]) -> str:
         imports.append("import 'package:cloud_firestore/cloud_firestore.dart';")
         imports.append(f"import 'package:{PACKAGE}/core/firebase/dt_converter.dart';")
     imports.append(
-        f"import 'package:{PACKAGE}/features/{feature}/domain/entities/{entity}.dart';")
+        f"import 'package:{PACKAGE}/features/{_PATH}/domain/entities/{entity}.dart';")
     ctor = "\n".join(f"    {'' if f.nullable else 'required '}super.{f.name}," for f in fields)
     from_json = "\n".join(f"      {f.name}: {f.from_json()}," for f in fields)
     to_json = "\n".join(f"      '{f.name}': {f.to_json()}," for f in fields if f.name != "id")
@@ -202,7 +202,7 @@ def repository_file(feature: str, entity: str, method: str) -> str:
     repo = pascal(feature) + "Repository"
     ent = pascal(entity) + "Entity"
     return f"""import 'package:{PACKAGE}/core/resorces/data_state.dart';
-import 'package:{PACKAGE}/features/{feature}/domain/entities/{entity}.dart';
+import 'package:{PACKAGE}/features/{_PATH}/domain/entities/{entity}.dart';
 
 abstract class {repo} {{
   Future<DataState<{ent}>> {method}(String id);
@@ -214,7 +214,7 @@ def source_interface_file(feature: str, entity: str, source: str, method: str) -
     ds = pascal(source) + "DataSource"
     model = pascal(entity) + "Model"
     return f"""import 'package:{PACKAGE}/core/resorces/data_state.dart';
-import 'package:{PACKAGE}/features/{feature}/data/models/{entity}.dart';
+import 'package:{PACKAGE}/features/{_PATH}/data/models/{entity}.dart';
 
 abstract class {ds} {{
   Future<DataState<{model}>> {method}(String id);
@@ -232,8 +232,8 @@ def source_impl_file(feature: str, entity: str, source: str, method: str,
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:{PACKAGE}/core/firebase/collections.dart';
 import 'package:{PACKAGE}/core/resorces/data_state.dart';
-import 'package:{PACKAGE}/features/{feature}/data/data_source/{source}_service.dart';
-import 'package:{PACKAGE}/features/{feature}/data/models/{entity}.dart';
+import 'package:{PACKAGE}/features/{_PATH}/data/data_source/{source}_service.dart';
+import 'package:{PACKAGE}/features/{_PATH}/data/models/{entity}.dart';
 
 class {ds}Impl extends {ds} {{
   {ds}Impl({{required FirebaseFirestore firestore}}) : _firestore = firestore;
@@ -280,9 +280,9 @@ def repository_impl_file(feature: str, entity: str, source: str, method: str) ->
     field = "_" + camel(source) + "DataSource"
     param = camel(source) + "DataSource"
     return f"""import 'package:{PACKAGE}/core/resorces/data_state.dart';
-import 'package:{PACKAGE}/features/{feature}/data/data_source/{source}_service.dart';
-import 'package:{PACKAGE}/features/{feature}/domain/entities/{entity}.dart';
-import 'package:{PACKAGE}/features/{feature}/domain/repositories/{feature}_repository.dart';
+import 'package:{PACKAGE}/features/{_PATH}/data/data_source/{source}_service.dart';
+import 'package:{PACKAGE}/features/{_PATH}/domain/entities/{entity}.dart';
+import 'package:{PACKAGE}/features/{_PATH}/domain/repositories/{feature}_repository.dart';
 
 class {repo}Impl implements {repo} {{
   {repo}Impl({{required {ds} {param}}}) : {field} = {param};
@@ -316,9 +316,9 @@ def usecase_file(feature: str, entity: str, usecase: str, method: str) -> str:
     arg = camel(feature) + "Repository"
     return f"""import 'package:{PACKAGE}/core/resorces/data_state.dart';
 import 'package:{PACKAGE}/core/resorces/usecase.dart';
-import 'package:{PACKAGE}/features/{feature}/domain/entities/{entity}.dart';
-import 'package:{PACKAGE}/features/{feature}/domain/repositories/{feature}_repository.dart';
-import 'package:{PACKAGE}/features/{feature}/domain/usecases/utils/{usecase}_param.dart';
+import 'package:{PACKAGE}/features/{_PATH}/domain/entities/{entity}.dart';
+import 'package:{PACKAGE}/features/{_PATH}/domain/repositories/{feature}_repository.dart';
+import 'package:{PACKAGE}/features/{_PATH}/domain/usecases/utils/{usecase}_param.dart';
 
 class {cls} extends UseCase<DataState<{ent}>, {param}> {{
   {cls}({{required {repo} {arg}}}) : {field} = {arg};
@@ -342,9 +342,9 @@ def bloc_file(feature: str, entity: str, bloc: str, usecase: str) -> str:
     arg = camel(usecase) + "UseCase"
     return f"""import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:{PACKAGE}/core/resorces/data_state.dart';
-import 'package:{PACKAGE}/features/{feature}/domain/entities/{entity}.dart';
-import 'package:{PACKAGE}/features/{feature}/domain/usecases/{usecase}.dart';
-import 'package:{PACKAGE}/features/{feature}/domain/usecases/utils/{usecase}_param.dart';
+import 'package:{PACKAGE}/features/{_PATH}/domain/entities/{entity}.dart';
+import 'package:{PACKAGE}/features/{_PATH}/domain/usecases/{usecase}.dart';
+import 'package:{PACKAGE}/features/{_PATH}/domain/usecases/utils/{usecase}_param.dart';
 
 // ---------- Events ----------
 
@@ -428,7 +428,7 @@ def page_file(feature: str, bloc: str, page: str) -> str:
     route = "/" + page.replace("_", "-")
     return f"""import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:{PACKAGE}/features/{feature}/presentation/bloc/{bloc}_bloc/{bloc}_bloc.dart';
+import 'package:{PACKAGE}/features/{_PATH}/presentation/bloc/{bloc}_bloc.dart';
 
 class {p} extends StatelessWidget {{
   const {p}({{super.key}});
@@ -497,7 +497,7 @@ def model_test_file(feature: str, entity: str, fields: list[Field]) -> str:
     imports = ["import 'package:flutter_test/flutter_test.dart';"]
     if needs_ts:
         imports.insert(0, "import 'package:cloud_firestore/cloud_firestore.dart';")
-    imports.append(f"import 'package:{PACKAGE}/features/{feature}/data/models/{entity}.dart';")
+    imports.append(f"import 'package:{PACKAGE}/features/{_PATH}/data/models/{entity}.dart';")
     return f"""{chr(10).join(imports)}
 
 void main() {{
@@ -522,11 +522,16 @@ void main() {{
 
 # ---------- main ----------
 
+# Folder under lib/features: `<feature>` or `<feature>/<module>` (set in main).
+_PATH = ""
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", default=".", help="repo root (default: cwd)")
     ap.add_argument("--feature", required=True, help="snake_case feature folder, e.g. crossword")
+    ap.add_argument("--module", help="snake_case module inside the feature, e.g. revise "
+                    "(lib/features/<feature>/<module>/…; names come from the module)")
     ap.add_argument("--entity", required=True, help="snake_case entity, e.g. crossword_puzzle")
     ap.add_argument("--fields", required=True,
                     help='"id:String,title:String,count:int,createdAt:DateTime?"')
@@ -541,7 +546,14 @@ def main() -> None:
     ap.add_argument("--dry-run", action="store_true", help="print paths only")
     a = ap.parse_args()
 
+    global _PATH
     feature = check_snake(a.feature, "--feature")
+    _PATH = feature
+    if a.module:
+        # Inside a module the module name is the prefix; the feature name
+        # would only repeat the folder (CLAUDE.md "Code structure rules").
+        _PATH = f"{feature}/{check_snake(a.module, '--module')}"
+        feature = a.module
     entity = check_snake(a.entity, "--entity")
     source = check_snake(a.source or feature, "--source")
     usecase = check_snake(a.usecase or f"load_{entity}", "--usecase")
@@ -550,8 +562,8 @@ def main() -> None:
         sys.exit("--page needs --bloc")
     fields = parse_fields(a.fields)
 
-    lib = os.path.join(a.root, "lib", "features", feature)
-    test = os.path.join(a.root, "test", "features", feature)
+    lib = os.path.join(a.root, "lib", "features", _PATH)
+    test = os.path.join(a.root, "test", "features", _PATH)
     if not os.path.isdir(os.path.join(a.root, "lib")):
         sys.exit(f"No lib/ under {os.path.abspath(a.root)} — run from the repo root or pass --root")
 
@@ -573,7 +585,7 @@ def main() -> None:
     ]
     if a.bloc:
         bloc = check_snake(a.bloc, "--bloc")
-        plan.append((f"{lib}/presentation/bloc/{bloc}_bloc/{bloc}_bloc.dart",
+        plan.append((f"{lib}/presentation/bloc/{bloc}_bloc.dart",
                      bloc_file(feature, entity, bloc, usecase), False))
     if a.page:
         page = check_snake(a.page, "--page")
@@ -608,7 +620,7 @@ def main() -> None:
     repo = pascal(feature) + "Repository"
     uc = pascal(usecase) + "UseCase"
     print(f"""
---- lib/di.dart (inside _initialize{pascal(feature)}(), create it if missing) ---
+--- lib/features/{_PATH}/di.dart (init{pascal(_PATH.replace('/', '_'))}(GetIt getIt); call it from the feature's di.dart or lib/di.dart) ---
   getIt.registerSingleton<{ds}>(
     {ds}Impl(firestore: getIt<FirebaseFirestore>()),
   );

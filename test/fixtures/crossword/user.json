@@ -1,0 +1,18 @@
+{
+  "id": "alice",
+  "data": {
+    "displayName": "Alice",
+    "photoUrl": null,
+    "isAnonymous": false,
+    "xp": 1285,
+    "crossword": {
+      "played": 9,
+      "solved": 6,
+      "currentStreak": 4,
+      "longestStreak": 7,
+      "lastSolvedDate": "2026-10-22",
+      "bestTimeSec": 141
+    },
+    "rateLimit": {"submitWindowStart": "2026-10-22T03:00:00Z", "submitCount": 1}
+  }
+}

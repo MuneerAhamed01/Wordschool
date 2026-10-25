@@ -1,0 +1,14 @@
+{
+  "result": {
+    "score": 71,
+    "correctWords": 5,
+    "totalWords": 7,
+    "xpEarned": 21,
+    "timeSec": 312,
+    "wrongWordIds": ["2D", "3D"],
+    "revealedWordIds": ["3D"]
+  },
+  "xp": 1285,
+  "currentStreak": 4,
+  "alreadySubmitted": false
+}

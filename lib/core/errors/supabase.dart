@@ -1,3 +1,1 @@
-class SupabaseErrorHandler {
-  
-}
+class SupabaseErrorHandler {}

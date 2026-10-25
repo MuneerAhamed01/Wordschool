@@ -1,0 +1,16 @@
+{
+  "id": "kerala-history-0012",
+  "data": {
+    "status": "in_progress",
+    "letters": "MUZIRIS#.#######.#.###.#ASAN##.#.#.###.#.#.......#.######...####",
+    "elapsedSec": 95,
+    "hintsUsed": {
+      "letter": 1,
+      "word": 0,
+      "clue": 2
+    },
+    "checksUsed": 1,
+    "startedAt": "2026-10-22T03:00:00Z",
+    "updatedAt": "2026-10-22T03:01:35Z"
+  }
+}

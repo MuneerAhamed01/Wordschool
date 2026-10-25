@@ -1,0 +1,155 @@
+{
+  "id": "kerala-history-0012",
+  "data": {
+    "categoryId": "kerala-history",
+    "number": 12,
+    "title": {
+      "en": "Kerala Renaissance and Trade"
+    },
+    "difficulty": "medium",
+    "rows": 8,
+    "cols": 8,
+    "layout": ".......#.#######.#.###.#....##.#.#.###.#.#.......#.######...####",
+    "xpReward": 50,
+    "estimatedMinutes": 6,
+    "words": [
+      {
+        "id": "1A",
+        "number": 1,
+        "direction": "across",
+        "row": 0,
+        "col": 0,
+        "length": 7,
+        "clue": {
+          "en": "Ancient Chera port linked to the Pattanam excavations"
+        },
+        "extraClue": {
+          "en": "Mentioned by Pliny; on the Periyar near today's Kodungallur"
+        },
+        "fact": {
+          "en": "Muziris was an ancient port on the Malabar coast that traded pepper with Rome. Excavations at Pattanam are linked to it."
+        },
+        "questionId": "q-muziris",
+        "answerEnc": "JjAoKD4ofg=="
+      },
+      {
+        "id": "1D",
+        "number": 1,
+        "direction": "down",
+        "row": 0,
+        "col": 0,
+        "length": 7,
+        "clue": {
+          "en": "Northern Kerala region that was a district of the Madras Presidency"
+        },
+        "extraClue": {
+          "en": "It joined Kerala when the state was formed on 1 November 1956"
+        },
+        "fact": {
+          "en": "Malabar district was part of the Madras Presidency under British rule and became part of Kerala in 1956."
+        },
+        "questionId": "q-malabar",
+        "answerEnc": "JiQ+IC4gfw=="
+      },
+      {
+        "id": "2D",
+        "number": 2,
+        "direction": "down",
+        "row": 2,
+        "col": 2,
+        "length": 6,
+        "clue": {
+          "en": "1924–25 satyagraha for the right to use temple roads"
+        },
+        "extraClue": {
+          "en": "Held in Travancore; Gandhiji visited in March 1925"
+        },
+        "fact": {
+          "en": "The Vaikom Satyagraha (1924–25) protested the ban on oppressed castes using the roads around the Vaikom temple."
+        },
+        "questionId": "q-vaikom",
+        "answerEnc": "PSQ7KiMs"
+      },
+      {
+        "id": "3D",
+        "number": 3,
+        "direction": "down",
+        "row": 2,
+        "col": 6,
+        "length": 4,
+        "clue": {
+          "en": "Portuguese explorer Vasco da ___"
+        },
+        "extraClue": {
+          "en": "He reached the Malabar coast in 1498"
+        },
+        "fact": {
+          "en": "Vasco da Gama reached the Malabar coast near Kozhikode in May 1498, opening the sea route from Europe to India."
+        },
+        "questionId": "q-gama",
+        "answerEnc": "LCQ/IA=="
+      },
+      {
+        "id": "4A",
+        "number": 4,
+        "direction": "across",
+        "row": 3,
+        "col": 0,
+        "length": 4,
+        "clue": {
+          "en": "Kumaran ___, poet of 'Veena Poovu'"
+        },
+        "extraClue": {
+          "en": "One of the modern triumvirate of Malayalam poets"
+        },
+        "fact": {
+          "en": "Kumaran Asan wrote 'Veena Poovu' (1907) and is one of the modern triumvirate of Malayalam poetry with Ulloor and Vallathol."
+        },
+        "questionId": "q-asan",
+        "answerEnc": "KjYzLw=="
+      },
+      {
+        "id": "5A",
+        "number": 5,
+        "direction": "across",
+        "row": 5,
+        "col": 2,
+        "length": 6,
+        "clue": {
+          "en": "Beach near Kozhikode linked to Vasco da Gama's 1498 landing"
+        },
+        "extraClue": {
+          "en": "A memorial stone marks the spot"
+        },
+        "fact": {
+          "en": "Kappad beach near Kozhikode has a memorial marking Vasco da Gama's arrival in 1498."
+        },
+        "questionId": "q-kappad",
+        "answerEnc": "ICQiMS0l"
+      },
+      {
+        "id": "6A",
+        "number": 6,
+        "direction": "across",
+        "row": 7,
+        "col": 1,
+        "length": 3,
+        "clue": {
+          "en": "Initials of Kerala's first Chief Minister"
+        },
+        "extraClue": {
+          "en": "E. M. S. Namboodiripad, sworn in 1957"
+        },
+        "fact": {
+          "en": "E. M. S. Namboodiripad became Kerala's first Chief Minister in 1957."
+        },
+        "questionId": "q-ems",
+        "answerEnc": "Ligh"
+      }
+    ],
+    "wordCount": 7,
+    "status": "published",
+    "schemaVersion": 1,
+    "publishedAt": "2026-10-22T00:05:00Z"
+  }
+}

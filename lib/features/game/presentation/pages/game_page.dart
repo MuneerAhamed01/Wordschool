@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wordshool/core/routes/app_routes.dart';
 import 'package:wordshool/core/enums/word_tile_type.dart';
 import 'package:wordshool/features/game/presentation/bloc/game_bloc/game_bloc.dart';
 import 'package:wordshool/features/game/presentation/bloc/word_cubit/word_cubit.dart';
@@ -17,7 +18,7 @@ import 'package:wordshool/shared/presentations/widgets/wordle_tile/tile.dart';
 part 'game_page_helper.dart';
 
 class GamePage extends StatefulWidget {
-  static const String routeName = '/game';
+  static const String routeName = AppRoutes.game;
   const GamePage({super.key});
 
   @override

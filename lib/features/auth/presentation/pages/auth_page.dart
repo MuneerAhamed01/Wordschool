@@ -7,14 +7,14 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:wordshool/config/themes/colors.dart';
 import 'package:wordshool/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:wordshool/features/auth/utils/auth_type.dart';
-import 'package:wordshool/features/home/presentation/pages/home_page.dart';
+import 'package:wordshool/core/routes/app_routes.dart';
 import 'package:wordshool/shared/presentations/widgets/app_button.dart';
 import 'package:wordshool/shared/presentations/widgets/fade_slide_in.dart';
 import 'package:wordshool/shared/presentations/widgets/game_scaffold.dart';
 import 'package:wordshool/shared/presentations/widgets/snackbar.dart';
 
 class AuthPage extends StatelessWidget {
-  static const String routeName = '/auth';
+  static const String routeName = AppRoutes.auth;
   const AuthPage({super.key});
 
   // Text styles are local because the app theme doesn't define them yet
@@ -45,7 +45,7 @@ class AuthPage extends StatelessWidget {
         listener: (ctx, state) {
           state.whenOrNull(
             // Replace the auth route so back doesn't return to sign-in
-            authenticated: (_) => ctx.go(HomePage.routeName),
+            authenticated: (_) => ctx.go(AppRoutes.home),
             error: (message) => CustomSnackBar.show(
               ctx,
               message: message,
@@ -126,7 +126,8 @@ class AuthPage extends StatelessWidget {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: index == 2 ? MyColors.tileCorrect : MyColors.tileAbsent,
+                  color:
+                      index == 2 ? MyColors.tileCorrect : MyColors.tileAbsent,
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(color: MyColors.tileFilled),
                 ),
@@ -176,8 +177,8 @@ class AuthPage extends StatelessWidget {
   Widget _buildGoogleButton() {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
-        final isGoogle = state.whenOrNull<AuthType?>(loading: (t) => t) ==
-            AuthType.google;
+        final isGoogle =
+            state.whenOrNull<AuthType?>(loading: (t) => t) == AuthType.google;
         return AppButton(
           label: 'Continue with Google',
           leading: SvgPicture.asset(

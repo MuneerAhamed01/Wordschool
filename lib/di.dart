@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:get_it/get_it.dart';
@@ -10,8 +11,10 @@ import 'package:wordshool/features/auth/data/data_source/auth_service.dart';
 import 'package:wordshool/features/auth/data/data_source/remote/auth_service.dart';
 import 'package:wordshool/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:wordshool/features/auth/domain/repositories/auth_repository.dart';
+import 'package:wordshool/features/auth/domain/usecases/save_player_profile.dart';
 import 'package:wordshool/features/auth/domain/usecases/sign_anonymosly.dart';
 import 'package:wordshool/features/auth/domain/usecases/sign_with_google.dart';
+import 'package:wordshool/features/crossword/di.dart';
 import 'package:wordshool/features/game/data/data_source/game_service.dart';
 import 'package:wordshool/features/game/data/data_source/remote/game_service.dart';
 import 'package:wordshool/features/game/data/repositories/game_repository_impl.dart';
@@ -29,11 +32,23 @@ Future<void> initializeDependency() async {
   final sharedPref = await SharedPreferences.getInstance();
   getIt.registerSingleton<SharedPreferences>(sharedPref);
 
+  _initializeFirebase();
   await _initializeRemoteConfig();
   await _initSessions();
   await _initializeAuthDependencies();
   await _initializeValidWords();
   _initializeGame();
+  initCrossword(getIt);
+}
+
+/// The only place `.instance` is used for Firebase Auth, Firestore and
+/// Functions.
+void _initializeFirebase() {
+  getIt.registerSingleton<FirebaseAuth>(FirebaseAuth.instance);
+  getIt.registerSingleton<FirebaseFirestore>(FirebaseFirestore.instance);
+  getIt.registerSingleton<FirebaseFunctions>(
+    FirebaseFunctions.instanceFor(region: 'asia-south1'),
+  );
 }
 
 Future<void> _initializeRemoteConfig() async {
@@ -70,8 +85,9 @@ Future<void> _initializeAuthDependencies() async {
 
   getIt.registerSingleton<AuthDataSource>(
     AuthDataSourceImpl(
-      firebaseAuth: FirebaseAuth.instance,
+      firebaseAuth: getIt<FirebaseAuth>(),
       googleSignIn: GoogleSignIn.instance,
+      firestore: getIt<FirebaseFirestore>(),
     ),
   );
 
@@ -86,6 +102,9 @@ Future<void> _initializeAuthDependencies() async {
 
   getIt.registerSingleton<SignInWithGoogleUseCase>(
       SignInWithGoogleUseCase(authRepo: getIt<AuthRepository>()));
+
+  getIt.registerSingleton<SavePlayerProfileUseCase>(
+      SavePlayerProfileUseCase(authRepository: getIt<AuthRepository>()));
 }
 
 Future<void> _initializeValidWords() async {
@@ -95,7 +114,7 @@ Future<void> _initializeValidWords() async {
 
 void _initializeGame() {
   getIt.registerSingleton<GameDataSource>(GameDataSourceImpl(
-    firestore: FirebaseFirestore.instance,
+    firestore: getIt<FirebaseFirestore>(),
     validWords: getIt<ValidWords>(),
   ));
 

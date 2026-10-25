@@ -227,10 +227,13 @@ stateDiagram-v2
 
 ### Player: open and play
 
-1. **Home** reads `crosswordDaily/{today IST}`, active categories (cached), own `users/{uid}`.
-2. **Category list**: published puzzles in the category, `number` desc, 20 per page.
-3. **Puzzle**: puzzle doc + own progress doc.
-4. **Play**: Check / Reveal / Show clue are offline; progress saved on pause, leave, or every 30 s; reveals are limited per puzzle (DEC-008).
+1. **Home** reads, in parallel: `crosswordDaily/{today IST}`, categories with `isActive == true` (sorted by `order` in the app — no composite index), own `users/{uid}`, a `count()` of own `revisionItems` with `mastered == false`, own progress for **today's puzzle only**, and per category a `count()` of own `crosswordProgress` with `status == completed` and the doc id between `{categoryId}-0000` and `{categoryId}-9999` (equality + `__name__` range: served by the single-field index). The whole progress collection is **never** read. Results are kept for the session (`CrosswordProgressRepository`): saves update the cache at once, a first submit bumps the category count, so returning from a puzzle costs no reads. *CW-057's summary doc would replace the per-category counts.*
+2. **Category list**: published puzzles in the category, `number` desc, 20 per page (`startAfter(number)`); marks for the page's puzzles with one `in` query on the doc id (≤ 20 ids, ≤ 30 allowed), cached.
+3. **Puzzle**: puzzle doc + own progress doc (from the cache when known). Revealed squares/words are kept on the device (SharedPreferences, key `crossword.reveals.{puzzleId}`) because the rules don't allow them on the progress doc; they're cleared after submit. Opening a completed puzzle calls `submitCrossword` again, which returns the stored result (no writes).
+4. **Play**: Check / Reveal / Show clue are offline; progress saved on pause, leave, or every `crossword_autosave_seconds` (30) while changed — never per key, and never a new doc for a puzzle that was only looked at; reveals are limited per puzzle (DEC-008).
+5. **Revise**: own `revisionItems`, `mastered == false`, `lastWrongAt` desc then doc id desc, 20 per page with `startAfter([lastWrongAt, questionId])` — one submit stamps all its mistakes with the same `lastWrongAt`, so the id breaks ties (the `mastered, lastWrongAt desc` index already orders by `__name__` desc). "Mark as learned" updates `mastered` + `updatedAt`, and Home re-counts.
+6. **Ranks**: `leaderboards/crossword-{IST ISO week}` (`top50`) + own `entries/{uid}` + `count()` of entries with more points (rank = count + 1).
+7. **Profile doc** (CW-055): after sign-in and on each app start, `users/{uid}` gets `displayName` (Google name or "Guest 1234", ≤ 40), `photoUrl`, `isAnonymous`, `lastSeenAt` (+ `createdAt` on create) — in a transaction: `update` when the doc exists (e.g. made by `submitCrossword`), `set` with `createdAt` otherwise, so a doc created in between retries as an update. Not awaited by sign-in.
 
 ### Player: finish
 
@@ -525,6 +528,8 @@ Admin reads go through callables, not rules: no client token can read `pscQuesti
 **$0 up to ~2,000 daily players; ≈ $3/month at 10,000; ≈ $20/month at 50,000** — assuming one puzzle per player per day.
 
 Per player per day ≈ **20 reads** (Home 3, list ≤ 10, puzzle 2, results/ranks 3, revision 2) and **9 writes** (4 progress saves + submit batch of 5). Leaderboard refresh adds 4,800 reads/day total.
+
+App (M3) per session start: Home ≈ 4 reads + 1 per progress doc (one-time, cached) + 1 aggregation; puzzle 2; ranks 3 (board, own entry, count); profile write 1 read + 1 write. A heavy player with 100 played puzzles pays ~100 extra reads per session start until CW-057 replaces the progress scan with a server-kept summary.
 
 | Daily players | Reads / day | Writes / day | Firestore / month |
 | --- | --- | --- | --- |

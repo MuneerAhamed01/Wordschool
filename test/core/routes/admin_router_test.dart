@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wordshool/core/routes/admin_router.dart';
-import 'package:wordshool/features/admin/data/admin_auth_service.dart';
+import 'package:wordshool/features/admin/shared/data/data_source/auth_service.dart';
 
 void main() {
   group('adminRedirect', () {

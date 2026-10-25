@@ -1,0 +1,14 @@
+{
+  "id": "kerala-history",
+  "data": {
+    "name": {"en": "Kerala History", "ml": "കേരള ചരിത്രം"},
+    "description": {"en": "From Muziris to modern Kerala"},
+    "icon": "landmark",
+    "color": "#6AAA64",
+    "order": 10,
+    "isActive": true,
+    "publishedPuzzleCount": 42,
+    "lastPuzzleNumber": 44,
+    "schemaVersion": 1
+  }
+}

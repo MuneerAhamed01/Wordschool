@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -9,6 +11,7 @@ import 'package:wordshool/config/themes/fonts.dart';
 import 'package:wordshool/core/routes/app_router.dart';
 import 'package:wordshool/core/routes/router_refresh.dart';
 import 'package:wordshool/di.dart';
+import 'package:wordshool/features/auth/domain/usecases/save_player_profile.dart';
 import 'package:wordshool/firebase_options.dart';
 import 'package:wordshool/shared/data/data_source/session_handler.dart';
 
@@ -39,6 +42,10 @@ Future<void> main() async {
   await firebaseAuth.authStateChanges().first;
   if (!isSignedIn()) {
     await sessionHandler.clear();
+  } else {
+    // Returning player: refresh users/{uid} (lastSeenAt, name) in the
+    // background (CW-055); new players get it right after sign-in.
+    unawaited(getIt<SavePlayerProfileUseCase>()());
   }
 
   // Single GoRouter; its redirect re-runs on every auth change.
